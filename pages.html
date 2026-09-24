@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pages Studio — Homepage, Login, Sign-up &amp; Dashboard Templates You Can Restyle Live | Xiraiya</title>
-<meta name="description" content="Pages Studio by Xiraiya: 8 full page templates (homepage, login, sign-up, pricing, dashboard, blog, contact, 404) with 40+ section variants. Change colours, fonts, buttons, radius and layout live, then export clean HTML.">
+<meta name="description" content="Pages Studio by Xiraiya: 13 full page templates (homepage, login, sign-up, pricing, dashboard, blog, contact, 404, portfolio, product, checkout, about, coming soon) with 70 section variants and 10 theme presets. Change colours, fonts, buttons, radius and layout live, then export clean HTML.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://sknoyon324234234234.github.io/Personal/pages.html">
 <meta name="theme-color" content="#f6f1e7">
@@ -51,8 +51,8 @@
     <div class="container container-wide page-hero-inner">
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><svg class="ic"><use href="#i-chevron-right"/></svg><span>Pages Studio</span></nav>
       <h1 class="h1" data-split="ready">Pages Studio<span class="accent">.</span></h1>
-      <p class="lead" data-reveal>Eight complete pages, from the homepage to log in, sign up and a full dashboard. Swap every section, restyle every button, repaint the colours and change the fonts. When it looks like yours, export the HTML.</p>
-      <div class="pg-stats" data-reveal><span><b>8</b> page templates</span><span><b>45</b> section variants</span><span><b>8</b> button styles</span><span><b>1</b> click to export</span></div>
+      <p class="lead" data-reveal>Thirteen complete pages, from the homepage, log in and sign up to a product page, checkout, dashboard and a coming-soon countdown. Pick a theme, swap every section, restyle every button, add motion, rewrite the text and check the quality score. When it looks like yours, export the HTML.</p>
+      <div class="pg-stats" data-reveal><span><b>13</b> page templates</span><span><b>70</b> section variants</span><span><b>10</b> theme presets</span><span><b>8</b> button styles</span><span><b>1</b> click to export</span></div>
     </div>
   </section>
 
@@ -70,12 +70,17 @@
             <button type="button" role="radio" aria-checked="true" data-dev="desktop" aria-label="Desktop"><svg class="ic"><use href="#i-monitor"/></svg></button>
             <button type="button" role="radio" aria-checked="false" data-dev="tablet" aria-label="Tablet"><svg class="ic"><use href="#i-tablet"/></svg></button>
             <button type="button" role="radio" aria-checked="false" data-dev="phone" aria-label="Phone"><svg class="ic"><use href="#i-phone"/></svg></button>
+            <button type="button" role="radio" aria-checked="false" data-dev="fluid" aria-label="Fluid width, drag to resize" title="Fluid: drag the handle to resize"><svg class="ic"><use href="#i-move"/></svg></button>
           </div>
           <div class="pst-acts">
             <button type="button" class="tb" id="undoB" aria-label="Undo (Ctrl Z)" title="Undo (Ctrl Z)" disabled><svg class="ic"><use href="#i-arrow-left"/></svg></button>
             <button type="button" class="tb" id="redoB" aria-label="Redo (Ctrl Shift Z)" title="Redo (Ctrl Shift Z)" disabled><svg class="ic"><use href="#i-arrow-right"/></svg></button>
             <button type="button" class="tb" id="darkB" aria-label="Toggle page dark mode" title="Page light / dark"><svg class="ic"><use href="#i-moon"/></svg></button>
             <button type="button" class="tb wide" id="luckyB" title="Randomise the design"><svg class="ic"><use href="#i-wand"/></svg><span>Surprise me</span></button>
+            <div class="pst-ver">
+              <button type="button" class="tb wide" id="verB" aria-haspopup="menu" aria-expanded="false" title="Saved versions"><svg class="ic"><use href="#i-clock"/></svg><span>Versions</span></button>
+              <div class="pst-menu" id="verM" role="menu"><button type="button" id="verSave" class="vsave"><svg class="ic"><use href="#i-plus"/></svg><span><b>Save this version</b><small>Snapshot of every page and style</small></span></button><div id="verL" class="verl"></div></div>
+            </div>
             <button type="button" class="tb" id="shareB" aria-label="Copy share link" title="Copy a link to this design"><svg class="ic"><use href="#i-link"/></svg></button>
             <div class="pst-exp">
               <button type="button" class="btn btn-primary btn-sm" id="expB" aria-haspopup="menu" aria-expanded="false"><svg class="ic"><use href="#i-download"/></svg>Export</button>
@@ -93,13 +98,14 @@
           <aside class="pst-pages" aria-label="Pages">
             <h3 class="pst-h">Pages</h3>
             <div class="pst-plist" id="plist" role="tablist" aria-label="Page templates"></div>
-            <div class="pst-tip"><svg class="ic"><use href="#i-info"/></svg><p>Every page shares one design system. Change a colour once and all eight pages follow.</p></div>
+            <div class="pst-tip"><svg class="ic"><use href="#i-info"/></svg><p>Every page shares one design system. Change a colour once and all thirteen pages follow.</p></div>
           </aside>
 
           <div class="pst-canvas" id="canvas">
             <div class="pst-frame" id="frame"><iframe id="pv" title="Page preview" loading="eager"></iframe></div>
             <div class="pst-hint" id="hint"></div>
             <span class="pst-size" id="sizeL"></span>
+            <button type="button" class="pst-grip" id="grip" hidden aria-label="Drag to resize the page width"><i></i></button>
           </div>
 
           <aside class="pst-insp" aria-label="Inspector">
@@ -107,11 +113,13 @@
               <button type="button" role="tab" aria-selected="true" data-tab="design">Design</button>
               <button type="button" role="tab" aria-selected="false" data-tab="sections">Sections</button>
               <button type="button" role="tab" aria-selected="false" data-tab="buttons">Buttons</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="code">Code</button>
             </div>
             <div class="pst-panes">
               <div class="pane on" data-pane="design" id="paneDesign"></div>
               <div class="pane" data-pane="sections" id="paneSections"></div>
               <div class="pane" data-pane="buttons" id="paneButtons"></div>
+              <div class="pane" data-pane="code" id="paneCode"></div>
             </div>
           </aside>
         </div>
