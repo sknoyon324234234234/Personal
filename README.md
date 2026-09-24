@@ -15,13 +15,30 @@ It's a cinematic, anime-inspired portfolio where visitors can try a live, intera
 | Page | What's inside |
 | --- | --- |
 | `index.html` | Cinematic hero with an animated anime mascot (its eyes follow the cursor), intro loader, character sheet, skill radar, 5-year timeline, 11-service bento grid, horizontal "explore" panels, process and tech stack |
-| `showcase.html` (**The Lab**) | 11 interactive stages: live website preview, drag-and-drop automation workflow, working Telegram shop bot, Chrome extension popup that edits a page, Minecraft server with plugin commands and a shop GUI, desktop OS with an EXE installer and app, Android app, configurable AI agent, AI chat widget (English + Bangla), e-commerce autopilot feed and an auto-confirming crypto checkout |
+| `showcase.html` (**The Lab**) | 11 interactive stages: live website preview, drag-and-drop automation workflow, working Telegram shop bot, Chrome extension popup that edits a page, **BlockRealm**, a playable Minecraft-style survival game (see below), desktop OS with an EXE installer and app, Android app, configurable AI agent, AI chat widget (English + Bangla), e-commerce autopilot feed and an auto-confirming crypto checkout |
 | `shop.html` | Full e-commerce demo: filters, product modal, cart, promo codes, AI shopping assistant, checkout with Crypto / bKash / Nagad / card / COD, and an autopilot admin dashboard |
 | `components.html` (**UI Kit**) | Figma-style workspace with 50 live components (headers, bars, heroes, buttons, cards, forms, footers, loaders, alerts). It has a layers panel, zoom/pan, an inspector that reads real computed styles, copyable HTML/CSS/JS and present mode |
 | `demos.html` + `demos/` | Six complete demo websites (SaaS, restaurant, crypto dashboard, Minecraft server, agency, app landing) and a desktop/laptop/tablet/phone preview studio |
 | `tutorials.html` (**Motion Academy**) | After Effects-style tutorial player with a keyframe engine, timeline, layers, effect controls with an easing graph, motion paths, lesson notes, live CSS export, an easing lab and code guides |
 | `hire.html` | Packages, a 4-step project configurator with an instant estimate, and a brief hand-off by email, Telegram or WhatsApp. Also covers payment methods, next steps and an FAQ with FAQPage schema |
 | `404.html` | Custom "lost shinobi" page |
+
+## BlockRealm: the playable Minecraft demo
+
+The Minecraft chapter of the Lab is a small survival game that shows off the kind of server plugin Xiraiya builds (the fictional "RealmCore" plugin):
+
+- **Survival:** mine and place blocks, 17 crafting and smelting recipes, pickaxe tiers, ores (coal, iron, gold, diamond), caves, fall damage, health and hunger. You eat food to survive.
+- **World:** day and night cycle, skylight that spreads through doors and caves, torches, rain, water, trees, a spawn house with a loot chest.
+- **Mobs:** zombies that burn in daylight, creepers that explode, pigs that drop porkchops. TNT and ender pearls work too.
+- **Plugin features:** coins and ore rewards, shop GUI, Legend Crates with a spinning reel, ranks, `/kit`, `/sethome` and `/home`, `/summon`, and the **Blood Moon** event with a boss bar. There are 13 advancements with toasts.
+- **Controls:** keyboard and mouse on desktop, and an on-screen pad on phones. Sound effects are synthesized in the browser and can be muted.
+- **Saving:** progress is saved in the visitor's browser (localStorage). "New world" in the inventory starts over.
+
+## Phone version and extras
+
+- On screens up to 760px wide, `assets/css/phone.css` switches to a simplified layout. It has an app-style bottom tab bar, compact home sections, one Lab chapter at a time with Prev/Next buttons, and lighter effects.
+- **Command Center:** press `Ctrl K` (or `Cmd K`) or the search button to jump to any page, demo, service or action.
+- **Visitor quest log:** visitors earn XP for visiting pages and trying each Lab demo. It's shown inside the Command Center, and completed quests pop up as toasts. There is also a hidden secret: the Konami code.
 
 ## Make it yours: edit one file
 
@@ -78,10 +95,10 @@ grep -rl "sknoyon324234234234.github.io/Personal/" --include=*.html --include=*.
 ```
 index.html  showcase.html  shop.html  components.html  demos.html  tutorials.html  hire.html  404.html
 demos/                 six standalone demo websites
-assets/css/            core.css (design system) + one stylesheet per page
+assets/css/            core.css (design system), one stylesheet per page, phone.css (phone layout)
 assets/js/config.js    your details, prices, services, packages
 assets/js/icons.js     custom SVG icon sprite (no emoji)
-assets/js/core.js      header/footer, transitions, cursor, reveals, mascot, particles, helpers
+assets/js/core.js      header/footer, tab bar, transitions, reveals, mascot, particles, Command Center, quests
 assets/js/lab/         one script per Lab stage
 assets/js/kit-data.js  UI Kit component library (HTML + CSS for each component)
 assets/img/            favicon, app icons, social share image, demo thumbnails

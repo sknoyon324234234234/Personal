@@ -24,6 +24,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+JP:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@400;600;700;800;900&family=VT323&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+JP:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@400;600;700;800;900&family=VT323&display=swap"></noscript>
 <link rel="stylesheet" href="assets/css/core.css">
 <link rel="stylesheet" href="assets/css/lab.css">
+<link rel="stylesheet" href="assets/css/phone.css">
 <script>document.documentElement.classList.add('js')</script>
 <script type="application/ld+json">
 {
@@ -278,42 +279,63 @@
 
   <!-- ================= 05 MINECRAFT ================= -->
   <section class="lab-sec" id="minecraft" aria-labelledby="mc-t">
-    <div class="container container-wide lab-grid">
+    <div class="container container-wide lab-grid lab-wide">
       <div class="lab-info">
         <span class="lab-num"><span class="hanko">伍</span><span>Chapter 05 · Minecraft Plugins</span></span>
         <h2 class="h2" id="mc-t" data-split>Plugins that keep <span class="grad-text">players online.</span></h2>
-        <p class="lead" data-reveal>You’re on the BlockRealm server with my <b>RealmCore</b> plugin loaded. Type commands in chat — open the shop GUI, claim your daily reward, change the weather and time.</p>
-        <ul class="lab-feats" data-reveal>
-          <li><svg class="ic"><use href="#i-check"/></svg>Economy, shops, ranks &amp; crates</li>
-          <li><svg class="ic"><use href="#i-check"/></svg>Custom GUIs, items &amp; commands</li>
-          <li><svg class="ic"><use href="#i-check"/></svg>Minigames, events &amp; leaderboards</li>
-          <li><svg class="ic"><use href="#i-check"/></svg>MySQL / SQLite storage</li>
-          <li><svg class="ic"><use href="#i-check"/></svg>Velocity / BungeeCord networks</li>
+        <p class="lead" data-reveal>A playable survival world on the BlockRealm server, running my <b>RealmCore</b> plugin. Mine and build, craft tools, eat before you starve, and survive the night when zombies and creepers come out. Then try the plugin: shop GUI, crates, ranks, homes and the Blood Moon event.</p>
+        <ul class="lab-feats cols" data-reveal>
+          <li><svg class="ic"><use href="#i-check"/></svg>Mining, building &amp; 17 crafting recipes</li>
+          <li><svg class="ic"><use href="#i-check"/></svg>Hunger, eating, health &amp; fall damage</li>
+          <li><svg class="ic"><use href="#i-check"/></svg>Day / night, torches, caves &amp; ores</li>
+          <li><svg class="ic"><use href="#i-check"/></svg>Zombies, creepers, pigs, TNT &amp; ender pearls</li>
+          <li><svg class="ic"><use href="#i-check"/></svg>Economy, shop GUI, crates, ranks &amp; events</li>
+          <li><svg class="ic"><use href="#i-check"/></svg>13 advancements, saved in your browser</li>
         </ul>
-        <div class="chips" data-reveal><span class="chip">Java 21</span><span class="chip">Paper API</span><span class="chip">Vault</span><span class="chip">MySQL</span></div>
-        <div class="lab-price" data-reveal><div><small>Starting from</small><b data-price="minecraft">$59</b></div><div><small>Delivery</small><b>2–10 days</b></div></div>
-        <div class="lab-ctas" data-reveal><a class="btn btn-primary" href="hire.html?service=minecraft">Build my plugin <svg class="ic"><use href="#i-arrow-right"/></svg></a><a class="btn btn-ghost" href="demos/blockrealm.html">Server website demo</a></div>
+        <div class="lab-row" data-reveal>
+          <div class="lab-price"><div><small>Starting from</small><b data-price="minecraft">$59</b></div><div><small>Delivery</small><b>2–10 days</b></div></div>
+          <a class="btn btn-primary" href="hire.html?service=minecraft">Build my plugin <svg class="ic"><use href="#i-arrow-right"/></svg></a>
+          <a class="btn btn-ghost" href="demos/blockrealm.html">Server website</a>
+        </div>
       </div>
       <div class="lab-stage stage-mc" data-stage="minecraft" data-reveal="scale">
-        <div class="mc-screen">
-          <canvas class="mc-canvas" width="320" height="180" aria-label="Pixel-art Minecraft-style world"></canvas>
-          <div class="mc-board"><b>BLOCKREALM</b><span>Rank <em class="mc-rank">[MEMBER]</em></span><span>Coins <em class="mc-coins">1,250</em></span><span>Online <em>312</em></span></div>
-          <div class="mc-hotbar" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="mc-chat" role="log" aria-live="polite"></div>
-          <form class="mc-input" autocomplete="off"><input type="text" placeholder="Type a command — try /help" aria-label="Minecraft chat"></form>
-          <div class="mc-gui" hidden>
-            <div class="mc-gui-box">
-              <div class="mc-gui-title">Realm Shop <span>Click an item to buy</span></div>
-              <div class="mc-slots"></div>
-              <button type="button" class="mc-gui-close">Close (Esc)</button>
-            </div>
-          </div>
+        <div class="mc-wrap"><div class="mc-screen"><div class="mc-over"><div><p class="mc-logo">BLOCK<span>REALM</span></p><p class="mc-tag">Loading world...</p></div></div></div></div>
+        <div class="mc-cmds" aria-label="Plugin commands">
+          <button type="button" data-cmd="/help">/help</button><button type="button" data-cmd="/kit">/kit</button><button type="button" data-cmd="/shop">/shop</button><button type="button" data-cmd="/crate">/crate</button><button type="button" data-cmd="/daily">/daily</button><button type="button" data-cmd="/time night">/time night</button><button type="button" data-cmd="/summon zombie">/summon zombie</button><button type="button" data-cmd="/summon creeper">/summon creeper</button><button type="button" data-cmd="/event bloodmoon">/event bloodmoon</button><button type="button" data-cmd="/fly">/fly</button><button type="button" data-cmd="/rankup">/rankup</button><button type="button" data-cmd="/weather rain">/weather rain</button>
         </div>
-        <div class="mc-cmds">
-          <button type="button" data-cmd="/help">/help</button><button type="button" data-cmd="/shop">/shop</button><button type="button" data-cmd="/daily">/daily</button><button type="button" data-cmd="/balance">/balance</button><button type="button" data-cmd="/time night">/time night</button><button type="button" data-cmd="/weather rain">/weather rain</button><button type="button" data-cmd="/rankup">/rankup</button><button type="button" data-cmd="/fly">/fly</button>
-        </div>
+        <div class="mc-code-row">
         <details class="mc-code">
-          <summary><svg class="ic"><use href="#i-code"/></svg>View plugin source — DailyCommand.java</summary>
+          <summary><svg class="ic"><use href="#i-code"/></svg>Plugin source — BloodMoonEvent.java</summary>
+<pre class="code"><span class="k">public final class</span> <span class="t">BloodMoonEvent</span> <span class="k">implements</span> <span class="t">Listener</span> {
+  <span class="k">private final</span> <span class="t">RealmCore</span> plugin;
+  <span class="k">private final</span> <span class="t">BossBar</span> bar = <span class="t">Bukkit</span>.createBossBar(<span class="s">"Blood Moon"</span>, <span class="t">BarColor</span>.RED, <span class="t">BarStyle</span>.SEGMENTED_10);
+  <span class="k">private int</span> left;
+
+  <span class="k">public void</span> <span class="f">start</span>(<span class="t">World</span> world, <span class="k">int</span> goal) {
+    left = goal;
+    world.setTime(<span class="n">13_000</span>);
+    <span class="t">Bukkit</span>.getOnlinePlayers().forEach(bar::addPlayer);
+    <span class="t">Msg</span>.<span class="f">broadcast</span>(<span class="s">"&amp;4[EVENT] &amp;cThe Blood Moon rises!"</span>);
+    plugin.scheduler().<span class="f">every</span>(<span class="n">40</span>, () -&gt; <span class="f">spawnWave</span>(world));
+  }
+
+  <span class="n">@EventHandler</span>
+  <span class="k">public void</span> <span class="f">onKill</span>(<span class="t">EntityDeathEvent</span> e) {
+    <span class="k">if</span> (!(e.getEntity() <span class="k">instanceof</span> <span class="t">Zombie</span>) || left &lt;= <span class="n">0</span>) <span class="k">return</span>;
+    bar.setProgress(--left / (<span class="k">double</span>) <span class="n">8</span>);
+    <span class="k">if</span> (left == <span class="n">0</span>) <span class="f">reward</span>(e.getEntity().getKiller());
+  }
+
+  <span class="k">private void</span> <span class="f">reward</span>(<span class="t">Player</span> p) {
+    plugin.economy().depositPlayer(p, <span class="n">500</span>);
+    p.getInventory().addItem(<span class="t">Crates</span>.<span class="f">key</span>(<span class="s">"legend"</span>));
+    p.getWorld().spawn(p.getLocation(), <span class="t">Firework</span>.<span class="k">class</span>);
+    bar.removeAll();
+  }
+}</pre>
+        </details>
+        <details class="mc-code">
+          <summary><svg class="ic"><use href="#i-code"/></svg>Plugin source — DailyCommand.java</summary>
 <pre class="code"><span class="k">public final class</span> <span class="t">DailyCommand</span> <span class="k">implements</span> <span class="t">CommandExecutor</span> {
   <span class="k">private final</span> <span class="t">Economy</span> eco;
   <span class="k">private final</span> <span class="t">Map</span>&lt;<span class="t">UUID</span>, <span class="t">Long</span>&gt; claimed = <span class="k">new</span> <span class="t">HashMap</span>&lt;&gt;();
@@ -334,6 +356,7 @@
   }
 }</pre>
         </details>
+        </div>
       </div>
     </div>
   </section>
@@ -536,7 +559,7 @@
         <div class="lab-ctas" data-reveal><a class="btn btn-primary" href="shop.html">Open the full shop demo <svg class="ic"><use href="#i-arrow-right"/></svg></a><a class="btn btn-ghost" href="hire.html?service=ecommerce">Hire for a store</a></div>
       </div>
       <div class="lab-stage stage-ec" data-stage="ecommerce" data-reveal="scale">
-        <a class="ec-preview" href="shop.html" data-cursor-label="Shop">
+        <a class="ec-preview" href="shop.html">
           <div class="ec-top"><b>KAGE<span>.</span>store</b><span class="ec-cart"><svg class="ic"><use href="#i-cart"/></svg><em class="ec-count">2</em></span></div>
           <div class="ec-grid">
             <div class="ec-card"><span class="ec-img" style="--c:#ff2e4d"><svg class="ic"><use href="#i-sword"/></svg></span><b>Neon Katana Lamp</b><small>$59</small></div>

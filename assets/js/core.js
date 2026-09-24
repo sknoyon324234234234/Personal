@@ -1,6 +1,6 @@
 /* =====================================================================
    XIRAIYA — core engine
-   Header / footer, page transitions, cursor, reveals, split text,
+   Header / footer, page transitions, reveals, split text,
    counters, marquee, parallax, magnetic buttons, toasts, mascot, petals.
    ===================================================================== */
 (function () {
@@ -11,6 +11,7 @@
   var root = document.documentElement;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fine = window.matchMedia('(pointer: fine)').matches;
+  var phone = window.matchMedia('(max-width: 760px)').matches;
   var page = document.body.getAttribute('data-page') || '';
   var icon = window.XRIcon || function () { return ''; };
 
@@ -131,17 +132,21 @@
   // Eyes follow the pointer
   var mascots = [];
   function watchMascots() {
-    mascots = $$('.mascot');
+    mascots = $$('.mascot').map(function (m) { return { el: m, iris: $$('.m-iris', m) }; });
     if (!mascots.length || !fine || reduce) return;
-    window.addEventListener('pointermove', function (e) {
+    var ev = null, queued = false;
+    function apply() {
+      queued = false;
       mascots.forEach(function (m) {
-        var r = m.getBoundingClientRect();
+        var r = m.el.getBoundingClientRect();
         if (r.bottom < 0 || r.top > innerHeight) return;
         var cx = r.left + r.width * .5, cy = r.top + r.height * .4;
-        var dx = clamp((e.clientX - cx) / (innerWidth * .5), -1, 1), dy = clamp((e.clientY - cy) / (innerHeight * .5), -1, 1);
-        $$('.m-iris', m).forEach(function (i) { i.style.transform = 'translate(' + (dx * 5).toFixed(2) + 'px,' + (dy * 4).toFixed(2) + 'px)'; });
+        var dx = clamp((ev.clientX - cx) / (innerWidth * .5), -1, 1), dy = clamp((ev.clientY - cy) / (innerHeight * .5), -1, 1);
+        var t = 'translate(' + (dx * 5).toFixed(1) + 'px,' + (dy * 4).toFixed(1) + 'px)';
+        m.iris.forEach(function (i) { i.style.transform = t; });
       });
-    }, { passive: true });
+    }
+    window.addEventListener('pointermove', function (e) { ev = e; if (!queued) { queued = true; requestAnimationFrame(apply); } }, { passive: true });
   }
 
   /* ------------------------------------------------------------------
@@ -187,6 +192,7 @@
         '<a class="brand" href="index.html" aria-label="' + esc(C.name || 'Xiraiya') + ' — home">' + brandMark() + '<span class="brand-word">' + esc((C.name || 'Xiraiya').toUpperCase()) + '</span><span class="brand-jp">開発者</span></a>' +
         '<nav class="hdr-nav" aria-label="Primary">' + links + '</nav>' +
         '<div class="hdr-actions">' +
+          '<button type="button" class="hdr-search" data-palette aria-label="Search and quests (Ctrl K)">' + icon('search') + '<span>Search</span><kbd>Ctrl K</kbd></button>' +
           '<span class="status' + (C.available === false ? ' off' : '') + '"><i></i>' + (C.available === false ? 'Booked — waitlist open' : 'Available for work') + '</span>' +
           '<a class="btn btn-primary btn-sm" href="hire.html" data-magnetic>' + roll('Hire me') + icon('arrow-up-right', 'ic-up') + '</a>' +
           '<button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mmenu"><span></span><span></span></button>' +
@@ -217,6 +223,26 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && root.classList.contains('menu-open')) btn.click();
     });
+  }
+
+  // App-style bottom tab bar (shown on phones only, via phone.css)
+  function buildTabbar() {
+    var TABS = [
+      { id: 'home', href: 'index.html', label: 'Home', ic: 'home' },
+      { id: 'lab', href: 'showcase.html', label: 'Lab', ic: 'sparkle' },
+      { id: 'hire', href: 'hire.html', label: 'Hire me', ic: 'briefcase', cls: 'tb-hire' },
+      { id: 'shop', href: 'shop.html', label: 'Shop', ic: 'cart' }
+    ];
+    var nav = document.createElement('nav');
+    nav.className = 'tabbar';
+    nav.setAttribute('aria-label', 'Quick navigation');
+    nav.innerHTML = TABS.map(function (t) {
+      var ic = icon(t.ic);
+      return '<a href="' + t.href + '"' + (t.cls ? ' class="' + t.cls + '"' : '') + (t.id === page ? ' aria-current="page"' : '') + '>' +
+        (t.cls ? '<span class="tb-orb">' + ic + '</span>' : ic) + '<span>' + t.label + '</span></a>';
+    }).join('') + '<button type="button" class="tb-more" aria-label="More pages">' + icon('grid') + '<span>More</span></button>';
+    document.body.appendChild(nav);
+    $('.tb-more', nav).addEventListener('click', function () { var b = $('.menu-btn'); if (b) b.click(); });
   }
 
   function buildFooter() {
@@ -253,7 +279,7 @@
   }
 
   /* ------------------------------------------------------------------
-     Global overlays: grain, progress, curtain, cursor, toasts
+     Global overlays: grain, progress, curtain, toasts
      ------------------------------------------------------------------ */
   function overlays() {
     var frag = document.createElement('div');
@@ -275,38 +301,6 @@
     setTimeout(function () { t.classList.add('out'); setTimeout(function () { t.remove(); }, 400); }, 2800);
   }
 
-  function cursor() {
-    if (!fine || reduce) return;
-    var dot = document.createElement('div'), ring = document.createElement('div');
-    dot.className = 'cursor-dot'; ring.className = 'cursor-ring';
-    ring.innerHTML = '<span></span>';
-    dot.style.opacity = ring.style.opacity = 0;
-    document.body.append(dot, ring);
-    root.classList.add('has-cursor');
-    var x = innerWidth / 2, y = innerHeight / 2, rx = x, ry = y, shown = false;
-    window.addEventListener('pointermove', function (e) {
-      x = e.clientX; y = e.clientY;
-      if (!shown) { shown = true; rx = x; ry = y; dot.style.opacity = ring.style.opacity = 1; }
-      dot.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
-    }, { passive: true });
-    (function loop() {
-      rx = lerp(rx, x, .18); ry = lerp(ry, y, .18);
-      ring.style.transform = 'translate3d(' + rx.toFixed(1) + 'px,' + ry.toFixed(1) + 'px,0)';
-      requestAnimationFrame(loop);
-    })();
-    document.addEventListener('mouseover', function (e) {
-      var lab = e.target.closest('[data-cursor-label]');
-      var hov = e.target.closest('a,button,[role="button"],label,select,[data-cursor]');
-      ring.classList.toggle('is-label', !!lab);
-      ring.classList.toggle('is-hover', !!hov && !lab);
-      ring.firstChild.textContent = lab ? lab.getAttribute('data-cursor-label') : '';
-    });
-    document.addEventListener('pointerdown', function () { ring.classList.add('is-down'); });
-    document.addEventListener('pointerup', function () { ring.classList.remove('is-down'); });
-    document.addEventListener('mouseleave', function () { dot.style.opacity = ring.style.opacity = 0; });
-    document.addEventListener('mouseenter', function () { dot.style.opacity = ring.style.opacity = 1; });
-  }
-
   /* ------------------------------------------------------------------
      Page transitions
      ------------------------------------------------------------------ */
@@ -325,7 +319,7 @@
       e.preventDefault();
       if (root.classList.contains('menu-open')) root.classList.remove('menu-open');
       root.classList.add('is-leaving');
-      setTimeout(function () { location.href = url.href; }, reduce ? 0 : 720);
+      setTimeout(function () { location.href = url.href; }, reduce ? 0 : 480);
     });
     window.addEventListener('pageshow', function (e) {
       if (e.persisted) root.classList.remove('is-leaving');
@@ -439,11 +433,11 @@
      ------------------------------------------------------------------ */
   function magnetic() {
     if (!fine || reduce) return;
+    var cur = null;
     document.addEventListener('pointermove', function (e) {
-      var m = e.target.closest('[data-magnetic]');
-      $$('[data-magnetic].is-mag').forEach(function (el) {
-        if (el !== m) { el.classList.remove('is-mag'); el.style.transform = ''; }
-      });
+      var m = e.target.closest ? e.target.closest('[data-magnetic]') : null;
+      if (cur && cur !== m) { cur.classList.remove('is-mag'); cur.style.transform = ''; }
+      cur = m;
       if (!m) return;
       var r = m.getBoundingClientRect();
       var dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
@@ -573,7 +567,7 @@
       W = r.width; H = r.height;
       canvas.width = W * dpr; canvas.height = H * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var n = Math.round(clamp(W * H / (opts.density || 26000), 12, opts.max || 70));
+      var n = Math.round(clamp(W * H / (opts.density || 26000), phone ? 6 : 12, phone ? 16 : (opts.max || 70)));
       parts = [];
       for (var i = 0; i < n; i++) parts.push(make(true));
     }
@@ -615,6 +609,189 @@
     document.addEventListener('visibilitychange', function () { visible = !document.hidden; });
     if (reduce) { visible = true; draw(); running = false; return; }
     draw();
+  }
+
+
+  /* ------------------------------------------------------------------
+     Command Center: search every page, demo and action (Ctrl / Cmd + K)
+     + visitor quest log (try things, earn XP) + a hidden Konami secret
+     ------------------------------------------------------------------ */
+  var QUESTS = [
+    { id: 'page-home', label: 'Visit the home page', xp: 10 },
+    { id: 'page-lab', label: 'Enter the Lab', xp: 10 },
+    { id: 'page-shop', label: 'Browse the shop demo', xp: 10 },
+    { id: 'page-kit', label: 'Open the UI Kit', xp: 10 },
+    { id: 'page-demos', label: 'Look at the demo sites', xp: 10 },
+    { id: 'page-academy', label: 'Visit the Motion Academy', xp: 10 },
+    { id: 'page-hire', label: 'Check the Hire page', xp: 10 },
+    { id: 'stage-web', label: 'Try the live website preview', xp: 20 },
+    { id: 'stage-automation', label: 'Run the automation workflow', xp: 20 },
+    { id: 'stage-telegram', label: 'Chat with the Telegram bot', xp: 20 },
+    { id: 'stage-extension', label: 'Use the Chrome extension', xp: 20 },
+    { id: 'stage-minecraft', label: 'Play BlockRealm survival', xp: 30 },
+    { id: 'stage-desktop', label: 'Install the desktop app', xp: 20 },
+    { id: 'stage-mobile', label: 'Tap around the Android app', xp: 20 },
+    { id: 'stage-agent', label: 'Give the AI agent a goal', xp: 20 },
+    { id: 'stage-chat', label: 'Talk to the AI support chat', xp: 20 },
+    { id: 'stage-ecommerce', label: 'Watch the store autopilot', xp: 20 },
+    { id: 'stage-crypto', label: 'Pay the crypto invoice', xp: 20 },
+    { id: 'palette', label: 'Open the Command Center', xp: 10 },
+    { id: 'konami', label: 'Find the secret code', xp: 50, secret: 1 }
+  ];
+  function questState() { return store('xr-quests') || {}; }
+  function questXp(st) { return QUESTS.reduce(function (a, q) { return a + (st[q.id] ? q.xp : 0); }, 0); }
+  function questLevel(xp) { return 1 + Math.floor(xp / 60); }
+  function quest(id) {
+    var q = QUESTS.find(function (x) { return x.id === id; });
+    if (!q) return;
+    var st = questState();
+    if (st[id]) return;
+    var before = questLevel(questXp(st));
+    st[id] = Date.now();
+    store('xr-quests', st);
+    var xp = questXp(st), lvl = questLevel(xp);
+    questToast(q, lvl > before ? lvl : 0);
+    var done = QUESTS.filter(function (x) { return st[x.id]; }).length;
+    if (done === QUESTS.length) setTimeout(function () { toast('All quests complete. You have seen everything. Ready to build yours?'); }, 2600);
+  }
+  function questToast(q, levelUp) {
+    var box = $('.toasts');
+    if (!box) return;
+    var t = document.createElement('div');
+    t.className = 'toast quest';
+    t.innerHTML = '<span class="q-ic">' + icon('shuriken') + '</span><span><small>' + (levelUp ? 'Level up · Lv ' + levelUp : 'Quest complete') + '</small>' + esc(q.label) + '</span><b>+' + q.xp + ' XP</b>';
+    box.appendChild(t);
+    setTimeout(function () { t.classList.add('out'); setTimeout(function () { t.remove(); }, 400); }, 3400);
+  }
+
+  function paletteItems() {
+    var items = [];
+    NAV.forEach(function (n) { items.push({ g: 'Pages', t: n.label, s: n.jp, ic: n.id === 'hire' ? 'briefcase' : n.id === 'shop' ? 'cart' : n.id === 'lab' ? 'sparkle' : n.id === 'kit' ? 'layers' : n.id === 'demos' ? 'monitor' : n.id === 'academy' ? 'film' : 'home', href: n.href }); });
+    SERVICES.forEach(function (sv) { items.push({ g: 'Live demos in the Lab', t: sv.name, s: 'from ' + fmtPrice(sv.priceFrom), ic: sv.icon, href: 'showcase.html#' + sv.id }); });
+    [['Nova AI', 'SaaS landing page', 'nova-saas'], ['Sakura Bistro', 'Restaurant', 'sakura-bistro'], ['Vault', 'Crypto dashboard', 'vault-dashboard'], ['BlockRealm', 'Minecraft server site', 'blockrealm'], ['Studio Kami', 'Agency', 'studio-kami'], ['Pulse', 'App landing page', 'pulse-app']].forEach(function (d) {
+      items.push({ g: 'Demo websites', t: d[0], s: d[1], ic: 'window', href: 'demos/' + d[2] + '.html' });
+    });
+    items.push(
+      { g: 'Actions', t: 'Play BlockRealm (Minecraft survival)', s: 'Mine, craft, fight zombies', ic: 'cube', href: 'showcase.html#minecraft' },
+      { g: 'Actions', t: 'Get a price estimate', s: '60-second configurator', ic: 'sliders', href: 'hire.html#configure' },
+      { g: 'Actions', t: 'Start a project', s: 'Send a brief', ic: 'rocket', href: 'hire.html' },
+      { g: 'Actions', t: 'Pay with crypto (demo)', s: 'Auto-confirming checkout', ic: 'btc', href: 'showcase.html#crypto' },
+      { g: 'Actions', t: 'Shop with the AI assistant', s: 'Store demo', ic: 'bag', href: 'shop.html' }
+    );
+    var c = (C.contact || {});
+    if (c.email) items.push({ g: 'Actions', t: 'Copy email address', s: c.email, ic: 'mail', run: function () { copy(c.email).then(function () { toast('Email copied'); }); } });
+    items.push({ g: 'Actions', t: 'Back to top', s: 'Scroll up', ic: 'arrow-up', run: function () { window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); } });
+    return items;
+  }
+  function score(text, q) {
+    text = text.toLowerCase();
+    if (!q) return 1;
+    var i = text.indexOf(q);
+    if (i >= 0) return 100 - i;
+    var ti = 0, sc = 0;
+    for (var k = 0; k < q.length; k++) { var f = text.indexOf(q[k], ti); if (f < 0) return 0; sc += f === ti ? 3 : 1; ti = f + 1; }
+    return sc;
+  }
+  var pal = null;
+  function palette() {
+    if (pal) { pal.open(); return; }
+    var el = document.createElement('div');
+    el.className = 'palette';
+    el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Command Center');
+    el.innerHTML = '<div class="pal-backdrop" data-close></div><div class="pal-box">' +
+      '<div class="pal-search">' + icon('search') + '<input type="text" placeholder="Search pages, demos, services..." aria-label="Search" autocomplete="off" spellcheck="false"><kbd>Esc</kbd></div>' +
+      '<div class="pal-body"><div class="pal-list" role="listbox"></div><aside class="pal-quests"></aside></div>' +
+      '<div class="pal-foot"><span><kbd>&uarr;</kbd><kbd>&darr;</kbd> move</span><span><kbd>Enter</kbd> open</span><span class="pal-tip">Tip: try the Konami code somewhere on the site</span></div></div>';
+    document.body.appendChild(el);
+    var input = $('input', el), list = $('.pal-list', el), side = $('.pal-quests', el), items = paletteItems(), shown = [], idx = 0, last;
+    function renderQuests() {
+      var st = questState(), xp = questXp(st), lvl = questLevel(xp), into = xp % 60, done = QUESTS.filter(function (q) { return st[q.id]; }).length;
+      side.innerHTML = '<div class="pq-head"><span class="pq-lv">Lv ' + lvl + '</span><div><b>Visitor quest log</b><small>' + done + ' of ' + QUESTS.length + ' quests · ' + xp + ' XP</small></div></div>' +
+        '<div class="pq-bar"><i style="width:' + (into / 60 * 100).toFixed(1) + '%"></i></div>' +
+        '<ul>' + QUESTS.map(function (q) {
+          var ok = !!st[q.id];
+          return '<li class="' + (ok ? 'ok' : '') + '">' + icon(ok ? 'check' : q.secret ? 'lock' : 'target') + '<span>' + (q.secret && !ok ? 'Secret quest' : esc(q.label)) + '</span><em>' + q.xp + '</em></li>';
+        }).join('') + '</ul>';
+    }
+    function render() {
+      var q = input.value.trim().toLowerCase();
+      shown = items.map(function (it) { return { it: it, sc: Math.max(score(it.t, q), score(it.s || '', q) * .6, score(it.g, q) * .3) }; })
+        .filter(function (x) { return x.sc > 0; }).sort(function (a, b) { return q ? b.sc - a.sc : 0; }).map(function (x) { return x.it; });
+      idx = Math.min(idx, Math.max(0, shown.length - 1));
+      var html = '', g = '';
+      shown.forEach(function (it, i) {
+        if (it.g !== g && !q) { g = it.g; html += '<p class="pal-g">' + esc(g) + '</p>'; }
+        html += '<a class="pal-item' + (i === idx ? ' on' : '') + '" role="option" aria-selected="' + (i === idx) + '" data-i="' + i + '"' + (it.href ? ' href="' + esc(it.href) + '"' : ' href="#"') + '>' + icon(it.ic || 'arrow-right') + '<span><b>' + esc(it.t) + '</b>' + (it.s ? '<small>' + esc(it.s) + '</small>' : '') + '</span>' + icon('arrow-right', 'pal-go') + '</a>';
+      });
+      list.innerHTML = html || '<p class="pal-empty">No results for “' + esc(input.value) + '”.</p>';
+    }
+    function move(d) {
+      if (!shown.length) return;
+      idx = (idx + d + shown.length) % shown.length; render();
+      var on = $('.pal-item.on', list); if (on) on.scrollIntoView({ block: 'nearest' });
+    }
+    function go(i) {
+      var it = shown[i]; if (!it) return;
+      if (it.run) { close(); it.run(); return; }
+      close();
+      var a = document.createElement('a'); a.href = it.href; document.body.appendChild(a); a.click(); a.remove();
+    }
+    function open() {
+      last = document.activeElement;
+      items = paletteItems(); input.value = ''; idx = 0; render(); renderQuests();
+      el.classList.add('is-open'); document.body.style.overflow = 'hidden';
+      setTimeout(function () { input.focus({ preventScroll: true }); }, 30);
+      quest('palette'); renderQuests();
+    }
+    function close() {
+      el.classList.remove('is-open'); document.body.style.overflow = '';
+      if (last && last.focus) last.focus({ preventScroll: true });
+    }
+    input.addEventListener('input', function () { idx = 0; render(); });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); move(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
+      else if (e.key === 'Enter') { e.preventDefault(); go(idx); }
+      else if (e.key === 'Escape') { e.preventDefault(); close(); }
+    });
+    list.addEventListener('click', function (e) { var a = e.target.closest('.pal-item'); if (!a) return; e.preventDefault(); go(+a.getAttribute('data-i')); });
+    list.addEventListener('mousemove', function (e) { var a = e.target.closest('.pal-item'); if (a && +a.getAttribute('data-i') !== idx) { idx = +a.getAttribute('data-i'); $$('.pal-item', list).forEach(function (x, i) { x.classList.toggle('on', i === idx); }); } });
+    el.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) close(); });
+    pal = { open: open, close: close, el: el };
+    open();
+  }
+  function commandCenter() {
+    document.addEventListener('click', function (e) { if (e.target.closest('[data-palette]')) { e.preventDefault(); if (root.classList.contains('menu-open')) { var b = $('.menu-btn'); if (b) b.click(); } palette(); } });
+    document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        if (pal && pal.el.classList.contains('is-open')) pal.close(); else palette();
+      }
+    });
+    // page-visit quests + quests for trying each Lab stage
+    var pageQuest = { home: 'page-home', lab: 'page-lab', shop: 'page-shop', kit: 'page-kit', demos: 'page-demos', academy: 'page-academy', hire: 'page-hire' }[page];
+    if (pageQuest) setTimeout(function () { quest(pageQuest); }, 2200);
+    document.addEventListener('pointerdown', function (e) {
+      var st = e.target.closest && e.target.closest('[data-stage]');
+      if (st) quest('stage-' + st.getAttribute('data-stage'));
+    }, true);
+    // Konami code: up up down down left right left right B A
+    var seq = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'], pos = 0;
+    document.addEventListener('keydown', function (e) {
+      var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      pos = k === seq[pos] ? pos + 1 : (k === seq[0] ? 1 : 0);
+      if (pos === seq.length) { pos = 0; shinobiMode(); }
+    });
+  }
+  function shinobiMode() {
+    quest('konami');
+    toast('Secret found: Shinobi mode');
+    var c = document.createElement('canvas');
+    c.className = 'shinobi-storm'; c.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(c);
+    root.classList.add('shinobi');
+    petals(c, { density: 2600, max: 260, petalRatio: .9 });
+    setTimeout(function () { c.classList.add('out'); root.classList.remove('shinobi'); setTimeout(function () { c.remove(); }, 1200); }, 6500);
   }
 
   /* ------------------------------------------------------------------
@@ -728,8 +905,8 @@
   window.XR = {
     $: $, $$: $$, clamp: clamp, lerp: lerp, esc: esc, icon: icon, store: store, toast: toast, copy: copy,
     fmtPrice: fmtPrice, contacts: contacts, mascot: mascot, brandMark: brandMark, petals: petals,
-    reveals: reveals, whenVisible: whenVisible, onReady: onReady, modal: modal, reduce: reduce, fine: fine, qr: qr, seeded: seeded,
-    config: C, services: SERVICES
+    reveals: reveals, whenVisible: whenVisible, onReady: onReady, modal: modal, reduce: reduce, fine: fine, phone: phone, qr: qr, seeded: seeded,
+    config: C, services: SERVICES, quest: quest, palette: function () { palette(); }
   };
 
   /* ------------------------------------------------------------------
@@ -737,6 +914,7 @@
      ------------------------------------------------------------------ */
   buildHeader();
   buildFooter();
+  buildTabbar();
   overlays();
   $$('[data-mascot]').forEach(function (el) { el.innerHTML = mascot({ cls: el.getAttribute('data-mascot') }); });
   fillConfig();
@@ -749,8 +927,8 @@
   spotlight();
   copyButtons();
   clock();
-  cursor();
   transitions();
+  commandCenter();
   watchMascots();
   $$('canvas[data-petals]').forEach(function (c) { petals(c, { density: parseFloat(c.getAttribute('data-petals')) || 26000 }); });
   loader();

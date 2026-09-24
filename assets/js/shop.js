@@ -144,7 +144,7 @@
       var badges = (p.was ? '<span class="p-badge">-' + Math.round((1 - p.price / p.was) * 100) + '%</span>' : '') + (p.badge === 'new' ? '<span class="p-badge new">New</span>' : '') + (p.stock <= 6 ? '<span class="p-badge low">Only ' + p.stock + ' left</span>' : '');
       var w = wish.indexOf(p.id) >= 0;
       return '<article class="prod" role="listitem" style="animation-delay:' + (i * .045).toFixed(2) + 's">' +
-        '<div class="p-art" style="--c:' + p.colors[0][1] + '" data-view="' + p.id + '" data-cursor-label="View"><div class="p-badges">' + badges + '</div>' + artSVG(p) +
+        '<div class="p-art" style="--c:' + p.colors[0][1] + '" data-view="' + p.id + '"><div class="p-badges">' + badges + '</div>' + artSVG(p) +
         '<button type="button" class="p-quick" data-add="' + p.id + '">' + I('plus') + 'Quick add</button></div>' +
         '<button type="button" class="p-wish' + (w ? ' is-on' : '') + '" data-wish="' + p.id + '" aria-pressed="' + w + '" aria-label="' + (w ? 'Remove from' : 'Add to') + ' wishlist: ' + esc(p.name) + '">' + I('heart') + '</button>' +
         '<div class="p-info"><span class="p-cat">' + p.cat + '</span><h3 class="p-name"><button type="button" data-view="' + p.id + '">' + esc(p.name) + '</button></h3>' +
