@@ -557,8 +557,8 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-100%); 
 .mascot .m-lock.l { transform-origin: 162px 110px; animation: mLock 4.8s cubic-bezier(.45,0,.55,1) infinite; }
 .mascot .m-lock.r { transform-origin: 238px 110px; animation: mLock 4.8s cubic-bezier(.45,0,.55,1) infinite -2.4s; }
 .mascot .m-breath { transform-origin: 200px 470px; animation: mBreath 4.2s cubic-bezier(.45,0,.55,1) infinite; }
-.mascot .m-sleeve { transform-origin: 126px 232px; animation: mSleeve 4.2s cubic-bezier(.45,0,.55,1) infinite; }
-.mascot .m-sleeve.r { transform-origin: 274px 232px; animation-delay: -2.1s; }
+.mascot .m-sleeve { transform-origin: 139px 224px; animation: mSleeve 4.2s cubic-bezier(.45,0,.55,1) infinite; }
+.mascot .m-sleeve.r { transform-origin: 261px 224px; animation-delay: -2.1s; }
 .mascot .m-look { transform-origin: 200px 186px; transform: translate(calc(var(--hx, 0) * 2.6px), calc(var(--hy, 0) * 1.8px)) rotate(calc(var(--hx, 0) * 2.4deg)); transition: transform .9s cubic-bezier(.2,.8,.2,1); }
 .mascot .m-nod { transform-origin: 200px 186px; animation: mNod 7.5s cubic-bezier(.45,0,.55,1) infinite; }
 @keyframes mBreath { 50% { transform: scale(1.008, 1.014); } }

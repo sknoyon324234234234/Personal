@@ -101,6 +101,23 @@
       '<path d="M0-172V-124M0 172V124M-172 0H-124M172 0H124" stroke="' + c1 + '" stroke-width="3"/></g><g class="m-spin rev"><circle r="104" fill="none" stroke="' + c2 + '" stroke-opacity=".75" stroke-width="2"/></g></g>' +
       '<ellipse cx="200" cy="512" rx="96" ry="9" fill="#3a2a1e" opacity=".16"/>';
   }
+  /* a kimono sleeve on a bent arm: the upper arm hangs from the shoulder, the forearm
+     turns in toward the hands and the wide sleeve drapes under it */
+  function sleeve(fill, dark, fold, right, dx) {
+    var body = '<path d="M139 222C122 230 112 254 108 290C104 324 102 362 106 398C108 414 120 423 137 421C151 419 160 409 162 395L164 364C163 357 159 351 154 348C146 338 136 322 132 304C132 286 138 262 150 246C150 236 146 228 139 222Z" fill="' + fill + '" stroke="' + dark + '" stroke-width="1.2"/>' +
+      '<path d="M106 398C108 414 120 423 137 421C151 419 160 409 162 395L161 386C156 400 146 408 134 409C122 410 112 404 107 390Z" fill="' + dark + '"/>' +
+      '<path d="M149 345C157 347 164 355 164 366C158 361 150 359 143 359Z" fill="' + dark + '"/>' +
+      '<path d="M118 300C114 336 114 372 118 402M136 336C134 360 136 386 142 408" stroke="' + fold + '" stroke-width="2" fill="none" opacity=".45" stroke-linecap="round"/>' +
+      '<path d="M150 247C138 263 132 287 132 305C136 322 145 337 153 347" stroke="' + dark + '" stroke-width="3" fill="none" opacity=".3" stroke-linecap="round"/>';
+    return '<g class="m-sleeve' + (right ? ' r' : '') + '"><g transform="' + (right ? 'matrix(-1 0 0 1 400 0) ' : '') + 'translate(' + (dx || 0) + ' 0)">' + body + '</g></g>';
+  }
+  var HEAD = 1.12;
+  /* neck: flat skin lit from the left, a crisp shadow cast by the jaw and a soft collar shadow */
+  function neck(lit, shade, cast) {
+    return '<path d="M187 172 185 207C193 213 207 213 215 207L213 172Z" fill="' + lit + '"/><path d="M204 172H213L215 207C211 210 207 211 204 211Z" fill="' + shade + '" opacity=".75"/>' +
+      '<path d="M185 178C191 189 209 189 215 178V185C208 192 192 192 185 185Z" fill="' + cast + '" opacity=".42"/>' +
+      '<path d="M185 205C192 209 208 209 215 205V208C208 212 192 212 185 208Z" fill="' + cast + '" opacity=".22"/>';
+  }
   function hand(x, y, s, p) {
     return '<g><path d="M' + x + ' ' + y + 'c' + (-1 * s) + ' -7 ' + (8 * s) + ' -11 ' + (14 * s) + ' -7c' + (5 * s) + ' 4 ' + (5 * s) + ' 12 ' + (1 * s) + ' 17c' + (-5 * s) + ' 5 ' + (-13 * s) + ' 2 ' + (-15 * s) + ' -4z" fill="url(#' + p + 's)" stroke="#b98464" stroke-width=".8"/>' +
       '<path d="M' + (x + 5 * s) + ' ' + (y - 8) + 'l' + (2 * s) + ' 9M' + (x + 9 * s) + ' ' + (y - 8.5) + 'l' + (1.6 * s) + ' 9M' + (x + 12.5 * s) + ' ' + (y - 6.5) + 'l' + (.8 * s) + ' 7" stroke="#c08a6c" stroke-width=".8" opacity=".7"/></g>';
@@ -115,6 +132,8 @@
         '<stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".3" stop-color="#fff" stop-opacity=".1"/>' +
         '<stop offset=".58" stop-color="#000" stop-opacity="0"/><stop offset=".86" stop-color="#1a0d06" stop-opacity=".22"/><stop offset="1" stop-color="#1a0d06" stop-opacity=".38"/></radialGradient>' +
       '<linearGradient id="' + p + 'rim" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#ffd9a8" stop-opacity=".55"/><stop offset=".18" stop-color="#ffd9a8" stop-opacity="0"/></linearGradient>' +
+      '<radialGradient id="' + p + 'vs" cx=".34" cy=".26" r=".9" fx=".32" fy=".22"><stop offset="0" stop-color="#fff6ea" stop-opacity=".42"/><stop offset=".32" stop-color="#fff6ea" stop-opacity=".06"/>' +
+        '<stop offset=".62" stop-color="#c0603a" stop-opacity="0"/><stop offset=".88" stop-color="#a54a2a" stop-opacity=".16"/><stop offset="1" stop-color="#8a3a1e" stop-opacity=".26"/></radialGradient>' +
       '<radialGradient id="' + p + 'ao" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#1a0d06" stop-opacity=".42"/><stop offset="1" stop-color="#1a0d06" stop-opacity="0"/></radialGradient>';
     var twin = new RegExp('<(path|ellipse|circle|rect)\\b([^>]*?)\\sfill="url\\(#' + p + '(s|r|k|t|o|h|hb|m|sl|mt)\\)"([^>]*?)/>', 'g');
     var hair = new RegExp('<g fill="url\\(#' + p + '(?:h|hb)\\)"[^>]*>((?:(?!</g>).)*)</g>', 'g');
@@ -122,12 +141,12 @@
     return svg
       .replace('<defs>', '<defs>' + defs)
       .replace(twin, function (m, tag, pre, key, post) {
-        var copy = '<' + tag + clean(pre) + ' fill="url(#' + p + 'v)"' + clean(post) + ' pointer-events="none"/>';
+        var copy = '<' + tag + clean(pre) + ' fill="url(#' + p + (key === 's' ? 'vs' : 'v') + ')"' + clean(post) + ' pointer-events="none"/>';
         var rim = key === 's' || key === 'r' || key === 'k' ? '<' + tag + clean(pre) + ' fill="url(#' + p + 'rim)"' + clean(post) + ' pointer-events="none"/>' : '';
         return m + copy + rim;
       })
       .replace(hair, function (m, body) { return m + '<g fill="url(#' + p + 'v)" pointer-events="none">' + body + '</g>'; })
-      .replace('<g class="m-look">', '<ellipse cx="200" cy="200" rx="30" ry="11" fill="url(#' + p + 'ao)"/><ellipse cx="200" cy="356" rx="58" ry="10" fill="url(#' + p + 'ao)"/><g class="m-look">');
+      .replace('<g class="m-look">', '<ellipse cx="200" cy="356" rx="58" ry="10" fill="url(#' + p + 'ao)"/><g class="m-look">');
   }
 
   function mascot(opts) {
@@ -159,36 +178,33 @@
       '<linearGradient id="' + p + 'k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3e5d48"/><stop offset="1" stop-color="#22372a"/></linearGradient>' +
       '<linearGradient id="' + p + 'm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eeeae2"/><stop offset=".5" stop-color="#bdb6aa"/><stop offset="1" stop-color="#8d867b"/></linearGradient>' +
       '<radialGradient id="' + p + 'i" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#ffd98c"/><stop offset=".5" stop-color="#c9811f"/><stop offset="1" stop-color="#5a3208"/></radialGradient>' +
-      '<clipPath id="' + p + 'coat"><path d="M122 226C140 212 170 205 200 205S260 212 278 226C288 300 294 390 298 468H102C106 390 112 300 122 226Z"/></clipPath>' +
+      '<clipPath id="' + p + 'coat"><path d="M170 205C152 208 142 214 137 228C130 300 122 392 114 468H286C278 392 270 300 263 228C258 214 248 208 230 205Z"/></clipPath>' +
       '<clipPath id="' + p + 'scr"><rect x="156" y="290" width="88" height="54" rx="2"/></clipPath>' +
       '</defs>' + stage(p, '#e0442e', '#d9a441') +
       '<g class="m-body">' +
         // scroll on the back
         '<g transform="rotate(-18 200 250)"><rect x="54" y="236" width="292" height="34" rx="17" fill="#ebe1c8" stroke="#6b5a40" stroke-width="1.6"/><path d="M70 244H330M70 262H330" stroke="#cdbf9c" stroke-width="1.4"/><rect x="44" y="230" width="22" height="46" rx="7" fill="#b8321f" stroke="#5a1a0e" stroke-width="1.6"/><rect x="334" y="230" width="22" height="46" rx="7" fill="#b8321f" stroke="#5a1a0e" stroke-width="1.6"/></g>' +
         // long mane behind
-        '<g class="m-tail">' + hairLocks(mane, 'url(#' + p + 'hb)', '#9c9384', '#8f8778') + '</g>' +
-        '<g class="m-crown">' + hairLocks(crown, H, '#aaa293', '#c3bcae') + '</g>' +
+        '<g class="m-tail"><g transform="translate(200 190) scale(' + HEAD + ') translate(-200 -190)">' + hairLocks(mane, 'url(#' + p + 'hb)', '#9c9384', '#8f8778') + '</g></g>' +
+        '<g class="m-crown"><g transform="translate(200 190) scale(' + HEAD + ') translate(-200 -190)">' + hairLocks(crown, H, '#aaa293', '#c3bcae') + '</g></g>' +
         // legs: hakama + geta
         '<path d="M158 464 154 502H192L195 464ZM205 464 208 502H246L242 464Z" fill="#2b2a33"/><path d="M172 468 170 502M224 468 226 502" stroke="#1b1a21" stroke-width="1.4" opacity=".7"/>' +
         '<path d="M146 504H198V511H146ZM202 504H254V511H202Z" fill="#7a5230"/><path d="M152 511V518M192 511V518M208 511V518M248 511V518" stroke="#4a3018" stroke-width="5"/><path d="M160 503 170 494 180 503M220 503 230 494 240 503" stroke="#efe4cc" stroke-width="2.6" fill="none"/>' +
         '<g class="m-breath">' +
           // haori
-          '<path d="M122 226C140 212 170 205 200 205S260 212 278 226C288 300 294 390 298 468H102C106 390 112 300 122 226Z" fill="url(#' + p + 'r)"/>' +
+          '<path d="M170 205C152 208 142 214 137 228C130 300 122 392 114 468H286C278 392 270 300 263 228C258 214 248 208 230 205Z" fill="url(#' + p + 'r)"/>' +
           '<g clip-path="url(#' + p + 'coat)"><rect x="96" y="446" width="208" height="26" fill="#6e1c10"/><g fill="none" stroke="#efe4cc" stroke-width="1.6" opacity=".85">' + waves + '</g>' +
-            '<g fill="none" stroke="#7a1d0f" stroke-width="2.2" stroke-linecap="round" opacity=".45"><path d="M142 256C148 320 150 380 148 446"/><path d="M258 256C252 320 250 380 252 446"/><path d="M126 300C128 360 126 410 120 446"/><path d="M276 300C274 360 276 410 282 446"/></g>' +
-            '<path d="M130 238C146 226 162 219 176 216" stroke="#f47f5f" stroke-width="2" fill="none" opacity=".55"/></g>' +
+            '<g fill="none" stroke="#7a1d0f" stroke-width="2.2" stroke-linecap="round" opacity=".45"><path d="M152 256C156 320 157 380 155 446"/><path d="M248 256C244 320 243 380 245 446"/><path d="M140 300C139 360 134 410 126 446"/><path d="M260 300C261 360 266 410 274 446"/></g>' +
+            '<path d="M142 236C152 224 164 216 176 212" stroke="#f47f5f" stroke-width="2" fill="none" opacity=".55"/></g>' +
           // kimono underneath, collar and haori lapels
           '<path d="M180 207C186 260 190 330 192 468H208C210 330 214 260 220 207Z" fill="url(#' + p + 'k)"/>' +
           '<path d="M181 208 200 262 219 208" fill="none" stroke="#e9e1d0" stroke-width="3"/>' +
           '<path d="M170 207H180C186 260 190 330 192 468H182C180 330 176 260 170 207ZM230 207H220C214 260 210 330 208 468H218C220 330 224 260 230 207Z" fill="#2b1d16"/>' +
           '<path d="M186 334H214V348H186Z" fill="#1b1511"/><path d="M186 341H214" stroke="#d9a441" stroke-width="1.4"/>' +
-          '<circle cx="150" cy="246" r="8.5" fill="none" stroke="#efe4cc" stroke-width="1.4"/><circle cx="250" cy="246" r="8.5" fill="none" stroke="#efe4cc" stroke-width="1.4"/>' +
-          '<text x="150" y="250" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="10" fill="#efe4cc">蝦</text><text x="250" y="250" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="10" fill="#efe4cc">蝦</text>' +
-          // sleeves
-          '<g class="m-sleeve"><path d="M124 228C106 244 96 280 94 330 92 370 96 400 104 420 116 427 136 425 146 414 146 390 150 364 158 346 150 330 146 300 150 270Z" fill="url(#' + p + 'r)" stroke="#6e1c10" stroke-width="1.2"/>' +
-            '<path d="M104 420C116 427 136 425 146 414L144 404C134 412 116 413 106 408Z" fill="#6e1c10"/><path d="M110 300C106 340 106 380 112 410M128 280C124 320 126 370 132 408" stroke="#7a1d0f" stroke-width="2" fill="none" opacity=".45"/></g>' +
-          '<g class="m-sleeve r"><path d="M276 228C294 244 304 280 306 330 308 370 304 400 296 420 284 427 264 425 254 414 254 390 250 364 242 346 250 330 254 300 250 270Z" fill="url(#' + p + 'r)" stroke="#6e1c10" stroke-width="1.2"/>' +
-            '<path d="M296 420C284 427 264 425 254 414L256 404C266 412 284 413 294 408Z" fill="#6e1c10"/><path d="M290 300C294 340 294 380 288 410M272 280C276 320 274 370 268 408" stroke="#7a1d0f" stroke-width="2" fill="none" opacity=".45"/></g>' +
+          '<circle cx="157" cy="248" r="8.5" fill="none" stroke="#efe4cc" stroke-width="1.4"/><circle cx="243" cy="248" r="8.5" fill="none" stroke="#efe4cc" stroke-width="1.4"/>' +
+          '<text x="157" y="252" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="10" fill="#efe4cc">蝦</text><text x="243" y="252" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="10" fill="#efe4cc">蝦</text>' +
+          // sleeves on bent arms
+          sleeve('url(#' + p + 'r)', '#6e1c10', '#7a1d0f') + sleeve('url(#' + p + 'r)', '#6e1c10', '#7a1d0f', true) +
           // laptop held at the chest
           '<g class="m-laptop"><rect x="150" y="284" width="100" height="66" rx="5" fill="#1d1813" stroke="#4a3b2e" stroke-width="1.6"/>' +
             '<g clip-path="url(#' + p + 'scr)"><rect x="156" y="290" width="88" height="54" fill="#15110d"/><g class="m-code" opacity=".8"><rect x="160" y="294" width="30" height="2.4" rx="1.2" fill="#6fb3a8"/><rect x="165" y="300" width="46" height="2.4" rx="1.2" fill="#d9a441"/><rect x="165" y="306" width="24" height="2.4" rx="1.2" fill="#6fb3a8"/><rect x="160" y="312" width="40" height="2.4" rx="1.2" fill="#e0442e"/><rect x="165" y="318" width="52" height="2.4" rx="1.2" fill="#6fb3a8"/><rect x="165" y="324" width="20" height="2.4" rx="1.2" fill="#d9a441"/><rect x="160" y="330" width="36" height="2.4" rx="1.2" fill="#6fb3a8"/><rect x="165" y="336" width="48" height="2.4" rx="1.2" fill="#6fb3a8"/><rect x="160" y="342" width="30" height="2.4" rx="1.2" fill="#6fb3a8"/><rect x="165" y="348" width="46" height="2.4" rx="1.2" fill="#d9a441"/><rect x="165" y="354" width="24" height="2.4" rx="1.2" fill="#6fb3a8"/><rect x="160" y="360" width="40" height="2.4" rx="1.2" fill="#e0442e"/><rect x="165" y="366" width="52" height="2.4" rx="1.2" fill="#6fb3a8"/><rect x="165" y="372" width="20" height="2.4" rx="1.2" fill="#d9a441"/></g></g>' +
@@ -197,10 +213,10 @@
           hand(146, 354, 1, p) + hand(254, 354, -1, p) +
         '</g>' +
         // neck
-        '<path d="M188 172 186 206C194 212 206 212 214 206L212 172Z" fill="url(#' + p + 's)"/><path d="M188 176C194 186 206 186 212 176V192C206 197 194 197 188 192Z" fill="#c98b6c" opacity=".45"/>' +
+        neck('#f1cfb5', '#d8a383', '#b57a5c') +
         // long locks framing the face, over the shoulders
-        '<g class="m-lock l">' + hairLocks(sideL, H, '#aaa293', '#c3bcae') + '</g><g class="m-lock r">' + hairLocks(sideR, H, '#aaa293', '#c3bcae') + '</g>' +
-        '<g class="m-look"><g class="m-nod">' +
+        '<g class="m-lock l"><g transform="translate(200 190) scale(' + HEAD + ') translate(-200 -190)">' + hairLocks(sideL, H, '#aaa293', '#c3bcae') + '</g></g><g class="m-lock r"><g transform="translate(200 190) scale(' + HEAD + ') translate(-200 -190)">' + hairLocks(sideR, H, '#aaa293', '#c3bcae') + '</g></g>' +
+        '<g class="m-look"><g class="m-nod"><g transform="translate(200 190) scale(' + HEAD + ') translate(-200 -190)">' +
           // ears
           '<path d="M161 118C153 115 150 132 157 140 160 143 164 139 164 134ZM239 118C247 115 250 132 243 140 240 143 236 139 236 134Z" fill="#e9bc9d" stroke="#c08a6c" stroke-width=".8"/><path d="M158 124C156 130 158 135 161 137M242 124C244 130 242 135 239 137" stroke="#c08a6c" stroke-width="1" fill="none"/>' +
           // face
@@ -224,7 +240,7 @@
           '<path d="M178 95.5C192 94 208 94 222 95.5V110C208 108.6 192 108.6 178 110Z" fill="url(#' + p + 'm)" stroke="#6f685d" stroke-width="1"/>' +
           '<text x="200" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="9" fill="#2f2822">&lt;/&gt;</text>' +
           '<g fill="#6f685d"><circle cx="182" cy="98.5" r="1.1"/><circle cx="218" cy="98.5" r="1.1"/><circle cx="182" cy="107" r="1.1"/><circle cx="218" cy="107" r="1.1"/></g>' +
-        '</g></g>' +
+        '</g></g></g>' +
       '</g>' +
       toadG(p) +
       '<g class="m-holo h1"><g transform="rotate(-8 44 150)"><rect x="24" y="100" width="40" height="104" fill="#efe4cc" stroke="#b8321f" stroke-width="2"/><rect x="29" y="105" width="30" height="94" fill="none" stroke="#b8321f" stroke-width="1"/><text x="44" y="146" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="20" fill="#1d1208">AI</text><text x="44" y="178" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="18" fill="#b8321f">術</text></g></g>' +
@@ -291,7 +307,7 @@
   function tsunade(opts) {
     opts = opts || {};
     var p = 'ts' + (++uid), R = rng(11), spirals = '';
-    [[132, 300], [140, 380], [268, 300], [262, 380], [150, 452], [250, 452]].forEach(function (c) {
+    [[160, 292], [150, 420], [240, 292], [250, 420], [174, 456], [226, 456]].forEach(function (c) {
       spirals += '<path d="M' + c[0] + ' ' + c[1] + 'm-7 0a7 7 0 1 1 7 7a4.4 4.4 0 1 1 -4.4 -4.4a1.8 1.8 0 1 1 1.8 1.8"/>';
     });
     var mane = [];
@@ -311,31 +327,28 @@
       '<linearGradient id="' + p + 'k" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5f9a5c"/><stop offset=".6" stop-color="#3f7442"/><stop offset="1" stop-color="#2a5230"/></linearGradient>' +
       '<linearGradient id="' + p + 'o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ecc063"/><stop offset="1" stop-color="#a87a22"/></linearGradient>' +
       '<radialGradient id="' + p + 'i" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#f3c98a"/><stop offset=".5" stop-color="#a8651f"/><stop offset="1" stop-color="#3f1c06"/></radialGradient>' +
-      '<clipPath id="' + p + 'coat"><path d="M124 226C142 212 170 206 200 206S258 212 276 226C286 300 292 390 294 470H106C108 390 114 300 124 226Z"/></clipPath>' +
+      '<clipPath id="' + p + 'coat"><path d="M172 206C156 209 146 215 142 228C138 280 142 318 150 336C146 380 132 430 124 470H276C268 430 254 380 250 336C258 318 262 280 258 228C254 215 244 209 228 206Z"/></clipPath>' +
       '</defs>' + stage(p, '#3f8f84', '#d9a441') +
       '<g class="m-body">' +
-        '<g class="m-tail">' + hairLocks(mane, 'url(#' + p + 'hb)', '#a07a36', '#8e6a2a') + '</g>' +
+        '<g class="m-tail"><g transform="translate(200 190) scale(' + HEAD + ') translate(-200 -190)">' + hairLocks(mane, 'url(#' + p + 'hb)', '#a07a36', '#8e6a2a') + '</g></g>' +
         // tabi + zori
         '<path d="M162 466 160 502H192L194 466ZM206 466 208 502H240L238 466Z" fill="#f3efe8"/><path d="M152 504H198V511H152ZM202 504H248V511H202Z" fill="#b8321f"/><path d="M168 502 176 493 184 502M216 502 224 493 232 502" stroke="#1d1813" stroke-width="2.4" fill="none"/>' +
         '<g class="m-breath">' +
-          '<path d="M124 226C142 212 170 206 200 206S258 212 276 226C286 300 292 390 294 470H106C108 390 114 300 124 226Z" fill="url(#' + p + 'k)"/>' +
+          '<path d="M172 206C156 209 146 215 142 228C138 280 142 318 150 336C146 380 132 430 124 470H276C268 430 254 380 250 336C258 318 262 280 258 228C254 215 244 209 228 206Z" fill="url(#' + p + 'k)"/>' +
           '<g clip-path="url(#' + p + 'coat)"><g fill="none" stroke="#e6b650" stroke-width="1.8" opacity=".7">' + spirals + '</g>' +
-            '<g fill="none" stroke="#1f4526" stroke-width="2.2" stroke-linecap="round" opacity=".4"><path d="M146 262C150 330 152 400 150 466"/><path d="M254 262C250 330 248 400 250 466"/><path d="M200 350C198 400 198 440 200 470"/></g>' +
-            '<path d="M132 238C148 226 164 219 178 216" stroke="#8fc58a" stroke-width="2" fill="none" opacity=".6"/>' +
-            '<path d="M200 350 150 470M200 350 250 470" stroke="#2a5230" stroke-width="1.6" opacity=".45"/></g>' +
+            '<g fill="none" stroke="#1f4526" stroke-width="2.2" stroke-linecap="round" opacity=".4"><path d="M158 262C160 296 158 318 155 334"/><path d="M242 262C240 296 242 318 245 334"/><path d="M200 374C198 410 198 440 200 470"/><path d="M172 376C166 410 152 440 140 468"/><path d="M228 376C234 410 248 440 260 468"/></g>' +
+            '<path d="M148 236C158 225 168 218 180 213" stroke="#8fc58a" stroke-width="2" fill="none" opacity=".6"/>' +
+            '</g>' +
           // crossed collar: white under-collar, green overlap closing high
           '<path d="M176 207 200 252 224 207" fill="none" stroke="#f7f2ea" stroke-width="9" stroke-linejoin="round"/><path d="M170 209 200 262 230 209" fill="none" stroke="#b8321f" stroke-width="3" stroke-linejoin="round" opacity=".85"/>' +
           '<path d="M178 206C188 214 212 214 222 206" stroke="#f7f2ea" stroke-width="3" fill="none"/>' +
           // obi
-          '<path d="M128 330C160 324 240 324 272 330V338H128Z" fill="#e79aa6"/>' +
-          '<path d="M127 336H273V372H127Z" fill="url(#' + p + 'o)"/><path d="M127 344H273M127 364H273" stroke="#8a6320" stroke-width="1.3" opacity=".6"/>' +
-          '<g fill="none" stroke="#8a6320" stroke-width="1.2" opacity=".55"><path d="M140 354h12l6-5 6 5h12M190 354h12l6-5 6 5h12M240 354h12l6-5 6 5h12"/></g>' +
-          '<path d="M127 354H273" stroke="#b8321f" stroke-width="3"/><circle cx="200" cy="354" r="6" fill="#b8321f"/><circle cx="200" cy="354" r="2.6" fill="#e6b650"/>' +
-          // sleeves
-          '<g class="m-sleeve"><path d="M126 228C108 246 98 282 96 330 94 372 98 402 106 422 118 429 138 427 148 416 148 392 152 366 160 348 152 330 148 300 152 270Z" fill="url(#' + p + 'k)" stroke="#1f4526" stroke-width="1.2"/>' +
-            '<path d="M106 422C118 429 138 427 148 416L146 406C136 414 118 415 108 410Z" fill="#1f4526"/><path d="M112 300C108 340 108 380 114 412" stroke="#1f4526" stroke-width="2" fill="none" opacity=".4"/></g>' +
-          '<g class="m-sleeve r"><path d="M274 228C292 246 302 282 304 330 306 372 302 402 294 422 282 429 262 427 252 416 252 392 248 366 240 348 248 330 252 300 248 270Z" fill="url(#' + p + 'k)" stroke="#1f4526" stroke-width="1.2"/>' +
-            '<path d="M294 422C282 429 262 427 252 416L254 406C264 414 282 415 292 410Z" fill="#1f4526"/><path d="M288 300C292 340 292 380 286 412" stroke="#1f4526" stroke-width="2" fill="none" opacity=".4"/></g>' +
+          '<path d="M150 329C176 324 224 324 250 329V337H150Z" fill="#e79aa6"/>' +
+          '<path d="M149 336H251L254 372H146Z" fill="url(#' + p + 'o)"/><path d="M149 344H251M147 364H253" stroke="#8a6320" stroke-width="1.3" opacity=".6"/>' +
+          
+          '<path d="M147 354H253" stroke="#b8321f" stroke-width="3"/><circle cx="200" cy="354" r="6" fill="#b8321f"/><circle cx="200" cy="354" r="2.6" fill="#e6b650"/>' +
+          // sleeves on bent arms
+          sleeve('url(#' + p + 'k)', '#1f4526', '#1f4526', false, 4) + sleeve('url(#' + p + 'k)', '#1f4526', '#1f4526', true, 4) +
           // tea cup in the left hand
           '<g class="m-tea"><path class="m-steam" d="M152 316C146 308 158 302 152 294M162 318C156 310 168 304 162 296" stroke="#c9c2b2" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M142 324H172L168 342C166 347 148 347 146 342Z" fill="#efe4cc" stroke="#6b5a40" stroke-width="1.6"/><path d="M145 330H169" stroke="#3f8f84" stroke-width="2.6"/></g>' +
           hand(150, 352, 1, p) +
@@ -344,17 +357,18 @@
             '<text x="246" y="305" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="8" fill="#1d1208">QA LOG</text>' +
             '<path d="M226 314l2.6 2.6 4.4-5.2M226 324l2.6 2.6 4.4-5.2M226 334l2.6 2.6 4.4-5.2" stroke="#3f8f84" stroke-width="1.8" fill="none"/><path d="M238 315h26M238 325h22M238 335h26" stroke="#c9bb98" stroke-width="1.8"/>' +
             '<g class="m-stamp"><circle cx="258" cy="348" r="10" fill="none" stroke="#d63a24" stroke-width="2.2"/><text x="258" y="351.5" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="9.5" fill="#d63a24">OK</text></g></g>' +
-          hand(262, 356, -1, p) +
+          hand(256, 356, -1, p) +
         '</g>' +
         // neck
-        '<path d="M189 170 187 206C194 211 206 211 213 206L211 170Z" fill="url(#' + p + 's)"/><path d="M189 174C194 184 206 184 211 174V190C206 195 194 195 189 190Z" fill="#cf9677" opacity=".4"/>' +
-        '<g class="m-lock l">' + hairLocks(sideL, H, '#b08a44', '#fff2c8') + '</g><g class="m-lock r">' + hairLocks(sideR, H, '#b08a44', '#fff2c8') + '</g>' +
-        '<g class="m-look"><g class="m-nod">' +
+        neck('#f8dcc6', '#e3b393', '#c08466') +
+        '<g class="m-lock l"><g transform="translate(200 190) scale(' + HEAD + ') translate(-200 -190)">' + hairLocks(sideL, H, '#b08a44', '#fff2c8') + '</g></g><g class="m-lock r"><g transform="translate(200 190) scale(' + HEAD + ') translate(-200 -190)">' + hairLocks(sideR, H, '#b08a44', '#fff2c8') + '</g></g>' +
+        '<g class="m-look"><g class="m-nod"><g transform="translate(200 190) scale(' + HEAD + ') translate(-200 -190)">' +
           '<path d="M163 118C156 116 153 131 159 138 162 141 165 137 165 133ZM237 118C244 116 247 131 241 138 238 141 235 137 235 133Z" fill="#efc3a6" stroke="#c89274" stroke-width=".8"/>' +
           '<g class="m-earrings"><path d="M160 139V147M240 139V147" stroke="#d9a441" stroke-width="1.4"/><circle cx="160" cy="150" r="3.4" fill="#e6b650" stroke="#8a6320" stroke-width=".8"/><circle cx="240" cy="150" r="3.4" fill="#e6b650" stroke="#8a6320" stroke-width=".8"/><circle cx="160" cy="157" r="2.2" fill="#3f8f84"/><circle cx="240" cy="157" r="2.2" fill="#3f8f84"/></g>' +
           '<path d="M162 110C160 136 166 156 177 169 185 178 193 182 200 182S215 178 223 169C234 156 240 136 238 110 238 86 221 72 200 72S162 86 162 110Z" fill="url(#' + p + 's)"/>' +
           '<path d="M234 116C235 140 229 160 214 177 225 162 230 142 229 116Z" fill="#cf9677" opacity=".3"/>' +
           '<ellipse cx="178" cy="150" rx="9" ry="4.5" fill="#ef8f86" opacity=".26"/><ellipse cx="222" cy="150" rx="9" ry="4.5" fill="#ef8f86" opacity=".26"/>' +
+          '<path d="M200 101.5 203.4 107 200 112.5 196.6 107Z" fill="#8a4fb0"/><path d="M200 103 201.6 107 200 109" stroke="#d7b6ee" stroke-width=".9" fill="none" opacity=".8"/>' +
           eyePair(p, { y: 131, gap: 17, iris: '#5a2c08', lash: true, lid: '#2b1a1c' }) +
           '<g class="m-brows"><path d="M167 118C174 113 184 112 193 116" stroke="#a4803a" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M233 118C226 113 216 112 207 116" stroke="#a4803a" stroke-width="2.2" fill="none" stroke-linecap="round"/></g>' +
           '<path d="M200 134C201 141 202 146 203 150 201 152 199 152 197 151" stroke="#c48a6c" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".85"/>' +
@@ -366,7 +380,7 @@
           '<g fill="' + H + '" stroke="#b08a44" stroke-width="1" stroke-linejoin="round"><path d="M201 82C186 84 171 95 165 115 163 124 164 132 167 138 169 124 176 110 188 102 194 97 199 91 201 82Z"/><path d="M199 82C214 84 229 95 235 115 237 124 236 132 233 138 231 124 224 110 212 102 206 97 201 91 199 82Z"/></g>' +
           '<path d="M196 88C184 94 174 104 170 120M204 88C216 94 226 104 230 120M200 70C194 74 190 80 190 86" stroke="#fff2c8" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".8"/>' +
           '<circle cx="226" cy="96" r="4" fill="#3f8f84" stroke="#1f4526" stroke-width="1"/><circle cx="224.8" cy="94.8" r="1.2" fill="#fff" opacity=".8"/>' +
-        '</g></g>' +
+        '</g></g></g>' +
       '</g>' +
       '<g transform="translate(92 124) scale(.76)">' + slugG(p) + '</g>' +
       '<g class="m-holo h1"><g transform="rotate(-7 44 150)"><rect x="24" y="100" width="40" height="104" fill="#efe4cc" stroke="#3f8f84" stroke-width="2"/><rect x="29" y="105" width="30" height="94" fill="none" stroke="#3f8f84" stroke-width="1"/><text x="44" y="146" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="19" fill="#1d1208">QA</text><text x="44" y="178" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="18" fill="#3f8f84">癒</text></g></g>' +
