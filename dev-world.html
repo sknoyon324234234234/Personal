@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dev World — Terminal, Code Playground, Dev Toolbox &amp; API Console | Xiraiya</title>
-<meta name="description" content="Dev World by Xiraiya: a developer village with a working terminal, a live HTML/CSS/JS playground, nine dev tools (JSON, regex, Base64, UUID, passwords, colours, SHA-256, JWT, timestamps), a mock API console and a git-graph career timeline.">
+<meta name="description" content="Dev World by Xiraiya: a developer village with a working terminal, a live HTML/CSS/JS playground, seventeen dev tools, an algorithm arena, a code typing test, a mock API console and a git-graph career timeline.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://sknoyon324234234234.github.io/Personal/dev-world.html">
 <meta name="theme-color" content="#f6f1e7">
@@ -51,25 +51,26 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><svg class="ic"><use href="#i-chevron-right"/></svg><span>Dev World</span></nav>
       <div class="wd-head">
         <h1 class="h1" data-split="ready">Dev World<span class="accent">.</span></h1>
-        <p class="lead" data-reveal>A whole developer village. Five buildings, five working tools: a terminal dojo, a code workshop, a toolbox forge, an API shrine and a git tower. Click a building to walk in.</p>
+        <p class="lead" data-reveal>A whole developer village. Seven buildings, seven working tools: a terminal, a code workshop, a toolbox forge, an API shrine, a git tower, an algorithm arena and a typing dojo. Collect a stamp in each one.</p>
       </div>
       <div class="wd-map" data-reveal>
         <div class="wd-map-sc"><div class="wd-map-in">
-        <svg viewBox="0 0 1200 520" role="img" aria-labelledby="wdMapT">
-          <title id="wdMapT">Illustrated map of the developer village with five clickable buildings</title>
+        <svg viewBox="0 0 1560 520" role="img" aria-labelledby="wdMapT">
+          <title id="wdMapT">Illustrated map of the developer village with seven clickable buildings</title>
           <defs>
             <linearGradient id="wdSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--hero-top)"/><stop offset="1" style="stop-color:var(--bg)"/></linearGradient>
             <linearGradient id="wdRiver" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6fa7b8" stop-opacity=".55"/><stop offset="1" stop-color="#2c6f65" stop-opacity=".45"/></linearGradient>
             <radialGradient id="wdGlow"><stop offset="0" stop-color="#ffcf6b" stop-opacity=".9"/><stop offset="1" stop-color="#ffcf6b" stop-opacity="0"/></radialGradient>
           </defs>
-          <rect width="1200" height="520" fill="url(#wdSky)"/>
-          <circle class="wd-sun" cx="930" cy="110" r="62"/>
+          <rect width="1560" height="520" fill="url(#wdSky)"/>
+          <g class="wd-stars" id="wdStars"></g>
+          <circle class="wd-sun" cx="930" cy="110" r="62"/><circle class="wd-moonshade" cx="954" cy="96" r="56"/>
           <g class="wd-clouds"><path class="wd-cloud c1" d="M120 90h120a22 22 0 0 0-30-26 30 30 0 0 0-56 4 18 18 0 0 0-34 22z"/><path class="wd-cloud c2" d="M620 70h96a18 18 0 0 0-24-21 24 24 0 0 0-45 3 14 14 0 0 0-27 18z"/><path class="wd-cloud c3" d="M980 170h110a20 20 0 0 0-27-24 28 28 0 0 0-52 4 16 16 0 0 0-31 20z"/></g>
-          <path class="wd-far" d="M0 250 90 170 170 230 280 120 390 220 470 180 560 240 690 130 800 220 900 160 1010 230 1110 150 1200 210V520H0Z"/>
-          <path class="wd-mid" d="M0 300C140 250 250 290 380 262S640 230 780 270 1040 240 1200 262V520H0Z"/>
-          <path class="wd-ground" d="M0 340C200 318 380 350 600 332S980 312 1200 330V520H0Z"/>
-          <path class="wd-river" d="M-10 470C160 430 300 470 450 438S700 392 840 420 1060 470 1210 440V520H-10Z" fill="url(#wdRiver)"/>
-          <path class="wd-path" d="M90 420C220 400 320 420 440 404S640 380 760 398 960 420 1120 396" fill="none"/>
+          <path class="wd-far" d="M0 250 90 170 170 230 280 120 390 220 470 180 560 240 690 130 800 220 900 160 1010 230 1110 150 1200 210 1300 150 1400 230 1490 170 1560 220V520H0Z"/>
+          <path class="wd-mid" d="M0 300C140 250 250 290 380 262S640 230 780 270 1040 240 1200 262 1420 250 1560 270V520H0Z"/>
+          <path class="wd-ground" d="M0 340C200 318 380 350 600 332S980 312 1200 330 1420 322 1560 336V520H0Z"/>
+          <path class="wd-river" d="M-10 470C160 430 300 470 450 438S700 392 840 420 1060 470 1210 440 1420 420 1570 450V520H-10Z" fill="url(#wdRiver)"/>
+          <path class="wd-path" d="M90 420C220 400 320 420 440 404S640 380 760 398 960 420 1120 396 1340 380 1500 404" fill="none"/>
           <g class="wd-bridge"><path d="M560 452q40-30 80 0" fill="none"/><path d="M566 452v-10M580 440v-12M600 436v-12M620 440v-12M634 452v-10" /></g>
 
           <!-- Terminal Dojo -->
@@ -137,7 +138,31 @@
             <g class="plaque"><rect x="1024" y="112" width="112" height="30" rx="15"/><text x="1080" y="132" text-anchor="middle">Git Tower</text></g>
           </g>
 
-          <g class="wd-trees"><path d="M40 360l14-44 14 44z"/><path d="M60 364l10-34 10 34z"/><path d="M290 352l12-38 12 38z"/><path d="M510 350l10-32 10 32z"/><path d="M750 362l12-40 12 40z"/><path d="M1000 356l10-34 10 34z"/><path d="M1150 362l12-40 12 40z"/></g>
+          <!-- Algorithm Arena -->
+          <g class="bld" data-go="arena" tabindex="0" role="link" aria-label="Algorithm Arena — open the algorithm visualizer">
+            <ellipse class="bld-shadow" cx="1290" cy="394" rx="104" ry="10"/>
+            <path class="w-wall" d="M1206 392V322Q1290 294 1374 322V392Z"/>
+            <path class="w-roof" d="M1198 326Q1290 284 1382 326L1374 334Q1290 300 1206 334Z"/>
+            <g class="w-arch"><path d="M1220 392v-24a9 9 0 0 1 18 0v24z"/><path d="M1248 392v-24a9 9 0 0 1 18 0v24z"/><path d="M1314 392v-24a9 9 0 0 1 18 0v24z"/><path d="M1342 392v-24a9 9 0 0 1 18 0v24z"/><path d="M1276 392v-34a14 14 0 0 1 28 0v34z"/></g>
+            <g class="w-bars"><rect x="1270" y="336" width="6" height="10"/><rect x="1280" y="330" width="6" height="16"/><rect x="1290" y="324" width="6" height="22"/><rect x="1300" y="318" width="6" height="28"/></g>
+            <path class="w-red" d="M1232 312v-34l20 7-20 7z"/><path class="w-red flag2" d="M1348 312v-34l20 7-20 7z"/>
+            <g class="plaque"><rect x="1216" y="232" width="148" height="30" rx="15"/><text x="1290" y="252" text-anchor="middle">Algorithm Arena</text></g>
+          </g>
+
+          <!-- Typing Dojo -->
+          <g class="bld" data-go="typing" tabindex="0" role="link" aria-label="Typing Dojo — open the code typing test">
+            <ellipse class="bld-shadow" cx="1470" cy="392" rx="80" ry="9"/>
+            <rect class="w-wall" x="1412" y="322" width="116" height="68" rx="3"/>
+            <path class="w-roof" d="M1394 328 1470 286 1546 328 1534 334 1470 300 1406 334Z"/>
+            <path class="w-roof2" d="M1430 292 1470 268 1510 292 1502 295 1470 278 1438 295Z"/>
+            <rect class="w-dark" x="1458" y="346" width="26" height="44" rx="2"/>
+            <g class="w-keys"><rect x="1422" y="338" width="28" height="18" rx="3"/><rect x="1426" y="342" width="5" height="4"/><rect x="1433" y="342" width="5" height="4"/><rect x="1440" y="342" width="5" height="4"/><rect x="1428" y="349" width="16" height="3"/></g>
+            <rect class="w-win" x="1492" y="338" width="24" height="18" rx="2"/>
+            <g class="plaque"><rect x="1414" y="234" width="112" height="30" rx="15"/><text x="1470" y="254" text-anchor="middle">Typing Dojo</text></g>
+          </g>
+
+          <g class="wd-fireflies" id="wdFlies"></g>
+          <g class="wd-trees"><path d="M40 360l14-44 14 44z"/><path d="M60 364l10-34 10 34z"/><path d="M290 352l12-38 12 38z"/><path d="M510 350l10-32 10 32z"/><path d="M750 362l12-40 12 40z"/><path d="M1000 356l10-34 10 34z"/><path d="M1150 362l12-40 12 40z"/><path d="M1396 360l10-34 10 34z"/><path d="M1540 362l10-36 10 36z"/></g>
           <g class="wd-boat"><path d="M300 470h54l-8 10h-38z"/><path d="M326 470v-30l18 28z" class="sail"/></g>
         </svg>
         <div class="wd-toad" data-mascot="toad" title="Gama guards the bridge"></div>
@@ -147,9 +172,11 @@
       <div class="wd-dock" data-reveal>
         <a href="#terminal"><b>01</b>Terminal Dojo<small>30+ commands</small></a>
         <a href="#playground"><b>02</b>Code Workshop<small>Live HTML, CSS, JS</small></a>
-        <a href="#toolbox"><b>03</b>Toolbox Forge<small>9 dev tools</small></a>
+        <a href="#toolbox"><b>03</b>Toolbox Forge<small>17 dev tools</small></a>
         <a href="#api"><b>04</b>API Shrine<small>Mock REST console</small></a>
         <a href="#git"><b>05</b>Git Tower<small>Career as a git graph</small></a>
+        <a href="#arena"><b>06</b>Algorithm Arena<small>Sorting and pathfinding</small></a>
+        <a href="#typing"><b>07</b>Typing Dojo<small>Code typing speed test</small></a>
       </div>
     </div>
   </section>
@@ -165,7 +192,7 @@
       <div class="term dark-scope" data-reveal>
         <div class="term-bar"><i></i><i></i><i></i><span>guest@xiraiya-village: ~</span><button type="button" class="term-x" data-cmd="clear" aria-label="Clear terminal"><svg class="ic"><use href="#i-refresh"/></svg></button></div>
         <div class="term-body" id="termOut" aria-live="polite"></div>
-        <form class="term-in" id="termF" autocomplete="off"><label for="termI" class="term-ps"><b>guest</b>@village <em>~</em> $</label><input id="termI" spellcheck="false" autocapitalize="off" aria-label="Terminal command"></form>
+        <form class="term-in" id="termF" autocomplete="off"><label for="termI" class="term-ps"><b>guest</b>@village <em>~</em> $</label><span class="term-field"><span class="term-ghost" id="termG" aria-hidden="true"></span><input id="termI" spellcheck="false" autocapitalize="off" aria-label="Terminal command"></span></form>
         <div class="term-chips" id="termChips"></div>
       </div>
     </div>
@@ -187,9 +214,10 @@
           <button type="button" class="btn btn-primary btn-sm" id="pgRun"><svg class="ic"><use href="#i-play"/></svg>Run</button>
           <button type="button" class="pg-ib" id="pgOpen" aria-label="Open result in a new tab" title="Open in new tab"><svg class="ic"><use href="#i-external"/></svg></button>
           <button type="button" class="pg-ib" id="pgCopy" aria-label="Copy as one HTML file" title="Copy as one HTML file"><svg class="ic"><use href="#i-copy"/></svg></button>
+          <button type="button" class="pg-ib" id="pgShare" aria-label="Copy a share link" title="Copy a share link"><svg class="ic"><use href="#i-link"/></svg></button>
         </div>
         <div class="pg-main">
-          <div class="pg-ed"><div class="pg-gut" id="pgGut" aria-hidden="true"></div><textarea id="pgCode" spellcheck="false" aria-label="Code editor" wrap="off"></textarea></div>
+          <div class="pg-ed"><div class="pg-gut" id="pgGut" aria-hidden="true"></div><div class="pg-box"><pre class="pg-hl" id="pgHl" aria-hidden="true"></pre><textarea id="pgCode" spellcheck="false" aria-label="Code editor" wrap="off"></textarea></div></div>
           <div class="pg-out">
             <div class="pg-view"><iframe id="pgFrame" title="Playground result" sandbox="allow-scripts allow-modals"></iframe></div>
             <div class="pg-con"><div class="pg-con-h"><span>Console</span><button type="button" id="pgClr">Clear</button></div><div class="pg-log" id="pgLog"></div></div>
@@ -204,11 +232,11 @@
     <div class="container container-wide">
       <div class="section-head">
         <span class="num"><span class="hanko sm">鍛</span> 03 · Toolbox Forge</span>
-        <h2 class="h2" data-split>Nine tools I use <span class="grad-text">every single day.</span></h2>
+        <h2 class="h2" data-split>Seventeen tools I use <span class="grad-text">every single day.</span></h2>
         <p class="lead" data-reveal>Everything runs in your browser. Nothing you paste leaves this page.</p>
       </div>
       <div class="tbx card" data-reveal>
-        <div class="tbx-nav" role="tablist" id="tbxNav"></div>
+        <div class="tbx-side"><label class="tbx-search"><svg class="ic"><use href="#i-search"/></svg><input id="tbxQ" placeholder="Search 17 tools" aria-label="Search tools"></label><div class="tbx-nav" role="tablist" id="tbxNav"></div></div>
         <div class="tbx-panel" id="tbxPanel"></div>
       </div>
     </div>
@@ -229,6 +257,7 @@
           <button class="btn btn-primary btn-sm" type="submit" id="apiSend"><svg class="ic"><use href="#i-send"/></svg>Send</button>
         </form>
         <div class="api-quick" id="apiQuick"></div>
+        <div class="api-opts"><label class="api-auth"><input type="checkbox" id="apiAuth" checked> Send API key</label><span class="api-hist-l">History</span><div class="api-hist" id="apiHist"><span class="c">No requests yet</span></div></div>
         <div class="api-grid">
           <div class="api-col">
             <div class="api-h"><span>Request body</span><small id="apiBodyHint">Used by POST and PATCH</small></div>
@@ -246,6 +275,68 @@
             <pre class="api-res" id="apiRes"><span class="c">// The response shows up here</span></pre>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 ARENA -->
+  <section class="section wd-sec" id="arena">
+    <div class="container container-wide">
+      <div class="section-head">
+        <span class="num"><span class="hanko sm">闘</span> 06 · Algorithm Arena</span>
+        <h2 class="h2" data-split>Watch algorithms <span class="grad-text">fight it out.</span></h2>
+        <p class="lead" data-reveal>Six sorting algorithms and four pathfinders, animated step by step, with live counters. Draw walls, drag the start and the goal, or race every sort at once.</p>
+      </div>
+      <div class="ar dark-scope" data-reveal>
+        <div class="ar-tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-ar="sort">Sorting</button><button type="button" role="tab" aria-selected="false" data-ar="path">Pathfinding</button><button type="button" role="tab" aria-selected="false" data-ar="race">Race</button></div>
+        <div class="ar-pane on" data-arp="sort">
+          <div class="ar-ctl">
+            <label>Algorithm<select id="srtA"><option value="bubble">Bubble sort</option><option value="insertion">Insertion sort</option><option value="selection">Selection sort</option><option value="merge" selected>Merge sort</option><option value="quick">Quick sort</option><option value="heap">Heap sort</option></select></label>
+            <label class="ar-rng">Bars <input type="range" id="srtN" min="10" max="120" value="60"><b id="srtNv">60</b></label>
+            <label class="ar-rng">Speed <input type="range" id="srtS" min="1" max="100" value="70"></label>
+            <button type="button" class="ar-b" id="srtShuf"><svg class="ic"><use href="#i-refresh"/></svg>Shuffle</button>
+            <button type="button" class="ar-b" id="srtSnd" aria-pressed="false"><svg class="ic"><use href="#i-volume"/></svg>Sound</button>
+            <button type="button" class="btn btn-primary btn-sm" id="srtRun"><svg class="ic"><use href="#i-play"/></svg>Run</button>
+          </div>
+          <div class="ar-stage"><div class="bars" id="bars"></div></div>
+          <div class="ar-stats"><span>Comparisons <b id="stC">0</b></span><span>Swaps and writes <b id="stW">0</b></span><span>Steps <b id="stT">0</b></span><span class="ar-bigo" id="stO"></span></div>
+        </div>
+        <div class="ar-pane" data-arp="path">
+          <div class="ar-ctl">
+            <label>Algorithm<select id="pfA"><option value="astar">A* search</option><option value="dijkstra">Dijkstra</option><option value="bfs">Breadth-first</option><option value="dfs">Depth-first</option></select></label>
+            <div class="ar-seg" id="pfTool"><button type="button" aria-pressed="true" data-t="wall">Walls</button><button type="button" aria-pressed="false" data-t="weight">Mud (x5)</button><button type="button" aria-pressed="false" data-t="erase">Erase</button></div>
+            <button type="button" class="ar-b" id="pfMaze"><svg class="ic"><use href="#i-grid"/></svg>Maze</button>
+            <button type="button" class="ar-b" id="pfClear"><svg class="ic"><use href="#i-trash"/></svg>Clear</button>
+            <button type="button" class="btn btn-primary btn-sm" id="pfRun"><svg class="ic"><use href="#i-play"/></svg>Find path</button>
+          </div>
+          <div class="ar-stage grid"><canvas id="pfC" aria-label="Pathfinding grid: drag to draw walls, drag the start or goal to move them"></canvas></div>
+          <div class="ar-stats"><span>Visited <b id="pfV">0</b></span><span>Path length <b id="pfL">0</b></span><span>Cost <b id="pfCost">0</b></span><span class="ar-bigo" id="pfInfo">Drag on the grid to draw walls. Drag the start or the goal to move them.</span></div>
+        </div>
+        <div class="ar-pane" data-arp="race">
+          <div class="ar-ctl"><span class="ar-note">Same shuffled array, six algorithms, one finish line.</span><button type="button" class="ar-b" id="rcShuf"><svg class="ic"><use href="#i-refresh"/></svg>New array</button><button type="button" class="btn btn-primary btn-sm" id="rcRun"><svg class="ic"><use href="#i-flame"/></svg>Start race</button></div>
+          <div class="race" id="race"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 TYPING -->
+  <section class="section wd-sec" id="typing">
+    <div class="container container-wide">
+      <div class="section-head">
+        <span class="num"><span class="hanko sm">打</span> 07 · Typing Dojo</span>
+        <h2 class="h2" data-split>How fast do you <span class="grad-text">type code?</span></h2>
+        <p class="lead" data-reveal>Real snippets in four languages. Brackets, semicolons and all. Click the snippet and start typing: the clock starts on your first key.</p>
+      </div>
+      <div class="ty-wrap" data-reveal>
+        <div class="ty dark-scope">
+          <div class="ty-bar"><div class="ty-langs" id="tyL"></div><button type="button" class="ar-b" id="tyNew"><svg class="ic"><use href="#i-refresh"/></svg>New snippet</button></div>
+          <div class="ty-stats"><span>WPM <b id="tyW">0</b></span><span>Accuracy <b id="tyA">100%</b></span><span>Time <b id="tyT">0.0s</b></span><span>Errors <b id="tyE">0</b></span><div class="ty-prog"><i id="tyP"></i></div></div>
+          <div class="ty-code" id="tyC" tabindex="0" role="textbox" aria-label="Typing test. Click here and type the code shown."></div>
+          <textarea id="tyI" class="ty-in" autocomplete="off" autocapitalize="off" spellcheck="false" aria-hidden="true" tabindex="-1"></textarea>
+          <div class="ty-res" id="tyR" hidden></div>
+        </div>
+        <aside class="card ty-board"><h3 class="h4">Your best runs</h3><ol id="tyB"></ol><div class="ty-ranks"><p>Ranks</p><span>Genin <b>&lt;25</b></span><span>Chunin <b>25+</b></span><span>Jonin <b>40+</b></span><span>Kage <b>60+</b></span><span>Toad Sage <b>80+</b></span></div></aside>
       </div>
     </div>
   </section>
@@ -283,6 +374,11 @@
     </div>
   </section>
 </main>
+
+<aside class="passport" id="passport" aria-label="Village passport">
+  <button type="button" class="pp-pill" id="ppPill" aria-expanded="false"><span class="pp-seal">里</span><span>Passport <b id="ppN">0/7</b></span></button>
+  <div class="pp-card" id="ppCard"><div class="pp-h"><b>Village passport</b><small>Use each building to earn its stamp.</small></div><div class="pp-grid" id="ppGrid"></div><p class="pp-f" id="ppF"></p></div>
+</aside>
 
 <footer class="site-footer" id="site-footer"></footer>
 

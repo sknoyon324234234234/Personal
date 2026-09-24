@@ -861,6 +861,7 @@
     { id: 'studio-export', label: 'Export a page from the studio', xp: 20 },
     { id: 'world-terminal', label: 'Run a command in the village terminal', xp: 20 },
     { id: 'world-tool', label: 'Use a tool in the Dev Toolbox', xp: 20 },
+    { id: 'world-passport', label: 'Collect all 7 village stamps', xp: 50 },
     { id: 'stage-web', label: 'Try the live website preview', xp: 20 },
     { id: 'stage-automation', label: 'Run the automation workflow', xp: 20 },
     { id: 'stage-telegram', label: 'Chat with the Telegram bot', xp: 20 },
