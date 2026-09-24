@@ -22,7 +22,7 @@
     pages.login.sections[0].v = 1;
     pages.signup.sections[0].v = 2;
     return {
-      page: 'home', brand: 'Lumen', tag: 'The calm workspace for teams that ship',
+      page: 'home', site: 'lumen', brand: 'Lumen', tag: 'The calm workspace for teams that ship',
       p: '#5b5bf0', a: '#ff7a59', tone: 'neutral', mode: 'light', font: 'modern',
       fs: 16, r: 14, space: 1, shadow: .5, bw: 1, bgc: {}, txc: {},
       btn: { style: 'solid', shape: 'rounded', size: 'md', hover: 'lift', icon: true },
@@ -210,7 +210,12 @@
   function drawDesign() {
     var t = K.tokens(S);
     var bg = t['--bg'], tx = t['--tx'];
-    var h = '<div class="grp"><h4>Theme presets <button type="button" id="dReplay">Replay motion</button></h4><div class="presets">' + K.PRESETS.map(function (p, i) {
+    var SITES = window.XRSites || [];
+    var h = SITES.length ? '<div class="grp"><h4>Website <small class="gh-n">' + SITES.length + ' complete sites</small></h4><div class="sites">' + SITES.map(function (w, i) {
+      var th = w.img ? '<img src="' + w.img[0] + '" alt="" loading="lazy">' : '<i style="background:linear-gradient(135deg,' + w.look.p + ',' + w.look.a + ')"></i>';
+      return '<button type="button" class="site" data-site="' + i + '" aria-pressed="' + (S.site === w.id) + '"><span class="site-th">' + th + '<em style="background:' + w.look.p + '"></em></span><b>' + esc(w.name) + '</b><small>' + esc(w.kind) + '</small></button>';
+    }).join('') + '</div></div>' : '';
+    h += '<div class="grp"><h4>Theme presets <button type="button" id="dReplay">Replay motion</button></h4><div class="presets">' + K.PRESETS.map(function (p, i) {
       var tn = K.TONES[p.tone][p.mode === 'dark' ? 'D' : 'L'], on = S.p === p.p && S.font === p.font && S.btn.style === p.btn.style && S.mode === p.mode;
       return '<button type="button" class="pre" data-pre="' + i + '" aria-pressed="' + on + '"><span class="pre-art" style="--pb:' + tn.bg + ';--pt:' + tn.tx + ';--pp:' + p.p + ';--pa:' + p.a + ';--pr:' + Math.min(p.r, 12) + 'px"><i class="pre-h"></i><i class="pre-l"></i><i class="pre-l s"></i><i class="pre-b bs-' + p.btn.style + '"></i><i class="pre-c"></i></span><b>' + esc(p.n) + '</b></button>';
     }).join('') + '</div></div>';
@@ -261,6 +266,7 @@
     var b = e.target.closest('button');
     if (!b) return;
     if (b.hasAttribute('data-pre')) { applyPreset(K.PRESETS[+b.getAttribute('data-pre')]); return; }
+    if (b.hasAttribute('data-site')) { applySite((window.XRSites || [])[+b.getAttribute('data-site')]); return; }
     if (b.id === 'dReplay') { replay(); return; }
     if (b.hasAttribute('data-fx')) { var fk = b.getAttribute('data-fx'); S.fx[fk] = b.getAttribute('data-fv'); applyVars(); commit(); drawDesign(); if (fk === 'anim') replay(); hint(b.closest('.fxrow').firstChild.textContent + ': ' + b.textContent); return; }
     if (b.hasAttribute('data-pal')) { var p = K.PALETTES[+b.getAttribute('data-pal')]; S.p = p.p; S.a = p.a; hint(p.n + ' palette'); }
@@ -277,6 +283,21 @@
     S.btn = Object.assign({}, S.btn, p.btn); S.fx = Object.assign({}, p.fx); S.bgc = {}; S.txc = {};
     applyVars(); commit(); drawDesign(); drawButtons(); darkUI(); replay();
     hint('Theme: ' + p.n);
+  }
+  /* switch the whole website: copy, photos, look and the layout of every page */
+  function applySite(w) {
+    if (!w) return;
+    var L = w.look;
+    S.site = w.id; S.brand = w.brand; S.tag = w.tag;
+    ['p', 'a', 'tone', 'mode', 'font', 'r', 'space', 'shadow', 'bw'].forEach(function (k) { S[k] = L[k]; });
+    S.btn = Object.assign({}, S.btn, L.btn); S.fx = Object.assign({}, L.fx); S.bgc = {}; S.txc = {};
+    var lay = w.layout || {};
+    Object.keys(S.pages).forEach(function (pid) {
+      S.pages[pid].sections.forEach(function (sec) { if (lay[sec.k] != null && K.SEC[sec.k] && lay[sec.k] < K.SEC[sec.k].v.length) sec.v = lay[sec.k]; });
+    });
+    sel = -1;
+    commit(); renderAll();
+    hint('Website: ' + w.name + ' · ' + w.kind);
   }
   function replay() { var d = doc(); if (!d || !d.defaultView) return; d.defaultView.scrollTo({ top: 0, behavior: 'instant' }); if (d.defaultView.xrReveal) setTimeout(function () { d.defaultView.xrReveal(); }, 60); }
   function hsl(h, s, l) {
