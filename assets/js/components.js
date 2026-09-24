@@ -1,7 +1,7 @@
 /* =====================================================================
    XIRAIYA — UI Kit sections
-   One specimen board per category, a live panel per component with
-   copyable HTML / CSS / JS, a sticky category bar with search, present mode
+   One interactive bench per category: a measured stage, a variant row,
+   canvas / accent / zoom / speed / redline controls and live code
    ===================================================================== */
 (function () {
   'use strict';
@@ -76,37 +76,52 @@
     $$('form', root).forEach(function (f) { f.addEventListener('submit', function (e) { e.preventDefault(); }); });
   }
 
-  /* ---------- sections ---------- */
-  var COLS = { Foundations: 2, Headers: 1, Bars: 2, Heroes: 1, Buttons: 3, Cards: 3, Forms: 2, Footers: 1, Loaders: 4, Feedback: 2 };
+  /* ---------- one bench per category ---------- */
+  var COPY = {
+    Foundations: ['The tokens <em>everything</em> is built from.', 'Colour and type first. Every other bench on this page pulls from these two.'],
+    Headers: ['Five headers, tried at <em>real size.</em>', 'Pick one, shift its accent, slow its hover down and read the exact measurements.'],
+    Bars: ['Navigation that shows <em>where you are.</em>', 'Tabs, segments, steppers and sidebars. Click inside them, they all work.'],
+    Heroes: ['First screens, <em>measured.</em>', 'The part people see before they decide to scroll. Try it on a different canvas.'],
+    Buttons: ['Ten buttons, <em>one bench.</em>', 'Zoom to 2×, drop the speed to a quarter and hover. Every easing is on show.'],
+    Cards: ['Cards you can <em>pull apart.</em>', 'Turn on the redlines to see every box inside a card, with its size.'],
+    Forms: ['Inputs that <em>forgive</em> typos.', 'Type into them. Paste a code into the OTP field. Use the arrow keys in the palette.'],
+    Footers: ['The last thing people <em>see.</em>', 'Three footers, from a full sitemap to a single signed line.'],
+    Loaders: ['Waiting, but <em>nicer.</em>', 'Put a loader at 0.25× and watch how each one is timed.'],
+    Feedback: ['Toasts, dialogs and alerts <em>in context.</em>', 'Messages that tell people what happened, without shouting.']
+  };
+  var TALL = { Heroes: 1, Footers: 1, Foundations: 1 };
   function slug(t) { return 'kb-' + t.toLowerCase().replace(/[^a-z]+/g, '-'); }
   var html = '', chips = '';
   KIT.forEach(function (g, gi) {
+    var c = COPY[g.cat] || [esc(g.cat), ''];
     chips += '<a href="#' + slug(g.cat) + '" data-kb="' + gi + '">' + esc(g.cat) + '<b>' + g.items.length + '</b></a>';
-    html += '<section class="kb-sec" id="' + slug(g.cat) + '" data-kb-sec="' + gi + '">' +
-      '<div class="kb-head"><span class="hanko sm">' + g.jp + '</span><h2>' + esc(g.cat) + '</h2><span class="kb-count">' + String(gi + 1).padStart(2, '0') + ' · ' + g.items.length + ' components</span></div>' +
-      '<div class="kb-board" style="--cols:' + (COLS[g.cat] || 2) + '"><span class="kb-flabel">' + I('frame') + esc(g.cat) + ' / v3.2</span>';
-    g.items.forEach(function (it) {
-      it.cat = g.cat; all.push(it); byId[it.id] = it;
-      var wide = /^(hdr|hero|ftr)/.test(it.id) || COLS[g.cat] === 1;
-      html += '<article class="kb-cell' + (wide ? ' wide' : '') + '" data-id="' + it.id + '" data-name="' + esc((g.cat + ' ' + it.name).toLowerCase()) + '">' +
-        '<div class="kb-top"><span class="kb-tag">' + esc(g.cat) + ' / ' + esc(it.name) + '</span><div class="kb-acts">' +
-          '<button type="button" data-kb-code aria-expanded="false">' + I('code') + '<span>Code</span></button>' +
-          '<button type="button" data-kb-copy="html" title="Copy HTML">' + I('copy') + '<span>HTML</span></button>' +
-          '<button type="button" data-kb-copy="css" title="Copy CSS">' + I('copy') + '<span>CSS</span></button>' +
-          '<button type="button" data-kb-present title="Present full screen" aria-label="Present ' + esc(it.name) + '">' + I('fullscreen') + '</button></div></div>' +
-        '<div class="kb-well" style="' + (it.bg ? '--fbg:' + it.bg + ';' : '') + (it.pad ? '--pad:' + it.pad + ';' : '') + '"><div class="kb-fit">' + it.html + '</div></div>' +
-        '<p class="kb-note">' + esc(it.note || '') + (it.js ? ' <em>Has a small script.</em>' : '') + '</p>' +
-        '<div class="kb-code" hidden></div>' +
-      '</article>';
-    });
-    html += '</div></section>';
+    g.items.forEach(function (it) { it.cat = g.cat; all.push(it); byId[it.id] = it; });
+    html += '<section class="section pg-sec" id="' + slug(g.cat) + '" data-kb-sec="' + gi + '">' +
+      '<div class="kx-head"><span class="num"><span class="hanko sm">' + g.jp + '</span> ' + String(gi + 1).padStart(2, '0') + ' · ' + esc(g.cat) + '</span>' +
+      '<h2 class="h2">' + c[0] + '</h2><p class="lead">' + c[1] + '</p></div>' +
+      '<div class="kx-anat-grid pg" data-g="' + gi + '">' +
+        '<div class="kx-spec">' +
+          '<div class="kx-stage pg-stage' + (TALL[g.cat] ? ' tall' : '') + '"><span class="pg-name"></span><div class="pg-fit"></div><svg class="kx-lines pg-lines" aria-hidden="true"></svg></div>' +
+          '<div class="pg-vars" role="tablist" aria-label="' + esc(g.cat) + ' variants">' + g.items.map(function (it, i) {
+            return '<button type="button" role="tab" aria-selected="' + (i === 0) + '" data-pick="' + it.id + '"><small>' + String(i + 1).padStart(2, '0') + '</small>' + esc(it.name) + '</button>';
+          }).join('') + '</div>' +
+        '</div>' +
+        '<aside class="kx-tok">' +
+          '<h3>Bench</h3>' +
+          '<p class="pg-note"></p>' +
+          '<div class="kx-ctl"><span>Canvas</span><div class="kx-seg" data-ctl="canvas"><button type="button" aria-checked="true" data-v="own">Own</button><button type="button" aria-checked="false" data-v="paper">Paper</button><button type="button" aria-checked="false" data-v="ink">Ink</button><button type="button" aria-checked="false" data-v="blue">Blueprint</button></div></div>' +
+          '<label class="kx-ctl"><span>Accent shift <b class="pg-hv">0°</b></span><input type="range" min="-180" max="180" step="5" value="0" data-ctl="hue"></label>' +
+          '<div class="kx-ctl"><span>Zoom</span><div class="kx-seg" data-ctl="zoom"><button type="button" aria-checked="true" data-v="fit">Fit</button><button type="button" aria-checked="false" data-v="1">1×</button><button type="button" aria-checked="false" data-v="2">2×</button></div></div>' +
+          '<div class="kx-ctl"><span>Animation speed</span><div class="kx-seg" data-ctl="speed"><button type="button" aria-checked="false" data-v=".25">0.25×</button><button type="button" aria-checked="false" data-v=".5">0.5×</button><button type="button" aria-checked="true" data-v="1">1×</button><button type="button" aria-checked="false" data-v="2">2×</button></div></div>' +
+          '<label class="kx-sw pg-rl"><input type="checkbox" checked data-ctl="lines"><span aria-hidden="true"></span>Redlines</label>' +
+          '<div class="kx-out"><div class="kx-out-h"><div class="pg-langs" role="tablist"></div><span class="pg-acts"><button type="button" class="ki-copy" data-copy-now>' + I('copy') + 'Copy</button><button type="button" class="ki-copy" data-present title="Present full screen">' + I('fullscreen') + '</button></span></div><pre class="code pg-code"></pre></div>' +
+        '</aside>' +
+      '</div></section>';
   });
   root.innerHTML = html;
   nav.innerHTML = chips;
-  wire(root);
   $$('.k-count').forEach(function (el) { el.textContent = all.length; });
 
-  /* ---------- code panel ---------- */
   function hl(code, lang) {
     var s = esc(code);
     if (lang === 'css') {
@@ -121,49 +136,121 @@
     }
     return s.replace(/\b(const|let|if|return|forEach|addEventListener|document)\b/g, '<span class="k">$1</span>').replace(/(&#39;[^&]*?&#39;)/g, '<span class="s">$1</span>');
   }
-  function codeFor(it, lang) { return lang === 'js' ? JS[it.js] : it[lang]; }
-  function paintCode(cell, lang) {
-    var it = byId[cell.getAttribute('data-id')], box = $('.kb-code', cell), langs = ['html', 'css'].concat(it.js ? ['js'] : []);
-    box.innerHTML = '<div class="kb-code-h"><div role="tablist">' + langs.map(function (l) { return '<button type="button" role="tab" aria-selected="' + (l === lang) + '" data-kb-lang="' + l + '">' + l.toUpperCase() + '</button>'; }).join('') +
-      '</div><button type="button" class="ki-copy" data-kb-copy="' + lang + '">' + I('copy') + 'Copy ' + lang.toUpperCase() + '</button></div><pre class="code">' + hl(codeFor(it, lang), lang) + '</pre>';
-  }
-  root.addEventListener('click', function (e) {
-    var cell = e.target.closest('.kb-cell'); if (!cell) return;
-    var it = byId[cell.getAttribute('data-id')];
-    var t = e.target.closest('[data-kb-code]');
-    if (t) {
-      var box = $('.kb-code', cell), open = box.hidden;
-      if (open) paintCode(cell, 'html');
-      box.hidden = !open; t.setAttribute('aria-expanded', open); cell.classList.toggle('is-open', open);
-      return;
-    }
-    var l = e.target.closest('[data-kb-lang]'); if (l) { paintCode(cell, l.getAttribute('data-kb-lang')); return; }
-    var c = e.target.closest('[data-kb-copy]');
-    if (c) { var lang = c.getAttribute('data-kb-copy'); XR.copy(codeFor(it, lang)).then(function () { XR.toast(it.name + ': ' + lang.toUpperCase() + ' copied'); }); return; }
-    if (e.target.closest('[data-kb-present]')) openPresent(all.indexOf(it));
-  });
+  function pretty(h) { return h.replace(/></g, '>\n<').replace(/\n(<\/?(?:span|b|i|em|small|svg|path|circle|rect|use|strong)\b)/g, '$1'); }
+  function codeFor(it, lang) { return lang === 'js' ? JS[it.js] : lang === 'html' ? pretty(it.html) : it.css; }
 
-  /* ---------- category bar: scrollspy + search ---------- */
-  var secs = $$('.kb-sec', root);
+  var CANVAS = { paper: '#f3ecdf', ink: '#14110e', blue: 'linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px) 0 0 / 20px 20px, linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px) 0 0 / 20px 20px, #16325c' };
+  var benches = $$('.pg', root).map(function (el) {
+    var B = { el: el, g: KIT[+el.getAttribute('data-g')], canvas: 'own', hue: 0, zoom: 'fit', speed: 1, lines: true, lang: 'html', it: null };
+    B.stage = $('.pg-stage', el); B.fit = $('.pg-fit', el); B.svg = $('.pg-lines', el);
+    B.pick = function (id) {
+      B.it = byId[id];
+      $$('[data-pick]', el).forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-pick') === id); });
+      B.fit.innerHTML = B.it.html;
+      wire(B.fit);
+      $('.pg-name', el).textContent = B.it.cat + ' / ' + B.it.name;
+      $('.pg-note', el).textContent = B.it.note || '';
+      B.lang = 'html';
+      B.paint(); B.code();
+    };
+    B.paint = function () {
+      var it = B.it;
+      B.stage.style.setProperty('--fbg', B.canvas === 'own' ? (it.bg || '#15120f') : CANVAS[B.canvas]);
+      B.fit.style.setProperty('--pad', it.pad || '32px');
+      B.fit.style.filter = B.hue ? 'hue-rotate(' + B.hue + 'deg)' : '';
+      B.fit.style.zoom = 1;
+      var root = B.fit.firstElementChild;
+      if (root) {
+        var sw = B.stage.clientWidth - 80, sh = B.stage.clientHeight - 90, w = B.fit.offsetWidth, h = B.fit.offsetHeight;
+        B.z = B.zoom === 'fit' ? Math.max(.3, Math.min(2.2, sw / w, sh / h)) : +B.zoom;
+        B.fit.style.zoom = B.z;
+      }
+      $('.pg-hv', el).textContent = (B.hue > 0 ? '+' : '') + B.hue + '°';
+      requestAnimationFrame(B.measure);
+    };
+    B.measure = function () {
+      var root = B.fit.firstElementChild;
+      if (!B.lines || !root) { B.svg.innerHTML = ''; return; }
+      var sr = B.stage.getBoundingClientRect(), r = root.getBoundingClientRect(), z = B.z || 1;
+      var x0 = r.left - sr.left, y0 = r.top - sr.top, x1 = r.right - sr.left, y1 = r.bottom - sr.top, out = '';
+      out += '<rect x="' + x0 + '" y="' + y0 + '" width="' + (x1 - x0) + '" height="' + (y1 - y0) + '"/>';
+      /* child boxes, one level down, so you can see how it is put together */
+      $$(':scope > *', root).slice(0, 14).forEach(function (c) {
+        var q = c.getBoundingClientRect();
+        if (q.width < 4 || q.height < 4) return;
+        out += '<rect class="sub" x="' + (q.left - sr.left) + '" y="' + (q.top - sr.top) + '" width="' + q.width + '" height="' + q.height + '"/>';
+      });
+      var ty = Math.max(14, y0 - 16), lx = Math.max(14, x0 - 16);
+      out += '<line x1="' + x0 + '" y1="' + ty + '" x2="' + x1 + '" y2="' + ty + '"/><line x1="' + x0 + '" y1="' + (ty - 5) + '" x2="' + x0 + '" y2="' + (ty + 5) + '"/><line x1="' + x1 + '" y1="' + (ty - 5) + '" x2="' + x1 + '" y2="' + (ty + 5) + '"/>';
+      out += '<line x1="' + lx + '" y1="' + y0 + '" x2="' + lx + '" y2="' + y1 + '"/><line x1="' + (lx - 5) + '" y1="' + y0 + '" x2="' + (lx + 5) + '" y2="' + y0 + '"/><line x1="' + (lx - 5) + '" y1="' + y1 + '" x2="' + (lx + 5) + '" y2="' + y1 + '"/>';
+      var W = Math.round(r.width / z), H = Math.round(r.height / z), cs = getComputedStyle(root);
+      var tag = function (x, y, t) { var w = t.length * 6.2 + 10; return '<g class="tag"><rect x="' + (x - w / 2) + '" y="' + (y - 8) + '" width="' + w + '" height="16" rx="3"/><text x="' + x + '" y="' + (y + 3.5) + '" text-anchor="middle">' + t + '</text></g>'; };
+      out += tag((x0 + x1) / 2, ty, 'W ' + W) + tag(lx, (y0 + y1) / 2, 'H ' + H);
+      var rad = parseFloat(cs.borderTopLeftRadius);
+      if (rad) out += tag(x1 + 4, y1 + 14, rad >= r.height / z / 2 ? 'pill' : 'r ' + Math.round(rad));
+      if (z !== 1) out += tag(sr.width - 44, sr.height - 18, Math.round(z * 100) + '%');
+      B.svg.setAttribute('viewBox', '0 0 ' + sr.width + ' ' + sr.height);
+      B.svg.innerHTML = out;
+    };
+    B.code = function () {
+      var it = B.it, langs = ['html', 'css'].concat(it.js ? ['js'] : []);
+      $('.pg-langs', el).innerHTML = langs.map(function (l) { return '<button type="button" role="tab" aria-selected="' + (l === B.lang) + '" data-lang="' + l + '">' + l.toUpperCase() + '</button>'; }).join('');
+      $('.pg-code', el).innerHTML = hl(codeFor(it, B.lang), B.lang);
+    };
+    el.addEventListener('click', function (e) {
+      var pk = e.target.closest('[data-pick]'); if (pk) { B.pick(pk.getAttribute('data-pick')); return; }
+      var sg = e.target.closest('[data-ctl] button');
+      if (sg) {
+        var box = sg.parentElement, key = box.getAttribute('data-ctl');
+        $$('button', box).forEach(function (x) { x.setAttribute('aria-checked', x === sg); });
+        B[key] = key === 'speed' ? +sg.getAttribute('data-v') : sg.getAttribute('data-v');
+        if (key === 'speed') rate(B); else B.paint();
+        return;
+      }
+      var lg = e.target.closest('[data-lang]'); if (lg) { B.lang = lg.getAttribute('data-lang'); B.code(); return; }
+      if (e.target.closest('[data-copy-now]')) { XR.copy(codeFor(B.it, B.lang)).then(function () { XR.toast(B.it.name + ': ' + B.lang.toUpperCase() + ' copied'); }); return; }
+      if (e.target.closest('[data-present]')) openPresent(all.indexOf(B.it));
+    });
+    $('[data-ctl="hue"]', el).addEventListener('input', function (e) { B.hue = +e.target.value; B.paint(); });
+    $('[data-ctl="lines"]', el).addEventListener('change', function (e) { B.lines = e.target.checked; B.measure(); });
+    B.fit.addEventListener('transitionend', function () { if (B.lines) B.measure(); });
+    B.pick(B.g.items[0].id);
+    return B;
+  });
+  /* slow motion: every CSS animation and transition inside a bench runs at its chosen rate */
+  function rate(B) {
+    if (!document.getAnimations) return;
+    document.getAnimations().forEach(function (a) { var t = a.effect && a.effect.target; if (t && B.fit.contains(t) && a.playbackRate !== B.speed) a.playbackRate = B.speed; });
+  }
+  setInterval(function () { benches.forEach(function (B) { if (B.speed !== 1) rate(B); }); }, 120);
+  var rs; window.addEventListener('resize', function () { clearTimeout(rs); rs = setTimeout(function () { benches.forEach(function (B) { B.paint(); }); }, 150); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { benches.forEach(function (B) { B.paint(); }); });
+
+  /* ---------- category bar: scrollspy + search that jumps to a component ---------- */
+  var secs = $$('.pg-sec', root);
   function spy() {
     var cur = 0, mid = innerHeight * .35;
-    secs.forEach(function (s, i) { if (!s.hidden && s.getBoundingClientRect().top < mid) cur = i; });
+    secs.forEach(function (s, i) { if (s.getBoundingClientRect().top < mid) cur = i; });
     $$('a', nav).forEach(function (a) { a.classList.toggle('on', +a.getAttribute('data-kb') === cur); });
   }
   var sp = false;
   window.addEventListener('scroll', function () { if (!sp) { sp = true; requestAnimationFrame(function () { sp = false; spy(); }); } }, { passive: true });
   spy();
   var search = $('.kb-search input');
-  if (search) search.addEventListener('input', function () {
-    var q = search.value.toLowerCase().trim(), shown = 0;
-    secs.forEach(function (s) {
-      var any = 0;
-      $$('.kb-cell', s).forEach(function (c) { var ok = !q || c.getAttribute('data-name').indexOf(q) > -1; c.hidden = !ok; if (ok) any++; });
-      s.hidden = !any; shown += any;
+  function find(q) { return all.filter(function (it) { return (it.cat + ' ' + it.name).toLowerCase().indexOf(q) > -1; }); }
+  if (search) {
+    search.addEventListener('input', function () {
+      var q = search.value.toLowerCase().trim(), hits = q ? find(q) : all;
+      $('.kb-found').textContent = q ? (hits.length ? hits.length + ' found · Enter' : 'no match') : all.length + ' components';
     });
-    $('.kb-empty').hidden = shown > 0;
-    $('.kb-found').textContent = q ? shown + ' of ' + all.length : all.length + ' components';
-  });
+    search.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter') return;
+      var hit = find(search.value.toLowerCase().trim())[0]; if (!hit) return;
+      var B = benches.filter(function (b) { return b.g.cat === hit.cat; })[0];
+      B.pick(hit.id);
+      B.el.scrollIntoView({ behavior: XR.reduce ? 'auto' : 'smooth', block: 'center' });
+    });
+  }
 
   /* ---------- present mode ---------- */
   var present = $('.present'), stage = $('.present-stage'), pIdx = 0, lastFocus;
