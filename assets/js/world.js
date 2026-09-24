@@ -46,7 +46,7 @@
     ls: function (a) { var all = a[0] === '-a' || a[0] === '-la'; return Object.keys(FILES).filter(function (f) { return all || f[0] !== '.'; }).map(function (f) { return /\.(json)$/.test(f) ? '<span class="t-yel">' + f + '</span>' : f[0] === '.' ? '<span class="t-dim">' + f + '</span>' : '<span class="t-blu">' + f + '</span>'; }).join('  '); },
     cat: function (a) { if (!a[0]) return '<span class="t-red">cat: missing file name.</span> Try <span class="t-grn">cat about.txt</span>'; var f = FILES[a[0]]; return f ? f() : '<span class="t-red">cat: ' + esc(a[0]) + ': No such file.</span> Run <span class="t-grn">ls</span> to see what is here.'; },
     open: function (a) {
-      var map2 = { home: 'index.html', lab: 'showcase.html', shop: 'shop.html', kit: 'components.html', demos: 'demos.html', pages: 'pages.html', academy: 'tutorials.html', hire: 'hire.html', minecraft: 'showcase.html#minecraft' };
+      var map2 = { home: 'index.html', lab: 'showcase.html', shop: 'shop.html', kit: 'components.html', demos: 'demos.html', pages: 'pages.html', hire: 'hire.html', minecraft: 'showcase.html#minecraft' };
       var t = map2[(a[0] || '').toLowerCase()];
       if (!t) return 'open what? Try: ' + Object.keys(map2).map(function (k) { return '<span class="t-grn">' + k + '</span>'; }).join(', ');
       setTimeout(function () { location.href = t; }, 700); return 'Opening <a href="' + t + '">' + t + '</a>...';
@@ -154,7 +154,7 @@
       else if (e.key === 'ArrowDown') { e.preventDefault(); if (hp < hist.length - 1) { hp++; inp.value = hist[hp]; } else { hp = hist.length; inp.value = ''; } }
       else if (e.key === 'Tab') {
         e.preventDefault();
-        var v = inp.value, parts = v.split(' '), last = parts[parts.length - 1], pool = parts.length > 1 ? Object.keys(FILES).concat(['hire-me', 'log', 'lab', 'shop', 'demos', 'pages', 'hire', 'academy']) : Object.keys(CMDS);
+        var v = inp.value, parts = v.split(' '), last = parts[parts.length - 1], pool = parts.length > 1 ? Object.keys(FILES).concat(['hire-me', 'log', 'lab', 'shop', 'demos', 'pages', 'hire']) : Object.keys(CMDS);
         var m = pool.filter(function (x) { return x.indexOf(last) === 0; });
         if (m.length === 1) { parts[parts.length - 1] = m[0]; inp.value = parts.join(' ') + ' '; }
         else if (m.length > 1) print(m.join('  '), 't-dim');

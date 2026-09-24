@@ -24,6 +24,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"></noscript>
 <link rel="stylesheet" href="assets/css/core.css">
 <link rel="stylesheet" href="assets/css/shop.css">
+<link rel="stylesheet" href="assets/css/circuit.css">
+<link rel="stylesheet" href="assets/css/bugs.css">
 <link rel="stylesheet" href="assets/css/phone.css">
 <script>document.documentElement.classList.add('js');try{if(localStorage.getItem('xr-mode')==='ink')document.documentElement.setAttribute('data-mode','ink')}catch(e){}</script>
 <script type="application/ld+json">
@@ -48,12 +50,19 @@
 <main id="main">
   <section class="page-hero shop-hero">
     <div class="kanji-bg" aria-hidden="true">店</div>
+    <div class="shop-orbs" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="container container-wide page-hero-inner">
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><svg class="ic"><use href="#i-chevron-right"/></svg><span>Shop templates</span></nav>
       <div class="shop-hero-row">
         <div class="shop-hero-copy">
           <h1 class="h1" data-split="ready">Shop templates<span class="accent">.</span></h1>
-          <p class="lead" data-reveal>Complete online stores you can click through: clothes, baby wear, beauty, jewellery, sneakers, furniture and more. Each one has its own look, currency, cart and checkout. Open the <b>Admin</b> view to see the orders come in.</p>
+          <p class="lead" data-reveal>Twelve complete online stores, and no two share a layout. Each one has its own storefront, tools, currency, cart and checkout: a room planner, a shade finder, a desk builder, a size-first sneaker drop and more. Open the <b>Admin</b> view to watch the orders come in.</p>
+          <ul class="shop-stats" data-reveal>
+            <li><b>12</b><span>unique storefronts</span></li>
+            <li><b>5</b><span>payment methods</span></li>
+            <li><b>6</b><span>live automations</span></li>
+            <li><b>0</b><span>real charges</span></li>
+          </ul>
         </div>
         <div class="shop-mode" role="tablist" aria-label="Store view" data-reveal>
           <button type="button" role="tab" aria-selected="true" data-mode="store"><svg class="ic"><use href="#i-store"/></svg>Storefront</button>
@@ -61,7 +70,11 @@
         </div>
       </div>
       <div class="tpl" data-reveal>
-        <div class="tpl-head"><span class="tpl-label"><b class="tpl-n">0</b> store templates</span><span class="tpl-hint">Pick one to open it below</span></div>
+        <div class="tpl-head">
+          <span class="tpl-label"><b class="tpl-n">0</b> store templates</span>
+          <div class="tpl-groups" role="radiogroup" aria-label="Filter stores"></div>
+          <button type="button" class="tpl-shuffle"><svg class="ic"><use href="#i-refresh"/></svg>Surprise me</button>
+        </div>
         <div class="tpl-rail" role="radiogroup" aria-label="Store template"></div>
       </div>
     </div>
@@ -72,9 +85,10 @@
     <div class="container container-wide">
       <div class="sf" id="sf">
         <div class="sf-chrome" aria-hidden="true"><span class="sf-dots"><i></i><i></i><i></i></span><span class="sf-url"><svg class="ic"><use href="#i-lock"/></svg><span class="sf-domain"></span></span><span class="sf-tag"></span></div>
+        <div class="sf-loader" aria-hidden="true"><i></i></div>
         <div class="sf-site" id="sfSite"></div>
       </div>
-      <p class="demo-note"><svg class="ic"><use href="#i-info"/></svg>Demo stores. The brands are made up, the photos are real (credited in each store’s footer), and no payment is ever taken.</p>
+      <p class="demo-note"><svg class="ic"><use href="#i-info"/></svg>Demo stores. The brands are made up, the photos are real (credited in each store’s footer), and no payment is ever taken. Tip: press <kbd>/</kbd> to search any store.</p>
     </div>
   </section>
 
@@ -135,14 +149,15 @@
   <div class="modal-box pm-box">
     <button type="button" class="modal-close" data-close aria-label="Close"><svg class="ic"><use href="#i-close"/></svg></button>
     <div class="pm-grid">
-      <div class="pm-media"><div class="pm-zoom"></div></div>
+      <div class="pm-media"><div class="pm-zoom"></div><div class="pm-nav"></div></div>
       <div class="pm-info">
-        <span class="pm-cat"></span>
+        <div class="pm-top"><span class="pm-cat"></span><button type="button" class="pm-share" aria-label="Copy link to this product"><svg class="ic"><use href="#i-link"/></svg></button></div>
         <h2 id="pm-name"></h2>
         <div class="pm-rating"></div>
         <div class="pm-price"></div>
         <p class="pm-desc"></p>
         <div class="pm-opts"></div>
+        <div class="pm-ship"></div>
         <div class="pm-buy">
           <div class="qty" role="group" aria-label="Quantity"><button type="button" data-q="-1" aria-label="Decrease"><svg class="ic"><use href="#i-minus"/></svg></button><span class="pm-qty">1</span><button type="button" data-q="1" aria-label="Increase"><svg class="ic"><use href="#i-plus"/></svg></button></div>
           <button type="button" class="btn btn-primary pm-add"><svg class="ic"><use href="#i-cart"/></svg>Add to cart</button>
@@ -163,6 +178,7 @@
     <div class="drawer-h"><h2><svg class="ic"><use href="#i-bag"/></svg><span>Your bag</span> <small class="cart-store"></small></h2><button type="button" class="modal-close" data-close aria-label="Close cart"><svg class="ic"><use href="#i-close"/></svg></button></div>
     <div class="ship-bar"><p class="ship-text"></p><div class="ship-track"><i></i></div></div>
     <ul class="cart-items"></ul>
+    <div class="cart-ups"></div>
     <div class="cart-empty"><svg class="ic"><use href="#i-bag"/></svg><p>Your bag is empty.</p><button type="button" class="btn btn-ghost btn-sm" data-close>Keep shopping</button></div>
     <div class="cart-foot">
       <form class="promo" autocomplete="off"><input class="input" type="text" placeholder="Promo code" aria-label="Promo code"><button class="btn btn-ghost btn-sm" type="submit">Apply</button></form>
@@ -182,7 +198,7 @@
   <div class="modal-backdrop" data-close></div>
   <div class="modal-box co-box">
     <button type="button" class="modal-close" data-close aria-label="Close checkout"><svg class="ic"><use href="#i-close"/></svg></button>
-    <div class="co-head"><h2 class="h3" id="co-title">Checkout</h2><ol class="co-steps"><li class="is-on">Details</li><li>Payment</li><li>Done</li></ol></div>
+    <div class="co-head"><div><h2 class="h3" id="co-title">Checkout</h2><div class="co-summary" aria-hidden="true"></div></div><ol class="co-steps"><li class="is-on">Details</li><li>Payment</li><li>Done</li></ol></div>
     <div class="co-body">
       <form class="co-panel co-details" data-step="0" autocomplete="on" novalidate>
         <div class="co-grid">
@@ -223,6 +239,9 @@
   </div>
 </div>
 
+<!-- sticky bag bar -->
+<div class="sf-sticky" aria-live="polite"><span class="sfs-t"></span><button type="button" class="sfs-go"><svg class="ic"><use href="#i-bag"/></svg>View bag</button></div>
+
 <!-- AI shopping assistant -->
 <div class="ai-shop">
   <div class="ai-box" hidden role="dialog" aria-label="Shopping assistant">
@@ -238,6 +257,8 @@
 
 <script src="assets/js/config.js" defer></script>
 <script src="assets/js/core.js" defer></script>
+<script src="assets/js/circuit.js" defer></script>
+<script src="assets/js/bugs.js" defer></script>
 <script src="assets/js/shop-data.js" defer></script>
 <script src="assets/js/shop.js" defer></script>
 </body>

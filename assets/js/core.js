@@ -398,7 +398,6 @@
     { id: 'demos', href: 'demos.html', label: 'Demo Sites', short: 'Demos', jp: '演' },
     { id: 'pages', href: 'pages.html', label: 'Pages', jp: '頁' },
     { id: 'world', href: 'dev-world.html', label: 'Dev World', jp: '里' },
-    { id: 'academy', href: 'tutorials.html', label: 'Academy', jp: '学' },
     { id: 'hire', href: 'hire.html', label: 'Hire Me', jp: '雇' }
   ];
 
@@ -936,7 +935,6 @@
     { id: 'page-shop', label: 'Browse the shop demo', xp: 10 },
     { id: 'page-kit', label: 'Open the UI Kit', xp: 10 },
     { id: 'page-demos', label: 'Look at the demo sites', xp: 10 },
-    { id: 'page-academy', label: 'Visit the Motion Academy', xp: 10 },
     { id: 'page-hire', label: 'Check the Hire page', xp: 10 },
     { id: 'page-pages', label: 'Open the Pages Studio', xp: 10 },
     { id: 'page-world', label: 'Walk into Dev World', xp: 10 },
@@ -986,9 +984,9 @@
 
   function paletteItems() {
     var items = [];
-    NAV.forEach(function (n) { items.push({ g: 'Pages', t: n.label, s: n.jp, ic: n.id === 'hire' ? 'briefcase' : n.id === 'shop' ? 'cart' : n.id === 'lab' ? 'sparkle' : n.id === 'kit' ? 'layers' : n.id === 'demos' ? 'monitor' : n.id === 'academy' ? 'film' : n.id === 'pages' ? 'window' : n.id === 'world' ? 'terminal' : 'home', href: n.href }); });
+    NAV.forEach(function (n) { items.push({ g: 'Pages', t: n.label, s: n.jp, ic: n.id === 'hire' ? 'briefcase' : n.id === 'shop' ? 'cart' : n.id === 'lab' ? 'sparkle' : n.id === 'kit' ? 'layers' : n.id === 'demos' ? 'monitor' : n.id === 'pages' ? 'window' : n.id === 'world' ? 'terminal' : 'home', href: n.href }); });
     SERVICES.forEach(function (sv) { items.push({ g: 'Live demos in the Lab', t: sv.name, s: 'from ' + fmtPrice(sv.priceFrom), ic: sv.icon, href: 'showcase.html#' + sv.id }); });
-    [['Nova AI', 'SaaS landing page', 'nova-saas'], ['Sakura Bistro', 'Restaurant', 'sakura-bistro'], ['Vault', 'Crypto dashboard', 'vault-dashboard'], ['BlockRealm', 'Minecraft server site', 'blockrealm'], ['Studio Kami', 'Agency', 'studio-kami'], ['Pulse', 'App landing page', 'pulse-app'], ['Aurum', 'Luxury watch store', 'aurum'], ['Mori Tea', 'Tea shop', 'mori-tea'], ['Haven', 'Architecture and homes', 'haven'], ['Ledger', 'Banking dashboard', 'ledger'], ['Nomad', 'Travel booking', 'nomad'], ['Kumo Docs', 'Developer docs', 'devdocs']].forEach(function (d) {
+    [['Nova AI', 'SaaS landing page', 'nova-saas'], ['Sakura Bistro', 'Restaurant', 'sakura-bistro'], ['Vault', 'Crypto dashboard', 'vault-dashboard'], ['BlockRealm', 'Minecraft server site', 'blockrealm'], ['Pulse', 'App landing page', 'pulse-app'], ['Mori Tea', 'Tea shop', 'mori-tea'], ['Haven', 'Architecture and homes', 'haven'], ['Ledger', 'Banking dashboard', 'ledger'], ['Nomad', 'Travel booking', 'nomad'], ['Kumo Docs', 'Developer docs', 'devdocs'], ['Orbital', 'Space travel booking', 'orbital'], ['Kinetik', 'EV configurator', 'kinetik'], ['Echo', 'Music streaming app', 'echo'], ['Medica', 'Clinic and telehealth', 'medica'], ['Grove', 'Online learning platform', 'grove'], ['Nimbus', 'Weather dashboard', 'nimbus'], ['Neon Drift', 'Esports tournaments', 'neon-drift'], ['Flowboard', 'Project management app', 'flowboard'], ['Summit 26', 'Tech conference', 'summit'], ['Quill', 'Editorial magazine', 'quill']].forEach(function (d) {
       items.push({ g: 'Demo websites', t: d[0], s: d[1], ic: 'window', href: 'demos/' + d[2] + '.html' });
     });
     items.push(
@@ -1089,7 +1087,7 @@
       }
     });
     // page-visit quests + quests for trying each Lab stage
-    var pageQuest = { home: 'page-home', lab: 'page-lab', shop: 'page-shop', kit: 'page-kit', demos: 'page-demos', academy: 'page-academy', hire: 'page-hire', pages: 'page-pages', world: 'page-world' }[page];
+    var pageQuest = { home: 'page-home', lab: 'page-lab', shop: 'page-shop', kit: 'page-kit', demos: 'page-demos', hire: 'page-hire', pages: 'page-pages', world: 'page-world' }[page];
     if (pageQuest) setTimeout(function () { quest(pageQuest); }, 2200);
     document.addEventListener('pointerdown', function (e) {
       var st = e.target.closest && e.target.closest('[data-stage]');

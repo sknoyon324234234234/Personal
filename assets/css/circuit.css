@@ -1,0 +1,83 @@
+/* =====================================================================
+   XIRAIYA — circuit layer (see assets/js/circuit.js)
+   Washi: vermilion traces like hanko ink. Sumi ink: cyan traces that glow.
+   ===================================================================== */
+:root {
+  --cx-base: rgba(40, 28, 16, .12);
+  --cx-live: #c4321d;
+  --cx-live-2: #d9a441;
+  --cx-hot: #e2703a;
+  --cx-bolt: #c4321d;
+  --cx-core: #fff8ee;
+  --cx-chip: #fffdf8;
+  --cx-side: rgba(40, 28, 16, .16);
+  --cx-glow-a: .1;
+}
+html[data-mode="ink"] {
+  --cx-base: rgba(255, 255, 255, .08);
+  --cx-live: #6fb3a8;
+  --cx-live-2: #d9a441;
+  --cx-hot: #eafff8;
+  --cx-bolt: #eafff8;
+  --cx-core: #ffffff;
+  --cx-chip: #1b1814;
+  --cx-side: rgba(0, 0, 0, .55);
+  --cx-glow-a: .2;
+}
+
+@keyframes cxPing { 0% { transform: scale(1.9); } 100% { transform: scale(1); } }
+@keyframes cxHalo { 0%, 100% { transform: scale(.85); opacity: .18; } 50% { transform: scale(1.15); opacity: .32; } }
+@keyframes cxHit {
+  0% { outline: 1.5px solid var(--cx-live); outline-offset: 0; }
+  100% { outline: 1.5px solid transparent; outline-offset: 12px; }
+}
+
+.cx-layer { position: absolute; left: 0; top: 0; z-index: 60; pointer-events: none; overflow: hidden; }
+.cx-svg { display: block; }
+.cx-hdr { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+.cx-svg * { pointer-events: none; }
+
+/* traces */
+.cx-base path { fill: none; stroke: var(--cx-base); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+.cx-base .cx-tn { stroke-dasharray: 1 7; }
+.cx-base .cx-b2 { stroke-width: 1; }
+.cx-live path { fill: none; stroke: var(--cx-live); stroke-linejoin: round; stroke-linecap: round; }
+.cx-live .cx-glow { stroke-width: 7; opacity: var(--cx-glow-a); }
+.cx-live .cx-l { stroke-width: 1.7; }
+.cx-live .cx-l2 { stroke-width: 1; opacity: .6; }
+.cx-live .cx-w { transition-property: stroke-dashoffset; transition-timing-function: cubic-bezier(.3, .7, .2, 1); }
+
+/* vias, pads and chips */
+.cx-via, .cx-pad { fill: var(--bg); stroke: var(--cx-base); stroke-width: 1.5; transition: fill .4s, stroke .4s; }
+.cx-pad { stroke-width: 2; }
+.cx-via.on { fill: var(--cx-live); stroke: var(--cx-live); }
+.cx-pad.on { fill: var(--cx-core); stroke: var(--cx-live); }
+.cx-via.ping, .cx-chip.ping .core { transform-box: fill-box; transform-origin: center; animation: cxPing .5s cubic-bezier(.2, .8, .2, 1); }
+.cx-chip .side { fill: var(--cx-side); }
+.cx-chip .body { fill: var(--cx-chip); stroke: var(--cx-base); stroke-width: 1.5; transition: stroke .4s; }
+.cx-chip .pin { fill: none; stroke: var(--cx-base); stroke-width: 1.5; stroke-linecap: round; transition: stroke .4s; }
+.cx-chip .core { fill: var(--cx-base); transition: fill .4s; }
+.cx-chip.on .body, .cx-chip.on .pin { stroke: var(--cx-live); }
+.cx-chip.on .core { fill: var(--cx-live-2); }
+
+/* the spark */
+.cx-hot { fill: none; stroke: var(--cx-hot); stroke-width: 2.8; stroke-linecap: round; }
+.cx-head .halo { fill: var(--cx-live); opacity: .24; transform-box: fill-box; transform-origin: center; animation: cxHalo 1.1s ease-in-out infinite; }
+.cx-head .ring { fill: none; stroke: var(--cx-live); stroke-width: 1.5; opacity: .85; }
+.cx-head .core { fill: var(--cx-core); stroke: var(--cx-live); stroke-width: 1; }
+.cx-bolt { fill: none; stroke: var(--cx-bolt); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.cx-bolt-g { fill: none; stroke: var(--cx-live); stroke-width: 5; opacity: .28; stroke-linecap: round; stroke-linejoin: round; }
+.cx-flash { animation: cxFlash .26s steps(3) forwards; }
+@keyframes cxFlash { 0% { opacity: 1; } 60% { opacity: .5; } 100% { opacity: 0; } }
+
+/* energy packets */
+.cx-pk { fill: var(--cx-live-2); stroke: var(--cx-live-2); stroke-opacity: .3; stroke-width: 5; }
+.cx-pk-b { fill: var(--cx-core); stroke: var(--cx-live); }
+
+/* power pulse on the cards and buttons the spark reaches */
+.cx-hit { animation: cxHit 1.25s cubic-bezier(.16, 1, .3, 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-head .halo, .cx-hit, .cx-via.ping, .cx-chip.ping .core { animation: none; }
+}
+@media print { .cx-layer { display: none !important; } }

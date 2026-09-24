@@ -39,7 +39,7 @@ const out = p => path.join(root, 'assets/img', p);
 
   // 3) Demo thumbnails (800x500 JPEG)
   fs.mkdirSync(out('demos'), { recursive: true });
-  for (const n of ['nova-saas', 'sakura-bistro', 'vault-dashboard', 'blockrealm', 'studio-kami', 'pulse-app', 'aurum', 'mori-tea', 'haven', 'ledger', 'nomad', 'devdocs']) {
+  for (const n of ['nova-saas', 'sakura-bistro', 'vault-dashboard', 'blockrealm', 'pulse-app', 'mori-tea', 'haven', 'ledger', 'nomad', 'devdocs', 'orbital', 'kinetik', 'echo', 'medica', 'grove', 'nimbus', 'neon-drift', 'flowboard', 'summit', 'quill']) {
     const p = await browser.newPage({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: .625, ignoreHTTPSErrors: true });
     await p.goto(file('demos/' + n + '.html'), { waitUntil: 'networkidle' });
     await p.evaluate(() => document.fonts.ready);

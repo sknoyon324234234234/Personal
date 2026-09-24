@@ -115,7 +115,7 @@
 }
 
 /* Lab chapter pager (phones) */
-.lab-pager { align-items: center; justify-content: space-between; gap: 10px; margin: 26px var(--gutter) 10px; padding: 10px; border-radius: 6px; border: 1px solid var(--line); background: rgba(var(--fx), .02); }
+.lab-pager { display: none; align-items: center; justify-content: space-between; gap: 10px; margin: 26px var(--gutter) 10px; padding: 10px; border-radius: 6px; border: 1px solid var(--line); background: rgba(var(--fx), .02); }
 .lab-pager button { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 6px; font-weight: 600; font-size: 14px; color: var(--ink); background: rgba(var(--fx), .05); border: 1px solid var(--line-2); }
 .lab-pager button:disabled { opacity: .35; }
 .lab-pager .lp-next { background: var(--red); border-color: var(--red); color: #fff; }

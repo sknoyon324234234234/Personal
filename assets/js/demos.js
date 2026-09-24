@@ -10,14 +10,22 @@
     { id: 'sakura-bistro', name: 'Sakura Bistro' },
     { id: 'vault-dashboard', name: 'Vault' },
     { id: 'blockrealm', name: 'BlockRealm' },
-    { id: 'studio-kami', name: 'Studio Kami' },
     { id: 'pulse-app', name: 'Pulse' },
-    { id: 'aurum', name: 'Aurum' },
     { id: 'mori-tea', name: 'Mori Tea' },
     { id: 'haven', name: 'Haven' },
     { id: 'ledger', name: 'Ledger' },
     { id: 'nomad', name: 'Nomad' },
-    { id: 'devdocs', name: 'Kumo Docs' }
+    { id: 'devdocs', name: 'Kumo Docs' },
+    { id: 'orbital', name: 'Orbital' },
+    { id: 'kinetik', name: 'Kinetik' },
+    { id: 'echo', name: 'Echo' },
+    { id: 'medica', name: 'Medica' },
+    { id: 'grove', name: 'Grove' },
+    { id: 'nimbus', name: 'Nimbus' },
+    { id: 'neon-drift', name: 'Neon Drift' },
+    { id: 'flowboard', name: 'Flowboard' },
+    { id: 'summit', name: 'Summit 26' },
+    { id: 'quill', name: 'Quill' }
   ];
   var DEV = { desktop: [1440, 900], laptop: [1280, 800], tablet: [820, 1180], phone: [390, 844] };
 
