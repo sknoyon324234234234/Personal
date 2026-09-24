@@ -72,15 +72,15 @@
   "jutti": "traditional embroidered shoes"
  },
  "carry": {
-  "hero": "leather bag flat lay",
-  "look": "travel accessories flat lay",
+  "hero": "leather bag",
+  "look": "leather goods",
   "backpack": "leather backpack",
   "wallet": "leather wallet",
   "sunglasses": "sunglasses product",
   "scarf": "silk scarf",
   "cap": "baseball cap",
   "duffel": "duffel bag",
-  "watch": "men watch leather strap",
+  "watch": "wristwatch leather strap",
   "cardholder": "leather card holder"
  }
 }

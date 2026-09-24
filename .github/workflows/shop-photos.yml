@@ -33,12 +33,15 @@ jobs:
         run: |
           if git diff --name-only HEAD~1 HEAD | grep -q 'tools/shop-photos/select.json'; then echo "m=final" >> "$GITHUB_OUTPUT"; else echo "m=candidates" >> "$GITHUB_OUTPUT"; fi
       - name: Fetch
+        env:
+          SKIP_UNSPLASH: '1'
         run: node tools/shop-photos/fetch.mjs ${{ steps.mode.outputs.m }}
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tools/shop-photos assets/img/shop
+          git add -A tools/shop-photos
+          [ -d assets/img/shop ] && git add -A assets/img/shop
           git diff --cached --quiet && exit 0
           git commit -m "Shop photos: ${{ steps.mode.outputs.m }}"
           git push origin HEAD:${{ github.ref_name }}

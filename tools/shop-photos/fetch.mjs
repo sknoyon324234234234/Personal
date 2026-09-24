@@ -18,7 +18,7 @@ const HERE = path.dirname(new URL(import.meta.url).pathname);
 const ROOT = path.join(HERE, '..', '..');
 const OUT = path.join(ROOT, 'assets', 'img', 'shop');
 const mode = process.argv[2];
-const N = 6;
+const N = 8;
 const UA = { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36', Accept: 'application/json' };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -32,10 +32,10 @@ async function unsplash(q) {
   }));
 }
 async function openverse(q) {
-  const r = await fetch('https://api.openverse.org/v1/images/?page_size=20&mature=false&license_type=commercial&q=' + encodeURIComponent(q), { headers: UA });
+  const r = await fetch('https://api.openverse.org/v1/images/?page_size=30&mature=false&license_type=commercial&category=photograph&q=' + encodeURIComponent(q), { headers: UA });
   if (!r.ok) throw new Error('openverse ' + r.status);
   const j = await r.json();
-  return j.results.filter((p) => p.width >= 900).map((p) => ({
+  return j.results.filter((p) => !p.width || p.width >= 700).map((p) => ({
     src: 'openverse', id: p.id, raw: p.url, thumb: p.thumbnail, alt: p.title || '',
     by: p.creator || 'unknown', link: p.foreign_landing_url, license: (p.license || '').toUpperCase() + ' ' + (p.license_version || '')
   }));
@@ -63,7 +63,7 @@ async function candidates() {
     for (const slot of Object.keys(req[store])) {
       const q = req[store][slot];
       let list = [];
-      try { list = await unsplash(q); } catch (e) { console.log('!', store, slot, e.message); }
+      if (!process.env.SKIP_UNSPLASH) { try { list = await unsplash(q); } catch (e) { console.log('!', store, slot, e.message); } }
       if (list.length < N) { try { list = list.concat(await openverse(q)); } catch (e) { console.log('!', store, slot, e.message); } }
       list = list.slice(0, N);
       all[store][slot] = list;
