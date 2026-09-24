@@ -1,0 +1,86 @@
+{
+ "maison": {
+  "hero": [],
+  "look": [],
+  "linen": [],
+  "blazer": [],
+  "knit": [],
+  "jeans": [],
+  "trench": [],
+  "blouse": [],
+  "skirt": [],
+  "tote": []
+ },
+ "pebble": {
+  "hero": [],
+  "look": [],
+  "romper": [],
+  "cardigan": [],
+  "booties": [],
+  "swaddle": [],
+  "sleepsuit": [],
+  "beanie": [],
+  "dungarees": [],
+  "bunny": []
+ },
+ "glow": {
+  "hero": [],
+  "look": [],
+  "serum": [],
+  "cream": [],
+  "lipstick": [],
+  "palette": [],
+  "perfume": [],
+  "polish": [],
+  "brushes": [],
+  "cleanser": []
+ },
+ "aurelia": {
+  "hero": [],
+  "look": [],
+  "ring": [],
+  "pearls": [],
+  "pendant": [],
+  "bracelet": [],
+  "hoops": [],
+  "solitaire": [],
+  "chain": [],
+  "watch": []
+ },
+ "northside": {
+  "hero": [],
+  "look": [],
+  "oxford": [],
+  "denim": [],
+  "chinos": [],
+  "sweater": [],
+  "boots": [],
+  "coat": [],
+  "tee": [],
+  "belt": []
+ },
+ "deshi": {
+  "hero": [],
+  "look": [],
+  "saree": [],
+  "silk": [],
+  "panjabi": [],
+  "kurti": [],
+  "dupatta": [],
+  "bangles": [],
+  "kantha": [],
+  "jutti": []
+ },
+ "carry": {
+  "hero": [],
+  "look": [],
+  "backpack": [],
+  "wallet": [],
+  "sunglasses": [],
+  "scarf": [],
+  "cap": [],
+  "duffel": [],
+  "watch": [],
+  "cardholder": []
+ }
+}
