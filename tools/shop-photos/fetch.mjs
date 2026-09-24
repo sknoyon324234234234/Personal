@@ -32,17 +32,34 @@ async function unsplash(q) {
   }));
 }
 async function openverse(q) {
-  const r = await fetch('https://api.openverse.org/v1/images/?page_size=30&mature=false&license_type=commercial&category=photograph&q=' + encodeURIComponent(q), { headers: UA });
-  if (!r.ok) throw new Error('openverse ' + r.status);
+  for (let tries = 0; tries < 4; tries++) {
+    const r = await fetch('https://api.openverse.org/v1/images/?page_size=20&mature=false&license_type=commercial&category=photograph&q=' + encodeURIComponent(q), { headers: UA });
+    if (r.status === 429) { console.log('  openverse busy, waiting'); await sleep(25000); continue; }
+    if (!r.ok) throw new Error('openverse ' + r.status);
+    const j = await r.json();
+    return j.results.filter((p) => !p.width || p.width >= 700).map((p) => ({
+      src: 'openverse', id: p.id, raw: p.url, alt: p.title || '',
+      by: p.creator || 'unknown', link: p.foreign_landing_url, license: ('CC ' + (p.license || '').toUpperCase() + ' ' + (p.license_version || '')).trim()
+    }));
+  }
+  throw new Error('openverse rate limited');
+}
+async function commons(q) {
+  const u = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|size|extmetadata&iiurlwidth=1000&gsrsearch=' + encodeURIComponent(q + ' filetype:bitmap');
+  const r = await fetch(u, { headers: UA });
+  if (!r.ok) throw new Error('commons ' + r.status);
   const j = await r.json();
-  return j.results.filter((p) => !p.width || p.width >= 700).map((p) => ({
-    src: 'openverse', id: p.id, raw: p.url, thumb: p.thumbnail, alt: p.title || '',
-    by: p.creator || 'unknown', link: p.foreign_landing_url, license: (p.license || '').toUpperCase() + ' ' + (p.license_version || '')
-  }));
+  const pages = Object.values((j.query && j.query.pages) || {}).sort((a, b) => a.index - b.index);
+  return pages.map((p) => {
+    const ii = p.imageinfo && p.imageinfo[0], m = (ii && ii.extmetadata) || {};
+    const lic = (m.LicenseShortName && m.LicenseShortName.value) || '';
+    if (!ii || ii.width < 800 || !/^(CC0|CC BY(-SA)? [0-9.]+|Public domain)/i.test(lic)) return null;
+    return { src: 'commons', id: p.pageid, raw: ii.thumburl || ii.url, alt: p.title, by: ((m.Artist && m.Artist.value) || 'unknown').replace(/<[^>]+>/g, '').trim(), link: ii.descriptionurl, license: lic };
+  }).filter(Boolean);
 }
 function sized(c, w, h) {
   if (c.src === 'unsplash') return c.raw + (c.raw.includes('?') ? '&' : '?') + 'fm=jpg&q=' + (h ? 60 : 78) + '&w=' + w + (h ? '&h=' + h + '&fit=crop' : '&fit=max');
-  return h && c.thumb ? c.thumb : c.raw;
+  return c.raw;
 }
 async function get(url) {
   for (let i = 0; i < 3; i++) {
@@ -57,14 +74,15 @@ async function candidates() {
   const req = JSON.parse(fs.readFileSync(path.join(HERE, 'request.json'), 'utf8'));
   const all = {};
   fs.mkdirSync(path.join(HERE, 'sheets'), { recursive: true });
-  for (const store of Object.keys(req)) {
+  for (const store of Object.keys(req).filter((k) => k[0] !== '_')) {
     all[store] = {};
     const rows = [];
     for (const slot of Object.keys(req[store])) {
       const q = req[store][slot];
       let list = [];
       if (!process.env.SKIP_UNSPLASH) { try { list = await unsplash(q); } catch (e) { console.log('!', store, slot, e.message); } }
-      if (list.length < N) { try { list = list.concat(await openverse(q)); } catch (e) { console.log('!', store, slot, e.message); } }
+      if (list.length < N) { try { list = list.concat(await openverse(q)); } catch (e) { console.log('!', store, slot, e.message); } await sleep(1500); }
+      if (list.length < N) { try { list = list.concat(await commons(q)); } catch (e) { console.log('!', store, slot, e.message); } }
       list = list.slice(0, N);
       all[store][slot] = list;
       const tiles = [];
