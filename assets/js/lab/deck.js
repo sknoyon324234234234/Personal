@@ -1,7 +1,7 @@
 /* =====================================================================
    XIRAIYA — The Lab: control deck
-   Everything around the eleven live stages: the hero network and its
-   chapter console, a chapter sidebar with progress, a window frame on
+   Everything around the eleven live stages: the contents page in the
+   hero, a chapter sidebar with progress, a window frame on
    every stage with a fullscreen focus mode, J/K/F shortcuts, and the
    "build your combo" price calculator at the end. The stages themselves
    stay untouched in their own files.
@@ -41,76 +41,6 @@
     }
   }
 
-  /* ---------- hero: a signal network behind the console ---------- */
-  function heroNet() {
-    var cv = $('.lh-net');
-    if (!cv || !cv.getContext) return;
-    var ctx = cv.getContext('2d'), dpr = Math.min(window.devicePixelRatio || 1, 2), W = 0, H = 0, nodes = [], pulses = [], on = true;
-    var col = '196, 50, 29', line = '40, 28, 16';
-    function colors() {
-      var ink = root.getAttribute('data-mode') === 'ink';
-      col = ink ? '240, 106, 82' : '196, 50, 29';
-      line = ink ? '239, 228, 204' : '40, 28, 16';
-    }
-    function size() {
-      var r = cv.parentElement.getBoundingClientRect();
-      W = r.width; H = r.height;
-      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-      cv.style.width = W + 'px'; cv.style.height = H + 'px';
-      var count = Math.round(Math.min(70, W * H / 16000));
-      nodes = [];
-      for (var i = 0; i < count; i++) nodes.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * 12, vy: (Math.random() - .5) * 12 });
-    }
-    colors(); size();
-    new MutationObserver(colors).observe(root, { attributes: true, attributeFilter: ['data-mode'] });
-    window.addEventListener('resize', size);
-    var last = performance.now(), spawn = 0, running = false;
-    function start() { if (running) return; running = true; last = performance.now(); requestAnimationFrame(tick); }
-    if (window.IntersectionObserver) new IntersectionObserver(function (es) { on = es[0].isIntersecting; if (on) start(); }).observe(cv);
-    function tick(t) {
-      if (!on) { running = false; return; }
-      var dt = Math.min(.05, (t - last) / 1000); last = t;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, W, H);
-      var i, j, a, b, d;
-      for (i = 0; i < nodes.length; i++) {
-        a = nodes[i];
-        if (!XR.reduce) { a.x += a.vx * dt; a.y += a.vy * dt; }
-        if (a.x < 0 || a.x > W) a.vx *= -1;
-        if (a.y < 0 || a.y > H) a.vy *= -1;
-      }
-      ctx.lineWidth = 1;
-      for (i = 0; i < nodes.length; i++) {
-        for (j = i + 1; j < nodes.length; j++) {
-          a = nodes[i]; b = nodes[j]; d = Math.hypot(a.x - b.x, a.y - b.y);
-          if (d > 130) continue;
-          ctx.strokeStyle = 'rgba(' + line + ',' + (.1 * (1 - d / 130)).toFixed(3) + ')';
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-        }
-      }
-      spawn -= dt;
-      if (spawn <= 0 && !XR.reduce && nodes.length > 1) {
-        spawn = .35;
-        a = nodes[(Math.random() * nodes.length) | 0];
-        var near = nodes.filter(function (n) { return n !== a && Math.hypot(n.x - a.x, n.y - a.y) < 130; });
-        if (near.length) pulses.push({ a: a, b: near[(Math.random() * near.length) | 0], t: 0 });
-      }
-      ctx.fillStyle = 'rgba(' + col + ', .9)';
-      pulses = pulses.filter(function (p) {
-        p.t += dt * 1.4;
-        var x = p.a.x + (p.b.x - p.a.x) * p.t, y = p.a.y + (p.b.y - p.a.y) * p.t;
-        ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill();
-        return p.t < 1;
-      });
-      for (i = 0; i < nodes.length; i++) {
-        ctx.fillStyle = 'rgba(' + line + ', .22)';
-        ctx.beginPath(); ctx.arc(nodes[i].x, nodes[i].y, 1.6, 0, Math.PI * 2); ctx.fill();
-      }
-      requestAnimationFrame(tick);
-    }
-    start();
-  }
-
   /* ---------- sidebar (wide screens) ---------- */
   function buildShell() {
     var secs = CH.map(function (c) { return doc.getElementById(c.id); }).filter(Boolean);
@@ -124,7 +54,7 @@
       '<div class="ls-head"><div class="ls-ring" aria-hidden="true"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19"/><circle class="ls-arc" cx="22" cy="22" r="19" pathLength="100"/></svg><b data-lab-done>0</b></div>' +
       '<div><b>Demos tried</b><small><span data-lab-done>0</span> of 11 · tap any demo</small></div></div>' +
       '<ol class="ls-list">' + CH.map(function (c) {
-        return '<li><a href="#' + c.id + '" data-ch="' + c.id + '"><span class="ls-n">' + String(c.n).padStart(2, '0') + '</span>' + XR.icon(c.icon) + '<span class="ls-name">' + c.name + '</span><i class="ls-ok" aria-hidden="true">' + XR.icon('check') + '</i></a></li>';
+        return '<li><a href="#' + c.id + '" data-ch="' + c.id + '"><span class="ls-n">' + String(c.n).padStart(2, '0') + '</span><span class="ls-name">' + c.name + '</span><i class="ls-ok" aria-hidden="true">' + XR.icon('check') + '</i></a></li>';
       }).join('') + '</ol>' +
       '<div class="ls-acts"><button type="button" class="ls-focus">' + XR.icon('fullscreen') + '<span>Focus this demo</span><kbd>F</kbd></button>' +
       '<button type="button" class="ls-next">' + XR.icon('arrow-right') + '<span>Next demo</span><kbd>J</kbd></button></div>';
@@ -257,35 +187,28 @@
   }
 
 
-  /* ---------- chapter dress: accent colour, giant number, stage plate, "try this" hints ---------- */
+  /* ---------- chapter dress: accent colour and a margin note under each stage ---------- */
   var DRESS = {
-    web: ['#c4321d', ['Switch between the demo sites', 'Change the device size', 'Scroll inside the preview']],
-    automation: ['#2c6f65', ['Drag the workflow nodes', 'Press Run', 'Watch the log fill up']],
-    telegram: ['#2f6fe0', ['Type /help', 'Tap Catalog and buy something', 'Watch the admin panel update']],
-    extension: ['#b7862a', ['Toggle the popup switches', 'Change the highlight words', 'See the page change live']],
-    minecraft: ['#4d7424', ['Click the world to start', 'Mine, craft and build', 'Type /kit in the chat']],
-    desktop: ['#5f4f95', ['Run the EXE installer', 'Open the installed app', 'Drag the window around']],
-    mobile: ['#a4473a', ['Tap the bottom tabs', 'Open a product', 'Scroll the feed']],
-    'ai-agent': ['#5f4f95', ['Pick a preset goal', 'Switch tools on or off', 'Press Run and watch it work']],
-    'ai-chat': ['#c4321d', ['Ask about delivery time', 'Switch to বাংলা', 'Change the widget colour']],
-    ecommerce: ['#b7862a', ['Watch orders arrive', 'Follow the autopilot feed', 'See restocks happen on their own']],
-    crypto: ['#d9a441', ['Pick a coin', 'Press Simulate payment', 'Read the webhook log']]
+    web: ['#c4321d', 'switch between the demo sites, try the phone size, then scroll inside the preview.'],
+    automation: ['#2c6f65', 'drag a node somewhere else, press Run and read the log as it fills.'],
+    telegram: ['#2f6fe0', 'type /help, buy something from the catalog and watch the admin panel.'],
+    extension: ['#b7862a', 'flip the popup switches and change the highlight words. The page reacts at once.'],
+    minecraft: ['#4d7424', 'click the world, punch a tree, then type /kit in the chat.'],
+    desktop: ['#5f4f95', 'run the installer, open the app it installs and drag its window around.'],
+    mobile: ['#a4473a', 'tap the bottom tabs, open a product and scroll the feed.'],
+    'ai-agent': ['#5f4f95', 'pick a goal, switch one tool off, then press Run and watch the plan change.'],
+    'ai-chat': ['#c4321d', 'ask about delivery, switch to বাংলা, then change the widget colour.'],
+    ecommerce: ['#b7862a', 'do nothing for a minute. Orders, restocks and price changes arrive on their own.'],
+    crypto: ['#d9a441', 'pick a coin, press Simulate payment and read the webhook log.']
   };
+  var ARROW = '<svg class="arr" viewBox="0 0 44 34" aria-hidden="true"><path d="M4 31c9-2 19-9 25-24"/><path d="M22 10l7-4 3 8"/></svg>';
   function dress() {
     CH.forEach(function (c) {
       var sec = doc.getElementById(c.id), d = DRESS[c.id];
       if (!sec || !d) return;
       sec.style.setProperty('--ac', d[0]);
-      var info = $('.lab-info', sec);
-      if (info && !$('.lab-bignum', info)) info.insertAdjacentHTML('afterbegin', '<span class="lab-bignum" aria-hidden="true">' + String(c.n).padStart(2, '0') + '</span>');
-      var feats = $('.lab-feats', sec);
-      if (feats) feats.classList.add('lab-feats-grid');
       var win = $('.lab-win', sec);
-      if (win && !$('.lab-tips', win)) {
-        win.insertAdjacentHTML('beforeend', '<div class="lab-tips"><span>' + XR.icon('cursor') + 'Try this</span>' +
-          d[1].map(function (t, i) { return '<em><b>' + (i + 1) + '</b>' + XR.esc(t) + '</em>'; }).join('') + '</div>');
-        win.insertAdjacentHTML('afterbegin', '<i class="lab-plate" aria-hidden="true"></i>');
-      }
+      if (win && !$('.lab-note', win)) win.insertAdjacentHTML('beforeend', '<p class="lab-note">' + ARROW + '<span><b>Try it:</b> ' + XR.esc(d[1]) + '</span></p>');
     });
   }
 
@@ -293,7 +216,6 @@
     buildWindows();
     dress();
     buildShell();
-    heroNet();
     combo();
     paintProgress();
     var rnd = $('[data-lab-random]');
