@@ -186,3 +186,62 @@
   .lh-tiles a:hover::after { animation: none; }
   .lab-win.is-focus, .lw-backdrop { animation: none; }
 }
+
+/* ---------- chapter dress (accent colour per chapter) ---------- */
+.lab-sec { --ac: var(--red); overflow-x: clip; }
+.lab-sec .grad-text { color: var(--ac); }
+.lab-sec .lab-num .hanko { background: var(--ac); box-shadow: inset 0 0 0 2px var(--ac), inset 0 0 0 3.5px rgba(251, 241, 220, .75); }
+.lab-info { position: relative; }
+.lab-bignum {
+  position: absolute; right: 0; top: -.3em; z-index: -1; pointer-events: none; user-select: none;
+  font: 800 clamp(150px, 16vw, 260px)/1 var(--font-display); letter-spacing: -.04em;
+  color: transparent; -webkit-text-stroke: 1.5px color-mix(in srgb, var(--ac) 30%, transparent);
+}
+.lab-feats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.lab-feats-grid li {
+  align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; font-size: 13.5px; line-height: 1.35;
+  background: var(--surface); border: 1px solid var(--line); transition: border-color .3s, transform .4s var(--ease-out);
+}
+.lab-feats-grid li:hover { border-color: var(--ac); transform: translateY(-2px); }
+.lab-feats-grid .ic { margin: 0; width: 22px; height: 22px; padding: 4px; border-radius: 7px; color: #fff; background: var(--ac); stroke-width: 3; }
+.lab-sec .lab-price {
+  position: relative; overflow: hidden; gap: 0; padding: 0; border: 0; border-radius: 16px;
+  background: linear-gradient(135deg, var(--ac), color-mix(in srgb, var(--ac) 55%, #1f1813)); color: #fff; box-shadow: 0 20px 40px -24px var(--ac);
+}
+.lab-sec .lab-price > div { padding: 14px 22px; }
+.lab-sec .lab-price > div + div { border-left: 1px solid rgba(255, 255, 255, .22); }
+.lab-sec .lab-price small { color: rgba(255, 255, 255, .72); }
+.lab-sec .lab-price b { color: #fff; font-size: 24px; }
+.lab-sec .lab-price::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .22) 45%, transparent 60%); transform: translateX(-100%); animation: priceShine 4.5s var(--ease-in-out) infinite; pointer-events: none; }
+@keyframes priceShine { 60%, 100% { transform: translateX(100%); } }
+.lab-sec .lab-ctas .btn-primary, .lab-sec .lab-row .btn-primary { background: var(--ac); box-shadow: 0 14px 28px -14px var(--ac); }
+
+/* the stage plate: each demo stands on a lit pedestal */
+.lab-win { isolation: isolate; }
+.lab-plate {
+  position: absolute; z-index: -1; left: 4%; right: 4%; top: 18%; bottom: -6%; pointer-events: none;
+  border-radius: 40px;
+  background:
+    radial-gradient(60% 55% at 50% 45%, color-mix(in srgb, var(--ac) 30%, transparent), transparent 70%),
+    linear-gradient(rgba(var(--fx), .07) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, rgba(var(--fx), .07) 1px, transparent 1px) 0 0 / 28px 28px;
+  -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent); mask-image: radial-gradient(closest-side, #000 55%, transparent);
+  filter: saturate(1.2);
+}
+.lw-title .ic { color: var(--ac); }
+.lab-tips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 18px; }
+.lab-tips > span { display: inline-flex; align-items: center; gap: 6px; font: 600 11px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ac); }
+.lab-tips > span .ic { font-size: 14px; }
+.lab-tips em { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px 0 5px; border-radius: 999px; font: 500 12.5px/1 var(--font-body); font-style: normal; color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); }
+.lab-tips em b { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font: 700 11px/1 var(--font-mono); color: #fff; background: var(--ac); }
+.lab-win.is-focus .lab-plate { display: none; }
+.lab-win.is-focus .lab-tips { justify-content: center; }
+.lab-sec.is-tried-pulse .lw-done { animation: triedPop .6s var(--ease-spring); }
+@keyframes triedPop { 50% { transform: scale(1.25); } }
+@media (max-width: 760px) {
+  .lab-bignum { font-size: 120px; top: -.3em; }
+  .lab-feats-grid { grid-template-columns: minmax(0, 1fr); }
+  .lab-tips em { font-size: 12px; }
+  .lab-plate { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .lab-sec .lab-price::after { animation: none; } }

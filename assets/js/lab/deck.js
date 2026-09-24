@@ -256,8 +256,42 @@
     paint();
   }
 
+
+  /* ---------- chapter dress: accent colour, giant number, stage plate, "try this" hints ---------- */
+  var DRESS = {
+    web: ['#c4321d', ['Switch between the demo sites', 'Change the device size', 'Scroll inside the preview']],
+    automation: ['#2c6f65', ['Drag the workflow nodes', 'Press Run', 'Watch the log fill up']],
+    telegram: ['#2f6fe0', ['Type /help', 'Tap Catalog and buy something', 'Watch the admin panel update']],
+    extension: ['#b7862a', ['Toggle the popup switches', 'Change the highlight words', 'See the page change live']],
+    minecraft: ['#4d7424', ['Click the world to start', 'Mine, craft and build', 'Type /kit in the chat']],
+    desktop: ['#5f4f95', ['Run the EXE installer', 'Open the installed app', 'Drag the window around']],
+    mobile: ['#a4473a', ['Tap the bottom tabs', 'Open a product', 'Scroll the feed']],
+    'ai-agent': ['#5f4f95', ['Pick a preset goal', 'Switch tools on or off', 'Press Run and watch it work']],
+    'ai-chat': ['#c4321d', ['Ask about delivery time', 'Switch to বাংলা', 'Change the widget colour']],
+    ecommerce: ['#b7862a', ['Watch orders arrive', 'Follow the autopilot feed', 'See restocks happen on their own']],
+    crypto: ['#d9a441', ['Pick a coin', 'Press Simulate payment', 'Read the webhook log']]
+  };
+  function dress() {
+    CH.forEach(function (c) {
+      var sec = doc.getElementById(c.id), d = DRESS[c.id];
+      if (!sec || !d) return;
+      sec.style.setProperty('--ac', d[0]);
+      var info = $('.lab-info', sec);
+      if (info && !$('.lab-bignum', info)) info.insertAdjacentHTML('afterbegin', '<span class="lab-bignum" aria-hidden="true">' + String(c.n).padStart(2, '0') + '</span>');
+      var feats = $('.lab-feats', sec);
+      if (feats) feats.classList.add('lab-feats-grid');
+      var win = $('.lab-win', sec);
+      if (win && !$('.lab-tips', win)) {
+        win.insertAdjacentHTML('beforeend', '<div class="lab-tips"><span>' + XR.icon('cursor') + 'Try this</span>' +
+          d[1].map(function (t, i) { return '<em><b>' + (i + 1) + '</b>' + XR.esc(t) + '</em>'; }).join('') + '</div>');
+        win.insertAdjacentHTML('afterbegin', '<i class="lab-plate" aria-hidden="true"></i>');
+      }
+    });
+  }
+
   doc.addEventListener('DOMContentLoaded', function () {
     buildWindows();
+    dress();
     buildShell();
     heroNet();
     combo();

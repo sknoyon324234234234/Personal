@@ -151,4 +151,53 @@
       if (vis) vis.style.translate = (x * 18).toFixed(1) + 'px ' + (y * 12).toFixed(1) + 'px';
     });
   }
+
+  /* ---- services: filter tabs, 3D tilt with glare, price + delivery from the config ---- */
+  var bento = $('.bento');
+  if (bento) {
+    var MAP = { 's-web': ['web', 'web'], 's-agent': ['ai-agent', 'ai'], 's-auto': ['automation', 'bots'], 's-tg': ['telegram', 'bots'],
+      's-ext': ['extension', 'web'], 's-shop': ['ecommerce', 'shop'], 's-crypto': ['crypto', 'shop'], 's-mc': ['minecraft', 'bots'],
+      's-desk': ['desktop', 'web'], 's-mob': ['mobile', 'web'], 's-chat': ['ai-chat', 'ai'] };
+    var byId = {};
+    (XR.services || []).forEach(function (sv) { byId[sv.id] = sv; });
+    var cards = $$('.svc', bento);
+    cards.forEach(function (c, i) {
+      var key = Object.keys(MAP).filter(function (k) { return c.classList.contains(k); })[0], m = MAP[key];
+      if (!m) return;
+      c.setAttribute('data-cat', m[1]);
+      var sv = byId[m[0]], top = $('.svc-top', c);
+      if (top) top.insertAdjacentHTML('afterbegin', '<span class="svc-n">' + String(i + 1).padStart(2, '0') + '</span>');
+      if (top) top.insertAdjacentHTML('beforeend', '<span class="svc-live"><i></i>live</span>');
+      var more = $('.svc-more', c);
+      if (sv && more) more.insertAdjacentHTML('beforebegin', '<div class="svc-meta"><span><small>From</small><b>' + XR.fmtPrice(sv.priceFrom) + '</b></span><span><small>Delivery</small><b>' + XR.esc(sv.days) + ' days</b></span></div>');
+      c.insertAdjacentHTML('beforeend', '<i class="svc-glare" aria-hidden="true"></i>');
+    });
+    var cats = [['all', 'All eleven'], ['web', 'Web & apps'], ['bots', 'Bots & automation'], ['ai', 'AI'], ['shop', 'Commerce & payments']];
+    var bar = document.createElement('div');
+    bar.className = 'svc-filter';
+    bar.setAttribute('role', 'group');
+    bar.setAttribute('aria-label', 'Filter services');
+    bar.innerHTML = cats.map(function (c, i) {
+      var n = c[0] === 'all' ? cards.length : cards.filter(function (k) { return k.getAttribute('data-cat') === c[0]; }).length;
+      return '<button type="button" data-f="' + c[0] + '" aria-pressed="' + (i ? 'false' : 'true') + '">' + c[1] + '<em>' + n + '</em></button>';
+    }).join('');
+    bento.parentNode.insertBefore(bar, bento);
+    bar.addEventListener('click', function (e) {
+      var b = e.target.closest('button');
+      if (!b) return;
+      var f = b.getAttribute('data-f');
+      $$('button', bar).forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      bento.classList.toggle('is-filtered', f !== 'all');
+      cards.forEach(function (c) { c.classList.toggle('is-dim', f !== 'all' && c.getAttribute('data-cat') !== f); });
+    });
+    if (XR.fine && !XR.reduce) cards.forEach(function (c) {
+      c.addEventListener('pointermove', function (e) {
+        var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        c.style.setProperty('--gx', (x * 100).toFixed(1) + '%');
+        c.style.setProperty('--gy', (y * 100).toFixed(1) + '%');
+        c.style.transform = 'perspective(900px) rotateX(' + ((.5 - y) * 7).toFixed(2) + 'deg) rotateY(' + ((x - .5) * 9).toFixed(2) + 'deg) translateY(-4px)';
+      });
+      c.addEventListener('pointerleave', function () { c.style.transform = ''; });
+    });
+  }
 })();

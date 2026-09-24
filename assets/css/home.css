@@ -635,3 +635,47 @@ html:not(.js) .loader { display: none; }
   .crew-card.small { grid-template-columns: 110px minmax(0, 1fr); }
   .crew-info { padding: 20px; }
 }
+
+/* ---------- services upgrade: filters, tilt, glare, glowing border, price line ---------- */
+.svc-filter { display: flex; flex-wrap: wrap; gap: 8px; margin: -18px 0 26px; }
+.svc-filter button { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 999px; font: 600 13.5px/1 var(--font-body); color: var(--ink-2); border: 1px solid var(--line-2); background: var(--surface); transition: color .25s, background .25s, border-color .25s; }
+.svc-filter button:hover { color: var(--ink); border-color: var(--ink-3); }
+.svc-filter button em { min-width: 22px; height: 20px; padding: 0 6px; border-radius: 10px; display: grid; place-items: center; font: 600 11px/1 var(--font-mono); font-style: normal; color: var(--ink-3); background: rgba(var(--fx), .06); }
+.svc-filter button[aria-pressed="true"] { color: var(--on-red); background: var(--red); border-color: var(--red); }
+.svc-filter button[aria-pressed="true"] em { color: var(--red); background: var(--on-red); }
+
+.bento .svc { --gx: 50%; --gy: 0%; position: relative; transform-style: preserve-3d; transition: transform .5s var(--ease-out), opacity .45s var(--ease-out), filter .45s, border-color .4s, box-shadow .5s; }
+.bento .svc::after {
+  content: ''; position: absolute; inset: -1px; z-index: 2; border-radius: inherit; padding: 1.5px; pointer-events: none;
+  background: conic-gradient(from var(--svc-a, 0deg), transparent 0 55%, var(--red) 70%, var(--gold) 80%, transparent 92%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+          mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0; transition: opacity .4s;
+}
+.bento .svc:hover::after { opacity: 1; animation: svcSpin 3.2s linear infinite; }
+@property --svc-a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes svcSpin { to { --svc-a: 360deg; } }
+.svc-glare { position: absolute; inset: 0; z-index: 1; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .4s;
+  background: radial-gradient(360px circle at var(--gx) var(--gy), rgba(255, 255, 255, .5), transparent 55%); mix-blend-mode: soft-light; }
+.bento .svc:hover .svc-glare { opacity: 1; }
+.bento .svc:hover { box-shadow: 0 40px 70px -40px rgba(196, 50, 29, .45), var(--shadow); }
+.svc-top { gap: 12px; }
+.svc-n { font: 600 11px/1 var(--font-mono); letter-spacing: .14em; color: var(--ink-3); order: 0; }
+.svc-top .svc-ic { order: 1; }
+.svc-top .svc-jp { order: 3; margin-left: 0; }
+.svc-live { order: 2; margin-left: auto; display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 9px; border-radius: 999px; font: 600 10px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--lime); background: rgba(169, 196, 106, .12); }
+.svc-live i { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); animation: ping 2s infinite; }
+.svc-vis { transform: translateZ(26px); box-shadow: 0 18px 30px -24px rgba(0, 0, 0, .35); }
+.svc-meta { display: flex; gap: 22px; padding-top: 12px; border-top: 1px dashed var(--line-2); }
+.svc-meta small { display: block; margin-bottom: 3px; font: 500 10px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+.svc-meta b { font: 800 17px/1.1 var(--font-display); color: var(--ink); }
+.svc-meta span:first-child b { color: var(--red); }
+.s-chat .svc-meta { grid-column: 2; }
+.bento .svc.is-dim { opacity: .18; filter: grayscale(1) blur(1px); transform: scale(.97); pointer-events: none; }
+@media (max-width: 760px) {
+  .svc-filter { margin: -8px 0 16px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .svc-filter button { flex: none; }
+  .svc-live, .svc-n, .svc-glare { display: none; }
+  .bento .svc.is-dim { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .bento .svc:hover::after { animation: none; } }
