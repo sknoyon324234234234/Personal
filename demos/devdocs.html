@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kumo SDK Docs — Realtime in ten lines (demo site by Xiraiya)</title>
+<meta name="description" content="Demo developer documentation site designed and built by Xiraiya.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap"></noscript>
+<script>try{if(localStorage.getItem('kumo-theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
+<style>
+:root{--bg:#fff;--bg2:#f7f7f8;--bg3:#efeff1;--ink:#16161a;--ink2:#55555f;--ink3:#8a8a94;--line:#e6e6ea;--acc:#5b5bf0;--acc2:#4343d6;--acct:#eeeefe;--code:#0f0f14;--codeln:#26262e;--ok:#12a150;--okt:#e7f6ee;--warn:#b76e00;--warnt:#fff5e3;--err:#d93636;--errt:#fdecec;--k1:#c792ea;--k2:#89ddff;--k3:#c3e88d;--k4:#f78c6c;--k5:#676e95;--k6:#ffcb6b}
+[data-theme=dark]{--bg:#0c0c10;--bg2:#131318;--bg3:#1b1b22;--ink:#ececf1;--ink2:#a4a4b0;--ink3:#72727e;--line:#24242c;--acc:#8b8bff;--acc2:#a5a5ff;--acct:#1d1d38;--code:#08080b;--codeln:#1c1c24;--ok:#3ecf7c;--okt:#10261a;--warn:#f0a93a;--warnt:#2a1f0c;--err:#ff6b6b;--errt:#2c1313}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:84px}body{margin:0;font:400 15px/1.7 Geist,system-ui,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s;overflow-x:hidden}
+a{color:inherit;text-decoration:none}h1,h2,h3,p{margin:0}button,input,select{font:inherit;color:inherit}button{background:none;border:0;cursor:pointer}
+code,.mono{font-family:'Geist Mono',ui-monospace,monospace}
+svg.i{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* top */
+.top{position:sticky;top:0;z-index:30;height:64px;display:flex;align-items:center;gap:18px;padding:0 24px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:-.02em}
+.logo svg{width:28px;height:28px}
+.ver{height:30px;padding:0 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg2);font:500 12.5px 'Geist Mono',monospace;color:var(--ink2)}
+.tlinks{display:flex;gap:22px;margin-left:12px;font-size:14px;color:var(--ink2)}.tlinks a:hover,.tlinks a.on{color:var(--ink)}
+.sbtn{margin-left:auto;display:flex;align-items:center;gap:10px;width:260px;height:38px;padding:0 10px 0 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--ink3);font-size:14px;transition:border-color .2s}
+.sbtn:hover{border-color:var(--ink3)}.sbtn kbd{margin-left:auto}
+kbd{font:500 11.5px 'Geist Mono',monospace;padding:2px 6px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink2)}
+.icb{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);color:var(--ink2);transition:.2s}.icb:hover{color:var(--ink);background:var(--bg2)}
+.icb .moon{display:none}[data-theme=dark] .icb .sun{display:none}[data-theme=dark] .icb .moon{display:block}
+.burger{display:none}
+/* layout */
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr) 220px;max-width:1440px;margin:0 auto}
+.side{position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;padding:24px 16px 40px 24px;border-right:1px solid var(--line);scrollbar-width:thin}
+.grp{margin-bottom:10px}
+.grp>button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:6px 8px;font-size:13px;font-weight:600;color:var(--ink)}
+.grp>button svg{transition:transform .3s;width:14px;height:14px}
+.grp.closed>button svg{transform:rotate(-90deg)}
+.grp .gl{display:grid;grid-template-rows:1fr;transition:grid-template-rows .35s cubic-bezier(.16,1,.3,1)}
+.grp .gl>ul{list-style:none;overflow:hidden;min-height:0;margin:2px 0 0 10px;padding:0 0 0 8px;border-left:1px solid var(--line)}
+.grp.closed .gl{grid-template-rows:0fr}
+.grp li a{display:flex;align-items:center;gap:8px;padding:5px 10px;margin-left:-9px;border-left:1px solid transparent;font-size:14px;color:var(--ink2);transition:color .2s,border-color .2s}
+.grp li a:hover{color:var(--ink)}
+.grp li a.on{color:var(--acc);border-color:var(--acc);font-weight:500}
+.badge{font:600 10px 'Geist Mono',monospace;padding:1px 6px;border-radius:99px;background:var(--acct);color:var(--acc)}
+.badge.new{background:var(--okt);color:var(--ok)}
+/* article */
+article{padding:40px 56px 80px;min-width:0;max-width:860px}
+.crumb{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ink3);margin-bottom:14px}
+h1{font-size:40px;font-weight:700;letter-spacing:-.035em;line-height:1.1}
+.lead{margin:14px 0 26px;font-size:18px;color:var(--ink2);max-width:640px}
+article h2{margin:54px 0 14px;font-size:25px;font-weight:650;letter-spacing:-.025em;display:flex;align-items:center;gap:8px}
+article h3{margin:30px 0 10px;font-size:18px;font-weight:600}
+article h2 .anc,article h3 .anc{opacity:0;color:var(--ink3);font-weight:400;transition:opacity .2s}
+article h2:hover .anc,article h3:hover .anc{opacity:1}
+article p{margin:12px 0;color:var(--ink2)}
+article p code,td code,li code{padding:1.5px 6px;border-radius:6px;background:var(--bg3);color:var(--ink);font-size:.86em}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}.meta span{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:99px;border:1px solid var(--line);font-size:12.5px;color:var(--ink2)}
+.meta i{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px var(--okt);animation:blink 2s infinite}@keyframes blink{50%{opacity:.4}}
+/* callouts */
+.co{display:flex;gap:12px;margin:20px 0;padding:14px 16px;border-radius:12px;border:1px solid;font-size:14.5px}
+.co svg{margin-top:3px}.co p{margin:0;color:inherit}.co b{display:block;margin-bottom:2px}
+.co.note{background:var(--acct);border-color:color-mix(in srgb,var(--acc) 30%,transparent);color:var(--ink)}.co.note svg{color:var(--acc)}
+.co.warn{background:var(--warnt);border-color:color-mix(in srgb,var(--warn) 30%,transparent)}.co.warn svg{color:var(--warn)}
+.co.tip{background:var(--okt);border-color:color-mix(in srgb,var(--ok) 30%,transparent)}.co.tip svg{color:var(--ok)}
+/* code */
+.cb{margin:18px 0;border-radius:14px;overflow:hidden;background:var(--code);border:1px solid var(--codeln)}
+.cb-h{display:flex;align-items:center;gap:4px;height:42px;padding:0 8px 0 6px;border-bottom:1px solid var(--codeln)}
+.cb-h .fn{padding:0 10px;font:500 12.5px 'Geist Mono',monospace;color:#9a9aa8}
+.cb-h .t{height:30px;padding:0 12px;border-radius:8px;font:500 12.5px 'Geist Mono',monospace;color:#8a8a98;transition:.2s}
+.cb-h .t:hover{color:#e6e6ee}
+.cb-h .t[aria-selected="true"]{background:#1e1e28;color:#fff}
+.copy{margin-left:auto;display:flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:8px;color:#9a9aa8;font-size:12.5px;transition:.2s}
+.copy:hover{background:#1e1e28;color:#fff}.copy.ok{color:#3ecf7c}
+pre{margin:0;padding:16px 18px;overflow-x:auto;font:400 13.5px/1.75 'Geist Mono',monospace;color:#e4e4ec;counter-reset:ln;scrollbar-width:thin}
+pre .l{display:block;padding-left:0}
+pre.num .l::before{counter-increment:ln;content:counter(ln);display:inline-block;width:26px;margin-right:14px;text-align:right;color:#4b4b58}
+pre .hl{background:rgba(139,139,255,.12);margin:0 -18px;padding:0 18px;box-shadow:inset 3px 0 0 #8b8bff}
+.k{color:var(--k1)}.f{color:var(--k2)}.s{color:var(--k3)}.n{color:var(--k4)}.c{color:var(--k5);font-style:italic}.y{color:var(--k6)}
+/* steps */
+.steps{counter-reset:st;margin:20px 0;padding-left:0;list-style:none}
+.steps>li{position:relative;padding:0 0 18px 44px;border-left:1px solid var(--line);margin-left:14px;padding-left:30px}
+.steps>li:last-child{border-color:transparent}
+.steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:-15px;top:-2px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--bg3);border:1px solid var(--line);font:600 13px 'Geist Mono',monospace}
+.steps>li b{display:block;font-weight:600;margin-bottom:2px}
+.steps>li>p{margin:2px 0 0}
+/* table */
+.tbl{margin:18px 0;border:1px solid var(--line);border-radius:12px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;padding:10px 14px;background:var(--bg2);font-weight:600;font-size:12.5px;color:var(--ink2);border-bottom:1px solid var(--line)}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}tr:last-child td{border:0}
+td:first-child code{color:var(--acc);background:var(--acct)}
+.req{font:600 10.5px 'Geist Mono',monospace;color:var(--err);margin-left:6px}
+/* try it */
+.try{margin:18px 0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.try-h{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg2);border-bottom:1px solid var(--line);font:500 13px 'Geist Mono',monospace}
+.mth{padding:2px 8px;border-radius:6px;background:var(--okt);color:var(--ok);font-weight:600}
+.try-b{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.try-f{padding:16px;display:grid;gap:12px;align-content:start;border-right:1px solid var(--line)}
+.try-f label{display:grid;gap:6px;font-size:12.5px;font-weight:500;color:var(--ink2)}
+.try-f input,.try-f select{height:38px;padding:0 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);outline:0;font:400 13.5px 'Geist Mono',monospace;transition:border-color .2s,box-shadow .2s}
+.try-f input:focus,.try-f select:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acct)}
+.run{display:flex;align-items:center;justify-content:center;gap:8px;height:40px;border-radius:10px;background:var(--ink);color:var(--bg);font-weight:600;transition:transform .2s}
+.run:hover{transform:translateY(-1px)}
+.run:disabled{opacity:.6}
+.try-o{background:var(--code);min-height:260px;display:flex;flex-direction:column}
+.try-o .st{display:flex;gap:12px;padding:10px 16px;border-bottom:1px solid var(--codeln);font:500 12px 'Geist Mono',monospace;color:#8a8a98}
+.try-o .st b{color:#3ecf7c}
+.try-o pre{flex:1}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:sp .7s linear infinite}@keyframes sp{to{transform:rotate(1turn)}}
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.cards a{display:block;padding:16px 18px;border:1px solid var(--line);border-radius:14px;transition:border-color .25s,transform .25s,background .25s}
+.cards a:hover{border-color:var(--acc);transform:translateY(-2px);background:var(--bg2)}
+.cards b{display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:4px}.cards span{font-size:13.5px;color:var(--ink2)}
+.cards svg{color:var(--acc)}
+/* foot */
+.help{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:56px;padding-top:22px;border-top:1px solid var(--line);font-size:14px;color:var(--ink2)}
+.help button{display:flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:9px;border:1px solid var(--line);transition:.2s}
+.help button:hover{background:var(--bg2);color:var(--ink)}
+.help button[aria-pressed="true"]{border-color:var(--acc);color:var(--acc);background:var(--acct)}
+.help .edit{margin-left:auto;display:flex;align-items:center;gap:6px}
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+.pn a{padding:14px 18px;border:1px solid var(--line);border-radius:14px;transition:border-color .2s}.pn a:hover{border-color:var(--acc)}
+.pn small{display:block;font-size:12.5px;color:var(--ink3)}.pn b{font-weight:600;color:var(--acc)}.pn a:last-child{text-align:right}
+/* toc */
+.toc{position:sticky;top:64px;height:calc(100vh - 64px);padding:40px 20px 20px 10px;font-size:13.5px}
+.toc h6{margin:0 0 10px;font-size:12.5px;font-weight:600;color:var(--ink)}
+.toc a{position:relative;display:block;padding:4px 0 4px 12px;color:var(--ink3);border-left:1px solid var(--line);transition:color .2s}
+.toc a.sub{padding-left:24px}
+.toc a:hover{color:var(--ink)}
+.toc .mk{position:absolute;left:0;width:2px;border-radius:2px;background:var(--acc);transition:top .35s cubic-bezier(.16,1,.3,1),height .35s cubic-bezier(.16,1,.3,1)}
+.toc a.on{color:var(--acc)}
+.prog{margin-top:18px;height:4px;border-radius:99px;background:var(--bg3);overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--acc);border-radius:99px}
+.toc .top2{display:flex;align-items:center;gap:6px;margin-top:14px;color:var(--ink3)}
+/* search modal */
+.sm{position:fixed;inset:0;z-index:60;display:flex;justify-content:center;align-items:flex-start;padding:12vh 16px 16px;background:rgba(8,8,12,.45);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .2s}
+.sm.on{opacity:1;pointer-events:auto}
+.sbox{width:min(620px,100%);border-radius:16px;background:var(--bg);border:1px solid var(--line);box-shadow:0 40px 80px -20px rgba(0,0,0,.45);overflow:hidden;transform:scale(.97) translateY(-8px);transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.sm.on .sbox{transform:none}
+.sin{display:flex;align-items:center;gap:12px;padding:0 16px;height:56px;border-bottom:1px solid var(--line)}
+.sin input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:16px}
+.sres{max-height:52vh;overflow-y:auto;padding:8px}
+.sres h6{margin:10px 10px 4px;font-size:11.5px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em}
+.sres a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px}
+.sres a i{display:grid;place-items:center;width:32px;height:32px;border-radius:8px;border:1px solid var(--line);color:var(--ink2);flex:none}
+.sres a b{display:block;font-weight:500;font-size:14.5px}.sres a small{font-size:12.5px;color:var(--ink3)}
+.sres a.hl{background:var(--acct)}.sres a.hl i{border-color:var(--acc);color:var(--acc)}
+.sres mark{background:none;color:var(--acc);font-weight:600}
+.sfoot{display:flex;gap:16px;padding:10px 16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink3)}
+.toast{position:fixed;left:50%;bottom:24px;z-index:70;transform:translate(-50%,220%);padding:11px 18px;border-radius:12px;background:var(--ink);color:var(--bg);font-size:13.5px;font-weight:500;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.toast.on{transform:translate(-50%,0)}
+.by{position:fixed;right:14px;bottom:14px;z-index:40;padding:7px 12px;border-radius:999px;background:var(--ink);color:var(--bg);font:600 12px Geist,sans-serif}.by b{color:var(--acc)}
+.scrim{display:none}
+@media(max-width:1200px){.layout{grid-template-columns:240px minmax(0,1fr)}.toc{display:none}}
+@media(max-width:860px){.layout{grid-template-columns:minmax(0,1fr)}.tlinks{display:none}.burger{display:grid}.sbtn{width:auto;margin-left:auto}.sbtn span,.sbtn kbd{display:none}
+.side{position:fixed;left:0;top:64px;bottom:0;z-index:25;width:280px;height:auto;background:var(--bg);transform:translateX(-100%);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+body.nav .side{transform:none}body.nav .scrim{display:block;position:fixed;inset:64px 0 0;z-index:24;background:rgba(0,0,0,.35)}
+article{padding:28px 18px 80px}.try-b,.cards,.pn{grid-template-columns:minmax(0,1fr)}.try-f{border-right:0;border-bottom:1px solid var(--line)}h1{font-size:32px}.lead{font-size:16.5px}.top{padding:0 14px;gap:10px}.ver{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="srch" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+  <symbol id="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+  <symbol id="warn" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></symbol>
+  <symbol id="bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V16h8v-1.3A7 7 0 0 0 12 2z"/></symbol>
+  <symbol id="doc" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/></symbol>
+  <symbol id="hash" viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></symbol>
+  <symbol id="play" viewBox="0 0 24 24"><path d="m6 4 14 8-14 8z"/></symbol>
+  <symbol id="up" viewBox="0 0 24 24"><path d="M7 10v11M3 10h4v11H3zM7 10l4-7a2 2 0 0 1 3 2l-1 5h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 21H7"/></symbol>
+  <symbol id="menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+  <symbol id="globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+  <symbol id="edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+</svg>
+
+<header class="top">
+  <button class="icb burger" type="button" id="burger" aria-label="Open navigation"><svg class="i"><use href="#menu"/></svg></button>
+  <a class="logo" href="#"><svg viewBox="0 0 28 28"><rect width="28" height="28" rx="8" fill="#5b5bf0"/><path d="M7 17.5a4 4 0 0 1 1.2-7.8 5.5 5.5 0 0 1 10.6 1.3 3.3 3.3 0 0 1 .7 6.5z" fill="#fff"/></svg>Kumo</a>
+  <select class="ver" aria-label="Version"><option>v3.2</option><option>v3.1</option><option>v2.x</option></select>
+  <nav class="tlinks"><a class="on" href="#">Docs</a><a href="#api">API</a><a href="#guides">Guides</a><a href="#changelog">Changelog</a></nav>
+  <button class="sbtn" type="button" id="openS"><svg class="i"><use href="#srch"/></svg><span>Search docs</span><kbd>Ctrl K</kbd></button>
+  <button class="icb" type="button" id="theme" aria-label="Toggle dark mode"><svg class="i sun"><use href="#sun"/></svg><svg class="i moon"><use href="#moon"/></svg></button>
+</header>
+
+<div class="layout">
+  <aside class="side" id="side" aria-label="Docs navigation">
+    <div class="grp"><button type="button">Getting started<svg class="i"><use href="#chev"/></svg></button><div class="gl"><ul>
+      <li><a href="#intro" class="on">Introduction</a></li><li><a href="#install">Installation</a></li><li><a href="#quick">Quickstart</a></li><li><a href="#auth">Authentication</a></li></ul></div></div>
+    <div class="grp"><button type="button">Core concepts<svg class="i"><use href="#chev"/></svg></button><div class="gl"><ul>
+      <li><a href="#channels">Channels</a></li><li><a href="#presence">Presence <span class="badge new">new</span></a></li><li><a href="#history">Message history</a></li><li><a href="#edge">Edge regions</a></li></ul></div></div>
+    <div class="grp" id="api"><button type="button">API reference<svg class="i"><use href="#chev"/></svg></button><div class="gl"><ul>
+      <li><a href="#publish">publish()</a></li><li><a href="#subscribe">subscribe()</a></li><li><a href="#try">Try it live</a></li><li><a href="#errors">Errors</a></li></ul></div></div>
+    <div class="grp closed" id="guides"><button type="button">Guides<svg class="i"><use href="#chev"/></svg></button><div class="gl"><ul>
+      <li><a href="#quick">Build a chat app</a></li><li><a href="#presence">Live cursors</a></li><li><a href="#edge">Multiplayer games</a></li><li><a href="#auth">Telegram bot bridge <span class="badge">beta</span></a></li></ul></div></div>
+    <div class="grp closed" id="changelog"><button type="button">Changelog<svg class="i"><use href="#chev"/></svg></button><div class="gl"><ul>
+      <li><a href="#intro">v3.2 · Presence</a></li><li><a href="#intro">v3.1 · Edge regions</a></li><li><a href="#intro">v3.0 · New client</a></li></ul></div></div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <article id="art">
+    <div class="crumb">Docs <svg class="i" style="width:13px;transform:rotate(-90deg)"><use href="#chev"/></svg> Getting started</div>
+    <h1 id="intro">Realtime in ten lines</h1>
+    <p class="lead">Kumo is a realtime messaging SDK. Open a channel, publish a message, and every connected client gets it in under 50 milliseconds, anywhere on earth.</p>
+    <div class="meta"><span><i></i>All systems normal</span><span class="mono">v3.2.0</span><span>Updated 2 days ago</span><span>6 min read</span></div>
+    <div class="cards">
+      <a href="#quick"><b><svg class="i"><use href="#bolt"/></svg>Quickstart</b><span>Send your first message in two minutes.</span></a>
+      <a href="#try"><b><svg class="i"><use href="#play"/></svg>Try it live</b><span>Call the API from this page. No signup.</span></a>
+      <a href="#auth"><b><svg class="i"><use href="#lock"/></svg>Authentication</b><span>Tokens, scopes and short-lived keys.</span></a>
+      <a href="#edge"><b><svg class="i"><use href="#globe"/></svg>Edge regions</b><span>41 regions. Pick one or let us route.</span></a>
+    </div>
+
+    <h2 id="install">Installation <a class="anc" href="#install">#</a></h2>
+    <p>Kumo works in the browser, Node 18+, Bun, Deno and React Native. Pick your package manager.</p>
+    <div class="cb" data-tabs>
+      <div class="cb-h" role="tablist"><button class="t" role="tab" aria-selected="true" data-v="npm install @kumo/sdk">npm</button><button class="t" role="tab" aria-selected="false" data-v="yarn add @kumo/sdk">yarn</button><button class="t" role="tab" aria-selected="false" data-v="pnpm add @kumo/sdk">pnpm</button><button class="t" role="tab" aria-selected="false" data-v="bun add @kumo/sdk">bun</button><button class="copy" type="button"><svg class="i"><use href="#copy"/></svg>Copy</button></div>
+      <pre><span class="l"><span class="c">$</span> <span class="cmd">npm install @kumo/sdk</span></span></pre>
+    </div>
+    <div class="co tip"><svg class="i"><use href="#bulb"/></svg><p><b>Tip</b>The SDK is 9.4 kB gzipped and has zero dependencies. It will not slow your bundle down.</p></div>
+
+    <h2 id="quick">Quickstart <a class="anc" href="#quick">#</a></h2>
+    <ol class="steps">
+      <li><b>Create a client</b><p>Grab a publishable key from the dashboard. It is safe to ship in frontend code.</p></li>
+      <li><b>Join a channel</b><p>Channels are created on first use. Name them anything, like <code>room:lobby</code>.</p></li>
+      <li><b>Publish and subscribe</b><p>Every subscriber receives the message, including the sender.</p></li>
+    </ol>
+    <div class="cb"><div class="cb-h"><span class="fn">chat.ts</span><button class="copy" type="button"><svg class="i"><use href="#copy"/></svg>Copy</button></div>
+<pre class="num"><span class="l"><span class="k">import</span> { <span class="y">Kumo</span> } <span class="k">from</span> <span class="s">'@kumo/sdk'</span></span><span class="l"> </span><span class="l hl"><span class="k">const</span> kumo <span class="k">=</span> <span class="k">new</span> <span class="f">Kumo</span>({ key: <span class="s">'pk_live_7c1e...'</span>, region: <span class="s">'auto'</span> })</span><span class="l hl"><span class="k">const</span> room <span class="k">=</span> kumo.<span class="f">channel</span>(<span class="s">'room:lobby'</span>)</span><span class="l"> </span><span class="l">room.<span class="f">subscribe</span>(<span class="s">'message'</span>, (msg) <span class="k">=&gt;</span> {</span><span class="l">  console.<span class="f">log</span>(msg.data.text, <span class="s">'from'</span>, msg.clientId)</span><span class="l">})</span><span class="l"> </span><span class="l"><span class="k">await</span> room.<span class="f">publish</span>(<span class="s">'message'</span>, { text: <span class="s">'Hello from Rajshahi'</span> })</span><span class="l"><span class="c">// latency p50: 38 ms, p99: 91 ms</span></span></pre></div>
+    <div class="co note"><svg class="i"><use href="#info"/></svg><p><b>Note</b>Highlighted lines are the only ones you need. The rest is your app.</p></div>
+
+    <h2 id="auth">Authentication <a class="anc" href="#auth">#</a></h2>
+    <p>Publishable keys can subscribe. To publish from untrusted clients, mint a short-lived token on your server with the scopes the user needs.</p>
+    <div class="cb"><div class="cb-h"><span class="fn">server.js</span><button class="copy" type="button"><svg class="i"><use href="#copy"/></svg>Copy</button></div>
+<pre class="num"><span class="l"><span class="k">const</span> token <span class="k">=</span> <span class="k">await</span> kumo.auth.<span class="f">createToken</span>({</span><span class="l">  clientId: user.id,</span><span class="l">  scopes: [<span class="s">'room:*:publish'</span>, <span class="s">'room:*:presence'</span>],</span><span class="l">  ttl: <span class="n">3600</span> <span class="c">// seconds</span></span><span class="l">})</span></pre></div>
+    <div class="co warn"><svg class="i"><use href="#warn"/></svg><p><b>Warning</b>Never ship a secret key (<code>sk_</code>) to the browser. Anyone could publish as you.</p></div>
+
+    <h2 id="channels">Channels <a class="anc" href="#channels">#</a></h2>
+    <p>A channel is a named stream of messages. Names use colons for namespaces, and scopes can match with wildcards like <code>room:*</code>.</p>
+    <h3 id="presence">Presence <a class="anc" href="#presence">#</a></h3>
+    <p>Presence tells you who is in a channel right now. Use it for online dots, live cursors and "typing" hints.</p>
+    <h3 id="history">Message history <a class="anc" href="#history">#</a></h3>
+    <p>Channels keep the last 24 hours of messages by default. Call <code>room.history({ limit: 50 })</code> to backfill a chat window.</p>
+    <h3 id="edge">Edge regions <a class="anc" href="#edge">#</a></h3>
+    <p>Kumo runs in 41 regions. With <code>region: 'auto'</code>, each client connects to the closest one and messages cross the backbone, not the public internet.</p>
+
+    <h2 id="publish">publish() <a class="anc" href="#publish">#</a></h2>
+    <p>Sends a message to every subscriber of the channel. Returns when the message is stored in at least two regions.</p>
+    <div class="tbl"><table><thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>event</code><span class="req">required</span></td><td class="mono">string</td><td>Event name. Subscribers filter by it.</td></tr>
+      <tr><td><code>data</code><span class="req">required</span></td><td class="mono">object</td><td>Any JSON value up to 64 kB.</td></tr>
+      <tr><td><code>ttl</code></td><td class="mono">number</td><td>Seconds to keep in history. Default <code>86400</code>.</td></tr>
+      <tr><td><code>echo</code></td><td class="mono">boolean</td><td>Deliver to the sender too. Default <code>true</code>.</td></tr>
+    </tbody></table></div>
+    <h2 id="subscribe">subscribe() <a class="anc" href="#subscribe">#</a></h2>
+    <p>Registers a listener. Returns an <code>unsubscribe</code> function. Reconnects and replays missed messages for you.</p>
+
+    <h2 id="try">Try it live <a class="anc" href="#try">#</a></h2>
+    <p>This runs against a simulated sandbox right in your browser. Change the fields and press Send.</p>
+    <div class="try">
+      <div class="try-h"><span class="mth">POST</span><span id="ep">/v3/channels/room:lobby/messages</span></div>
+      <div class="try-b">
+        <form class="try-f" id="tryf">
+          <label>Channel<input id="tch" value="room:lobby" spellcheck="false"></label>
+          <label>Event<input id="tev" value="message" spellcheck="false"></label>
+          <label>Text<input id="ttx" value="Hello from the docs" spellcheck="false"></label>
+          <label>Region<select id="trg"><option value="auto">auto</option><option>ap-south-1 (Mumbai)</option><option>ap-southeast-1 (Singapore)</option><option>eu-west-1 (Dublin)</option><option>us-east-1 (Virginia)</option></select></label>
+          <button class="run" type="submit" id="runB"><svg class="i"><use href="#play"/></svg>Send request</button>
+        </form>
+        <div class="try-o"><div class="st" id="tst"><span>Waiting for a request</span></div><pre id="tout"><span class="c">// Response appears here</span></pre></div>
+      </div>
+    </div>
+
+    <h2 id="errors">Errors <a class="anc" href="#errors">#</a></h2>
+    <div class="tbl"><table><thead><tr><th>Code</th><th>Meaning</th><th>What to do</th></tr></thead><tbody>
+      <tr><td><code>401</code></td><td>Missing or expired token</td><td>Mint a fresh token on your server.</td></tr>
+      <tr><td><code>403</code></td><td>Token lacks the scope</td><td>Add <code>channel:publish</code> to scopes.</td></tr>
+      <tr><td><code>413</code></td><td>Message over 64 kB</td><td>Send a URL to the blob instead.</td></tr>
+      <tr><td><code>429</code></td><td>Rate limit hit</td><td>Back off. The SDK retries with jitter.</td></tr>
+    </tbody></table></div>
+
+    <div class="help"><span>Was this page helpful?</span><button type="button" data-h="y" aria-pressed="false"><svg class="i"><use href="#up"/></svg>Yes</button><button type="button" data-h="n" aria-pressed="false"><svg class="i" style="transform:scaleY(-1)"><use href="#up"/></svg>No</button><a class="edit" href="#" id="editL"><svg class="i"><use href="#edit"/></svg>Edit this page</a></div>
+    <div class="pn"><a href="#intro"><small>Previous</small><b>Overview</b></a><a href="#channels"><small>Next</small><b>Channels</b></a></div>
+  </article>
+
+  <aside class="toc" aria-label="On this page"><h6>On this page</h6><div id="tocL" style="position:relative"></div><div class="prog"><i id="prog"></i></div><a class="top2" href="#intro" style="border:0;padding-left:0">Back to top</a></aside>
+</div>
+
+<div class="sm" id="sm" aria-hidden="true"><div class="sbox" role="dialog" aria-modal="true" aria-label="Search docs">
+  <div class="sin"><svg class="i"><use href="#srch"/></svg><input id="sq" placeholder="Search docs, APIs, guides" aria-label="Search" autocomplete="off"><kbd>Esc</kbd></div>
+  <div class="sres" id="sres"></div>
+  <div class="sfoot"><span><kbd>↑</kbd> <kbd>↓</kbd> to move</span><span><kbd>Enter</kbd> to open</span><span><kbd>Esc</kbd> to close</span></div>
+</div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<a class="by" href="../index.html" target="_top">Demo by <b>Xiraiya</b></a>
+
+<script>
+(function(){
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function toast(t){var el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('on')},2200)}
+/* theme */
+$('#theme').addEventListener('click',function(){var d=document.documentElement,dark=d.dataset.theme!=='dark';if(dark)d.dataset.theme='dark';else delete d.dataset.theme;try{localStorage.setItem('kumo-theme',dark?'dark':'light')}catch(e){}});
+/* sidebar */
+$$('.grp>button').forEach(function(b){b.setAttribute('aria-expanded',!b.parentNode.classList.contains('closed'));b.addEventListener('click',function(){var c=b.parentNode.classList.toggle('closed');b.setAttribute('aria-expanded',!c)})});
+$('#burger').addEventListener('click',function(){document.body.classList.toggle('nav')});$('#scrim').addEventListener('click',function(){document.body.classList.remove('nav')});
+$('#side').addEventListener('click',function(e){if(e.target.closest('a'))document.body.classList.remove('nav')});
+/* copy */
+function copyText(t,btn){var done=function(){btn.classList.add('ok');btn.innerHTML='<svg class="i"><use href="#check"/></svg>Copied';setTimeout(function(){btn.classList.remove('ok');btn.innerHTML='<svg class="i"><use href="#copy"/></svg>Copy'},1600)};
+  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(done,done);else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove();done()}}
+$$('.copy').forEach(function(b){b.addEventListener('click',function(){var pre=b.closest('.cb').querySelector('pre');copyText(pre.innerText.replace(/^\$ /,''),b)})});
+/* package tabs */
+$$('[data-tabs]').forEach(function(cb){$$('.t',cb).forEach(function(t){t.addEventListener('click',function(){$$('.t',cb).forEach(function(x){x.setAttribute('aria-selected',x===t)});$('.cmd',cb).textContent=t.dataset.v;try{localStorage.setItem('kumo-pm',t.textContent)}catch(e){}})})});
+try{var pm=localStorage.getItem('kumo-pm');if(pm)$$('[data-tabs] .t').forEach(function(t){if(t.textContent===pm)t.click()})}catch(e){}
+/* toc + scrollspy */
+var heads=$$('article h2, article h3'),tocL=$('#tocL');
+tocL.innerHTML='<span class="mk" id="mk"></span>'+heads.map(function(h){return '<a href="#'+h.id+'" class="'+(h.tagName==='H3'?'sub':'')+'">'+h.firstChild.textContent.trim()+'</a>'}).join('');
+var tocA=$$('a',tocL),mk=$('#mk'),sideA=$$('.side a');
+function spy(){var y=scrollY+120,cur=0;heads.forEach(function(h,i){if(h.offsetTop<=y)cur=i});if(innerHeight+scrollY>=document.body.scrollHeight-4)cur=heads.length-1;
+  tocA.forEach(function(a,i){a.classList.toggle('on',i===cur)});var a=tocA[cur];if(a){mk.style.top=a.offsetTop+'px';mk.style.height=a.offsetHeight+'px'}
+  var id=heads[cur].id,hit=false;if(scrollY<200)id='intro';sideA.forEach(function(x){var on=!hit&&x.getAttribute('href')==='#'+id;if(on)hit=true;x.classList.toggle('on',on)});
+  var max=document.body.scrollHeight-innerHeight;$('#prog').style.width=(max>0?scrollY/max*100:0)+'%'}
+addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);spy();
+/* search */
+var IDX=heads.map(function(h){var p=h.nextElementSibling;return{t:h.firstChild.textContent.trim(),id:h.id,s:(p&&p.tagName==='P'?p.textContent:'').slice(0,80),g:h.tagName==='H2'?'Pages':'Sections'}}).concat([{t:'createToken()',id:'auth',s:'Mint short-lived tokens with scopes',g:'API'},{t:'history()',id:'history',s:'Backfill the last 24 hours',g:'API'},{t:'Rate limits',id:'errors',s:'429 and retry with jitter',g:'API'},{t:'React Native',id:'install',s:'Works out of the box with Hermes',g:'Guides'},{t:'Live cursors',id:'presence',s:'Show where everyone is pointing',g:'Guides'}]);
+var sm=$('#sm'),sq=$('#sq'),sres=$('#sres'),hi=0,list=[];
+function esc(s){return s.replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})}
+function mark(s,q){if(!q)return esc(s);var i=s.toLowerCase().indexOf(q);return i<0?esc(s):esc(s.slice(0,i))+'<mark>'+esc(s.slice(i,i+q.length))+'</mark>'+esc(s.slice(i+q.length))}
+function sdraw(){var q=sq.value.trim().toLowerCase();list=IDX.filter(function(x){return !q||(x.t+' '+x.s).toLowerCase().indexOf(q)>-1}).slice(0,9);hi=0;var g='',h='';
+  list.forEach(function(x,i){if(x.g!==g){g=x.g;h+='<h6>'+g+'</h6>'}h+='<a href="#'+x.id+'" data-i="'+i+'" class="'+(i===0?'hl':'')+'"><i><svg class="i"><use href="#'+(x.g==='API'?'hash':'doc')+'"/></svg></i><span><b>'+mark(x.t,q)+'</b><small>'+mark(x.s||'Jump to section',q)+'</small></span></a>'});
+  sres.innerHTML=h||'<p style="padding:24px;text-align:center;color:var(--ink3)">No results for "'+esc(q)+'". Try "token" or "presence".</p>'}
+function sopen(){sm.classList.add('on');sm.setAttribute('aria-hidden','false');sq.value='';sdraw();setTimeout(function(){sq.focus()},30)}
+function sclose(){sm.classList.remove('on');sm.setAttribute('aria-hidden','true')}
+function hl(n){var a=$$('a',sres);if(!a.length)return;hi=(n+a.length)%a.length;a.forEach(function(x,i){x.classList.toggle('hl',i===hi)});a[hi].scrollIntoView({block:'nearest'})}
+$('#openS').addEventListener('click',sopen);sq.addEventListener('input',sdraw);
+sm.addEventListener('click',function(e){if(e.target===sm)sclose();if(e.target.closest('.sres a'))sclose()});
+sres.addEventListener('mousemove',function(e){var a=e.target.closest('a');if(a&&+a.dataset.i!==hi)hl(+a.dataset.i)});
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();sm.classList.contains('on')?sclose():sopen();return}
+  if(e.key==='/'&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();sopen();return}
+  if(!sm.classList.contains('on'))return;if(e.key==='Escape')sclose();if(e.key==='ArrowDown'){e.preventDefault();hl(hi+1)}if(e.key==='ArrowUp'){e.preventDefault();hl(hi-1)}
+  if(e.key==='Enter'){var a=$$('a',sres)[hi];if(a){e.preventDefault();sclose();location.hash=a.getAttribute('href')}}});
+/* try it */
+function jsonHL(o){return esc(JSON.stringify(o,null,2)).replace(/(&quot;|")([^"]+)\1(?=:)/g,'<span class="f">"$2"</span>').replace(/: "([^"]*)"/g,': <span class="s">"$1"</span>').replace(/: (\d+\.?\d*)/g,': <span class="n">$1</span>').replace(/: (true|false)/g,': <span class="k">$1</span>')}
+['#tch','#tev'].forEach(function(s){$(s).addEventListener('input',function(){$('#ep').textContent='/v3/channels/'+($('#tch').value||'?')+'/messages'})});
+$('#tryf').addEventListener('submit',function(e){e.preventDefault();var ch=$('#tch').value.trim(),b=$('#runB'),st=$('#tst');b.disabled=true;b.innerHTML='<span class="spin"></span>Sending';st.innerHTML='<span>Connecting to '+($('#trg').value==='auto'?'nearest region':$('#trg').value.split(' ')[0])+'...</span>';
+  var ms=28+Math.round(Math.random()*40),regs={auto:'ap-south-1'};
+  setTimeout(function(){b.disabled=false;b.innerHTML='<svg class="i"><use href="#play"/></svg>Send request';var ok=/^[a-z0-9_-]+(:[a-z0-9_*-]+)*$/i.test(ch)&&$('#tev').value.trim();
+    var reg=regs[$('#trg').value]||$('#trg').value.split(' ')[0];
+    if(!ok){st.innerHTML='<b style="color:#ff6b6b">400 Bad Request</b><span>'+ms+' ms</span>';$('#tout').innerHTML=jsonHL({error:{code:'invalid_channel',message:'Channel names use letters, numbers, dashes and colons.',docs:'https://kumo.dev/docs#channels'}});return}
+    st.innerHTML='<b>201 Created</b><span>'+ms+' ms</span><span>'+reg+'</span>';
+    $('#tout').innerHTML=jsonHL({id:'msg_'+Math.random().toString(36).slice(2,12),channel:ch,event:$('#tev').value.trim(),data:{text:$('#ttx').value},region:reg,replicated:['ap-south-1','ap-southeast-1'],subscribers:1284,timestamp:new Date().toISOString()})},500+ms*4)});
+/* helpful */
+$$('.help [data-h]').forEach(function(b){b.addEventListener('click',function(){$$('.help [data-h]').forEach(function(x){x.setAttribute('aria-pressed',x===b)});toast(b.dataset.h==='y'?'Thanks. The docs team gets a small dopamine hit.':'Sorry about that. Tell us what was missing?')})});
+$('#editL').addEventListener('click',function(e){e.preventDefault();toast('This would open the page source in your repo.')});
+})();
+</script>
+</body>
+</html>

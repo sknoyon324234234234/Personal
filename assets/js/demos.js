@@ -11,7 +11,13 @@
     { id: 'vault-dashboard', name: 'Vault' },
     { id: 'blockrealm', name: 'BlockRealm' },
     { id: 'studio-kami', name: 'Studio Kami' },
-    { id: 'pulse-app', name: 'Pulse' }
+    { id: 'pulse-app', name: 'Pulse' },
+    { id: 'aurum', name: 'Aurum' },
+    { id: 'mori-tea', name: 'Mori Tea' },
+    { id: 'haven', name: 'Haven' },
+    { id: 'ledger', name: 'Ledger' },
+    { id: 'nomad', name: 'Nomad' },
+    { id: 'devdocs', name: 'Kumo Docs' }
   ];
   var DEV = { desktop: [1440, 900], laptop: [1280, 800], tablet: [820, 1180], phone: [390, 844] };
 

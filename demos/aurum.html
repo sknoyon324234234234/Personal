@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aurum — Haute horlogerie (demo site by Xiraiya)</title>
+<meta name="description" content="Demo luxury watch boutique designed and built by Xiraiya.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700&display=swap"></noscript>
+<style>
+:root{--bg:#0b0a09;--bg2:#131210;--card:#17150f;--ink:#f1ead8;--ink2:#a79f8b;--gold:#c8a45c;--gold2:#e6cf97;--line:rgba(241,234,216,.12)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:400 15px/1.7 Manrope,system-ui,sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}h1,h2,h3,p{margin:0}button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.wrap{max-width:1280px;margin:0 auto;padding:0 32px}
+.serif{font-family:'Cormorant Garamond',Georgia,serif}
+.eyebrow{font:600 11px/1 Manrope,sans-serif;letter-spacing:.32em;text-transform:uppercase;color:var(--gold)}
+header{position:fixed;inset:0 0 auto;z-index:30;transition:background .5s,border-color .5s;border-bottom:1px solid transparent}
+header.s{background:rgba(11,10,9,.86);backdrop-filter:blur(12px);border-color:var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:82px}
+.logo{font:500 26px 'Cormorant Garamond',serif;letter-spacing:.42em}
+.logo b{color:var(--gold);font-weight:500}
+nav{display:flex;gap:34px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
+nav a{position:relative;padding:6px 0}nav a::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:right;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+nav a:hover{color:var(--ink)}nav a:hover::after{transform:scaleX(1);transform-origin:left}
+.bagb{display:flex;align-items:center;gap:10px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
+.bagb i{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#0b0a09;font-style:normal;font-weight:700;font-size:11px;letter-spacing:0}
+.btn{display:inline-flex;align-items:center;gap:12px;height:54px;padding:0 30px;border-radius:999px;font:600 12.5px/1 Manrope,sans-serif;letter-spacing:.16em;text-transform:uppercase;transition:all .5s cubic-bezier(.16,1,.3,1)}
+.btn-gold{background:linear-gradient(120deg,#b8914a,#e6cf97 45%,#b8914a);background-size:220% 100%;color:#0b0a09}
+.btn-gold:hover{background-position:100% 0;transform:translateY(-2px);box-shadow:0 16px 40px -18px rgba(200,164,92,.8)}
+.btn-line{border:1px solid rgba(241,234,216,.3)}.btn-line:hover{border-color:var(--gold);color:var(--gold2)}
+.hero{position:relative;min-height:100vh;display:grid;align-items:center;padding:120px 0 60px;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-10%;top:10%;width:70vw;height:70vw;max-width:900px;max-height:900px;border-radius:50%;background:radial-gradient(circle,rgba(200,164,92,.16),transparent 62%)}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+.hero h1{margin:22px 0 24px;font:400 clamp(64px,9vw,138px)/.88 'Cormorant Garamond',serif;letter-spacing:-.01em}
+.hero h1 em{font-style:italic;color:var(--gold2)}
+.hero h1 .ln{display:block;overflow:hidden}.hero h1 .ln span{display:block;animation:rise 1.4s cubic-bezier(.16,1,.3,1) both}.hero h1 .ln:nth-child(2) span{animation-delay:.12s}
+@keyframes rise{from{transform:translateY(105%)}}
+.hero p{max-width:440px;color:var(--ink2);font-size:16px}
+.hero .ctas{display:flex;gap:14px;flex-wrap:wrap;margin-top:36px}
+.hero .meta{display:flex;gap:36px;margin-top:54px;padding-top:22px;border-top:1px solid var(--line);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
+.hero .meta b{display:block;margin-bottom:4px;font:500 26px 'Cormorant Garamond',serif;letter-spacing:0;text-transform:none;color:var(--ink)}
+.hw{position:relative;justify-self:center;width:min(480px,86vw);aspect-ratio:1;transition:transform .8s cubic-bezier(.16,1,.3,1);animation:fadeIn 1.6s ease both .2s}
+@keyframes fadeIn{from{opacity:0;transform:scale(.94)}}
+.hw .ring{position:absolute;inset:-6%;border-radius:50%;border:1px solid rgba(200,164,92,.25)}
+.hw .ring::after{content:'';position:absolute;inset:6%;border-radius:50%;border:1px dashed rgba(200,164,92,.18);animation:spin 80s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hw .tag{position:absolute;right:-4%;bottom:12%;padding:12px 16px;border-radius:14px;background:rgba(23,21,15,.9);border:1px solid var(--line);font-size:12px;color:var(--ink2);backdrop-filter:blur(8px)}
+.hw .tag b{display:block;color:var(--ink);font:500 18px 'Cormorant Garamond',serif}
+.press{border-block:1px solid var(--line);padding:22px 0;overflow:hidden;white-space:nowrap}
+.press div{display:inline-flex;gap:60px;animation:mq 30s linear infinite;font:italic 400 22px 'Cormorant Garamond',serif;color:var(--ink2)}
+.press span::before{content:'✦';font-style:normal;margin-right:60px;color:var(--gold);font-size:12px;vertical-align:middle}
+@keyframes mq{to{transform:translateX(-50%)}}
+section{padding:120px 0}
+.sh{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:56px}
+.sh h2{margin-top:14px;font:400 clamp(40px,5vw,72px)/1 'Cormorant Garamond',serif}
+.sh h2 em{color:var(--gold2)}
+.sh p{max-width:360px;color:var(--ink2)}
+.col{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.w{position:relative;padding:26px 22px 24px;border-radius:24px;background:linear-gradient(180deg,var(--card),#0f0e0b);border:1px solid var(--line);transition:transform .7s cubic-bezier(.16,1,.3,1),border-color .5s}
+.w:hover{transform:translateY(-8px);border-color:rgba(200,164,92,.45)}
+.w .face{width:78%;margin:6px auto 22px;aspect-ratio:1;transition:transform 1s cubic-bezier(.16,1,.3,1)}
+.w:hover .face{transform:rotate(-8deg) scale(1.04)}
+.w h3{font:500 28px/1 'Cormorant Garamond',serif}
+.w .ref{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink2);margin:6px 0 14px}
+.w .row{display:flex;justify-content:space-between;align-items:center}
+.w .price{font:500 20px 'Cormorant Garamond',serif;color:var(--gold2)}
+.sw{display:flex;gap:6px}.sw button{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.3)}.sw button.on{outline:1px solid var(--gold);outline-offset:3px}
+.w .add{margin-top:18px;width:100%;height:44px;border-radius:999px;border:1px solid var(--line);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;transition:all .4s}
+.w .add:hover{background:var(--gold);color:#0b0a09;border-color:var(--gold)}
+.cfg{background:var(--bg2);border-block:1px solid var(--line)}
+.cfg .wrap{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+.cfg .prev{position:relative;aspect-ratio:1;max-width:460px;justify-self:center;width:100%}
+.cfg .prev .face{width:100%;height:100%}
+.cfg .eng{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);font:italic 400 18px 'Cormorant Garamond',serif;color:var(--gold2);white-space:nowrap}
+.opt{margin-top:28px}.opt h4{margin:0 0 12px;font:600 11px/1 Manrope,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--ink2)}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chips button{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:999px;border:1px solid var(--line);font-size:13px;transition:all .35s}
+.chips button i{width:14px;height:14px;border-radius:50%}
+.chips button[aria-pressed="true"]{border-color:var(--gold);background:rgba(200,164,92,.1);color:var(--gold2)}
+.cfg input{width:100%;height:50px;padding:0 18px;border-radius:14px;border:1px solid var(--line);background:#0e0d0a;color:var(--ink);font:italic 500 18px 'Cormorant Garamond',serif}
+.cfg input:focus{outline:none;border-color:var(--gold)}
+.total{display:flex;justify-content:space-between;align-items:center;margin-top:34px;padding-top:24px;border-top:1px solid var(--line)}
+.total b{font:500 40px 'Cormorant Garamond',serif;color:var(--gold2)}
+.atl .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:70px;align-items:center}
+.gear{width:100%;max-width:420px;aspect-ratio:1;justify-self:center}
+.gear .g1{transform-origin:170px 170px;animation:spin 22s linear infinite}.gear .g2{transform-origin:320px 300px;animation:spin 14s linear infinite reverse}.gear .g3{transform-origin:300px 110px;animation:spin 9s linear infinite}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+.stats b{display:block;font:400 56px/1 'Cormorant Garamond',serif;color:var(--gold2)}
+.stats span{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
+.quote{text-align:center}
+.quote blockquote{margin:0 auto;max-width:900px;font:italic 400 clamp(28px,3.6vw,48px)/1.25 'Cormorant Garamond',serif}
+.quote cite{display:block;margin-top:26px;font:600 11px/1 Manrope;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-style:normal}
+.book .wrap{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+form{display:grid;gap:14px;padding:34px;border-radius:26px;background:var(--card);border:1px solid var(--line)}
+label{display:grid;gap:8px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink2)}
+form input,form select{height:50px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:#0e0d0a;color:var(--ink);font:500 15px Manrope,sans-serif}
+form input:focus,form select:focus{outline:none;border-color:var(--gold)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ok{display:none;padding:30px;text-align:center}.ok b{display:block;font:500 34px 'Cormorant Garamond',serif;color:var(--gold2)}
+form.done .ok{display:block}form.done .fields{display:none}
+.fields{display:grid;gap:14px}
+.bq{display:grid;gap:18px;color:var(--ink2)}.bq div{display:flex;justify-content:space-between;padding:18px 0;border-bottom:1px solid var(--line)}.bq b{color:var(--ink);font-weight:500}
+footer{padding:60px 0 40px;border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;font-size:12.5px;color:var(--ink2)}
+.drawer{position:fixed;inset:0;z-index:50;visibility:hidden}
+.drawer.on{visibility:visible}
+.drawer .bd{position:absolute;inset:0;background:rgba(0,0,0,.6);opacity:0;transition:opacity .5s}.drawer.on .bd{opacity:1}
+.drawer aside{position:absolute;right:0;top:0;bottom:0;width:min(420px,100%);padding:30px;background:#12110e;border-left:1px solid var(--line);transform:translateX(100%);transition:transform .7s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column}
+.drawer.on aside{transform:none}
+.drawer h3{font:500 32px 'Cormorant Garamond',serif;display:flex;justify-content:space-between;align-items:center}
+.items{flex:1;overflow:auto;margin:20px 0;display:grid;gap:14px;align-content:start}
+.it{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding:12px;border-radius:16px;border:1px solid var(--line)}
+.it b{font:500 20px 'Cormorant Garamond',serif}.it small{display:block;color:var(--ink2);font-size:12px}
+.it button{color:var(--ink2);font-size:12px}.it button:hover{color:var(--gold)}
+.empty{color:var(--ink2);padding:30px 0;text-align:center}
+.toast{position:fixed;left:50%;bottom:26px;z-index:60;transform:translate(-50%,220%);padding:14px 22px;border-radius:999px;background:var(--gold);color:#0b0a09;font-weight:600;font-size:13.5px;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.toast.on{transform:translate(-50%,0)}
+.rv{opacity:0;transform:translateY(40px);transition:opacity 1.2s cubic-bezier(.16,1,.3,1),transform 1.2s cubic-bezier(.16,1,.3,1)}.rv.in{opacity:1;transform:none}
+.by{position:fixed;left:14px;bottom:14px;z-index:40;padding:8px 12px;border-radius:999px;background:var(--gold);color:#0b0a09;font:700 12px Manrope,sans-serif}
+@media(max-width:980px){nav{display:none}.hero .wrap,.cfg .wrap,.atl .wrap,.book .wrap{grid-template-columns:1fr}.col{grid-template-columns:repeat(2,minmax(0,1fr))}.hw{order:-1;width:min(360px,80vw)}.sh{flex-direction:column;align-items:start}}
+@media(max-width:560px){.wrap{padding:0 20px}.col{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.two{grid-template-columns:1fr}.hero .meta{gap:20px;flex-wrap:wrap}section{padding:80px 0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<header id="hd"><div class="wrap"><a class="logo" href="#">AUR<b>U</b>M</a><nav><a href="#collection">Collection</a><a href="#configure">Configure</a><a href="#atelier">Atelier</a><a href="#book">Boutiques</a></nav><button class="bagb" id="bagb" type="button">Bag <i id="bagc">0</i></button></div></header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Maison d'horlogerie · Est. 1911</p>
+      <h1><span class="ln"><span>Time,</span></span><span class="ln"><span><em>perfected.</em></span></span></h1>
+      <p>Hand-finished mechanical watches, assembled one at a time in our Geneva atelier. The watch on this page keeps your local time.</p>
+      <div class="ctas"><a class="btn btn-gold" href="#collection">Explore the collection</a><a class="btn btn-line" href="#book">Private viewing</a></div>
+      <div class="meta"><div><b>312</b>parts per movement</div><div><b>72 h</b>power reserve</div><div><b>±2 s</b>per day</div></div>
+    </div>
+    <div class="hw" id="hw"><div class="ring"></div><div id="liveWatch"></div><div class="tag"><b id="liveTime">--:--:--</b>Meridian · your local time</div></div>
+  </div>
+</section>
+
+<div class="press"><div><span>Geneva</span><span>Tokyo</span><span>Milan</span><span>Dhaka</span><span>New York</span><span>Paris</span><span>Geneva</span><span>Tokyo</span><span>Milan</span><span>Dhaka</span><span>New York</span><span>Paris</span></div></div>
+
+<section id="collection">
+  <div class="wrap">
+    <div class="sh rv"><div><p class="eyebrow">The collection</p><h2>Four watches. <em>One obsession.</em></h2></div><p>Every reference is limited to 250 pieces a year. Change the dial colour to see each variant.</p></div>
+    <div class="col" id="col"></div>
+  </div>
+</section>
+
+<section class="cfg" id="configure">
+  <div class="wrap">
+    <div class="prev rv"><div id="cfgWatch" class="face"></div><span class="eng" id="engPrev"></span></div>
+    <div class="rv">
+      <p class="eyebrow">Atelier configurator</p>
+      <h2 class="serif" style="font-size:clamp(40px,5vw,68px);line-height:1;margin-top:14px;font-weight:400">Make it <em style="color:var(--gold2)">yours.</em></h2>
+      <div class="opt"><h4>Case</h4><div class="chips" data-k="case"></div></div>
+      <div class="opt"><h4>Dial</h4><div class="chips" data-k="dial"></div></div>
+      <div class="opt"><h4>Strap</h4><div class="chips" data-k="strap"></div></div>
+      <div class="opt"><h4>Caseback engraving</h4><input id="eng" maxlength="18" placeholder="e.g. For R., 2026" aria-label="Engraving text"></div>
+      <div class="total"><div><small style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink2)">Your Meridian</small><br><b id="cfgPrice">$0</b></div><button class="btn btn-gold" id="cfgAdd" type="button">Add to bag</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="atl" id="atelier">
+  <div class="wrap">
+    <svg class="gear rv" viewBox="0 0 440 440" aria-hidden="true">
+      <g class="g1" fill="none" stroke="#c8a45c" stroke-width="2"><circle cx="170" cy="170" r="110"/><circle cx="170" cy="170" r="84"/><circle cx="170" cy="170" r="16" fill="#c8a45c"/>
+        <g id="teeth1"></g></g>
+      <g class="g2" fill="none" stroke="#e6cf97" stroke-width="2" opacity=".8"><circle cx="320" cy="300" r="70"/><circle cx="320" cy="300" r="10" fill="#e6cf97"/><g id="teeth2"></g></g>
+      <g class="g3" fill="none" stroke="#a79f8b" stroke-width="2" opacity=".7"><circle cx="300" cy="110" r="42"/><circle cx="300" cy="110" r="7" fill="#a79f8b"/><g id="teeth3"></g></g>
+    </svg>
+    <div class="rv">
+      <p class="eyebrow">The atelier</p>
+      <h2 class="serif" style="font-size:clamp(40px,5vw,68px);line-height:1;margin:14px 0 22px;font-weight:400">Slow by design.</h2>
+      <p style="color:var(--ink2);max-width:520px">A single Meridian takes our watchmakers 400 hours. Bridges are bevelled by hand, screws are flame-blued, and every movement is tested in six positions before it leaves Geneva.</p>
+      <div class="stats"><div><b class="cnt" data-n="400">0</b><span>hours per watch</span></div><div><b class="cnt" data-n="31">0</b><span>jewels</span></div><div><b class="cnt" data-n="5">0</b><span>year warranty</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="quote"><div class="wrap rv"><blockquote>“It is the only thing I own that will outlive me. Every morning, winding it feels like a small ceremony.”</blockquote><cite>— A collector since 2009</cite></div></section>
+
+<section class="book" id="book">
+  <div class="wrap">
+    <div class="rv"><p class="eyebrow">Boutiques</p><h2 class="serif" style="font-size:clamp(40px,5vw,68px);line-height:1;margin:14px 0 30px;font-weight:400">Book a <em style="color:var(--gold2)">private viewing.</em></h2>
+      <div class="bq"><div><b>Geneva</b><span>Rue du Rhône 42</span></div><div><b>Tokyo</b><span>Ginza 6-chōme</span></div><div><b>Dhaka</b><span>Gulshan Avenue 88</span></div></div></div>
+    <form class="rv" id="bookForm" novalidate>
+      <div class="fields">
+        <div class="two"><label>Name<input required id="bn" autocomplete="name"></label><label>Email<input required type="email" id="be" autocomplete="email"></label></div>
+        <div class="two"><label>Boutique<select id="bb"><option>Geneva</option><option>Tokyo</option><option>Dhaka</option></select></label><label>Date<input type="date" id="bd" required></label></div>
+        <button class="btn btn-gold" type="submit" style="justify-content:center">Request appointment</button>
+      </div>
+      <div class="ok"><b>Thank you.</b><span id="okMsg">We will confirm your appointment within one day.</span></div>
+    </form>
+  </div>
+</section>
+
+<footer><div class="wrap"><span class="logo" style="font-size:20px">AUR<b>U</b>M</span><span>Fictional brand · demo website by Xiraiya · no real orders are placed</span></div></footer>
+
+<div class="drawer" id="drawer" aria-hidden="true"><div class="bd" data-x></div><aside role="dialog" aria-label="Shopping bag"><h3>Your bag <button type="button" data-x aria-label="Close bag" style="font-size:26px">×</button></h3><div class="items" id="items"></div><div class="total" style="margin-top:0"><span style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink2)">Subtotal</span><b id="sub">$0</b></div><button class="btn btn-gold" type="button" id="checkout" style="justify-content:center;margin-top:16px">Checkout (demo)</button></aside></div>
+<div class="toast" id="toast" role="status"></div>
+<a class="by" href="../index.html" target="_top">Demo by <b>Xiraiya</b></a>
+
+<script>
+(function(){
+var CASE={yellow:['Yellow gold','#d7b36a','#8a6a2c',0],rose:['Rose gold','#e2a58a','#9a5a44',1200],steel:['Steel','#cfd3d6','#7d8388',-2800]};
+var DIAL={onyx:['Onyx','#111','#1d1d1d','#e6cf97'],ivory:['Ivory','#efe7d2','#d9cfb6','#3a2f20'],emerald:['Emerald','#0f3d2e','#15503c','#e6cf97'],navy:['Navy','#0f1f3d','#172b52','#e6cf97']};
+var STRAP={black:['Black alligator','#161412',0],cognac:['Cognac leather','#7a4520',180],bracelet:['Bracelet','metal',950]};
+function watch(o){
+  var c=CASE[o.c||'yellow'],d=DIAL[o.d||'onyx'],s=STRAP[o.s||'black'],id=o.id||'w'+Math.random().toString(36).slice(2,7);
+  var strapFill=s[1]==='metal'?c[1]:s[1],ticks='',nums='';
+  for(var i=0;i<60;i++){var a=i*6*Math.PI/180,r1=i%5?86:80,r2=90;ticks+='<line x1="'+(100+Math.sin(a)*r1).toFixed(2)+'" y1="'+(100-Math.cos(a)*r1).toFixed(2)+'" x2="'+(100+Math.sin(a)*r2).toFixed(2)+'" y2="'+(100-Math.cos(a)*r2).toFixed(2)+'" stroke="'+d[3]+'" stroke-width="'+(i%5?.6:2)+'" opacity="'+(i%5?.6:1)+'"/>';}
+  ['XII','III','VI','IX'].forEach(function(n,k){var a=k*90*Math.PI/180;nums+='<text x="'+(100+Math.sin(a)*66).toFixed(1)+'" y="'+(100-Math.cos(a)*66+5).toFixed(1)+'" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="15" font-weight="600" fill="'+d[3]+'">'+n+'</text>';});
+  var links='';if(s[1]==='metal'){for(var y=0;y<5;y++){links+='<rect x="74" y="'+(-58+y*11)+'" width="52" height="9" rx="2" fill="'+c[2]+'" opacity=".35"/>';links+='<rect x="74" y="'+(206+y*11)+'" width="52" height="9" rx="2" fill="'+c[2]+'" opacity=".35"/>';}}
+  return '<svg viewBox="0 -64 200 328" style="width:100%;height:100%;overflow:visible" role="img" aria-label="'+c[0]+' watch with '+d[0].toLowerCase()+' dial">'+
+  '<defs><radialGradient id="'+id+'d" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="'+d[2]+'"/><stop offset="1" stop-color="'+d[1]+'"/></radialGradient><linearGradient id="'+id+'c" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".3" stop-color="'+c[1]+'"/><stop offset="1" stop-color="'+c[2]+'"/></linearGradient></defs>'+
+  '<path d="M70 -64H130L126 28H74ZM74 172H126L130 264H70Z" fill="'+strapFill+'"/>'+links+
+  '<path d="M70 -64H130L126 28H74Z" fill="url(#'+id+'c)" opacity="'+(s[1]==='metal'?.5:0)+'"/>'+
+  '<rect x="186" y="92" width="12" height="16" rx="3" fill="url(#'+id+'c)"/>'+
+  '<circle cx="100" cy="100" r="98" fill="url(#'+id+'c)"/><circle cx="100" cy="100" r="92" fill="'+c[2]+'"/><circle cx="100" cy="100" r="90" fill="url(#'+id+'d)"/>'+ticks+nums+
+  '<text x="100" y="72" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="9" letter-spacing="3" fill="'+d[3]+'">AURUM</text><text x="100" y="81" text-anchor="middle" font-family="Manrope,sans-serif" font-size="4.2" letter-spacing="1.6" fill="'+d[3]+'" opacity=".7">GENÈVE · AUTOMATIC</text>'+
+  '<circle cx="100" cy="128" r="13" fill="none" stroke="'+d[3]+'" stroke-width=".6" opacity=".6"/>'+
+  '<g class="hh" data-w="'+id+'"><path d="M98 100 100 50 102 100Z" fill="'+d[3]+'"/></g><g class="mh"><path d="M99 100 100 30 101 100Z" fill="'+d[3]+'"/></g><g class="sh"><path d="M99.6 112 100 22 100.4 112Z" fill="#c8483a"/><circle cx="100" cy="100" r="3.5" fill="#c8483a"/></g>'+
+  '<circle cx="100" cy="100" r="2" fill="'+d[3]+'"/><ellipse cx="72" cy="62" rx="42" ry="22" fill="#fff" opacity=".05" transform="rotate(-30 72 62)"/></svg>';
+}
+function setHands(root,date){
+  var h=date.getHours()%12,m=date.getMinutes(),s=date.getSeconds()+date.getMilliseconds()/1000;
+  root.querySelectorAll('.hh').forEach(function(g){g.setAttribute('transform','rotate('+((h+m/60)*30).toFixed(2)+' 100 100)')});
+  root.querySelectorAll('.mh').forEach(function(g){g.setAttribute('transform','rotate('+((m+s/60)*6).toFixed(2)+' 100 100)')});
+  root.querySelectorAll('.sh').forEach(function(g){g.setAttribute('transform','rotate('+(s*6).toFixed(2)+' 100 100)')});
+}
+var live=document.getElementById('liveWatch');live.innerHTML=watch({c:'yellow',d:'onyx',s:'black',id:'lw'});
+var lt=document.getElementById('liveTime');
+(function tick(){var n=new Date();setHands(document,n);lt.textContent=n.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});requestAnimationFrame(tick)})();
+var hw=document.getElementById('hw');
+document.querySelector('.hero').addEventListener('pointermove',function(e){var r=hw.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;hw.style.transform='perspective(900px) rotateY('+(x*10).toFixed(2)+'deg) rotateX('+(-y*10).toFixed(2)+'deg)'});
+document.querySelector('.hero').addEventListener('pointerleave',function(){hw.style.transform=''});
+/* collection */
+var MODELS=[{n:'Meridian',ref:'Ref. 1911 · 40 mm',p:18400,c:'yellow',ds:['onyx','ivory','navy']},{n:'Solstice',ref:'Ref. 2208 · 38 mm',p:22900,c:'rose',ds:['ivory','emerald','onyx']},{n:'Noctis',ref:'Ref. 0412 · 41 mm',p:14600,c:'steel',ds:['navy','onyx','emerald']},{n:'Regent',ref:'Ref. 1701 · 39 mm',p:31500,c:'yellow',ds:['emerald','ivory','navy']}];
+var col=document.getElementById('col');
+col.innerHTML=MODELS.map(function(m,i){return '<article class="w rv" style="transition-delay:'+(i*.08)+'s"><div class="face" data-i="'+i+'">'+watch({c:m.c,d:m.ds[0],s:m.c==='steel'?'bracelet':'black'})+'</div><h3>'+m.n+'</h3><p class="ref">'+m.ref+'</p><div class="row"><span class="price">$'+m.p.toLocaleString()+'</span><div class="sw">'+m.ds.map(function(d,k){return '<button type="button" aria-label="'+DIAL[d][0]+' dial" data-i="'+i+'" data-d="'+d+'" class="'+(k?'':'on')+'" style="background:'+DIAL[d][1]+'"></button>'}).join('')+'</div></div><button class="add" type="button" data-add="'+i+'">Add to bag</button></article>'}).join('');
+col.addEventListener('click',function(e){var b=e.target.closest('[data-d]');if(b){var i=+b.dataset.i,m=MODELS[i];b.parentNode.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b)});col.querySelector('.face[data-i="'+i+'"]').innerHTML=watch({c:m.c,d:b.dataset.d,s:m.c==='steel'?'bracelet':'black'});m.cur=b.dataset.d;return}
+  var a=e.target.closest('[data-add]');if(a){var mm=MODELS[+a.dataset.add];addBag({n:mm.n,sub:DIAL[mm.cur||mm.ds[0]][0]+' dial',p:mm.p,svg:watch({c:mm.c,d:mm.cur||mm.ds[0],s:'black'})})}});
+/* configurator */
+var cfg={c:'yellow',d:'onyx',s:'black'},BASE=18400;
+function chips(k,src){var box=document.querySelector('.chips[data-k="'+k+'"]');box.innerHTML=Object.keys(src).map(function(key){var v=src[key],sw=k==='dial'?v[1]:k==='case'?v[1]:(v[1]==='metal'?'#cfd3d6':v[1]);return '<button type="button" aria-pressed="'+(cfg[k[0]]===key)+'" data-v="'+key+'"><i style="background:'+sw+'"></i>'+v[0]+'</button>'}).join('');
+  box.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;cfg[k[0]]=b.dataset.v;box.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});drawCfg()})}
+chips('case',CASE);chips('dial',DIAL);chips('strap',STRAP);
+function price(){return BASE+CASE[cfg.c][3]+STRAP[cfg.s][2]+(document.getElementById('eng').value.trim()?250:0)}
+function drawCfg(){document.getElementById('cfgWatch').innerHTML=watch({c:cfg.c,d:cfg.d,s:cfg.s});document.getElementById('cfgPrice').textContent='$'+price().toLocaleString();setHands(document,new Date())}
+document.getElementById('eng').addEventListener('input',function(){document.getElementById('engPrev').textContent=this.value?'“'+this.value+'”':'';drawCfg()});
+drawCfg();
+document.getElementById('cfgAdd').addEventListener('click',function(){var e=document.getElementById('eng').value.trim();addBag({n:'Meridian (custom)',sub:CASE[cfg.c][0]+' · '+DIAL[cfg.d][0]+' · '+STRAP[cfg.s][0]+(e?' · “'+e+'”':''),p:price(),svg:watch(cfg)})});
+/* bag */
+var bag=[],drawer=document.getElementById('drawer');
+function toast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('on')},2200)}
+function addBag(it){bag.push(it);renderBag();toast(it.n+' added to your bag')}
+function renderBag(){document.getElementById('bagc').textContent=bag.length;var box=document.getElementById('items');box.innerHTML=bag.length?bag.map(function(it,i){return '<div class="it"><div style="width:64px;height:64px">'+it.svg+'</div><div><b>'+it.n+'</b><small>'+it.sub+'</small><small style="color:var(--gold2)">$'+it.p.toLocaleString()+'</small></div><button type="button" data-rm="'+i+'">Remove</button></div>'}).join(''):'<p class="empty">Your bag is empty. A good watch is worth waiting for.</p>';
+  document.getElementById('sub').textContent='$'+bag.reduce(function(a,b){return a+b.p},0).toLocaleString();setHands(document,new Date())}
+document.getElementById('items').addEventListener('click',function(e){var b=e.target.closest('[data-rm]');if(b){bag.splice(+b.dataset.rm,1);renderBag()}});
+function openBag(o){drawer.classList.toggle('on',o);drawer.setAttribute('aria-hidden',!o)}
+document.getElementById('bagb').addEventListener('click',function(){openBag(true)});
+drawer.addEventListener('click',function(e){if(e.target.closest('[data-x]'))openBag(false)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')openBag(false)});
+document.getElementById('checkout').addEventListener('click',function(){toast(bag.length?'Demo checkout — no payment is taken':'Your bag is empty')});
+renderBag();
+/* gears */
+function teeth(id,cx,cy,r,n){var s='';for(var i=0;i<n;i++){var a=i*2*Math.PI/n;s+='<line x1="'+(cx+Math.cos(a)*r)+'" y1="'+(cy+Math.sin(a)*r)+'" x2="'+(cx+Math.cos(a)*(r+12))+'" y2="'+(cy+Math.sin(a)*(r+12))+'" stroke-width="7"/>'}document.getElementById(id).innerHTML=s}
+teeth('teeth1',170,170,110,36);teeth('teeth2',320,300,70,24);teeth('teeth3',300,110,42,14);
+/* booking */
+var bd=document.getElementById('bd');var t=new Date(Date.now()+86400000*3);bd.value=t.toISOString().slice(0,10);bd.min=new Date().toISOString().slice(0,10);
+document.getElementById('bookForm').addEventListener('submit',function(e){e.preventDefault();var n=document.getElementById('bn'),m=document.getElementById('be');if(!n.value.trim()){n.focus();toast('Please add your name');return}if(!/^\S+@\S+\.\S+$/.test(m.value)){m.focus();toast('Please add a valid email');return}
+  document.getElementById('okMsg').textContent='We look forward to welcoming you in '+document.getElementById('bb').value+' on '+new Date(bd.value).toLocaleDateString([], {weekday:'long',month:'long',day:'numeric'})+'.';this.classList.add('done')});
+/* header + reveals + counters */
+var hd=document.getElementById('hd');addEventListener('scroll',function(){hd.classList.toggle('s',scrollY>30)},{passive:true});
+var io=new IntersectionObserver(function(en){en.forEach(function(x){if(!x.isIntersecting)return;x.target.classList.add('in');io.unobserve(x.target);x.target.querySelectorAll&&x.target.querySelectorAll('.cnt').forEach(function(c){var to=+c.dataset.n,t0=performance.now();(function s(tt){var k=Math.min(1,(tt-t0)/1600);c.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(s)})(t0)})})},{threshold:.15});
+document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+})();
+</script>
+</body>
+</html>
