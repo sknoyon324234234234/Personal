@@ -1,0 +1,364 @@
+{
+ "thread": {
+  "hero": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/3284475/free-photo-image-fashion-shop-clothes",
+   "license": "CC CC0 1.0"
+  },
+  "look": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/3283850/free-photo-image-clothes-closet-dressing-room",
+   "license": "CC CC0 1.0"
+  },
+  "blazer": {
+   "photographer": "Seppo Konstig",
+   "link": "https://commons.wikimedia.org/wiki/File:Fashion_for_spring_and_summer_1986_(JOKAOM14AiD_MUO08-1).tif",
+   "license": "CC BY 4.0"
+  },
+  "fairisle": {
+   "photographer": "Kyle Cassidy",
+   "link": "https://commons.wikimedia.org/wiki/File:Knitted_Sweater.jpg",
+   "license": "CC BY-SA 4.0"
+  },
+  "navyknit": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/5921020/photo-image-public-domain-fashion-free",
+   "license": "CC CC0 1.0"
+  },
+  "cardigan": {
+   "photographer": "Piqua Hosiery Co",
+   "link": "https://commons.wikimedia.org/wiki/File:Brown_Wool_Knit_Cardigan_Sweater_of_Charles_Lindbergh_-_DPLA_-_c76bd59b2824736409a2eb2dbbfb58b3_(page_2).jpg",
+   "license": "Public domain"
+  },
+  "denim": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/8849885/denim-jacket-designed-arthur-mcgee",
+   "license": "CC CC0 1.0"
+  },
+  "chinos": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/3283318/free-photo-image-man-guy-standing-apparel",
+   "license": "CC CC0 1.0"
+  },
+  "coat": {
+   "photographer": "Unknown authorUnknown author",
+   "link": "https://commons.wikimedia.org/wiki/File:Man%27s_silk_and_wool_twill_frock_coat_c._1820.jpg",
+   "license": "Public domain"
+  },
+  "dress": {
+   "photographer": "Photographer for the Rhode Island School of Design - Museum of Art",
+   "link": "https://commons.wikimedia.org/wiki/File:1949_Norman_Norell_red_silk_dress_with_cartridge_pleated_skirt_04.jpg",
+   "license": "CC0"
+  },
+  "oxford": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/3284270/free-photo-image-shoe-man-apparel-beauty",
+   "license": "CC CC0 1.0"
+  },
+  "brogue": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/3337505/free-photo-image-apparel-camera-cc0",
+   "license": "CC CC0 1.0"
+  },
+  "belt": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/6040795/leather-belt-free-public-domain-cc0-photo",
+   "license": "CC CC0 1.0"
+  }
+ },
+ "aurelia": {
+  "hero": {
+   "photographer": "Thorn Yang",
+   "link": "https://stocksnap.io/photo/still-items-NLSP8TGHFM",
+   "license": "CC CC0 1.0"
+  },
+  "look": {
+   "photographer": "Mauro Cateb",
+   "link": "https://www.flickr.com/photos/69102917@N06/51314670144",
+   "license": "CC BY 2.0"
+  },
+  "bangle": {
+   "photographer": "lacma",
+   "link": "https://www.rawpixel.com/image/9276657/gold-bracelet",
+   "license": "CC CC0 1.0"
+  },
+  "cuff": {
+   "photographer": "themet",
+   "link": "https://www.rawpixel.com/image/9185722/gold-bracelet",
+   "license": "CC CC0 1.0"
+  },
+  "coil": {
+   "photographer": "themet",
+   "link": "https://www.rawpixel.com/image/9182917/electrotype-copy-gold-bracelet",
+   "license": "CC CC0 1.0"
+  },
+  "tennis": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/6028150/photo-image-public-domain-gold-fashion",
+   "license": "CC CC0 1.0"
+  },
+  "solitaire": {
+   "photographer": "Birch Landing Home",
+   "link": "https://stocksnap.io/photo/wedding-rings-C1ZAW5IMSC",
+   "license": "CC CC0 1.0"
+  },
+  "agate": {
+   "photographer": "Auckland Museum Collections",
+   "link": "https://www.flickr.com/photos/182826961@N04/51369837150",
+   "license": "CC BY 2.0"
+  },
+  "locket": {
+   "photographer": "Auckland Museum Collections",
+   "link": "https://www.flickr.com/photos/182826961@N04/51359084362",
+   "license": "CC BY 2.0"
+  },
+  "watch": {
+   "photographer": "Joe Haupt from USA",
+   "link": "https://commons.wikimedia.org/wiki/File:Vintage_Elgin_Women%27s_Wrist_Watch,_7_Jewels,_14K_White_Gold_Case,_Serial_No._27983818,_Made_In_USA,_Circa_1925_(36291835884).jpg",
+   "license": "CC BY-SA 2.0"
+  },
+  "rosegold": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/3284572/free-photo-image-fashion-watch-cc0",
+   "license": "CC CC0 1.0"
+  }
+ },
+ "glow": {
+  "hero": {
+   "photographer": "Freestocks.org",
+   "link": "https://stocksnap.io/photo/makeup-brush-EXKVSL1OHJ",
+   "license": "CC CC0 1.0"
+  },
+  "look": {
+   "photographer": "Homedust",
+   "link": "https://www.flickr.com/photos/159630537@N08/42033598224",
+   "license": "CC BY 2.0"
+  },
+  "serum": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/11515770/dropper-bottle-blank-retro-label",
+   "license": "CC CC0 1.0"
+  },
+  "lipstick": {
+   "photographer": "Open Grid Scheduler / Grid Engine",
+   "link": "https://www.flickr.com/photos/29155878@N03/23942120016",
+   "license": "CC CC0 1.0"
+  },
+  "palette": {
+   "photographer": "Beauty and Fashion",
+   "link": "https://stocksnap.io/photo/beauty-makeup-MKGGIJ360Q",
+   "license": "CC CC0 1.0"
+  },
+  "blush": {
+   "photographer": "Studio 7042",
+   "link": "https://stocksnap.io/photo/makeup-brush-K00RNBNJGC",
+   "license": "CC CC0 1.0"
+  },
+  "trio": {
+   "photographer": "ajay_suresh",
+   "link": "https://www.flickr.com/photos/83136374@N05/51825380981",
+   "license": "CC BY 2.0"
+  },
+  "kabuki": {
+   "photographer": "Pawel Kadysz",
+   "link": "https://stocksnap.io/photo/makeup-brush-IJSBS0EFPO",
+   "license": "CC CC0 1.0"
+  },
+  "brushroll": {
+   "photographer": "Freestocks.org",
+   "link": "https://stocksnap.io/photo/makeup-brush-PZ0Z7K0JRR",
+   "license": "CC CC0 1.0"
+  },
+  "base": {
+   "photographer": "Homedust",
+   "link": "https://www.flickr.com/photos/159630537@N08/40940531060",
+   "license": "CC BY 2.0"
+  },
+  "perfume": {
+   "photographer": "judy dean",
+   "link": "https://www.flickr.com/photos/12070225@N03/52937014750",
+   "license": "CC BY-SA 2.0"
+  },
+  "brushcup": {
+   "photographer": "Freestocks.org",
+   "link": "https://stocksnap.io/photo/makeup-brush-EXKVSL1OHJ",
+   "license": "CC CC0 1.0"
+  }
+ },
+ "pebble": {
+  "hero": {
+   "photographer": "Drew Hays",
+   "link": "https://stocksnap.io/photo/baby-shoes-AM0TUTSZ4U",
+   "license": "CC CC0 1.0"
+  },
+  "look": {
+   "photographer": "PRECIOSA ORNELA",
+   "link": "https://www.flickr.com/photos/67488680@N04/51699959539",
+   "license": "CC BY 2.0"
+  },
+  "romper": {
+   "photographer": "Evelyn Simak",
+   "link": "https://commons.wikimedia.org/wiki/File:A_rainbow_baby_romper_-_geograph.org.uk_-_6455312.jpg",
+   "license": "CC BY-SA 2.0"
+  },
+  "sleepsuit": {
+   "photographer": "Jajabis",
+   "link": "https://commons.wikimedia.org/wiki/File:A_romper_suit.jpg",
+   "license": "CC BY-SA 4.0"
+  },
+  "shoes": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/6028878/photo-image-public-domain-baby-cute",
+   "license": "CC CC0 1.0"
+  },
+  "lilac": {
+   "photographer": "osiristhe",
+   "link": "https://www.flickr.com/photos/99658898@N00/52533981092",
+   "license": "CC BY-ND 2.0"
+  },
+  "mint": {
+   "photographer": "osiristhe",
+   "link": "https://www.flickr.com/photos/99658898@N00/51957245883",
+   "license": "CC BY-ND 2.0"
+  },
+  "mittens": {
+   "photographer": "osiristhe",
+   "link": "https://www.flickr.com/photos/99658898@N00/51957771780",
+   "license": "CC BY-ND 2.0"
+  },
+  "dress": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/5921684/photo-image-public-domain-children-free",
+   "license": "CC CC0 1.0"
+  },
+  "letters": {
+   "photographer": "PRECIOSA ORNELA",
+   "link": "https://www.flickr.com/photos/67488680@N04/51699959629",
+   "license": "CC BY 2.0"
+  }
+ },
+ "deshi": {
+  "hero": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/3292356/free-photo-image-apparel-cc0-clothing",
+   "license": "CC CC0 1.0"
+  },
+  "look": {
+   "photographer": "Seacoast Sage",
+   "link": "https://stocksnap.io/photo/sari-fabric-2G3VPGYPBQ",
+   "license": "CC CC0 1.0"
+  },
+  "saree": {
+   "photographer": "Yann (talk)",
+   "link": "https://commons.wikimedia.org/wiki/File:Sari_2.jpg",
+   "license": "CC BY-SA 4.0"
+  },
+  "panjabi": {
+   "photographer": "beccapie",
+   "link": "https://commons.wikimedia.org/wiki/File:Kurta_pajamas_for_men_Indian_Dress.jpg",
+   "license": "CC BY-SA 2.0"
+  },
+  "silkprint": {
+   "photographer": "Seacoast Sage",
+   "link": "https://stocksnap.io/photo/sari-fabric-WXYINWDULE",
+   "license": "CC CC0 1.0"
+  },
+  "paisley": {
+   "photographer": "Seacoast Sage",
+   "link": "https://stocksnap.io/photo/colorful-sari-DC17RTS8K9",
+   "license": "CC CC0 1.0"
+  },
+  "bandhani": {
+   "photographer": "Seacoast Sage",
+   "link": "https://stocksnap.io/photo/colorful-sari-TNYTJ4YJBD",
+   "license": "CC CC0 1.0"
+  },
+  "gold": {
+   "photographer": "spurekar",
+   "link": "https://www.flickr.com/photos/63324741@N04/51578201044",
+   "license": "CC BY 2.0"
+  },
+  "glass": {
+   "photographer": "Bob Richards",
+   "link": "https://stocksnap.io/photo/jewelery-bangles-WBAXSZSZTE",
+   "license": "CC CC0 1.0"
+  },
+  "runner": {
+   "photographer": "Kritzolina",
+   "link": "https://commons.wikimedia.org/wiki/File:Embroidery_on_a_saree_01.jpg",
+   "license": "CC BY-SA 4.0"
+  },
+  "jutti": {
+   "photographer": "The open draft",
+   "link": "https://commons.wikimedia.org/wiki/File:Elegant_Embroidered_Juttis.jpg",
+   "license": "CC BY-SA 4.0"
+  }
+ },
+ "carry": {
+  "hero": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/3304283/free-photo-image-computer-blog-bokeh",
+   "license": "CC CC0 1.0"
+  },
+  "look": {
+   "photographer": "Snufkin",
+   "link": "https://stocksnap.io/photo/leather-purse-Y4IBN1USSQ",
+   "license": "CC CC0 1.0"
+  },
+  "messenger": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/3305481/free-photo-image-briefcase-leather-bag",
+   "license": "CC CC0 1.0"
+  },
+  "duffel": {
+   "photographer": "unknown",
+   "link": "https://www.rawpixel.com/image/3286872/free-photo-image-vintage-bag-luggage",
+   "license": "CC CC0 1.0"
+  },
+  "backpack": {
+   "photographer": "Ivan Radic",
+   "link": "https://www.flickr.com/photos/26344495@N05/51285442886",
+   "license": "CC BY 2.0"
+  },
+  "satchel": {
+   "photographer": "Crew crew",
+   "link": "https://commons.wikimedia.org/wiki/File:Trendy_Backpack_(Unsplash).jpg",
+   "license": "CC0"
+  },
+  "field": {
+   "photographer": "Unknown authorUnknown author",
+   "link": "https://commons.wikimedia.org/wiki/File:Backpack_(AM_650840).jpg",
+   "license": "CC BY 4.0"
+  },
+  "wallet": {
+   "photographer": "*•.¸♡ Sυҽ90ƈα ♡¸.•*",
+   "link": "https://www.flickr.com/photos/87811137@N00/14562624851",
+   "license": "CC BY-ND 2.0"
+  },
+  "billfold": {
+   "photographer": "Scouse Smurf",
+   "link": "https://www.flickr.com/photos/18667910@N00/54321867699",
+   "license": "CC BY-ND 2.0"
+  },
+  "shades": {
+   "photographer": "JamesInOregon",
+   "link": "https://commons.wikimedia.org/wiki/File:Jan_05_2011_-Day_065-_%22Retro_Sunglasses%22_(5328176833).jpg",
+   "license": "CC BY 2.0"
+  },
+  "scarf": {
+   "photographer": "SilkScarf_Lover",
+   "link": "https://www.flickr.com/photos/190092733@N06/53410317460",
+   "license": "CC PDM 1.0"
+  },
+  "watch": {
+   "photographer": "AfterMinute",
+   "link": "https://commons.wikimedia.org/wiki/File:Pilot_watch_on_a_bund_strap.jpg",
+   "license": "CC BY-SA 4.0"
+  },
+  "bluewatch": {
+   "photographer": "A S M Jobaer",
+   "link": "https://commons.wikimedia.org/wiki/File:Angled_view_of_a_fashion_wristwatch_with_purple_dial_and_leather_strap_02.jpg",
+   "license": "CC BY-SA 4.0"
+  }
+ }
+}
