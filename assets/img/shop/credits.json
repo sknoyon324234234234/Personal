@@ -72,11 +72,6 @@
    "link": "https://stocksnap.io/photo/still-items-NLSP8TGHFM",
    "license": "CC CC0 1.0"
   },
-  "look": {
-   "photographer": "Mauro Cateb",
-   "link": "https://www.flickr.com/photos/69102917@N06/51314670144",
-   "license": "CC BY 2.0"
-  },
   "bangle": {
    "photographer": "lacma",
    "link": "https://www.rawpixel.com/image/9276657/gold-bracelet",
@@ -178,11 +173,6 @@
    "photographer": "judy dean",
    "link": "https://www.flickr.com/photos/12070225@N03/52937014750",
    "license": "CC BY-SA 2.0"
-  },
-  "brushcup": {
-   "photographer": "Freestocks.org",
-   "link": "https://stocksnap.io/photo/makeup-brush-EXKVSL1OHJ",
-   "license": "CC CC0 1.0"
   }
  },
  "pebble": {
@@ -331,7 +321,7 @@
    "license": "CC BY 4.0"
   },
   "wallet": {
-   "photographer": "*•.¸♡ Sυҽ90ƈα ♡¸.•*",
+   "photographer": "*\u2022.\u00b8\u2661 S\u03c5\u04bd90\u0188\u03b1 \u2661\u00b8.\u2022*",
    "link": "https://www.flickr.com/photos/87811137@N00/14562624851",
    "license": "CC BY-ND 2.0"
   },
@@ -359,6 +349,288 @@
    "photographer": "A S M Jobaer",
    "link": "https://commons.wikimedia.org/wiki/File:Angled_view_of_a_fashion_wristwatch_with_purple_dial_and_leather_strap_02.jpg",
    "license": "CC BY-SA 4.0"
+  }
+ },
+ "kage": {
+  "laptop": {
+   "photographer": "Derick David",
+   "link": "https://unsplash.com/photos/409858",
+   "license": "Unsplash License"
+  },
+  "tablet": {
+   "photographer": "Kelly Sikkema",
+   "link": "https://unsplash.com/photos/685291",
+   "license": "Unsplash License"
+  },
+  "ultrawide": {
+   "photographer": "Alexandru Acea",
+   "link": "https://unsplash.com/photos/686569",
+   "license": "Unsplash License"
+  },
+  "monitor": {
+   "photographer": "Daniel Korpai",
+   "link": "https://unsplash.com/photos/1302051",
+   "license": "Unsplash License"
+  },
+  "keyboard": {
+   "photographer": "Juan Gomez",
+   "link": "https://unsplash.com/photos/674574",
+   "license": "Unsplash License"
+  },
+  "mouse": {
+   "photographer": "Oscar Ivan Esquivel Arteaga",
+   "link": "https://unsplash.com/photos/687447",
+   "license": "Unsplash License"
+  },
+  "tower": {
+   "photographer": "Florian Olivo",
+   "link": "https://unsplash.com/photos/1166419",
+   "license": "Unsplash License"
+  },
+  "ram": {
+   "photographer": "Liam Briese",
+   "link": "https://unsplash.com/photos/1128307",
+   "license": "Unsplash License"
+  },
+  "hdd": {
+   "photographer": "Vincent Botta",
+   "link": "https://unsplash.com/photos/736919",
+   "license": "Unsplash License"
+  },
+  "usbc": {
+   "photographer": "Adam Birkett",
+   "link": "https://unsplash.com/photos/239153",
+   "license": "Unsplash License"
+  },
+  "cat6": {
+   "photographer": "Thomas Q",
+   "link": "https://unsplash.com/photos/1229169",
+   "license": "Unsplash License"
+  }
+ },
+ "halide": {
+  "tlr": {
+   "photographer": "Alexander Andrews",
+   "link": "https://unsplash.com/photos/260988",
+   "license": "Unsplash License"
+  },
+  "f2": {
+   "photographer": "Chuttersnap",
+   "link": "https://unsplash.com/photos/324234",
+   "license": "Unsplash License"
+  },
+  "onestep": {
+   "photographer": "Eniko Kis",
+   "link": "https://unsplash.com/photos/663725",
+   "license": "Unsplash License"
+  },
+  "instamatic": {
+   "photographer": "Jakob Owens",
+   "link": "https://unsplash.com/photos/274337",
+   "license": "Unsplash License"
+  },
+  "press": {
+   "photographer": "Jonathan Talbert",
+   "link": "https://unsplash.com/photos/697262",
+   "license": "Unsplash License"
+  },
+  "rx": {
+   "photographer": "Patrick Brinksma",
+   "link": "https://unsplash.com/photos/663044",
+   "license": "Unsplash License"
+  },
+  "x100": {
+   "photographer": "Robert Shunev",
+   "link": "https://unsplash.com/photos/528016",
+   "license": "Unsplash License"
+  },
+  "tele": {
+   "photographer": "Brandi Redd",
+   "link": "https://unsplash.com/photos/104140",
+   "license": "Unsplash License"
+  },
+  "tabletop": {
+   "photographer": "Zoltan Tasi",
+   "link": "https://unsplash.com/photos/423051",
+   "license": "Unsplash License"
+  }
+ },
+ "stride": {
+  "prism": {
+   "photographer": "Chuttersnap",
+   "link": "https://unsplash.com/photos/584518",
+   "license": "Unsplash License"
+  },
+  "shadow": {
+   "photographer": "Imani Clovis",
+   "link": "https://unsplash.com/photos/234736",
+   "license": "Unsplash License"
+  },
+  "canvas": {
+   "photographer": "Mitch Lensink",
+   "link": "https://unsplash.com/photos/256007",
+   "license": "Unsplash License"
+  },
+  "knit": {
+   "photographer": "Nikolai Chernichenko",
+   "link": "https://unsplash.com/photos/1299748",
+   "license": "Unsplash License"
+  },
+  "eqt": {
+   "photographer": "Thomas Serer",
+   "link": "https://unsplash.com/photos/420833",
+   "license": "Unsplash License"
+  },
+  "court": {
+   "photographer": "Xavier Teo",
+   "link": "https://unsplash.com/photos/469050",
+   "license": "Unsplash License"
+  }
+ },
+ "fieldday": {
+  "tent": {
+   "photographer": "Michael Guite",
+   "link": "https://unsplash.com/photos/571169",
+   "license": "Unsplash License"
+  },
+  "road": {
+   "photographer": "Mikkel Bech",
+   "link": "https://unsplash.com/photos/748940",
+   "license": "Unsplash License"
+  },
+  "cruiser": {
+   "photographer": "Max Tarkhov",
+   "link": "https://unsplash.com/photos/737999",
+   "license": "Unsplash License"
+  },
+  "football": {
+   "photographer": "Nik Shuliahin",
+   "link": "https://unsplash.com/photos/619349",
+   "license": "Unsplash License"
+  },
+  "tennis": {
+   "photographer": "Ben Hershey",
+   "link": "https://unsplash.com/photos/574483",
+   "license": "Unsplash License"
+  },
+  "gloves": {
+   "photographer": "Neonbrand",
+   "link": "https://unsplash.com/photos/428982",
+   "license": "Unsplash License"
+  },
+  "basketball": {
+   "photographer": "Tommy Bebo",
+   "link": "https://unsplash.com/photos/600358",
+   "license": "Unsplash License"
+  },
+  "rope": {
+   "photographer": "Stoica Ionela",
+   "link": "https://unsplash.com/photos/530966",
+   "license": "Unsplash License"
+  }
+ },
+ "sobuj": {
+  "fern": {
+   "photographer": "Caleb George",
+   "link": "https://unsplash.com/photos/536388",
+   "license": "Unsplash License"
+  },
+  "hanging": {
+   "photographer": "Alex Rodriguez Santibanez",
+   "link": "https://unsplash.com/photos/200278",
+   "license": "Unsplash License"
+  },
+  "succulents": {
+   "photographer": "Annie Spratt",
+   "link": "https://unsplash.com/photos/78044",
+   "license": "Unsplash License"
+  },
+  "cactus": {
+   "photographer": "Charles Deluvio",
+   "link": "https://unsplash.com/photos/695736",
+   "license": "Unsplash License"
+  },
+  "bonsai": {
+   "photographer": "Mark Tegethoff",
+   "link": "https://unsplash.com/photos/667351",
+   "license": "Unsplash License"
+  },
+  "tulips": {
+   "photographer": "Natalia Y",
+   "link": "https://unsplash.com/photos/345738",
+   "license": "Unsplash License"
+  },
+  "aloe": {
+   "photographer": "Silvia Agrasar",
+   "link": "https://unsplash.com/photos/227575",
+   "license": "Unsplash License"
+  },
+  "orchid": {
+   "photographer": "Zoltan Kovacs",
+   "link": "https://unsplash.com/photos/642412",
+   "license": "Unsplash License"
+  },
+  "trowel": {
+   "photographer": "Neslihan Gunaydin",
+   "link": "https://unsplash.com/photos/3493",
+   "license": "Unsplash License"
+  }
+ },
+ "nordhem": {
+  "sofa": {
+   "photographer": "Nathan Fertig",
+   "link": "https://unsplash.com/photos/249917",
+   "license": "Unsplash License"
+  },
+  "leather": {
+   "photographer": "Paul Weaver",
+   "link": "https://unsplash.com/photos/1120584",
+   "license": "Unsplash License"
+  },
+  "armchair": {
+   "photographer": "Kari Shea",
+   "link": "https://unsplash.com/photos/398668",
+   "license": "Unsplash License"
+  },
+  "shell": {
+   "photographer": "Andres Jasso",
+   "link": "https://unsplash.com/photos/220776",
+   "license": "Unsplash License"
+  },
+  "cafe": {
+   "photographer": "Jean Philippe Delberghe",
+   "link": "https://unsplash.com/photos/1400011",
+   "license": "Unsplash License"
+  },
+  "balloon": {
+   "photographer": "Florian Klauer",
+   "link": "https://unsplash.com/photos/14840",
+   "license": "Unsplash License"
+  },
+  "pendant": {
+   "photographer": "Pierre Chatel Innocenti",
+   "link": "https://unsplash.com/photos/483198",
+   "license": "Unsplash License"
+  },
+  "desk": {
+   "photographer": "Abel Y Costa",
+   "link": "https://unsplash.com/photos/716024",
+   "license": "Unsplash License"
+  },
+  "bedside": {
+   "photographer": "Benjamin Voros",
+   "link": "https://unsplash.com/photos/310026",
+   "license": "Unsplash License"
+  },
+  "stool": {
+   "photographer": "Ruslan Bardash",
+   "link": "https://unsplash.com/photos/351288",
+   "license": "Unsplash License"
+  },
+  "lion": {
+   "photographer": "Vincent Liu",
+   "link": "https://unsplash.com/photos/525429",
+   "license": "Unsplash License"
   }
  }
 }
