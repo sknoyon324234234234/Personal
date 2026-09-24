@@ -3,7 +3,7 @@
 ![Xiraiya — websites, bots, apps & AI agents](assets/img/og-cover.png)
 
 The personal website of **Xiraiya**, a 21-year-old full-stack developer from Rajshahi, Bangladesh with 5+ years of experience.
-It's a cinematic, anime-inspired portfolio where visitors can try a live, interactive version of every service before they hire.
+It's a cinematic, ukiyo-e inspired portfolio where visitors can try a live, interactive version of every service before they hire.
 
 - **Pure HTML, CSS and JavaScript.** No framework and no build step. Open it, edit it and deploy it anywhere.
 - **No emojis.** Every icon is a custom SVG from `assets/js/icons.js`.
@@ -15,13 +15,32 @@ It's a cinematic, anime-inspired portfolio where visitors can try a live, intera
 | Page | What's inside |
 | --- | --- |
 | `index.html` | Cinematic hero with an animated anime mascot (its eyes follow the cursor), intro loader, character sheet, skill radar, 5-year timeline, 11-service bento grid, horizontal "explore" panels, process and tech stack |
-| `showcase.html` (**The Lab**) | 11 interactive stages: live website preview, drag-and-drop automation workflow, working Telegram shop bot, Chrome extension popup that edits a page, Minecraft server with plugin commands and a shop GUI, desktop OS with an EXE installer and app, Android app, configurable AI agent, AI chat widget (English + Bangla), e-commerce autopilot feed and an auto-confirming crypto checkout |
-| `shop.html` | Full e-commerce demo: filters, product modal, cart, promo codes, AI shopping assistant, checkout with Crypto / bKash / Nagad / card / COD, and an autopilot admin dashboard |
+| `showcase.html` (**The Lab**) | 11 interactive stages: live website preview, drag-and-drop automation workflow, working Telegram shop bot, Chrome extension popup that edits a page, **BlockRealm**, a playable Minecraft-style survival game (see below), desktop OS with an EXE installer and app, Android app, configurable AI agent, AI chat widget (English + Bangla), e-commerce autopilot feed and an auto-confirming crypto checkout |
+| `shop.html` (**Shop templates**) | Twelve complete store templates with real product photos: clothing, baby clothes, beauty, fine jewellery, handwoven Bangladeshi wear, bags, desk tech, film cameras, sneakers, furniture, plants and outdoor gear. Each store has its own fonts, colours, hero layout, currency (৳, $, €, £, kr), lookbook, reviews and footer. Shared engine: filters, product modal with zoom and sizes, per-store bag, promo codes, shopping assistant, checkout with bKash / Nagad / card / crypto / COD, and an admin dashboard |
 | `components.html` (**UI Kit**) | Figma-style workspace with 50 live components (headers, bars, heroes, buttons, cards, forms, footers, loaders, alerts). It has a layers panel, zoom/pan, an inspector that reads real computed styles, copyable HTML/CSS/JS and present mode |
-| `demos.html` + `demos/` | Six complete demo websites (SaaS, restaurant, crypto dashboard, Minecraft server, agency, app landing) and a desktop/laptop/tablet/phone preview studio |
+| `demos.html` + `demos/` | Twelve complete demo websites and a desktop/laptop/tablet/phone preview studio: Nova AI (SaaS), Sakura Bistro (restaurant), Vault (crypto dashboard), BlockRealm (Minecraft server), Studio Kami (agency), Pulse (app landing), **Aurum** (luxury watch store with a live watch and configurator), **Mori Tea** (tea shop with a brewing timer), **Haven** (architecture and homes with a time-of-day slider and mortgage calculator), **Ledger** (banking dashboard with a send-money keypad), **Nomad** (travel booking with a date-range picker and drag-and-drop trip planner) and **Kumo Docs** (developer docs with Ctrl K search and a live API console) |
+| `pages.html` (**Pages Studio**) | Thirteen page templates (homepage, log in, sign up, pricing, dashboard, blog post, contact, 404, portfolio, product, checkout, about + team, coming soon) built from 70 section variants. It has 10 one-click theme presets (Aurora, Swiss, Brutalist, Luxe, Playful, Terminal, Paper, Ocean glass, Forest, SaaS Indigo). A toolbar swaps, reorders, hides, duplicates and adds sections. Everything can be restyled live: colours, surface tone, light/dark, 8 font pairs, radius, spacing, shadows, borders, 8 button styles with shapes, sizes and hovers, and motion effects (scroll animations, card hover, background patterns, heading styles, a sticky glass navbar). It also has Select and Text modes (text edits are kept), desktop/tablet/phone/fluid-width previews with a drag handle, undo/redo, saved versions, a Code tab with a quality audit and highlighted source, share links and one-click HTML export |
+| `dev-world.html` (**Dev World**) | A developer village on an illustrated map (it turns into a starry night in ink mode) with seven buildings. It has a terminal with 40+ commands (including `curl` against the mock API, `calc`, `top`, `toadsay`, a playable `snake`, `grep` pipes and ghost autocomplete), a live HTML/CSS/JS playground with syntax highlighting, presets, a console and share links, 17 dev tools with search (JSON, regex, Base64, UUID, passwords, colours, SHA hashes, JWT, timestamps, gradients, box-shadows, Markdown, diff, cron, URL parser, case and unit converters), a mock REST API console with auth, history and fetch/curl/Python snippets, a git-graph career timeline with a heatmap, an **Algorithm Arena** (6 sorting algorithms, a 6-way race, and A*/Dijkstra/BFS/DFS pathfinding with walls, mud and mazes), a **Typing Dojo** code typing test with WPM, accuracy, ranks and best runs, and a village passport that stamps each building you use |
 | `tutorials.html` (**Motion Academy**) | After Effects-style tutorial player with a keyframe engine, timeline, layers, effect controls with an easing graph, motion paths, lesson notes, live CSS export, an easing lab and code guides |
 | `hire.html` | Packages, a 4-step project configurator with an instant estimate, and a brief hand-off by email, Telegram or WhatsApp. Also covers payment methods, next steps and an FAQ with FAQPage schema |
 | `404.html` | Custom "lost shinobi" page |
+
+## BlockRealm: the playable Minecraft demo
+
+The Minecraft chapter of the Lab is a small survival game that shows off the kind of server plugin Xiraiya builds (the fictional "RealmCore" plugin):
+
+- **Survival:** mine and place blocks, 17 crafting and smelting recipes, pickaxe tiers, ores (coal, iron, gold, diamond), caves, fall damage, health and hunger. You eat food to survive.
+- **World:** day and night cycle, skylight that spreads through doors and caves, torches, rain, water, trees, a spawn house with a loot chest.
+- **Mobs:** zombies that burn in daylight, creepers that explode, pigs that drop porkchops. TNT and ender pearls work too.
+- **Plugin features:** coins and ore rewards, shop GUI, Legend Crates with a spinning reel, ranks, `/kit`, `/sethome` and `/home`, `/summon`, and the **Blood Moon** event with a boss bar. There are 13 advancements with toasts.
+- **Controls:** keyboard and mouse on desktop, and an on-screen pad on phones. Sound effects are synthesized in the browser and can be muted.
+- **Saving:** progress is saved in the visitor's browser (localStorage). "New world" in the inventory starts over.
+
+## Phone version and extras
+
+- On screens up to 760px wide, `assets/css/phone.css` switches to a simplified layout. It has an app-style bottom tab bar, compact home sections, one Lab chapter at a time with Prev/Next buttons, and lighter effects.
+- **Command Center:** press `Ctrl K` (or `Cmd K`) or the search button to jump to any page, demo, service or action.
+- **Visitor quest log:** visitors earn XP for visiting pages and trying each Lab demo. It's shown inside the Command Center, and completed quests pop up as toasts. There is also a hidden secret: the Konami code.
 
 ## Make it yours: edit one file
 
@@ -76,14 +95,16 @@ grep -rl "sknoyon324234234234.github.io/Personal/" --include=*.html --include=*.
 ## Project structure
 
 ```
-index.html  showcase.html  shop.html  components.html  demos.html  tutorials.html  hire.html  404.html
-demos/                 six standalone demo websites
-assets/css/            core.css (design system) + one stylesheet per page
+index.html  showcase.html  shop.html  components.html  demos.html  pages.html  dev-world.html  tutorials.html  hire.html  404.html
+demos/                 twelve standalone demo websites
+assets/css/            core.css (design system), one stylesheet per page, phone.css (phone layout)
 assets/js/config.js    your details, prices, services, packages
 assets/js/icons.js     custom SVG icon sprite (no emoji)
-assets/js/core.js      header/footer, transitions, cursor, reveals, mascot, particles, helpers
+assets/js/core.js      header/footer, tab bar, transitions, reveals, mascot, particles, Command Center, quests
 assets/js/lab/         one script per Lab stage
 assets/js/kit-data.js  UI Kit component library (HTML + CSS for each component)
+assets/js/pages-kit.js Pages Studio template generator (sections, tokens, export)
+assets/js/world.js     Dev World terminal, playground, toolbox, API console and git graph
 assets/img/            favicon, app icons, social share image, demo thumbnails
 tools/                 og.html + render-assets.js (regenerate images)
 sitemap.xml  robots.txt  site.webmanifest  .nojekyll
@@ -101,6 +122,15 @@ node tools/render-assets.js
 ## Notes
 
 - Every shop, product, brand, person and review inside the demos is **fictional**.
+- Shop product photos are real, free-licence photos (Unsplash License and Creative Commons via Openverse and Wikimedia Commons). Every photographer and licence is listed in `assets/img/shop/credits.json` and in each store's footer. `tools/build-shop-photos.js` and the `Shop photos` GitHub workflow (`tools/shop-photos/`) rebuild them.
 - **No payment is ever requested or processed**: the crypto, bKash, Nagad and card flows are simulations and are labelled that way on screen. The demo wallet addresses and QR codes are decorative.
-- Fonts: Unbounded, Plus Jakarta Sans, JetBrains Mono and Noto Serif JP from Google Fonts, loaded without blocking rendering.
+- Design: an ukiyo-e "ink and vermilion" look (warm sumi black, washi cream, seal red, gold leaf) with film-style motion. It includes letterbox bars, ink-bleed reveals, calligraphy letters, brush strokes, seal stamps and an ink-wash page transition.
+- Themes: **paper** (light, default) and **ink** (dark). The moon/sun button in the header switches between them and remembers the choice. Colours live as tokens at the top of `assets/css/core.css`.
+- Characters (original designs, not copies of any anime character, drawn in the kabuki / folklore tradition of the 1839 tale of Jiraiya 児雷也):
+  - **Xiraiya**, the toad sage developer. He winks and waggles his eyebrows, and his toad Gama snaps flies out of the air.
+  - **Tsunade**, head of QA. She has a clipboard, tea and a stamp that slams "OK".
+  - **Namekuji**, a leopard slug who works customer support in a tiny headset.
+  - Click any character and they tell a joke. Meet them all in "The crew" section on the home page.
+- Motion: pill buttons with a fill that grows from the pointer and an arrow swap, lifting cards, inertia smooth scrolling for mouse wheels, and ink-bleed reveals.
+- Fonts: Shippori Mincho B1, Zen Kaku Gothic New and JetBrains Mono from Google Fonts, loaded without blocking rendering.
 - "Minecraft" is a trademark of Mojang/Microsoft and "Telegram" of Telegram FZ-LLC. The demos only use generic, original artwork.

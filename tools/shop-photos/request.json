@@ -1,0 +1,87 @@
+{
+ "_run": 3,
+ "maison": {
+  "hero": "fashion editorial woman minimal",
+  "look": "clothing rack boutique",
+  "linen": "linen dress",
+  "blazer": "women blazer fashion",
+  "knit": "knit sweater women",
+  "jeans": "folded jeans denim",
+  "trench": "trench coat woman street",
+  "blouse": "white silk blouse",
+  "skirt": "pleated skirt fashion",
+  "tote": "leather handbag product"
+ },
+ "pebble": {
+  "hero": "baby clothes flat lay",
+  "look": "nursery baby room",
+  "romper": "baby romper",
+  "cardigan": "baby knitted cardigan",
+  "booties": "baby shoes",
+  "swaddle": "muslin swaddle baby",
+  "sleepsuit": "baby clothes folded",
+  "beanie": "baby knit hat",
+  "dungarees": "kids clothes hanging",
+  "bunny": "plush bunny toy"
+ },
+ "glow": {
+  "hero": "skincare products flat lay",
+  "look": "makeup vanity",
+  "serum": "serum dropper bottle",
+  "cream": "face cream jar",
+  "lipstick": "lipstick",
+  "palette": "eyeshadow palette",
+  "perfume": "perfume bottle",
+  "polish": "nail polish bottles",
+  "brushes": "makeup brushes",
+  "cleanser": "skincare bottle minimal"
+ },
+ "aurelia": {
+  "hero": "gold jewelry model",
+  "look": "jewelry box",
+  "ring": "gold ring",
+  "pearls": "pearl earrings",
+  "pendant": "gold necklace pendant",
+  "bracelet": "gold bracelet",
+  "hoops": "gold hoop earrings",
+  "solitaire": "diamond engagement ring",
+  "chain": "silver chain necklace",
+  "watch": "women gold watch"
+ },
+ "northside": {
+  "hero": "menswear street style",
+  "look": "men clothing store",
+  "oxford": "men shirt folded",
+  "denim": "denim jacket",
+  "chinos": "men trousers fashion",
+  "sweater": "men knit sweater",
+  "boots": "leather boots",
+  "coat": "men wool coat",
+  "tee": "white t-shirt",
+  "belt": "leather belt"
+ },
+ "deshi": {
+  "hero": "saree woman",
+  "look": "fabric market textiles",
+  "saree": "saree",
+  "silk": "silk saree",
+  "panjabi": "kurta men",
+  "kurti": "kurti",
+  "dupatta": "colorful scarf fabric",
+  "bangles": "bangles",
+  "kantha": "embroidered fabric",
+  "jutti": "traditional embroidered shoes"
+ },
+ "carry": {
+  "hero": "leather bag",
+  "look": "leather goods",
+  "backpack": "leather backpack",
+  "wallet": "leather wallet",
+  "sunglasses": "sunglasses product",
+  "scarf": "silk scarf",
+  "cap": "baseball cap",
+  "duffel": "duffel bag",
+  "watch": "wristwatch leather strap",
+  "cardholder": "leather card holder"
+ }
+}

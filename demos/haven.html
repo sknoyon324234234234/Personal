@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Haven — Architecture &amp; homes (demo site by Xiraiya)</title>
+<meta name="description" content="Demo architecture and real-estate website designed and built by Xiraiya.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&family=Work+Sans:wght@400;500;600&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&family=Work+Sans:wght@400;500;600&display=swap"></noscript>
+<style>
+:root{--bg:#ebe8e1;--paper:#f6f4ef;--ink:#151515;--ink2:#5c5a55;--terra:#c0643d;--olive:#6b7154;--line:rgba(21,21,21,.14)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:400 16px/1.65 'Work Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden}
+a{color:inherit;text-decoration:none}h1,h2,h3,p{margin:0}button,input,select{font:inherit;color:inherit}button{background:none;border:0;cursor:pointer}
+.wrap{max-width:1320px;margin:0 auto;padding:0 32px}
+.bod{font-family:'Bodoni Moda',Didot,Georgia,serif}
+.lbl{font:500 11.5px/1 'Work Sans';letter-spacing:.22em;text-transform:uppercase;color:var(--ink2)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:84px;border-bottom:1px solid var(--line)}
+.logo{font:600 22px 'Bodoni Moda',serif;letter-spacing:.3em}
+nav{display:flex;gap:30px;font-size:14px}nav a{position:relative}nav a::after{content:'';position:absolute;left:0;bottom:-4px;width:100%;height:1px;background:var(--terra);transform:scaleX(0);transition:transform .5s cubic-bezier(.16,1,.3,1);transform-origin:left}nav a:hover::after{transform:scaleX(1)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:50px;padding:0 24px;border-radius:999px;font-weight:600;font-size:14px;transition:all .45s cubic-bezier(.16,1,.3,1)}
+.b-ink{background:var(--ink);color:var(--paper)}.b-ink:hover{background:var(--terra);transform:translateY(-2px)}
+.b-line{border:1px solid var(--ink)}.b-line:hover{background:var(--ink);color:var(--paper)}
+.hero{padding:40px 0 70px}
+.hero .top{display:flex;justify-content:space-between;align-items:end;gap:30px}
+.hero h1{max-width:900px;font:400 clamp(56px,8.4vw,132px)/.9 'Bodoni Moda',serif;letter-spacing:-.03em}
+.hero h1 em{color:var(--terra)}
+.hero .intro{max-width:340px;color:var(--ink2);padding-bottom:12px}
+.scene{position:relative;margin-top:36px;height:clamp(320px,44vw,560px);border-radius:28px;overflow:hidden;background:var(--sky,linear-gradient(#bfd4e3,#efe6d6))}
+.scene svg{position:absolute;inset:0;width:100%;height:100%}
+.draw path,.draw line,.draw rect,.draw polyline{stroke-dasharray:2000;stroke-dashoffset:2000;animation:draw 3.2s cubic-bezier(.65,0,.35,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.fill{opacity:0;animation:fillIn 1.2s ease 2.2s forwards}@keyframes fillIn{to{opacity:1}}
+.sunctl{position:absolute;left:24px;right:24px;bottom:20px;display:flex;align-items:center;gap:16px;padding:12px 18px;border-radius:999px;background:rgba(246,244,239,.86);backdrop-filter:blur(8px);font-size:13px}
+.sunctl input{flex:1;accent-color:var(--terra)}
+.sunctl b{min-width:54px;text-align:right;font-variant-numeric:tabular-nums}
+section{padding:110px 0}
+.sh{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:40px}
+.sh h2{margin-top:12px;font:400 clamp(40px,5vw,72px)/1 'Bodoni Moda',serif}.sh h2 em{color:var(--terra)}
+.filters{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:14px;border-radius:22px;background:var(--paper);border:1px solid var(--line);margin-bottom:26px}
+.seg{display:flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:999px;background:var(--bg);max-width:100%}.seg button{height:38px;padding:0 16px;border-radius:999px;font-size:14px;font-weight:500;color:var(--ink2)}.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.filters label{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink2)}
+.filters input[type=range]{accent-color:var(--terra);width:160px}
+.filters select{height:40px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg)}
+.count{margin-left:auto;font-size:14px;color:var(--ink2)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.card{border-radius:24px;background:var(--paper);border:1px solid var(--line);overflow:hidden;cursor:pointer;transition:transform .7s cubic-bezier(.16,1,.3,1),box-shadow .7s}
+.card:hover{transform:translateY(-6px);box-shadow:0 30px 60px -30px rgba(0,0,0,.35)}
+.card.hl{outline:2px solid var(--terra);outline-offset:3px}
+.ph{position:relative;aspect-ratio:4/3;overflow:hidden}.ph svg{width:100%;height:100%;transition:transform 1.2s cubic-bezier(.16,1,.3,1)}.card:hover .ph svg{transform:scale(1.06)}
+.tag{position:absolute;left:14px;top:14px;padding:6px 12px;border-radius:999px;background:rgba(246,244,239,.92);font-size:12px;font-weight:600}
+.heart{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(246,244,239,.92);transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.heart svg{width:18px;height:18px}.heart[aria-pressed="true"] path{fill:var(--terra);stroke:var(--terra)}.heart:active{transform:scale(.8)}
+.cb{padding:18px 20px 20px}.cb h3{font:400 26px 'Bodoni Moda',serif}.cb .loc{color:var(--ink2);font-size:14px;margin:2px 0 14px}
+.cb .row{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--line)}
+.cb .specs{display:flex;gap:14px;font-size:13px;color:var(--ink2)}.cb .price{font:600 20px 'Bodoni Moda',serif}
+.none{padding:40px;text-align:center;color:var(--ink2);grid-column:1/-1}
+.map-sec .wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+.map{position:relative;border-radius:28px;overflow:hidden;background:#dfdbd1;aspect-ratio:4/3}
+.map svg{width:100%;height:100%}
+.mp{cursor:pointer}.mp rect{transition:all .3s}.mp:hover rect,.mp.on rect{fill:var(--terra)}.mp:hover text,.mp.on text{fill:#fff}
+.steps{display:grid;gap:18px;margin-top:26px}
+.step{display:grid;grid-template-columns:52px 1fr;gap:16px;padding:18px 0;border-top:1px solid var(--line)}
+.step b{font:400 32px/1 'Bodoni Moda',serif;color:var(--terra)}.step h3{font:600 17px 'Work Sans';margin-bottom:4px}.step p{color:var(--ink2);font-size:15px}
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;visibility:hidden}
+.modal.on{visibility:visible}.modal .bd{position:absolute;inset:0;background:rgba(21,21,21,.5);opacity:0;transition:opacity .4s}.modal.on .bd{opacity:1}
+.mbox{position:relative;width:min(1000px,100%);max-height:calc(100vh - 40px);overflow:auto;border-radius:28px;background:var(--paper);display:grid;grid-template-columns:1.1fr .9fr;transform:translateY(30px) scale(.97);opacity:0;transition:all .6s cubic-bezier(.16,1,.3,1)}
+.modal.on .mbox{transform:none;opacity:1}
+.mbox .ph{aspect-ratio:auto;min-height:100%}.mdet{padding:30px;display:grid;gap:16px;align-content:start}
+.mdet h3{font:400 38px/1 'Bodoni Moda',serif}.x{position:absolute;right:14px;top:14px;z-index:2;width:42px;height:42px;border-radius:50%;background:var(--paper);font-size:22px}
+.feat{display:flex;flex-wrap:wrap;gap:8px}.feat span{padding:5px 12px;border-radius:999px;background:var(--bg);font-size:13px}
+.calc{padding:18px;border-radius:18px;background:var(--bg);display:grid;gap:12px}
+.calc label{display:grid;grid-template-columns:1fr auto;gap:6px 10px;font-size:13px;color:var(--ink2)}.calc input{grid-column:1/-1;accent-color:var(--terra)}
+.calc .pay{display:flex;justify-content:space-between;align-items:end;padding-top:10px;border-top:1px solid var(--line)}.calc .pay b{font:600 30px 'Bodoni Moda',serif}
+.contact{background:var(--ink);color:var(--paper)}
+.contact .wrap{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.contact h2{font:400 clamp(40px,5vw,72px)/1 'Bodoni Moda',serif}.contact h2 em{color:#e9a07e}
+.contact form{display:grid;gap:12px}.contact input,.contact textarea{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(246,244,239,.2);background:transparent;color:var(--paper)}
+.contact textarea{min-height:110px;resize:vertical}.contact input:focus,.contact textarea:focus{outline:none;border-color:#e9a07e}
+footer{padding:40px 0;font-size:13px;color:var(--ink2)}footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.toast{position:fixed;left:50%;bottom:24px;z-index:70;transform:translate(-50%,220%);padding:14px 22px;border-radius:999px;background:var(--terra);color:#fff;font-weight:600;font-size:14px;transition:transform .6s cubic-bezier(.16,1,.3,1)}.toast.on{transform:translate(-50%,0)}
+.rv{opacity:0;transform:translateY(30px);transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1)}.rv.in{opacity:1;transform:none}
+.by{position:fixed;left:14px;bottom:14px;z-index:40;padding:8px 12px;border-radius:999px;background:var(--ink);color:var(--paper);font:600 12px 'Work Sans',sans-serif}.by b{color:#e9a07e}
+@media(max-width:980px){nav{display:none}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.map-sec .wrap,.contact .wrap{grid-template-columns:1fr}.mbox{grid-template-columns:1fr}.mbox .ph{aspect-ratio:16/10}.hero .top,.sh{flex-direction:column;align-items:start}}
+@media(max-width:600px){.seg button{padding:0 12px}.wrap{padding:0 18px}.grid{grid-template-columns:1fr}.count{margin-left:0}.sunctl{left:10px;right:10px;bottom:10px;gap:10px;padding:10px 14px;font-size:12px}.scene{height:380px;box-shadow:inset 0 -64px 0 #c9c2b2}.scene svg{height:calc(100% - 64px)}section{padding:76px 0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.draw *{stroke-dashoffset:0!important}.fill{opacity:1}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="#">HAVEN</a><nav><a href="#homes">Homes</a><a href="#studio">Studio</a><a href="#contact">Contact</a></nav><a class="btn b-ink" href="#contact" style="height:44px">Book a tour</a></div></header>
+
+<section class="hero" style="padding-top:40px">
+  <div class="wrap">
+    <div class="top"><h1>Homes built around <em>light.</em></h1><p class="intro">Haven designs and sells quiet, light-filled homes. Drag the sun below to see how this house lives through a day.</p></div>
+    <div class="scene" id="scene">
+      <svg viewBox="0 0 1200 560" preserveAspectRatio="xMidYMax slice" aria-label="Line drawing of a modern house; its shadow moves with the time of day" role="img">
+        <circle id="sun" cx="900" cy="120" r="46" fill="#f4c46a"/>
+        <path d="M0 470H1200V560H0Z" fill="#c9c2b2"/>
+        <path id="shadow" d="M330 470 870 470 1010 520 470 520Z" fill="#151515" opacity=".16"/>
+        <g class="fill"><path d="M330 470V300H620V470Z" fill="#f6f4ef"/><path d="M620 470V230H870V470Z" fill="#e3ddd1"/><rect x="660" y="290" width="170" height="120" fill="#bfd4e3" id="win"/><rect x="370" y="340" width="90" height="130" fill="#6b7154"/><rect x="490" y="340" width="100" height="70" fill="#bfd4e3" id="win2"/></g>
+        <g class="draw" fill="none" stroke="#151515" stroke-width="2.2">
+          <path d="M300 300H640"/><path d="M600 230H900"/><path d="M330 470V300"/><path d="M620 470V230"/><path d="M870 470V230"/><path d="M620 470H870"/><path d="M330 470H620"/>
+          <rect x="660" y="290" width="170" height="120"/><rect x="370" y="340" width="90" height="130"/><rect x="490" y="340" width="100" height="70"/>
+          <path d="M745 290V410M660 350H830"/><path d="M880 470C900 430 940 420 960 440 980 400 1030 410 1030 450 1050 440 1070 456 1064 470"/><path d="M200 470V420M180 440C170 400 230 400 220 440"/>
+        </g>
+      </svg>
+      <div class="sunctl"><span>Sunrise</span><input type="range" min="6" max="20" step=".25" value="15" id="hour" aria-label="Time of day"><span>Night</span><b id="hourLbl">15:00</b></div>
+    </div>
+  </div>
+</section>
+
+<section id="homes">
+  <div class="wrap">
+    <div class="sh rv"><div><p class="lbl">Available homes</p><h2>Six homes, <em>zero</em> compromises.</h2></div><p style="max-width:340px;color:var(--ink2)">Filter by type, price and bedrooms. Click a home for details and a mortgage estimate.</p></div>
+    <div class="filters rv">
+      <div class="seg" id="type"><button aria-pressed="true" data-t="all">All</button><button aria-pressed="false" data-t="Villa">Villas</button><button aria-pressed="false" data-t="Apartment">Apartments</button><button aria-pressed="false" data-t="Cabin">Cabins</button></div>
+      <label>Max <input type="range" id="max" min="300" max="2400" step="50" value="2400"><b id="maxLbl">$2.4M</b></label>
+      <label>Beds <select id="beds"><option value="0">Any</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option></select></label>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<section class="map-sec" id="studio" style="background:var(--paper)">
+  <div class="wrap">
+    <div class="map rv"><svg viewBox="0 0 800 600" id="mapSvg" aria-label="Map of the homes">
+      <rect width="800" height="600" fill="#e3dfd5"/><path d="M0 420C160 380 260 470 420 430S640 360 800 400V600H0Z" fill="#bfd4e3"/>
+      <g stroke="#f6f4ef" stroke-width="14" fill="none" stroke-linecap="round"><path d="M40 120H760"/><path d="M200 40V560"/><path d="M520 40V420"/><path d="M40 300C200 280 400 330 760 250"/></g>
+      <g fill="#cfd6c2"><circle cx="340" cy="180" r="60"/><circle cx="640" cy="170" r="44"/></g>
+      <g id="pins"></g></svg></div>
+    <div class="rv"><p class="lbl">The studio</p><h2 class="bod" style="font-size:clamp(40px,5vw,64px);line-height:1;margin:12px 0 10px">How a Haven <em style="color:var(--terra)">happens.</em></h2>
+      <div class="steps"><div class="step"><b>i</b><div><h3>Site &amp; sun study</h3><p>We map how light moves across the land before a single wall is drawn.</p></div></div><div class="step"><b>ii</b><div><h3>Design in daylight</h3><p>Every room gets its best hour of the day. Bedrooms face sunrise, kitchens catch lunch.</p></div></div><div class="step"><b>iii</b><div><h3>Build &amp; hand over</h3><p>Local crews, natural materials, and a ten-year structural warranty.</p></div></div></div></div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap">
+    <div class="rv"><p class="lbl" style="color:#b9b5ab">Visit</p><h2>Walk through it <em>in person.</em></h2><p style="color:#b9b5ab;margin-top:18px;max-width:420px">Tours run every day from 9 to 6. Tell us which home and when, and we will have the coffee ready.</p></div>
+    <form class="rv" id="cf" novalidate><input id="cn" placeholder="Your name" autocomplete="name"><input id="ce" type="email" placeholder="Email" autocomplete="email"><textarea id="cm" placeholder="Which home would you like to see?"></textarea><button class="btn" style="background:#e9a07e;color:var(--ink)" type="submit">Request a tour</button></form>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>© Haven Studio · fictional listings · demo website by Xiraiya</span><span>Architecture · Real estate · Interiors</span></div></footer>
+
+<div class="modal" id="modal" aria-hidden="true"><div class="bd" data-x></div><div class="mbox" role="dialog" aria-label="Home details"><button class="x" data-x aria-label="Close">×</button><div class="ph" id="mph"></div><div class="mdet" id="mdet"></div></div></div>
+<div class="toast" id="toast" role="status"></div>
+<a class="by" href="../index.html" target="_top">Demo by <b>Xiraiya</b></a>
+
+<script>
+(function(){
+var HOMES=[
+ {n:'Casa Luma',loc:'Cox’s Bazar · sea view',t:'Villa',p:1850,b:4,ba:4,a:320,sky:['#f2c9a0','#f6e3cc'],c:'#f6f4ef',x:620,y:470,f:['Infinity pool','Solar roof','Sea-facing terrace']},
+ {n:'The Atrium',loc:'Gulshan · Dhaka',t:'Apartment',p:640,b:3,ba:2,a:180,sky:['#bfd4e3','#eef1f2'],c:'#e3ddd1',x:260,y:150,f:['Double-height atrium','Rooftop garden','Concierge']},
+ {n:'Pine Hollow',loc:'Sreemangal · tea hills',t:'Cabin',p:380,b:2,ba:1,a:95,sky:['#cfd8c3','#eef0e6'],c:'#9a6b4a',x:640,y:190,f:['Wood stove','Forest deck','Off-grid ready']},
+ {n:'Villa Ombra',loc:'Sylhet · riverside',t:'Villa',p:2250,b:5,ba:5,a:410,sky:['#e8b89a','#f3dfcc'],c:'#f6f4ef',x:460,y:380,f:['Courtyard','Guest pavilion','River jetty']},
+ {n:'Linea 12',loc:'Banani · Dhaka',t:'Apartment',p:520,b:2,ba:2,a:120,sky:['#c9d2dc','#eceff2'],c:'#d5d0c4',x:330,y:260,f:['Corner windows','Gym','EV parking']},
+ {n:'Stone Hut',loc:'Bandarban · hilltop',t:'Cabin',p:450,b:3,ba:2,a:130,sky:['#d9c7b0','#f1e8dc'],c:'#8f8a7e',x:700,y:330,f:['Stone walls','Cloud-level views','Rainwater system']}];
+function art(h,big){var s=h.sky,id='g'+Math.random().toString(36).slice(2,7),body;
+  if(h.t==='Villa')body='<rect x="70" y="150" width="190" height="100" fill="'+h.c+'"/><rect x="200" y="110" width="140" height="140" fill="#e3ddd1"/><rect x="215" y="140" width="110" height="70" fill="#9fb8cc"/><rect x="90" y="175" width="60" height="75" fill="#6b7154"/><rect x="165" y="175" width="70" height="40" fill="#9fb8cc"/><path d="M60 150H270M190 110H350" stroke="#151515" stroke-width="3"/><rect x="40" y="250" width="320" height="16" fill="#8fb7c9"/>';
+  else if(h.t==='Apartment')body='<rect x="130" y="40" width="140" height="210" fill="'+h.c+'"/>'+[0,1,2,3,4].map(function(r){return '<rect x="145" y="'+(55+r*38)+'" width="50" height="26" fill="#9fb8cc"/><rect x="205" y="'+(55+r*38)+'" width="50" height="26" fill="#9fb8cc"/>'}).join('')+'<rect x="270" y="110" width="80" height="140" fill="#cfc8ba"/><path d="M120 40H280" stroke="#151515" stroke-width="3"/>';
+  else body='<path d="M110 250V160L200 90 290 160V250Z" fill="'+h.c+'"/><path d="M96 170 200 82 304 170" stroke="#151515" stroke-width="6" fill="none"/><rect x="180" y="190" width="40" height="60" fill="#3e3a33"/><rect x="130" y="180" width="34" height="30" fill="#f4c46a"/><rect x="236" y="180" width="34" height="30" fill="#f4c46a"/><path d="M40 250V200L60 150 80 200V250M330 250V190L352 130 374 190V250" fill="#6b7154"/>';
+  return '<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of '+h.n+'"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+s[0]+'"/><stop offset="1" stop-color="'+s[1]+'"/></linearGradient></defs><rect width="400" height="300" fill="url(#'+id+')"/><circle cx="330" cy="70" r="26" fill="#f6d28a" opacity=".9"/><rect y="250" width="400" height="50" fill="#b9b2a2"/>'+body+'</svg>'}
+var saved={},grid=document.getElementById('grid');
+function money(k){return k>=1000?'$'+(k/1000).toFixed(k%1000?2:1).replace(/\.?0+$/,'')+'M':'$'+k+'K'}
+function render(){var t=document.querySelector('#type [aria-pressed="true"]').dataset.t,max=+document.getElementById('max').value,beds=+document.getElementById('beds').value;
+  var list=HOMES.filter(function(h){return (t==='all'||h.t===t)&&h.p<=max&&h.b>=beds});
+  document.getElementById('count').textContent=list.length+' of '+HOMES.length+' homes';
+  grid.innerHTML=list.length?list.map(function(h){var i=HOMES.indexOf(h);return '<article class="card" data-i="'+i+'" tabindex="0"><div class="ph">'+art(h)+'<span class="tag">'+h.t+'</span><button class="heart" type="button" aria-label="Save '+h.n+'" aria-pressed="'+!!saved[i]+'" data-h="'+i+'"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="none" stroke="#151515" stroke-width="1.8"/></svg></button></div><div class="cb"><h3>'+h.n+'</h3><p class="loc">'+h.loc+'</p><div class="row"><div class="specs"><span>'+h.b+' bd</span><span>'+h.ba+' ba</span><span>'+h.a+' m²</span></div><span class="price">'+money(h.p)+'</span></div></div></article>'}).join(''):'<p class="none">No homes match. Try a higher budget.</p>'}
+document.getElementById('type').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;this.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});render()});
+document.getElementById('max').addEventListener('input',function(){document.getElementById('maxLbl').textContent=money(+this.value);render()});
+document.getElementById('beds').addEventListener('change',render);
+grid.addEventListener('click',function(e){var h=e.target.closest('[data-h]');if(h){e.stopPropagation();var i=+h.dataset.h;saved[i]=!saved[i];h.setAttribute('aria-pressed',saved[i]);toast(saved[i]?HOMES[i].n+' saved to favourites':'Removed from favourites');return}var c=e.target.closest('.card');if(c)open(+c.dataset.i)});
+grid.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.classList.contains('card'))open(+e.target.dataset.i)});
+render();
+/* modal + mortgage */
+var modal=document.getElementById('modal');
+function open(i){var h=HOMES[i];document.getElementById('mph').innerHTML=art(h,true);
+  document.getElementById('mdet').innerHTML='<p class="lbl">'+h.t+' · '+h.loc+'</p><h3>'+h.n+'</h3><p style="color:var(--ink2)">'+h.b+' bedrooms · '+h.ba+' bathrooms · '+h.a+' m² of living space, designed around the morning light.</p><div class="feat">'+h.f.map(function(f){return '<span>'+f+'</span>'}).join('')+'</div>'+
+  '<div class="calc"><label>Price <b>'+money(h.p)+'</b></label><label>Down payment <b id="dpv">20%</b><input type="range" id="dp" min="10" max="60" value="20"></label><label>Interest rate <b id="rtv">9.0%</b><input type="range" id="rt" min="5" max="14" step=".25" value="9"></label><label>Term <b id="yrv">20 years</b><input type="range" id="yr" min="5" max="30" step="5" value="20"></label><div class="pay"><span style="font-size:13px;color:var(--ink2)">Estimated monthly</span><b id="pm">$0</b></div></div><button class="btn b-ink" type="button" id="tour">Schedule a tour</button>';
+  function calc(){var P=h.p*1000*(1-document.getElementById('dp').value/100),r=document.getElementById('rt').value/100/12,n=document.getElementById('yr').value*12,m=P*r/(1-Math.pow(1+r,-n));
+    document.getElementById('dpv').textContent=document.getElementById('dp').value+'%';document.getElementById('rtv').textContent=(+document.getElementById('rt').value).toFixed(2)+'%';document.getElementById('yrv').textContent=document.getElementById('yr').value+' years';document.getElementById('pm').textContent='$'+Math.round(m).toLocaleString()}
+  ['dp','rt','yr'].forEach(function(id){document.getElementById(id).addEventListener('input',calc)});calc();
+  document.getElementById('tour').addEventListener('click',function(){close();document.getElementById('cm').value='I would like to tour '+h.n+'.';document.getElementById('contact').scrollIntoView({behavior:'smooth'})});
+  modal.classList.add('on');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';setTimeout(function(){modal.querySelector('.x').focus()},50)}
+function close(){modal.classList.remove('on');modal.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+modal.addEventListener('click',function(e){if(e.target.closest('[data-x]'))close()});document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+/* map pins */
+document.getElementById('pins').innerHTML=HOMES.map(function(h,i){var w=h.n.length*8+26;return '<g class="mp" data-i="'+i+'" tabindex="0"><rect x="'+(h.x-w/2)+'" y="'+(h.y-18)+'" width="'+w+'" height="30" rx="15" fill="#f6f4ef" stroke="#151515" stroke-width="1.5"/><text x="'+h.x+'" y="'+(h.y+2)+'" text-anchor="middle" font-family="Work Sans,sans-serif" font-size="13" font-weight="600" fill="#151515">'+money(h.p)+'</text></g>'}).join('');
+document.getElementById('pins').addEventListener('click',function(e){var g=e.target.closest('.mp');if(g)open(+g.dataset.i)});
+/* time of day */
+var hour=document.getElementById('hour'),scene=document.getElementById('scene');
+function mix(a,b,t){var p=function(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]},x=p(a),y=p(b);return '#'+x.map(function(v,i){return ('0'+Math.round(v+(y[i]-v)*t).toString(16)).slice(-2)}).join('')}
+function sun(){var h=+hour.value,t=(h-6)/14,ang=Math.PI*t,sx=150+900*t,sy=440-Math.sin(ang)*360,night=Math.max(0,(h-18.5)/1.5),dusk=Math.max(0,1-Math.abs(h-18)/2.2);
+  var s=document.getElementById('sun');s.setAttribute('cx',sx);s.setAttribute('cy',sy);s.setAttribute('fill',night>.3?'#e8ecff':mix('#f4c46a','#e8763c',dusk));
+  var top=mix(mix('#9cc2dc','#e29a6b',dusk),'#1b2238',night),bot=mix(mix('#f1e7d6','#f5c89a',dusk),'#3a3550',night);scene.style.setProperty('--sky','linear-gradient('+top+','+bot+')');
+  var dx=(600-sx)*.55,len=Math.max(40,260*(1-Math.sin(ang))+40);document.getElementById('shadow').setAttribute('d','M330 470 870 470 '+(870+dx*.6+len*(dx>0?1:-1)*.4)+' 520 '+(330+dx*.6+len*(dx>0?1:-1)*.4)+' 520Z');
+  document.getElementById('shadow').setAttribute('opacity',(.22*(1-night)).toFixed(2));
+  ['win','win2'].forEach(function(id){document.getElementById(id).setAttribute('fill',night>.2?'#f6c76a':'#bfd4e3')});
+  var hh=Math.floor(h),mm=Math.round((h-hh)*60);document.getElementById('hourLbl').textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')}
+hour.addEventListener('input',sun);sun();
+/* contact */
+function toast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('on')},2400)}
+document.getElementById('cf').addEventListener('submit',function(e){e.preventDefault();if(!document.getElementById('cn').value.trim())return toast('Please add your name');if(!/^\S+@\S+\.\S+$/.test(document.getElementById('ce').value))return toast('Please add a valid email');toast('Tour requested. We will confirm within the hour.');this.reset()});
+var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}})},{threshold:.12});document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+})();
+</script>
+</body>
+</html>

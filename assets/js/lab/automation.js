@@ -5,13 +5,13 @@
   var W = 900, H = 380;
 
   var NODES = [
-    { id: 'hook', x: 18, y: 160, icon: 'zap', t: 'Webhook', s: 'POST /new-order', c: '#ffc24b', noIn: true },
-    { id: 'val', x: 222, y: 160, icon: 'code', t: 'Validate', s: 'Code · JavaScript', c: '#27e1d6' },
-    { id: 'ai', x: 440, y: 58, icon: 'chip', t: 'AI Classify', s: 'LLM · priority', c: '#8b6cff' },
-    { id: 'sheet', x: 440, y: 262, icon: 'grid', t: 'Google Sheets', s: 'Append row', c: '#a4ff6b' },
+    { id: 'hook', x: 18, y: 160, icon: 'zap', t: 'Webhook', s: 'POST /new-order', c: '#d9a441', noIn: true },
+    { id: 'val', x: 222, y: 160, icon: 'code', t: 'Validate', s: 'Code · JavaScript', c: '#6fb3a8' },
+    { id: 'ai', x: 440, y: 58, icon: 'chip', t: 'AI Classify', s: 'LLM · priority', c: '#9483c2' },
+    { id: 'sheet', x: 440, y: 262, icon: 'grid', t: 'Google Sheets', s: 'Append row', c: '#a9c46a' },
     { id: 'tg', x: 700, y: 18, icon: 'send', t: 'Telegram', s: 'Notify admin', c: '#2f9bff', noOut: true },
-    { id: 'mail', x: 700, y: 160, icon: 'mail', t: 'Email', s: 'Send invoice', c: '#ff5fb6', noOut: true },
-    { id: 'crm', x: 700, y: 302, icon: 'users', t: 'CRM', s: 'Upsert customer', c: '#ff2e4d', noOut: true }
+    { id: 'mail', x: 700, y: 160, icon: 'mail', t: 'Email', s: 'Send invoice', c: '#df7f73', noOut: true },
+    { id: 'crm', x: 700, y: 302, icon: 'users', t: 'CRM', s: 'Upsert customer', c: '#e0442e', noOut: true }
   ];
   var EDGES = [['hook', 'val'], ['val', 'ai'], ['val', 'sheet'], ['ai', 'tg'], ['ai', 'mail'], ['sheet', 'crm']];
 

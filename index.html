@@ -9,7 +9,7 @@
 <meta name="author" content="Xiraiya">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://sknoyon324234234234.github.io/Personal/">
-<meta name="theme-color" content="#07070b">
+<meta name="theme-color" content="#f6f1e7">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Xiraiya">
 <meta property="og:title" content="Xiraiya — Websites, Bots, Apps &amp; AI Agents that work while you sleep">
@@ -30,10 +30,11 @@
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+JP:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+JP:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@400;600;700;800;900&display=swap"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"></noscript>
 <link rel="stylesheet" href="assets/css/core.css">
 <link rel="stylesheet" href="assets/css/home.css">
-<script>document.documentElement.classList.add('js')</script>
+<link rel="stylesheet" href="assets/css/phone.css">
+<script>document.documentElement.classList.add('js');try{if(localStorage.getItem('xr-mode')==='ink')document.documentElement.setAttribute('data-mode','ink')}catch(e){}</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -93,13 +94,10 @@
 
 <!-- intro loader (first visit per session) -->
 <div class="loader" id="loader" aria-hidden="true">
-  <div class="loader-grid"></div>
-  <div class="loader-ring">
-    <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54"/><circle class="sweep" cx="60" cy="60" r="54"/><path d="M60 0v120M0 60h120"/></svg>
-    <span class="loader-num">3</span>
-  </div>
+  <svg class="loader-enso" viewBox="0 0 200 200"><path d="M112 20C160 26 186 64 182 106 178 150 142 182 98 180 54 178 20 144 22 100 24 62 52 30 92 22"/><path class="thin" d="M120 30C158 40 176 72 172 108"/></svg>
+  <span class="loader-num">三</span>
   <div class="loader-name"><span>XIRAIYA</span></div>
-  <div class="loader-meta">Rajshahi · Bangladesh <i></i> 開発者 <i></i> Click to skip</div>
+  <div class="loader-meta">Rajshahi · Bangladesh <i></i> 児雷也 <i></i> Click to skip (the toad will not mind)</div>
   <div class="loader-wipe"></div>
 </div>
 
@@ -109,20 +107,26 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero" aria-labelledby="hero-title">
-    <canvas class="hero-canvas" data-petals="21000" aria-hidden="true"></canvas>
+    <canvas class="hero-canvas" data-petals="34000" aria-hidden="true"></canvas>
     <div class="hero-sun" aria-hidden="true"></div>
-    <div class="hero-lines speedlines" aria-hidden="true"></div>
-    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="hero-peaks" aria-hidden="true">
+      <svg class="pk-far" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" data-speed=".06"><defs><linearGradient id="pkf" x1="0" y1="0" x2="0" y2="1"><stop offset=".2" style="stop-color:var(--peak-far)"/><stop offset=".85" stop-color="#3b3129" stop-opacity="0"/></linearGradient></defs><path d="M0 600V352C58 342 86 262 136 250 188 238 204 334 256 324 306 312 324 190 384 176 446 164 456 300 524 292 594 284 604 226 662 214 724 202 742 318 804 310 872 302 884 152 954 142 1024 134 1032 290 1102 282 1162 274 1182 232 1244 222 1306 212 1322 330 1384 322 1444 314 1472 252 1522 246 1562 242 1582 296 1600 298V600Z" fill="url(#pkf)"/></svg>
+      <svg class="pk-mid" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" data-speed=".12"><defs><linearGradient id="pkm" x1="0" y1="0" x2="0" y2="1"><stop offset=".45" style="stop-color:var(--peak-mid)"/><stop offset="1" stop-color="#231c16" stop-opacity="0"/></linearGradient></defs><path d="M0 600V438C70 430 98 336 168 326 232 318 250 424 318 414 380 404 404 300 474 296 546 292 566 432 640 424 716 416 744 356 806 352 874 348 890 452 962 444 1034 436 1054 330 1126 324 1196 318 1214 440 1282 434 1346 428 1372 380 1432 376 1500 372 1530 440 1600 436V600Z" fill="url(#pkm)"/></svg>
+      <svg class="pk-near" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><path d="M0 600V520C96 506 150 470 230 478 312 486 340 530 430 522 520 514 560 470 650 474 744 478 770 528 870 522 966 516 1010 482 1100 486 1196 490 1224 532 1320 526 1410 520 1452 492 1530 494 1566 495 1590 504 1600 506V600Z" style="fill:var(--bg)"/></svg>
+    </div>
+    <div class="hero-mist m1" aria-hidden="true"></div>
+    <div class="hero-mist m2" aria-hidden="true"></div>
     <div class="letterbox lb-top" aria-hidden="true"></div>
     <div class="letterbox lb-bot" aria-hidden="true"></div>
-    <div class="hero-vjp vertical-jp jp" aria-hidden="true">コード忍者</div>
+    <div class="hero-vjp vertical-jp jp" aria-hidden="true">児雷也・開発の仙人</div>
 
     <div class="container container-wide hero-inner">
       <div class="hero-copy">
-        <p class="hero-kicker"><span class="hanko sm">忍</span><span>Code Shinobi <em>·</em> Since <span data-cfg="startedYear">2021</span></span></p>
+        <p class="hero-kicker"><span class="hanko sm">忍</span><span>The toad sage of code <em>·</em> Since <span data-cfg="startedYear">2021</span></span></p>
         <h1 class="hero-title" id="hero-title">
-          <span class="hero-ghost" aria-hidden="true">XIRAIYA</span>
+          <svg class="hero-brush" viewBox="0 0 1000 160" preserveAspectRatio="none" aria-hidden="true"><path d="M14 92C120 58 330 40 560 44 720 46 880 58 988 70 996 72 996 90 984 92 860 110 690 124 520 126 330 128 150 124 24 118 6 116 2 98 14 92Z" fill="#e0442e"/><path d="M40 84C260 64 520 60 760 66M60 110C300 116 560 114 820 100M120 96C380 90 620 88 900 84" stroke="#b8321f" stroke-width="5" fill="none" stroke-linecap="round" opacity=".8"/><path d="M880 64C930 66 970 70 998 76M900 104 990 94" stroke="#e0442e" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/></svg>
           <span class="hero-name" data-split="ready">XIRAIYA</span>
+          <span class="hero-seal" aria-hidden="true"><span>児</span><span>雷</span><span>也</span></span>
           <span class="sr-only"> — full-stack developer, automation engineer and AI agent builder from Rajshahi, Bangladesh</span>
         </h1>
         <p class="hero-role">I build <span class="rotator"><span class="rot-word">websites</span></span><br>that work while you sleep.</p>
@@ -134,21 +138,8 @@
       </div>
 
       <div class="hero-visual">
-        <div class="orbit" aria-hidden="true">
-          <span class="orb" style="--i:0"><i><svg class="ic"><use href="#i-globe"/></svg></i></span>
-          <span class="orb" style="--i:1"><i><svg class="ic"><use href="#i-flow"/></svg></i></span>
-          <span class="orb" style="--i:2"><i><svg class="ic"><use href="#i-send"/></svg></i></span>
-          <span class="orb" style="--i:3"><i><svg class="ic"><use href="#i-puzzle"/></svg></i></span>
-          <span class="orb" style="--i:4"><i><svg class="ic"><use href="#i-cube"/></svg></i></span>
-          <span class="orb" style="--i:5"><i><svg class="ic"><use href="#i-window"/></svg></i></span>
-          <span class="orb" style="--i:6"><i><svg class="ic"><use href="#i-phone"/></svg></i></span>
-          <span class="orb" style="--i:7"><i><svg class="ic"><use href="#i-chip"/></svg></i></span>
-          <span class="orb" style="--i:8"><i><svg class="ic"><use href="#i-chat"/></svg></i></span>
-          <span class="orb" style="--i:9"><i><svg class="ic"><use href="#i-bag"/></svg></i></span>
-          <span class="orb" style="--i:10"><i><svg class="ic"><use href="#i-btc"/></svg></i></span>
-        </div>
         <div class="hero-mascot" data-mascot></div>
-        <p class="hero-bubble bubble"><span class="typer" data-lines="Yo! Tell me your idea.|I will ship it. Fast.|Bots? Apps? AI? Easy.">Yo! Tell me your idea.</span></p>
+        <p class="hero-bubble bubble"><span class="typer" data-lines="Tell me your idea.|I will ship it before the toad blinks.|Bots, apps, AI? Summoned.|Poke me. Go on.|The toad handles DevOps. Do not ask.">Tell me your idea.</span></p>
       </div>
     </div>
 
@@ -182,7 +173,7 @@
     <div class="kanji-bg about-kanji" aria-hidden="true">壱</div>
     <div class="container container-wide">
       <div class="section-head">
-        <span class="num"><span class="hanko sm">壱</span> 01 — The character</span>
+        <span class="num"><span class="hanko sm">壱</span> The character · 人物</span>
         <h2 class="h2" id="about-title" data-split>Meet the dev behind the <span class="grad-text">magic.</span></h2>
       </div>
 
@@ -258,13 +249,13 @@
   <section class="section services" id="services" aria-labelledby="svc-title">
     <div class="container container-wide">
       <div class="section-head">
-        <span class="num"><span class="hanko sm">弐</span> 02 — Arsenal</span>
+        <span class="num"><span class="hanko sm">弐</span> The arsenal · 武器</span>
         <h2 class="h2" id="svc-title" data-split>Eleven ways I can <span class="grad-text">level up</span> your business.</h2>
         <p class="lead" data-reveal>Every card opens a live, clickable preview in the Lab. No screenshots — the real thing, running in your browser.</p>
       </div>
 
       <div class="bento">
-        <a class="svc card s-web" href="showcase.html#web" data-reveal data-cursor-label="Preview">
+        <a class="svc card s-web" href="showcase.html#web" data-reveal>
           <div class="svc-top"><span class="svc-ic"><svg class="ic"><use href="#i-globe"/></svg></span><span class="svc-jp jp">網</span></div>
           <div class="svc-vis vis-web" aria-hidden="true"><div class="vw-bar"><i></i><i></i><i></i><span></span></div><div class="vw-body"><b></b><b></b><b></b><span></span><span></span><span></span></div></div>
           <h3 class="h3">Websites &amp; Web Apps</h3>
@@ -272,7 +263,7 @@
           <div class="chips"><span class="chip">React</span><span class="chip">Next.js</span><span class="chip">Node.js</span><span class="chip">WordPress</span></div>
           <span class="svc-more">Live preview <svg class="ic"><use href="#i-arrow-right"/></svg></span>
         </a>
-        <a class="svc card s-agent" href="showcase.html#ai-agent" data-reveal style="--d:.08s" data-cursor-label="Preview">
+        <a class="svc card s-agent" href="showcase.html#ai-agent" data-reveal style="--d:.08s">
           <div class="svc-top"><span class="svc-ic"><svg class="ic"><use href="#i-chip"/></svg></span><span class="svc-jp jp">知</span></div>
           <div class="svc-vis vis-ai" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><svg viewBox="0 0 200 100" preserveAspectRatio="none"><path vector-effect="non-scaling-stroke" d="M30 20 100 50 170 20M30 80 100 50 170 80M30 20 30 80M170 20 170 80M100 50 100 12M100 50 100 88"/></svg></div>
           <h3 class="h3">AI Agents</h3>
@@ -280,28 +271,28 @@
           <div class="chips"><span class="chip">Tool calling</span><span class="chip">RAG</span><span class="chip">Memory</span></div>
           <span class="svc-more">Live preview <svg class="ic"><use href="#i-arrow-right"/></svg></span>
         </a>
-        <a class="svc card s-auto" href="showcase.html#automation" data-reveal data-cursor-label="Preview">
+        <a class="svc card s-auto" href="showcase.html#automation" data-reveal>
           <div class="svc-top"><span class="svc-ic"><svg class="ic"><use href="#i-flow"/></svg></span><span class="svc-jp jp">自</span></div>
           <div class="svc-vis vis-flow" aria-hidden="true"><span></span><span></span><span></span><span></span><i></i></div>
           <h3 class="h3">Automation Tools</h3>
           <p>Scrapers, auto-posting, data pipelines and API workflows that run 24/7 so you don’t have to.</p>
           <span class="svc-more">Live preview <svg class="ic"><use href="#i-arrow-right"/></svg></span>
         </a>
-        <a class="svc card s-tg" href="showcase.html#telegram" data-reveal style="--d:.08s" data-cursor-label="Preview">
+        <a class="svc card s-tg" href="showcase.html#telegram" data-reveal style="--d:.08s">
           <div class="svc-top"><span class="svc-ic"><svg class="ic"><use href="#i-send"/></svg></span><span class="svc-jp jp">伝</span></div>
           <div class="svc-vis vis-tg" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
           <h3 class="h3">Telegram Bots</h3>
           <p>Shop bots, support bots, payment bots and group managers with admin panels.</p>
           <span class="svc-more">Live preview <svg class="ic"><use href="#i-arrow-right"/></svg></span>
         </a>
-        <a class="svc card s-ext" href="showcase.html#extension" data-reveal style="--d:.16s" data-cursor-label="Preview">
+        <a class="svc card s-ext" href="showcase.html#extension" data-reveal style="--d:.16s">
           <div class="svc-top"><span class="svc-ic"><svg class="ic"><use href="#i-puzzle"/></svg></span><span class="svc-jp jp">拡</span></div>
           <div class="svc-vis vis-ext" aria-hidden="true"><span class="slot"></span><span class="piece"><svg class="ic"><use href="#i-puzzle"/></svg></span></div>
           <h3 class="h3">Chrome Extensions</h3>
           <p>Manifest V3 tools that inject, automate, track and supercharge any website.</p>
           <span class="svc-more">Live preview <svg class="ic"><use href="#i-arrow-right"/></svg></span>
         </a>
-        <a class="svc card s-shop" href="shop.html" data-reveal data-cursor-label="Shop">
+        <a class="svc card s-shop" href="shop.html" data-reveal>
           <div class="svc-top"><span class="svc-ic"><svg class="ic"><use href="#i-bag"/></svg></span><span class="svc-jp jp">店</span></div>
           <div class="svc-vis vis-shop" aria-hidden="true"><span></span><span></span><span></span><b><svg class="ic"><use href="#i-cart"/></svg><em>3</em></b></div>
           <h3 class="h3">E-commerce on Autopilot</h3>
@@ -309,7 +300,7 @@
           <div class="chips"><span class="chip chip-red">Full demo store inside</span></div>
           <span class="svc-more">Open shop demo <svg class="ic"><use href="#i-arrow-right"/></svg></span>
         </a>
-        <a class="svc card s-crypto" href="showcase.html#crypto" data-reveal style="--d:.08s" data-cursor-label="Preview">
+        <a class="svc card s-crypto" href="showcase.html#crypto" data-reveal style="--d:.08s">
           <div class="svc-top"><span class="svc-ic"><svg class="ic"><use href="#i-btc"/></svg></span><span class="svc-jp jp">貨</span></div>
           <div class="svc-vis vis-crypto" aria-hidden="true"><span class="coin"><svg class="ic"><use href="#i-btc"/></svg></span><span class="conf"><i></i><i></i><i></i></span><em>Paid</em></div>
           <h3 class="h3">Crypto &amp; Auto Payments</h3>
@@ -317,28 +308,28 @@
           <div class="chips"><span class="chip">USDT</span><span class="chip">BTC</span><span class="chip">ETH</span><span class="chip">Binance Pay</span></div>
           <span class="svc-more">Live preview <svg class="ic"><use href="#i-arrow-right"/></svg></span>
         </a>
-        <a class="svc card s-mc" href="showcase.html#minecraft" data-reveal data-cursor-label="Preview">
+        <a class="svc card s-mc" href="showcase.html#minecraft" data-reveal>
           <div class="svc-top"><span class="svc-ic"><svg class="ic"><use href="#i-cube"/></svg></span><span class="svc-jp jp">塊</span></div>
           <div class="svc-vis vis-mc" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
           <h3 class="h3">Minecraft Plugins</h3>
           <p>Paper / Spigot plugins: economies, shops, ranks, GUIs and minigames.</p>
           <span class="svc-more">Live preview <svg class="ic"><use href="#i-arrow-right"/></svg></span>
         </a>
-        <a class="svc card s-desk" href="showcase.html#desktop" data-reveal style="--d:.08s" data-cursor-label="Preview">
+        <a class="svc card s-desk" href="showcase.html#desktop" data-reveal style="--d:.08s">
           <div class="svc-top"><span class="svc-ic"><svg class="ic"><use href="#i-window"/></svg></span><span class="svc-jp jp">機</span></div>
           <div class="svc-vis vis-desk" aria-hidden="true"><div><span></span><b></b></div></div>
           <h3 class="h3">Desktop Apps (.exe)</h3>
           <p>Windows software with real installers, auto-updates and license keys.</p>
           <span class="svc-more">Live preview <svg class="ic"><use href="#i-arrow-right"/></svg></span>
         </a>
-        <a class="svc card s-mob" href="showcase.html#mobile" data-reveal style="--d:.16s" data-cursor-label="Preview">
+        <a class="svc card s-mob" href="showcase.html#mobile" data-reveal style="--d:.16s">
           <div class="svc-top"><span class="svc-ic"><svg class="ic"><use href="#i-phone"/></svg></span><span class="svc-jp jp">携</span></div>
           <div class="svc-vis vis-mob" aria-hidden="true"><div><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
           <h3 class="h3">Mobile Apps (.apk)</h3>
           <p>Android apps in Flutter / Kotlin — shipped as APK or on the Play Store.</p>
           <span class="svc-more">Live preview <svg class="ic"><use href="#i-arrow-right"/></svg></span>
         </a>
-        <a class="svc card s-chat" href="showcase.html#ai-chat" data-reveal data-cursor-label="Preview">
+        <a class="svc card s-chat" href="showcase.html#ai-chat" data-reveal>
           <div class="svc-top"><span class="svc-ic"><svg class="ic"><use href="#i-chat"/></svg></span><span class="svc-jp jp">話</span></div>
           <div class="svc-vis vis-chat" aria-hidden="true"><span class="q">Do you ship to Dhaka?</span><span class="a"><i></i><i></i><i></i></span><span class="a2">Yes — 1–2 days, free over $50.</span></div>
           <div class="svc-text">
@@ -355,41 +346,51 @@
   <section class="explore" id="explore" aria-labelledby="explore-title">
     <div class="container container-wide explore-head">
       <div class="section-head">
-        <span class="num"><span class="hanko sm">参</span> 03 — Explore everything</span>
+        <span class="num"><span class="hanko sm">参</span> Explore everything · 巻物</span>
         <h2 class="h2" id="explore-title" data-split>Don’t take my word. <span class="grad-text">Try it.</span></h2>
         <p class="lead" data-reveal>This whole site is a playground. Click through real, working previews of every service before you hire.</p>
       </div>
     </div>
-    <div class="hs" style="--n:6">
+    <div class="hs" style="--n:8">
       <div class="hs-sticky">
         <div class="hs-track">
-          <a class="panel pn-lab" href="showcase.html" data-cursor-label="Enter">
+          <a class="panel pn-lab" href="showcase.html">
             <span class="pn-num">01</span><span class="pn-jp jp">技</span>
             <div class="pn-art art-lab" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
             <div class="pn-body"><h3 class="h3">The Lab</h3><p>11 interactive stages: a working Telegram bot, a draggable automation canvas, a Chrome extension popup, a Minecraft server with commands, an EXE installer, an APK app, an AI agent and more.</p><span class="link">Enter the Lab <svg class="ic"><use href="#i-arrow-right"/></svg></span></div>
           </a>
-          <a class="panel pn-shop" href="shop.html" data-cursor-label="Shop">
+          <a class="panel pn-shop" href="shop.html">
             <span class="pn-num">02</span><span class="pn-jp jp">店</span>
             <div class="pn-art art-shop" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-            <div class="pn-body"><h3 class="h3">Shop Demo</h3><p>A complete store: filters, cart, AI shopping assistant, crypto / bKash / card checkout and an autopilot admin.</p><span class="link">Open the store <svg class="ic"><use href="#i-arrow-right"/></svg></span></div>
+            <div class="pn-body"><h3 class="h3">Shop Templates</h3><p>Working online stores for clothes, baby wear, beauty, jewellery, sneakers and more, each with real photos, a cart and a bKash, card or crypto checkout.</p><span class="link">Browse the stores <svg class="ic"><use href="#i-arrow-right"/></svg></span></div>
           </a>
-          <a class="panel pn-kit" href="components.html" data-cursor-label="Inspect">
+          <a class="panel pn-kit" href="components.html">
             <span class="pn-num">03</span><span class="pn-jp jp">型</span>
             <div class="pn-art art-kit" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
             <div class="pn-body"><h3 class="h3">UI Kit — Figma style</h3><p>Headers, nav bars, footers, buttons, cards, forms and loaders on a Figma-like canvas. Inspect and copy the code.</p><span class="link">Inspect the kit <svg class="ic"><use href="#i-arrow-right"/></svg></span></div>
           </a>
-          <a class="panel pn-demos" href="demos.html" data-cursor-label="View">
+          <a class="panel pn-demos" href="demos.html">
             <span class="pn-num">04</span><span class="pn-jp jp">演</span>
             <div class="pn-art art-demos" aria-hidden="true"><span></span><span></span><span></span></div>
-            <div class="pn-body"><h3 class="h3">Demo Websites</h3><p>Six full demo sites — SaaS, restaurant, crypto dashboard, Minecraft server, agency and app landing — in a device preview studio.</p><span class="link">Browse demos <svg class="ic"><use href="#i-arrow-right"/></svg></span></div>
+            <div class="pn-body"><h3 class="h3">Demo Websites</h3><p>Twelve full demo sites — luxury store, banking app, travel booking, dev docs, SaaS, Minecraft server and more — in a device preview studio.</p><span class="link">Browse demos <svg class="ic"><use href="#i-arrow-right"/></svg></span></div>
           </a>
-          <a class="panel pn-academy" href="tutorials.html" data-cursor-label="Learn">
+          <a class="panel pn-academy" href="tutorials.html">
             <span class="pn-num">05</span><span class="pn-jp jp">学</span>
             <div class="pn-art art-academy" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
             <div class="pn-body"><h3 class="h3">Motion Academy</h3><p>After Effects-style tutorial player: scrub the timeline, watch keyframes, read the effect controls, copy the code.</p><span class="link">Start learning <svg class="ic"><use href="#i-arrow-right"/></svg></span></div>
           </a>
-          <a class="panel pn-hire" href="hire.html" data-cursor-label="Hire">
-            <span class="pn-num">06</span><span class="pn-jp jp">雇</span>
+          <a class="panel pn-pages" href="pages.html">
+            <span class="pn-num">06</span><span class="pn-jp jp">頁</span>
+            <div class="pn-art art-pages" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            <div class="pn-body"><h3 class="h3">Pages Studio</h3><p>Homepage, log in, sign up, pricing, dashboard and more. Swap sections, restyle buttons, repaint colours and fonts, then export the HTML.</p><span class="link">Open the studio <svg class="ic"><use href="#i-arrow-right"/></svg></span></div>
+          </a>
+          <a class="panel pn-world" href="dev-world.html">
+            <span class="pn-num">07</span><span class="pn-jp jp">里</span>
+            <div class="pn-art art-world" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            <div class="pn-body"><h3 class="h3">Dev World</h3><p>A developer village: a real terminal, a live code playground, nine dev tools, a mock API console and my career as a git graph.</p><span class="link">Walk in <svg class="ic"><use href="#i-arrow-right"/></svg></span></div>
+          </a>
+          <a class="panel pn-hire" href="hire.html">
+            <span class="pn-num">08</span><span class="pn-jp jp">雇</span>
             <div class="pn-art art-hire" aria-hidden="true"><span class="art-hanko jp">雇</span><div data-mascot="mini"></div></div>
             <div class="pn-body"><h3 class="h3">Hire me</h3><p>Configure your project, get an instant estimate and send the brief. Pay with crypto, bKash, Nagad or bank.</p><span class="link">Get an estimate <svg class="ic"><use href="#i-arrow-right"/></svg></span></div>
           </a>
@@ -403,7 +404,7 @@
   <section class="section process" id="process" aria-labelledby="process-title">
     <div class="container container-wide process-grid">
       <div class="section-head process-head">
-        <span class="num"><span class="hanko sm">肆</span> 04 — The process</span>
+        <span class="num"><span class="hanko sm">肆</span> The way · 道</span>
         <h2 class="h2" id="process-title" data-split>From idea to <span class="grad-text">launch</span> in five moves.</h2>
         <p class="lead" data-reveal>Clear steps, daily progress updates, and you see the work running before you pay the final part.</p>
         <a class="btn btn-ghost" href="hire.html" data-reveal>Start step one <svg class="ic"><use href="#i-arrow-right"/></svg></a>
@@ -436,20 +437,69 @@
     </div>
   </section>
 
+  <!-- ============ THE CREW ============ -->
+  <section class="section crew" id="crew" aria-labelledby="crew-title">
+    <div class="container container-wide">
+      <div class="section-head">
+        <span class="num"><span class="hanko sm">仲</span> The crew · 仲間</span>
+        <h2 class="h2" id="crew-title" data-split>Every project gets <span class="grad-text">a full team.</span></h2>
+        <p class="lead" data-reveal>Well, one developer and three very dedicated creatures. Click them. They talk.</p>
+      </div>
+      <div class="crew-grid">
+        <article class="crew-card card is-lift big sage" data-reveal>
+          <div class="crew-art"><i class="crew-sun" aria-hidden="true"></i><div data-mascot="crew"></div><p class="bubble crew-bubble">Poke me. I have jokes.</p></div>
+          <div class="crew-info">
+            <span class="crew-role">Lead developer · 開発</span>
+            <h3 class="h3">Xiraiya</h3>
+            <p>Writes the code, ships it fast, and fears nothing except merge conflicts.</p>
+            <dl><div><dt>Special move</dt><dd>Summons a full-stack app in a week</dd></div><div><dt>Weakness</dt><dd>Semicolons at 3 AM</dd></div></dl>
+          </div>
+        </article>
+        <article class="crew-card card is-lift big qa" data-reveal style="--d:.08s">
+          <div class="crew-art"><i class="crew-sun" aria-hidden="true"></i><div data-mascot="tsunade"></div><p class="bubble crew-bubble">Tests first. Tea second.</p></div>
+          <div class="crew-info">
+            <span class="crew-role">Head of QA · 品質</span>
+            <h3 class="h3">Tsunade</h3>
+            <p>Heals broken builds with one look. Stamps “OK” only when it is perfect. Drinks an alarming amount of tea.</p>
+            <dl><div><dt>Special move</dt><dd>The zero-bug seal</dd></div><div><dt>Weakness</dt><dd>Xiraiya’s variable names</dd></div></dl>
+          </div>
+        </article>
+        <article class="crew-card card is-lift small" data-reveal>
+          <div class="crew-art"><div data-mascot="toad"></div></div>
+          <div class="crew-info">
+            <span class="crew-role">DevOps · 蛙</span>
+            <h3 class="h4">Gama the toad</h3>
+            <p>Eats bugs. Literally. Also keeps the servers up all night.</p>
+            <dl><div><dt>Special move</dt><dd>Tongue-snap hotfix</dd></div></dl>
+          </div>
+        </article>
+        <article class="crew-card card is-lift small" data-reveal style="--d:.08s">
+          <div class="crew-art"><div data-mascot="slug"></div></div>
+          <div class="crew-info">
+            <span class="crew-role">Customer support · 蛞蝓</span>
+            <h3 class="h4">Namekuji the slug</h3>
+            <p>Slow? Maybe. But answers every ticket, day and night, and never gives up.</p>
+            <dl><div><dt>Special move</dt><dd>Infinite patience</dd></div></dl>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ WHY ME ============ -->
   <section class="section why" aria-labelledby="why-title">
     <div class="container container-wide">
       <div class="section-head center">
-        <span class="num"><span class="hanko sm">伍</span> 05 — The code of honor</span>
+        <span class="num"><span class="hanko sm">伍</span> Code of honor · 誓い</span>
         <h2 class="h2" id="why-title" data-split>Why clients <span class="grad-text">stay.</span></h2>
       </div>
       <div class="why-grid">
-        <div class="why card" data-reveal><span class="why-ic"><svg class="ic"><use href="#i-zap"/></svg></span><h3 class="h4">Fast delivery</h3><p>Small builds in days, not months. Daily progress so you’re never guessing.</p></div>
-        <div class="why card" data-reveal style="--d:.06s"><span class="why-ic"><svg class="ic"><use href="#i-user"/></svg></span><h3 class="h4">Direct line to the dev</h3><p>No agency middlemen. You talk to the person writing the code.</p></div>
-        <div class="why card" data-reveal style="--d:.12s"><span class="why-ic"><svg class="ic"><use href="#i-code"/></svg></span><h3 class="h4">Clean, owned code</h3><p>Documented source code handed over. It’s yours — no lock-in.</p></div>
-        <div class="why card" data-reveal style="--d:.18s"><span class="why-ic"><svg class="ic"><use href="#i-shield"/></svg></span><h3 class="h4">Secure by default</h3><p>Verified webhooks, safe key storage, and sensible security on every build.</p></div>
-        <div class="why card" data-reveal style="--d:.24s"><span class="why-ic"><svg class="ic"><use href="#i-wallet"/></svg></span><h3 class="h4">Flexible payments</h3><p>Crypto, Binance Pay, bKash, Nagad, Payoneer or bank — milestone based.</p></div>
-        <div class="why card" data-reveal style="--d:.3s"><span class="why-ic"><svg class="ic"><use href="#i-refresh"/></svg></span><h3 class="h4">Support after launch</h3><p>Free bug fixes in the support window, then optional maintenance plans.</p></div>
+        <div class="why card" data-reveal><span class="why-ic" aria-hidden="true">速</span><h3 class="h4">Fast delivery</h3><p>Small builds in days, not months. Daily progress so you’re never guessing.</p></div>
+        <div class="why card" data-reveal style="--d:.06s"><span class="why-ic" aria-hidden="true">直</span><h3 class="h4">Direct line to the dev</h3><p>No agency middlemen. You talk to the person writing the code.</p></div>
+        <div class="why card" data-reveal style="--d:.12s"><span class="why-ic" aria-hidden="true">潔</span><h3 class="h4">Clean, owned code</h3><p>Documented source code handed over. It’s yours — no lock-in.</p></div>
+        <div class="why card" data-reveal style="--d:.18s"><span class="why-ic" aria-hidden="true">守</span><h3 class="h4">Secure by default</h3><p>Verified webhooks, safe key storage, and sensible security on every build.</p></div>
+        <div class="why card" data-reveal style="--d:.24s"><span class="why-ic" aria-hidden="true">払</span><h3 class="h4">Flexible payments</h3><p>Crypto, Binance Pay, bKash, Nagad, Payoneer or bank — milestone based.</p></div>
+        <div class="why card" data-reveal style="--d:.3s"><span class="why-ic" aria-hidden="true">支</span><h3 class="h4">Support after launch</h3><p>Free bug fixes in the support window, then optional maintenance plans.</p></div>
       </div>
     </div>
   </section>

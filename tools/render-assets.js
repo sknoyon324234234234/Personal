@@ -19,7 +19,7 @@ const out = p => path.join(root, 'assets/img', p);
   for (let attempt = 1; attempt <= 6; attempt++) {
     await og.goto(file('tools/og.html'), { waitUntil: 'networkidle' });
     await og.evaluate(() => document.fonts.ready);
-    const ok = await og.evaluate(() => document.fonts.check('900 54px Unbounded') && document.fonts.check('600 17px "Plus Jakarta Sans"'));
+    const ok = await og.evaluate(() => document.fonts.check('800 54px "Shippori Mincho B1"') && document.fonts.check('500 14px "JetBrains Mono"'));
     if (ok) break;
     console.log('fonts not ready, retrying (' + attempt + ')');
   }
@@ -39,9 +39,10 @@ const out = p => path.join(root, 'assets/img', p);
 
   // 3) Demo thumbnails (800x500 JPEG)
   fs.mkdirSync(out('demos'), { recursive: true });
-  for (const n of ['nova-saas', 'sakura-bistro', 'vault-dashboard', 'blockrealm', 'studio-kami', 'pulse-app']) {
+  for (const n of ['nova-saas', 'sakura-bistro', 'vault-dashboard', 'blockrealm', 'studio-kami', 'pulse-app', 'aurum', 'mori-tea', 'haven', 'ledger', 'nomad', 'devdocs']) {
     const p = await browser.newPage({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: .625, ignoreHTTPSErrors: true });
     await p.goto(file('demos/' + n + '.html'), { waitUntil: 'networkidle' });
+    await p.evaluate(() => document.fonts.ready);
     await p.addStyleTag({ content: '.by{display:none!important}' });
     await p.waitForTimeout(2000);
     await p.screenshot({ path: out('demos/' + n + '.jpg'), type: 'jpeg', quality: 82 });

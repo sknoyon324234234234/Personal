@@ -51,8 +51,65 @@
     var bar = document.querySelector('.lab-nav-bar i');
     var navInner = document.querySelector('.lab-nav-inner');
     var current = -1, ticking = false;
+
+    /* ---- phones: one chapter at a time, with a pager ---- */
+    var one = window.matchMedia('(max-width: 760px)');
+    var pager = document.createElement('div');
+    pager.className = 'lab-pager';
+    pager.innerHTML = '<button type="button" class="lp-prev" aria-label="Previous chapter">' + XR.icon('arrow-left') + 'Prev</button>' +
+      '<span class="lp-pos" aria-live="polite"></span>' +
+      '<button type="button" class="lp-next" aria-label="Next chapter">Next' + XR.icon('arrow-right') + '</button>';
+    var lastSec = secs[secs.length - 1];
+    if (lastSec) lastSec.after(pager);
+    function centerLink(i) {
+      var a = links[i];
+      if (a && navInner) navInner.scrollTo({ left: a.offsetLeft - navInner.clientWidth / 2 + a.offsetWidth / 2, behavior: XR.reduce ? 'auto' : 'smooth' });
+    }
+    function show(i, scroll) {
+      i = XR.clamp(i, 0, secs.length - 1);
+      current = i;
+      secs.forEach(function (s, k) { if (s) s.classList.toggle('is-current', k === i); });
+      links.forEach(function (a, k) { a.classList.toggle('is-on', k === i); });
+      centerLink(i);
+      var next = links[i + 1];
+      XR.$('.lp-prev', pager).disabled = i === 0;
+      XR.$('.lp-next', pager).disabled = i === secs.length - 1;
+      XR.$('.lp-pos', pager).innerHTML = 'Chapter ' + (i + 1) + ' of ' + secs.length + (next ? '<b>Next: ' + XR.esc(next.textContent) + '</b>' : '<b>Last chapter</b>');
+      if (bar) bar.parentElement.style.setProperty('--p', (secs.length > 1 ? i / (secs.length - 1) : 1).toFixed(4));
+      if (scroll) {
+        var nav = document.querySelector('.lab-nav');
+        var top = secs[i].getBoundingClientRect().top + scrollY - (nav ? nav.offsetHeight : 0) - 70;
+        window.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+      }
+      try { history.replaceState(null, '', '#' + secs[i].id); } catch (e) { /* ignore */ }
+    }
+    function indexOfHash() {
+      var id = location.hash.slice(1);
+      var i = secs.findIndex(function (s) { return s && s.id === id; });
+      return i < 0 ? 0 : i;
+    }
+    function setMode() {
+      document.body.classList.toggle('lab-one', one.matches);
+      if (one.matches) show(current < 0 ? indexOfHash() : current, false);
+      else secs.forEach(function (s) { if (s) s.classList.remove('is-current'); });
+    }
+    links.forEach(function (a, i) {
+      a.addEventListener('click', function (e) {
+        if (!one.matches) return;
+        e.preventDefault();
+        show(i, true);
+      });
+    });
+    XR.$('.lp-prev', pager).addEventListener('click', function () { show(current - 1, true); });
+    XR.$('.lp-next', pager).addEventListener('click', function () { show(current + 1, true); });
+    window.addEventListener('hashchange', function () { if (one.matches) show(indexOfHash(), true); });
+    if (one.addEventListener) one.addEventListener('change', setMode);
+    setMode();
+    if (one.matches && location.hash && indexOfHash() > 0) setTimeout(function () { show(current, true); }, 60);
+
     function spy() {
       ticking = false;
+      if (one.matches) return;
       var mid = innerHeight * .35, idx = -1;
       secs.forEach(function (s, i) { if (s && s.getBoundingClientRect().top <= mid) idx = i; });
       if (idx !== current) {
