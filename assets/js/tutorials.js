@@ -44,7 +44,7 @@
     { id: 'kinetic', title: 'Kinetic type reveal', c: '#e0442e', dur: 3.2, bg: '#15120f', layers: [
       { name: 'Underline', type: 'Shape', lc: '#6fb3a8', css: 'height:6px;background:#e0442e;border-radius:3px;box-shadow:0 0 20px #e0442e', st: { y: 72 },
         p: { w: [[1.2, 0, 'io'], [2.0, 360]], o: [[1.2, 0, 'lin'], [1.25, 100]] } },
-      { name: 'Subtitle', type: 'Text', lc: '#9483c2', html: 'Motion Academy · Lesson 01', css: 'font:500 18px JetBrains Mono,monospace;color:#bfb29a;letter-spacing:.24em;text-transform:uppercase;white-space:nowrap',
+      { name: 'Subtitle', type: 'Text', lc: '#7a66b8', html: 'Motion Academy · Lesson 01', css: 'font:500 18px JetBrains Mono,monospace;color:#bfb29a;letter-spacing:.24em;text-transform:uppercase;white-space:nowrap',
         p: { o: [[1.0, 0, 'out'], [1.6, 100]], y: [[1.0, 140, 'expo'], [1.7, 112]] } },
       { name: 'Title', type: 'Text', lc: '#d9a441', html: 'BUILD LEGENDARY', css: 'font:800 64px "Shippori Mincho B1",Georgia,serif;color:#efe4cc;white-space:nowrap',
         p: { y: [[0.3, 80, 'expo'], [1.1, 0]], o: [[0.3, 0, 'out'], [0.8, 100]], ls: [[0.3, 0.5, 'expo'], [1.5, 0.02]] } },
@@ -60,7 +60,7 @@
       [1.2, 'The underline draws with Easy Ease, so it feels hand-drawn instead of mechanical.'],
       [1.6, 'The slash exits with Ease In: things leaving the frame should accelerate out.']
     ] },
-    { id: 'stinger', title: 'Logo stinger', c: '#9483c2', dur: 3.0, bg: '#0f0d0b', layers: [
+    { id: 'stinger', title: 'Logo stinger', c: '#7a66b8', dur: 3.0, bg: '#0f0d0b', layers: [
       { name: 'Flash', type: 'Solid', lc: '#efe4cc', css: 'width:960px;height:540px;background:#fff', p: { o: [[0.9, 0, 'out'], [1.0, 85, 'in'], [1.35, 0]] } },
       { name: 'Wordmark', type: 'Text', lc: '#d9a441', html: 'XIRAIYA', css: 'font:800 60px "Shippori Mincho B1",Georgia,serif;color:#efe4cc;white-space:nowrap', st: { y: 150 },
         p: { clip: [[1.1, 0, 'expo'], [1.9, 100]], ls: [[1.1, 0.5, 'expo'], [2.3, 0.12]] } },
@@ -70,7 +70,7 @@
         p: { x: [[0.15, 700, 'expo'], [0.95, 0]], r: [[0.15, 90, 'expo'], [0.95, -32]] } },
       { name: 'Blade A', type: 'Shape', lc: '#6fb3a8', css: 'width:30px;height:210px;background:#efe4cc;border-radius:4px', st: { y: -20 },
         p: { x: [[0, -700, 'expo'], [0.9, 0]], r: [[0, -90, 'expo'], [0.9, 32]] } },
-      { name: 'Diamond', type: 'Shape', lc: '#9483c2', css: 'width:200px;height:200px;border:6px solid #9483c2;box-shadow:0 0 40px rgba(148,131,194,.5)', st: { y: -20 },
+      { name: 'Diamond', type: 'Shape', lc: '#7a66b8', css: 'width:200px;height:200px;border:6px solid #7a66b8;box-shadow:0 0 40px rgba(148,131,194,.5)', st: { y: -20 },
         p: { r: [[0.9, -135, 'back'], [1.6, 45]], s: [[0.9, 0, 'back'], [1.6, 100]] } },
       { name: 'Background', type: 'Solid', lc: '#857a68', css: 'width:960px;height:540px;background:radial-gradient(circle,#1d0b2a,#0f0d0b 70%)', p: {} }
     ], notes: [
@@ -122,7 +122,7 @@
         p: { x: [[0, 180, 'io'], [4, -180]] } },
       { name: 'Mid hills', type: 'Shape', lc: '#df7f73', css: 'width:1500px;height:300px;background:#3a1450;border-radius:40% 60% 0 0/100% 100% 0 0', st: { y: 210 },
         p: { x: [[0, 100, 'io'], [4, -100]] } },
-      { name: 'Mountains', type: 'Shape', lc: '#9483c2', css: 'width:1400px;height:320px;background:#6b2a6e;clip-path:polygon(0 100%,14% 30%,26% 70%,40% 10%,55% 60%,68% 22%,82% 66%,100% 18%,100% 100%)', st: { y: 150 },
+      { name: 'Mountains', type: 'Shape', lc: '#7a66b8', css: 'width:1400px;height:320px;background:#6b2a6e;clip-path:polygon(0 100%,14% 30%,26% 70%,40% 10%,55% 60%,68% 22%,82% 66%,100% 18%,100% 100%)', st: { y: 150 },
         p: { x: [[0, 45, 'io'], [4, -45]] } },
       { name: 'Clouds', type: 'Shape', lc: '#efe4cc', css: 'width:240px;height:36px;border-radius:18px;background:rgba(255,255,255,.75);box-shadow:120px -26px 0 -6px rgba(255,255,255,.55),-260px 40px 0 -10px rgba(255,255,255,.45)', st: { y: -150 },
         p: { x: [[0, -260, 'lin'], [4, 260]] } },
@@ -140,7 +140,7 @@
         p: { o: [[0, 35, 'io'], [1, 100, 'io'], [2, 35]] } },
       { name: 'Dot 3', type: 'Shape', lc: '#6fb3a8', css: 'width:26px;height:26px;border-radius:50%;background:#6fb3a8;box-shadow:0 0 18px #6fb3a8', st: { x: 56 },
         p: { y: [[0.3, 0, 'out'], [0.6, -46, 'in'], [0.9, 0]], sy: [[0.9, 100, 'out'], [0.98, 70, 'out'], [1.1, 100]] } },
-      { name: 'Dot 2', type: 'Shape', lc: '#9483c2', css: 'width:26px;height:26px;border-radius:50%;background:#9483c2;box-shadow:0 0 18px #9483c2',
+      { name: 'Dot 2', type: 'Shape', lc: '#7a66b8', css: 'width:26px;height:26px;border-radius:50%;background:#7a66b8;box-shadow:0 0 18px #7a66b8',
         p: { y: [[0.15, 0, 'out'], [0.45, -46, 'in'], [0.75, 0]], sy: [[0.75, 100, 'out'], [0.83, 70, 'out'], [0.95, 100]] } },
       { name: 'Dot 1', type: 'Shape', lc: '#e0442e', css: 'width:26px;height:26px;border-radius:50%;background:#e0442e;box-shadow:0 0 18px #e0442e', st: { x: -56 },
         p: { y: [[0, 0, 'out'], [0.3, -46, 'in'], [0.6, 0]], sy: [[0.6, 100, 'out'], [0.68, 70, 'out'], [0.8, 100]] } },
@@ -550,7 +550,7 @@
   });
 
   /* easing lab */
-  var EL = [['Linear', 'lin', '#857a68', 'Robotic. Use for loops, rotation and progress bars.'], ['Ease Out', 'out', '#6fb3a8', 'Things entering the screen. Fast in, gentle stop.'], ['Ease In', 'in', '#df7f73', 'Things leaving the screen. Slow start, fast exit.'], ['Easy Ease', 'io', '#9483c2', 'Objects moving on screen, like a camera or a cursor.'], ['Expo Out', 'expo', '#e0442e', 'Premium, snappy UI. The site’s signature curve.'], ['Back Out', 'back', '#d9a441', 'Playful overshoot for buttons, badges and pop-ins.']];
+  var EL = [['Linear', 'lin', '#857a68', 'Robotic. Use for loops, rotation and progress bars.'], ['Ease Out', 'out', '#6fb3a8', 'Things entering the screen. Fast in, gentle stop.'], ['Ease In', 'in', '#df7f73', 'Things leaving the screen. Slow start, fast exit.'], ['Easy Ease', 'io', '#7a66b8', 'Objects moving on screen, like a camera or a cursor.'], ['Expo Out', 'expo', '#e0442e', 'Premium, snappy UI. The site’s signature curve.'], ['Back Out', 'back', '#d9a441', 'Playful overshoot for buttons, badges and pop-ins.']];
   $('.ease-list').innerHTML = EL.map(function (e) {
     return '<button type="button" class="ease" data-copy="' + BEZ[e[1]] + '"><span><b>' + e[0] + '</b><small>' + e[3] + '</small></span><span class="ease-track"><i style="--c:' + e[2] + ';--e:' + BEZ[e[1]] + '"></i></span><em>' + BEZ[e[1]] + '</em></button>';
   }).join('');

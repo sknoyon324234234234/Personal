@@ -162,3 +162,8 @@
 }
 .ae-row.prop .ae-name > span, .ae-name .ae-eye, .ae-twirl { display: inline-flex; align-items: center; }
 .ae svg.ic { display: inline-block; }
+
+/* lesson-note timecodes sit on the page, so they follow the page theme */
+.ac-notes time { color: #1f5f9e !important; }
+html[data-mode="ink"] .ac-notes time { color: var(--ae-blue) !important; }
+.ae-lessons button.is-on small { color: #c9d6e3; }

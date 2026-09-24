@@ -15,16 +15,16 @@
   --line: rgba(var(--fx), .11);
   --line-2: rgba(var(--fx), .22);
   --ink: #1f1813;
-  --ink-2: #53493f;
-  --ink-3: #8a7e6e;
-  --red: #d63a24;
-  --red-2: #e85c43;
+  --ink-2: #4a4037;
+  --ink-3: #6b604f;
+  --red: #c4321d;
+  --red-2: #d9492f;
   --red-deep: #9c2a1b;
-  --cyan: #3f8f84;
-  --gold: #b8862b;
-  --violet: #7a68ad;
-  --pink: #d06a5e;
-  --lime: #6f9a3a;
+  --cyan: #2c6f65;
+  --gold: #7f5a17;
+  --violet: #5f4f95;
+  --pink: #a4473a;
+  --lime: #4d7424;
   --grad: linear-gradient(100deg, var(--red) 0%, #e2703a 55%, var(--gold) 100%);
   --grad-warm: linear-gradient(115deg, var(--gold), var(--red));
   --paper: #efe4cc;
@@ -71,12 +71,12 @@ html[data-mode="ink"] {
   --line-2: rgba(var(--fx), .15);
   --ink: #efe4cc;
   --ink-2: #bfb29a;
-  --ink-3: #857a68;
-  --red: #e0442e;
+  --ink-3: #9d917d;
+  --red: #d23c26;
   --red-2: #f06a52;
   --cyan: #6fb3a8;
   --gold: #d9a441;
-  --violet: #9483c2;
+  --violet: #7a66b8;
   --pink: #df7f73;
   --lime: #a9c46a;
   --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, .5);
@@ -90,6 +90,40 @@ html[data-mode="ink"] {
   --mist: rgba(239, 228, 204, .08);
   --hero-name-shadow: 0 6px 0 rgba(0, 0, 0, .35);
   color-scheme: dark;
+}
+/* app mockups (editor, UI kit, Lab demos) always use the ink palette, like real app screenshots */
+.dark-scope, .ae, .kit-app, .present, .studio, .lab-stage {
+  --bg: #0f0d0b;
+  --bg-2: #15120f;
+  --surface: #1b1814;
+  --surface-2: #221e19;
+  --surface-3: #2b2620;
+  --fx: 255, 255, 255;
+  --bg-rgb: 15, 13, 11;
+  --line: rgba(var(--fx), .08);
+  --line-2: rgba(var(--fx), .15);
+  --ink: #efe4cc;
+  --ink-2: #bfb29a;
+  --ink-3: #9d917d;
+  --red: #d23c26;
+  --red-2: #f06a52;
+  --cyan: #6fb3a8;
+  --gold: #d9a441;
+  --violet: #7a66b8;
+  --pink: #df7f73;
+  --lime: #a9c46a;
+  --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, .5);
+  --shadow: 0 16px 40px -18px rgba(0, 0, 0, .7);
+  --shadow-lg: 0 40px 90px -30px rgba(0, 0, 0, .8);
+  --hero-top: #0c0a08;
+  --hero-mid: #17120e;
+  --hero-cloud: #17120e;
+  --peak-far: rgba(59, 49, 41, .75);
+  --peak-mid: #231c16;
+  --mist: rgba(239, 228, 204, .08);
+  --hero-name-shadow: 0 6px 0 rgba(0, 0, 0, .35);
+  color-scheme: dark;
+  color: var(--ink);
 }
 
 /* ---------- reset ---------- */
@@ -241,7 +275,8 @@ ul, ol { padding: 0; list-style: none; }
   color: var(--ink-2); background: rgba(var(--fx),.04); border: 1px solid var(--line);
 }
 .chip .ic { font-size: 14px; }
-.chip-red { color: var(--red); background: rgba(214,58,36,.1); border-color: rgba(214,58,36,.35); }
+.chip-red { color: var(--red-deep); background: rgba(196,50,29,.08); border-color: rgba(196,50,29,.35); }
+html[data-mode="ink"] .chip-red, .dark-scope .chip-red, .lab-stage .chip-red { color: var(--red-2); }
 .chip-cyan { color: var(--cyan); background: rgba(111,179,168,.08); border-color: rgba(111,179,168,.3); }
 .chip-gold { color: var(--gold); background: rgba(217,164,65,.08); border-color: rgba(217,164,65,.3); }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -276,7 +311,7 @@ a.card:hover, .card.is-lift:hover { transform: translateY(-5px); box-shadow: var
 .kanji-bg {
   position: absolute; pointer-events: none; user-select: none; z-index: 0;
   font-family: var(--font-jp); font-weight: 900; line-height: .9;
-  color: rgba(239,228,204,.035);
+  color: rgba(var(--fx), .05);
 }
 .vertical-jp { writing-mode: vertical-rl; text-orientation: upright; letter-spacing: .3em; }
 
