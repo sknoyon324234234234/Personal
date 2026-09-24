@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shop Demo — AI-Powered E-commerce Store with Crypto Checkout | Xiraiya</title>
+<meta name="description" content="A fully working demo store built by Xiraiya: product filters, cart, AI shopping assistant, crypto / bKash / Nagad / card checkout and an autopilot admin dashboard. No real payments.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://sknoyon324234234234.github.io/Personal/shop.html">
+<meta name="theme-color" content="#07070b">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Xiraiya">
+<meta property="og:title" content="KAGE.store — a live e-commerce demo on autopilot | Xiraiya">
+<meta property="og:description" content="Browse, chat with the AI assistant, check out with crypto or bKash, then flip to the autopilot admin. Built by Xiraiya.">
+<meta property="og:url" content="https://sknoyon324234234234.github.io/Personal/shop.html">
+<meta property="og:image" content="https://sknoyon324234234234.github.io/Personal/assets/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+JP:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+JP:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@400;600;700;800;900&display=swap"></noscript>
+<link rel="stylesheet" href="assets/css/core.css">
+<link rel="stylesheet" href="assets/css/shop.css">
+<script>document.documentElement.classList.add('js')</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "KAGE.store — e-commerce demo",
+  "url": "https://sknoyon324234234234.github.io/Personal/shop.html",
+  "description": "Interactive e-commerce demo with AI shopping assistant, crypto checkout and autopilot admin, built by Xiraiya.",
+  "author": { "@type": "Person", "name": "Xiraiya" },
+  "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://sknoyon324234234234.github.io/Personal/" },
+    { "@type": "ListItem", "position": 2, "name": "Shop Demo", "item": "https://sknoyon324234234234.github.io/Personal/shop.html" }
+  ] }
+}
+</script>
+</head>
+<body data-page="shop" id="top">
+<script src="assets/js/icons.js"></script>
+<header class="site-header" id="site-header"></header>
+
+<main id="main">
+  <section class="page-hero shop-hero">
+    <div class="glow" aria-hidden="true"></div>
+    <div class="kanji-bg" aria-hidden="true">店</div>
+    <div class="container container-wide page-hero-inner">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><svg class="ic"><use href="#i-chevron-right"/></svg><span>Shop Demo</span></nav>
+      <div class="shop-hero-row">
+        <div class="shop-hero-copy">
+          <h1 class="h1" data-split="ready">KAGE<span class="accent">.</span>store</h1>
+          <p class="lead" data-reveal>A complete store I built as a live demo. Shop, ask the AI assistant, pay with crypto or bKash — then switch to <b>Admin</b> to watch the autopilot run the business.</p>
+        </div>
+        <div class="shop-mode" role="tablist" aria-label="Store view" data-reveal>
+          <button type="button" role="tab" aria-selected="true" data-mode="store"><svg class="ic"><use href="#i-store"/></svg>Storefront</button>
+          <button type="button" role="tab" aria-selected="false" data-mode="admin"><svg class="ic"><use href="#i-bot"/></svg>Admin · Autopilot</button>
+        </div>
+      </div>
+      <p class="demo-note" data-reveal><svg class="ic"><use href="#i-info"/></svg>Demo store — products are fictional and no real payment is ever requested or processed.</p>
+    </div>
+  </section>
+
+  <!-- ================= STOREFRONT ================= -->
+  <section class="store" aria-label="Storefront">
+    <div class="container container-wide">
+      <div class="store-bar">
+        <label class="store-search"><svg class="ic"><use href="#i-search"/></svg><input type="search" placeholder="Search products…" aria-label="Search products"></label>
+        <div class="store-cats" role="radiogroup" aria-label="Category"></div>
+        <div class="store-tools">
+          <label class="store-price"><span>Max <b class="price-v">$150</b></span><input class="range" type="range" min="20" max="150" step="5" value="150" aria-label="Maximum price"></label>
+          <select class="select store-sort" aria-label="Sort products">
+            <option value="featured">Featured</option>
+            <option value="low">Price: low to high</option>
+            <option value="high">Price: high to low</option>
+            <option value="rating">Top rated</option>
+          </select>
+          <button type="button" class="btn btn-ghost btn-sm wish-filter" aria-pressed="false"><svg class="ic"><use href="#i-heart"/></svg><span class="wish-count">0</span></button>
+          <button type="button" class="btn btn-primary btn-sm cart-open" aria-label="Open cart"><svg class="ic"><use href="#i-cart"/></svg>Cart <span class="cart-count">0</span></button>
+        </div>
+      </div>
+      <div class="promo-strip"><span><svg class="ic"><use href="#i-tag"/></svg>Code <b>XIRAIYA10</b> = 10% off</span><span><svg class="ic"><use href="#i-truck"/></svg>Free delivery over $100</span><span><svg class="ic"><use href="#i-btc"/></svg>USDT · BTC · ETH · bKash · Nagad</span><span><svg class="ic"><use href="#i-shield"/></svg>7-day returns</span></div>
+      <p class="store-count" aria-live="polite"></p>
+      <div class="products" role="list"></div>
+      <p class="store-empty" hidden>No products match. Try another filter — or ask the AI assistant.</p>
+    </div>
+  </section>
+
+  <!-- ================= ADMIN ================= -->
+  <section class="admin" hidden aria-label="Admin dashboard">
+    <div class="container container-wide">
+      <div class="adm-kpis">
+        <div class="adm-kpi card"><small><svg class="ic"><use href="#i-wallet"/></svg>Revenue today</small><b class="k-rev">$0</b><em class="up">+18.4%</em></div>
+        <div class="adm-kpi card"><small><svg class="ic"><use href="#i-bag"/></svg>Orders</small><b class="k-orders">0</b><em class="up">+9</em></div>
+        <div class="adm-kpi card"><small><svg class="ic"><use href="#i-target"/></svg>Conversion</small><b class="k-conv">4.7%</b><em class="up">+0.6 pt</em></div>
+        <div class="adm-kpi card"><small><svg class="ic"><use href="#i-bot"/></svg>AI-handled chats</small><b class="k-ai">312</b><em class="up">94% resolved</em></div>
+      </div>
+      <div class="adm-grid">
+        <div class="adm-card card adm-chart">
+          <div class="adm-h"><h2 class="h4">Revenue · last 14 days</h2><span class="chip chip-cyan">live</span></div>
+          <svg class="chart" viewBox="0 0 600 220" preserveAspectRatio="none" role="img" aria-label="Revenue line chart"></svg>
+          <div class="chart-x"></div>
+        </div>
+        <div class="adm-card card adm-auto">
+          <div class="adm-h"><h2 class="h4">Autopilot agents</h2><span class="chip chip-red auto-state">6 running</span></div>
+          <ul class="autos"></ul>
+        </div>
+        <div class="adm-card card adm-orders">
+          <div class="adm-h"><h2 class="h4">Recent orders</h2><span class="muted mono" style="font-size:12px">your demo orders appear here</span></div>
+          <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Payment</th><th>Total</th><th>Status</th></tr></thead><tbody class="orders-body"></tbody></table></div>
+        </div>
+        <div class="adm-card card adm-inv">
+          <div class="adm-h"><h2 class="h4">Inventory</h2><span class="chip chip-gold">auto-restock on</span></div>
+          <ul class="inv"></ul>
+        </div>
+        <div class="adm-card card adm-feed">
+          <div class="adm-h"><h2 class="h4">Activity</h2><span class="chip">real time</span></div>
+          <ul class="feed" aria-live="off"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section shop-cta">
+    <div class="container container-wide center">
+      <div class="section-head center">
+        <span class="num"><span class="hanko sm">店</span> Want a store like this?</span>
+        <h2 class="h2" data-split>Your brand. Your products. <span class="grad-text">On autopilot.</span></h2>
+        <p class="lead" data-reveal>Custom design, AI assistant, crypto + bKash payments, Telegram order alerts and an admin that runs itself.</p>
+      </div>
+      <div class="flex wrap" style="justify-content:center" data-reveal>
+        <a class="btn btn-primary btn-lg" href="hire.html?service=ecommerce" data-magnetic>Build my store <svg class="ic"><use href="#i-arrow-right"/></svg></a>
+        <a class="btn btn-ghost btn-lg" href="showcase.html#crypto">See the crypto checkout</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- product quick view -->
+<div class="modal pmodal" id="pmodal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pm-name">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-box pm-box">
+    <button type="button" class="modal-close" data-close aria-label="Close"><svg class="ic"><use href="#i-close"/></svg></button>
+    <div class="pm-grid">
+      <div class="pm-art"></div>
+      <div class="pm-info">
+        <span class="pm-cat chip"></span>
+        <h2 class="h3" id="pm-name"></h2>
+        <div class="pm-rating"></div>
+        <div class="pm-price"></div>
+        <p class="pm-desc"></p>
+        <div class="pm-opts"></div>
+        <div class="pm-buy">
+          <div class="qty" role="group" aria-label="Quantity"><button type="button" data-q="-1" aria-label="Decrease"><svg class="ic"><use href="#i-minus"/></svg></button><span class="pm-qty">1</span><button type="button" data-q="1" aria-label="Increase"><svg class="ic"><use href="#i-plus"/></svg></button></div>
+          <button type="button" class="btn btn-primary pm-add"><svg class="ic"><use href="#i-cart"/></svg>Add to cart</button>
+          <button type="button" class="btn btn-ghost btn-icon pm-wish" aria-label="Add to wishlist"><svg class="ic"><use href="#i-heart"/></svg></button>
+        </div>
+        <ul class="pm-perks"><li><svg class="ic"><use href="#i-truck"/></svg>Dhaka 1–2 days · Worldwide 7–14 days</li><li><svg class="ic"><use href="#i-refresh"/></svg>7-day free returns</li><li><svg class="ic"><use href="#i-shield"/></svg>Secure crypto &amp; bKash checkout</li></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- cart drawer -->
+<aside class="drawer" id="cart" aria-hidden="true" aria-label="Shopping cart">
+  <div class="drawer-backdrop" data-close></div>
+  <div class="drawer-panel">
+    <div class="drawer-h"><h2 class="h4"><svg class="ic"><use href="#i-cart"/></svg>Your cart</h2><button type="button" class="modal-close" data-close aria-label="Close cart"><svg class="ic"><use href="#i-close"/></svg></button></div>
+    <div class="ship-bar"><p class="ship-text"></p><div class="ship-track"><i></i></div></div>
+    <ul class="cart-items"></ul>
+    <div class="cart-empty"><svg class="ic"><use href="#i-bag"/></svg><p>Your cart is empty.</p><button type="button" class="btn btn-ghost btn-sm" data-close>Keep shopping</button></div>
+    <div class="cart-foot">
+      <form class="promo" autocomplete="off"><input class="input" type="text" placeholder="Promo code" aria-label="Promo code"><button class="btn btn-ghost btn-sm" type="submit">Apply</button></form>
+      <dl class="totals">
+        <div><dt>Subtotal</dt><dd class="t-sub">$0.00</dd></div>
+        <div class="t-disc-row" hidden><dt>Discount</dt><dd class="t-disc">-$0.00</dd></div>
+        <div><dt>Delivery</dt><dd class="t-ship">$0.00</dd></div>
+        <div class="t-total"><dt>Total</dt><dd class="t-tot">$0.00</dd></div>
+      </dl>
+      <button type="button" class="btn btn-primary btn-lg checkout-open" style="width:100%">Checkout <svg class="ic"><use href="#i-arrow-right"/></svg></button>
+    </div>
+  </div>
+</aside>
+
+<!-- checkout -->
+<div class="modal cmodal" id="checkout" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="co-title">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-box co-box">
+    <button type="button" class="modal-close" data-close aria-label="Close checkout"><svg class="ic"><use href="#i-close"/></svg></button>
+    <div class="co-head"><h2 class="h3" id="co-title">Checkout</h2><ol class="co-steps"><li class="is-on">Details</li><li>Payment</li><li>Done</li></ol></div>
+    <div class="co-body">
+      <form class="co-panel co-details" data-step="0" autocomplete="on" novalidate>
+        <div class="co-grid">
+          <div class="field"><label for="co-name">Full name</label><input id="co-name" class="input" name="name" required placeholder="Your name" autocomplete="name"></div>
+          <div class="field"><label for="co-email">Email</label><input id="co-email" class="input" name="email" type="email" required placeholder="you@example.com" autocomplete="email"></div>
+          <div class="field"><label for="co-phone">Phone</label><input id="co-phone" class="input" name="phone" type="tel" placeholder="+880 1X XX XXX XXX" autocomplete="tel"></div>
+          <div class="field"><label for="co-city">City</label><select id="co-city" class="select" name="city"><option>Rajshahi</option><option>Dhaka</option><option>Chattogram</option><option>Khulna</option><option>Sylhet</option><option>Outside Bangladesh</option></select></div>
+          <div class="field full"><label for="co-addr">Address</label><input id="co-addr" class="input" name="address" placeholder="House, road, area" autocomplete="street-address"></div>
+        </div>
+        <p class="co-err" role="alert" hidden>Please enter your name and a valid email.</p>
+        <div class="co-actions"><span class="co-total"></span><button type="submit" class="btn btn-primary">Continue to payment <svg class="ic"><use href="#i-arrow-right"/></svg></button></div>
+      </form>
+      <div class="co-panel co-pay" data-step="1" hidden>
+        <div class="pay-methods" role="radiogroup" aria-label="Payment method">
+          <button type="button" role="radio" aria-checked="true" data-pm="crypto"><svg class="ic"><use href="#i-btc"/></svg>Crypto</button>
+          <button type="button" role="radio" aria-checked="false" data-pm="bkash"><svg class="ic"><use href="#i-phone"/></svg>bKash</button>
+          <button type="button" role="radio" aria-checked="false" data-pm="nagad"><svg class="ic"><use href="#i-phone"/></svg>Nagad</button>
+          <button type="button" role="radio" aria-checked="false" data-pm="card"><svg class="ic"><use href="#i-card"/></svg>Card</button>
+          <button type="button" role="radio" aria-checked="false" data-pm="cod"><svg class="ic"><use href="#i-truck"/></svg>Cash on delivery</button>
+        </div>
+        <div class="pm-panel"></div>
+        <p class="pay-note"><svg class="ic"><use href="#i-info"/></svg>Demo checkout — nothing is charged and no payment details are stored or sent.</p>
+        <div class="co-actions"><button type="button" class="btn btn-ghost co-back"><svg class="ic"><use href="#i-arrow-left"/></svg>Back</button><button type="button" class="btn btn-primary co-pay-btn"><svg class="ic"><use href="#i-lock"/></svg><span>Pay</span></button></div>
+      </div>
+      <div class="co-panel co-done" data-step="2" hidden>
+        <div class="done-burst" aria-hidden="true"></div>
+        <span class="done-ic"><svg class="ic"><use href="#i-check"/></svg></span>
+        <h3 class="h3">Order confirmed</h3>
+        <p class="done-id"></p>
+        <ul class="done-auto">
+          <li><svg class="ic"><use href="#i-mail"/></svg>Receipt emailed automatically</li>
+          <li><svg class="ic"><use href="#i-send"/></svg>Store owner alerted on Telegram</li>
+          <li><svg class="ic"><use href="#i-box"/></svg>Inventory updated · packing started</li>
+        </ul>
+        <div class="co-actions center"><button type="button" class="btn btn-ghost" data-close>Keep shopping</button><button type="button" class="btn btn-primary see-admin"><svg class="ic"><use href="#i-bot"/></svg>See it in Admin</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI shopping assistant -->
+<div class="ai-shop">
+  <div class="ai-box" hidden role="dialog" aria-label="Kage AI shopping assistant">
+    <div class="ai-head"><span class="ai-ava"><svg class="ic"><use href="#i-sparkle"/></svg></span><div><b>Kage AI</b><small>Shopping assistant · knows every product</small></div><button type="button" class="ai-x" aria-label="Close assistant"><svg class="ic"><use href="#i-close"/></svg></button></div>
+    <div class="ai-msgs" role="log" aria-live="polite"></div>
+    <div class="ai-sugg"></div>
+    <form class="ai-input" autocomplete="off"><input type="text" placeholder="e.g. a gift under $50" aria-label="Ask the shopping assistant"><button type="submit" aria-label="Send"><svg class="ic"><use href="#i-send"/></svg></button></form>
+  </div>
+  <button type="button" class="ai-launch" aria-label="Open AI shopping assistant"><svg class="ic"><use href="#i-sparkle"/></svg><span>Ask Kage AI</span></button>
+</div>
+
+<footer class="site-footer" id="site-footer"></footer>
+
+<script src="assets/js/config.js" defer></script>
+<script src="assets/js/core.js" defer></script>
+<script src="assets/js/shop.js" defer></script>
+</body>
+</html>

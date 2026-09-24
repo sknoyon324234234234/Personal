@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>OG cover render</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Noto+Serif+JP:wght@900&family=Plus+Jakarta+Sans:wght@500;600&family=Unbounded:wght@800;900&display=swap">
+<link rel="stylesheet" href="../assets/css/core.css">
+<style>
+html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #07070b; }
+.grain, .curtain, .progress, .toasts, .cursor-dot, .cursor-ring { display: none !important; }
+.og { position: relative; width: 1200px; height: 630px; overflow: hidden; isolation: isolate; }
+.sun { position: absolute; right: 0px; top: 50%; width: 560px; height: 560px; transform: translateY(-50%); border-radius: 50%; z-index: -1;
+  background: radial-gradient(circle at 50% 35%, #ff5570, #e3183a 42%, #7c0a1e 72%, #2a0510);
+  -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 58% 61%, #000 61% 69%, transparent 69% 73%, #000 73% 79%, transparent 79% 85%, #000 85% 89%, transparent 89%);
+  box-shadow: 0 0 160px 20px rgba(255,46,77,.25); }
+.lines { position: absolute; inset: -40%; z-index: -2; opacity: .5; background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.06) 0 1.2deg, transparent 1.2deg 7deg); }
+.floor { position: absolute; left: -20%; right: -20%; bottom: -10%; height: 40%; z-index: -1; transform: perspective(420px) rotateX(62deg); transform-origin: 50% 0;
+  background: linear-gradient(rgba(255,46,77,.3) 1px, transparent 1px) 0 0/100% 46px, linear-gradient(90deg, rgba(255,46,77,.22) 1px, transparent 1px) 0 0/60px 100%;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 60%); }
+.left { position: absolute; left: 64px; top: 64px; bottom: 60px; width: 620px; display: flex; flex-direction: column; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand .brand-mark { width: 48px; height: 48px; }
+.brand b { font: 900 26px/1 Unbounded, sans-serif; letter-spacing: .06em; color: #f4f0e8; }
+.brand span { font: 900 14px/1 'Noto Serif JP', serif; color: #ff2e4d; padding: 6px 8px; border: 1px solid rgba(255,46,77,.5); border-radius: 6px; letter-spacing: .15em; }
+h1 { margin: 40px 0 0; font: 900 54px/1.04 Unbounded, sans-serif; letter-spacing: -.035em; color: #f4f0e8; }
+h1 em { font-style: normal; background: linear-gradient(115deg, #ff2e4d, #ff5fb6 40%, #8b6cff 75%, #27e1d6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.tags { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 8px; max-width: 600px; }
+.tags span { padding: 8px 12px; border-radius: 999px; font: 500 14px/1 'JetBrains Mono', monospace; color: #bdb8cc; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); }
+.meta { margin-top: auto; display: flex; gap: 22px; font: 600 17px/1 'Plus Jakarta Sans', sans-serif; color: #bdb8cc; }
+.meta b { color: #a4ff6b; }
+.mascot { position: absolute; right: 24px; bottom: -4px; width: 430px; }
+.band { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; background: linear-gradient(90deg, #ff2e4d, #ff5fb6, #8b6cff, #27e1d6); }
+</style>
+</head>
+<body>
+<div class="og">
+  <div class="lines"></div><div class="sun"></div><div class="floor"></div>
+  <div class="left">
+    <div class="brand" id="brand"><b>XIRAIYA</b><span>開発者</span></div>
+    <h1>Websites, bots, apps &amp; <em>AI agents</em> that work while you sleep.</h1>
+    <div class="tags"><span>Telegram bots</span><span>Chrome extensions</span><span>Minecraft plugins</span><span>EXE &amp; APK apps</span><span>Crypto payments</span><span>E-commerce</span></div>
+    <div class="meta"><span>Rajshahi, Bangladesh</span><span>5+ years</span><span><b style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#a4ff6b;margin-right:8px"></b>Available for work</span></div>
+  </div>
+  <div class="mascot" data-mascot></div>
+  <div class="band"></div>
+</div>
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/core.js"></script>
+<script>
+document.getElementById('brand').insertAdjacentHTML('afterbegin', XR.brandMark());
+</script>
+</body>
+</html>

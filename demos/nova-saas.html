@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nova AI — Analytics that explain themselves (demo site by Xiraiya)</title>
+<meta name="description" content="Demo SaaS landing page designed and built by Xiraiya.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap"></noscript>
+<style>
+:root{--ink:#0d0f1c;--ink2:#4b5068;--ink3:#8a8fa8;--bg:#fbfbfe;--line:#e7e8f2;--brand:#5b4bff;--brand2:#9b5cff;--mint:#12c2a0;--card:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:400 16px/1.6 Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}h1,h2,h3,h4,p{margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.nav{position:sticky;top:0;z-index:10;background:rgba(251,251,254,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:28px;height:68px}
+.logo{display:flex;align-items:center;gap:10px;font:800 20px Sora,sans-serif}
+.logo i{width:28px;height:28px;border-radius:9px;background:conic-gradient(from 200deg,var(--brand),var(--brand2),var(--mint),var(--brand));box-shadow:0 6px 16px -6px var(--brand)}
+.nav nav{display:flex;gap:24px;margin-right:auto;font-size:14.5px;color:var(--ink2)}
+.nav nav a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 20px;border-radius:12px;border:0;font-weight:600;font-size:14.5px;transition:transform .3s,box-shadow .3s}
+.btn.p{background:var(--ink);color:#fff}.btn.p:hover{transform:translateY(-2px);box-shadow:0 10px 24px -10px var(--ink)}
+.btn.b{background:var(--brand);color:#fff;box-shadow:0 10px 24px -10px var(--brand)}.btn.b:hover{transform:translateY(-2px)}
+.btn.g{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.hero{position:relative;overflow:hidden;padding:80px 0 40px;text-align:center}
+.hero::before{content:'';position:absolute;inset:-40% -10% auto;height:640px;background:radial-gradient(closest-side,rgba(91,75,255,.18),transparent),radial-gradient(closest-side at 70% 60%,rgba(18,194,160,.14),transparent);z-index:-1}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:6px 14px 6px 6px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:13px;color:var(--ink2);box-shadow:0 4px 14px -8px rgba(0,0,0,.2)}
+.pill b{padding:3px 9px;border-radius:999px;background:var(--brand);color:#fff;font-size:11.5px}
+.hero h1{margin:22px auto 18px;max-width:880px;font:800 clamp(40px,6.4vw,76px)/1.02 Sora,sans-serif;letter-spacing:-.04em}
+.hero h1 em{font-style:normal;background:linear-gradient(100deg,var(--brand),var(--brand2) 50%,var(--mint));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:620px;margin:0 auto 30px;font-size:19px;color:var(--ink2)}
+.hero .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.hero small{display:block;margin-top:14px;color:var(--ink3);font-size:13px}
+.mock{margin:56px auto 0;max-width:1000px;border-radius:22px;background:#fff;border:1px solid var(--line);box-shadow:0 50px 100px -40px rgba(40,30,120,.35);overflow:hidden;text-align:left;animation:rise 1s cubic-bezier(.16,1,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(40px) scale(.98)}}
+.mock-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);background:#f7f7fc}
+.mock-bar i{width:10px;height:10px;border-radius:50%;background:#e1e2ee}
+.mock-bar span{margin-left:12px;font-size:12.5px;color:var(--ink3)}
+.mock-body{display:grid;grid-template-columns:200px 1fr;min-height:360px}
+.side{padding:16px;border-right:1px solid var(--line);display:grid;gap:4px;align-content:start;font-size:13.5px;color:var(--ink2)}
+.side a{padding:9px 12px;border-radius:9px}.side a.on{background:#f0eeff;color:var(--brand);font-weight:600}
+.main{padding:22px;display:grid;gap:16px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.kpi{padding:16px;border-radius:14px;border:1px solid var(--line)}
+.kpi small{color:var(--ink3);font-size:12.5px}.kpi b{display:block;font:800 26px Sora,sans-serif;margin:4px 0}.kpi em{font-style:normal;font-size:12px;color:var(--mint);font-weight:600}
+.chart{display:flex;align-items:flex-end;gap:10px;height:170px;padding:16px;border-radius:14px;border:1px solid var(--line);position:relative}
+.chart i{flex:1;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,var(--brand2),var(--brand));transform-origin:bottom;animation:bar 1.2s cubic-bezier(.16,1,.3,1) both}
+.chart i:nth-child(odd){background:linear-gradient(180deg,#b9f3e6,var(--mint))}
+@keyframes bar{from{transform:scaleY(0)}}
+.insight{position:absolute;right:18px;top:16px;max-width:260px;padding:12px 14px;border-radius:12px;background:var(--ink);color:#fff;font-size:12.5px;box-shadow:0 20px 40px -20px #000;animation:rise .8s .9s both}
+.insight b{color:#b3a9ff}
+.logos{padding:40px 0 20px;text-align:center}
+.logos p{font-size:13px;color:var(--ink3);margin-bottom:18px}
+.logos div{display:flex;justify-content:center;flex-wrap:wrap;gap:44px;font:800 20px Sora,sans-serif;color:#c3c5d6}
+section{padding:90px 0}
+.head{text-align:center;max-width:700px;margin:0 auto 50px}
+.head small{font-weight:700;color:var(--brand);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+.head h2{margin:10px 0 12px;font:800 clamp(30px,4.2vw,48px)/1.08 Sora,sans-serif;letter-spacing:-.03em}
+.head p{color:var(--ink2);font-size:17px}
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feat{padding:26px;border-radius:20px;background:var(--card);border:1px solid var(--line);transition:transform .4s,box-shadow .4s}
+.feat:hover{transform:translateY(-6px);box-shadow:0 30px 60px -30px rgba(40,30,120,.3)}
+.feat .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:#f0eeff;color:var(--brand);margin-bottom:16px}
+.feat h3{font-size:18px;margin-bottom:8px}.feat p{color:var(--ink2);font-size:15px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:s}
+.step{counter-increment:s;padding:26px;border-radius:20px;background:linear-gradient(180deg,#fff,#f6f5ff);border:1px solid var(--line)}
+.step::before{content:'0' counter(s);display:block;font:800 40px Sora,sans-serif;color:#dcd8ff;margin-bottom:10px}
+.step h3{font-size:18px;margin-bottom:6px}.step p{color:var(--ink2);font-size:15px}
+.toggle{display:flex;justify-content:center;margin:-24px 0 36px}
+.seg{display:inline-flex;padding:5px;border-radius:14px;background:#efeff7;position:relative}
+.seg button{position:relative;z-index:1;height:40px;padding:0 22px;border:0;background:none;font-weight:600;color:var(--ink2);border-radius:10px;transition:color .3s}
+.seg button.on{color:var(--ink)}.seg em{font-style:normal;color:var(--mint);font-size:12px}
+.seg span{position:absolute;top:5px;bottom:5px;border-radius:10px;background:#fff;box-shadow:0 4px 12px -6px rgba(0,0,0,.25);transition:left .4s cubic-bezier(.16,1,.3,1),width .4s cubic-bezier(.16,1,.3,1)}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start}
+.plan{padding:30px;border-radius:24px;background:#fff;border:1px solid var(--line);display:grid;gap:14px}
+.plan.hot{background:var(--ink);color:#fff;border-color:var(--ink);transform:translateY(-10px);box-shadow:0 40px 80px -40px rgba(20,10,80,.6)}
+.plan small{font-weight:700;font-size:13px;color:var(--brand)}.plan.hot small{color:#b3a9ff}
+.plan .price{font:800 44px Sora,sans-serif;letter-spacing:-.03em}.plan .price span{font:500 15px Inter,sans-serif;color:var(--ink3)}
+.plan ul{list-style:none;padding:0;margin:4px 0 8px;display:grid;gap:10px;font-size:14.5px}
+.plan li::before{content:'';display:inline-block;width:16px;height:16px;margin-right:10px;vertical-align:-3px;border-radius:50%;background:var(--mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/10px no-repeat}
+.plan .btn{justify-content:center}
+.faq{max-width:760px;margin:0 auto;display:grid;gap:10px}
+.faq details{padding:18px 22px;border-radius:16px;background:#fff;border:1px solid var(--line)}
+.faq summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:20px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';font-size:22px;line-height:1;color:var(--brand);transition:transform .3s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq p{margin-top:10px;color:var(--ink2);font-size:15px}
+.cta-band{margin:0 24px;padding:70px 24px;border-radius:32px;text-align:center;color:#fff;background:radial-gradient(circle at 20% 20%,rgba(155,92,255,.8),transparent 50%),radial-gradient(circle at 80% 80%,rgba(18,194,160,.6),transparent 50%),var(--ink)}
+.cta-band h2{font:800 clamp(30px,4.5vw,52px)/1.05 Sora,sans-serif;letter-spacing:-.03em;margin-bottom:14px}
+.cta-band p{opacity:.8;margin-bottom:26px}
+footer{padding:50px 0;color:var(--ink3);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.by{position:fixed;left:14px;bottom:14px;z-index:20;padding:8px 12px;border-radius:10px;background:var(--ink);color:#fff;font-size:12px;font-weight:600;box-shadow:0 10px 30px -10px #000}
+.by b{color:#ff5c7a}
+@media(max-width:860px){.nav nav{display:none}.mock-body{grid-template-columns:1fr}.side{display:none}.feats,.steps,.plans{grid-template-columns:1fr}.plan.hot{transform:none}.kpis{grid-template-columns:1fr 1fr}.insight{position:static;max-width:none;margin-top:8px}.chart{height:auto;min-height:170px;flex-wrap:wrap}}
+@media(max-width:520px){.nav .btn.g{display:none}.hero{padding-top:56px}.kpis{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap"><a class="logo" href="#"><i></i>Nova</a><nav><a href="#features">Features</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav><a class="btn g" href="#pricing">Log in</a><a class="btn p" href="#pricing">Start free</a></div></header>
+<main>
+<section class="hero"><div class="wrap">
+  <span class="pill"><b>New</b>Nova Agents can now answer “why” questions</span>
+  <h1>Analytics that <em>explain themselves.</em></h1>
+  <p>Nova watches your revenue, traffic and product data — and tells you in plain language what changed, why, and what to do next.</p>
+  <div class="cta"><a class="btn b" href="#pricing">Start free — 14 days</a><a class="btn g" href="#how">See how it works</a></div>
+  <small>No credit card · Connects to Stripe, Shopify, GA4 and 40+ sources</small>
+  <div class="mock">
+    <div class="mock-bar"><i></i><i></i><i></i><span>app.nova.ai / overview</span></div>
+    <div class="mock-body">
+      <div class="side"><a class="on">Overview</a><a>Revenue</a><a>Funnels</a><a>Cohorts</a><a>Agents</a><a>Settings</a></div>
+      <div class="main">
+        <div class="kpis"><div class="kpi"><small>MRR</small><b>$84,210</b><em>+12.4% this month</em></div><div class="kpi"><small>Active users</small><b>18,902</b><em>+6.1%</em></div><div class="kpi"><small>Churn</small><b>1.8%</b><em>-0.4 pt</em></div></div>
+        <div class="chart"><i style="height:38%;animation-delay:.05s"></i><i style="height:52%;animation-delay:.1s"></i><i style="height:46%;animation-delay:.15s"></i><i style="height:61%;animation-delay:.2s"></i><i style="height:58%;animation-delay:.25s"></i><i style="height:72%;animation-delay:.3s"></i><i style="height:66%;animation-delay:.35s"></i><i style="height:84%;animation-delay:.4s"></i><i style="height:78%;animation-delay:.45s"></i><i style="height:95%;animation-delay:.5s"></i>
+          <div class="insight"><b>Nova insight:</b> revenue jumped 18% on Tuesday because the new annual plan converted 3× better from pricing-page visitors in Bangladesh.</div></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+<div class="logos"><div class="wrap"><p>Trusted by fast-moving teams</p><div><span>kage.</span><span>Sakura</span><span>VAULT</span><span>PULSE</span><span>BlockRealm</span></div></div></div>
+<section id="features"><div class="wrap">
+  <div class="head"><small>Features</small><h2>Everything a data team does — minus the data team.</h2><p>Nova connects to your stack in minutes and starts finding answers on day one.</p></div>
+  <div class="feats">
+    <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg></div><h3>Plain-language insights</h3><p>Daily briefings that explain spikes and drops like a senior analyst would.</p></div>
+    <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></svg></div><h3>Auto-anomaly alerts</h3><p>Get pinged on Telegram or Slack the minute a metric behaves strangely.</p></div>
+    <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 15a2 2 0 0 1-2 2H8l-4 3.5V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/></svg></div><h3>Ask anything</h3><p>“Which country has the highest LTV this quarter?” — answered in seconds.</p></div>
+    <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></div><h3>Beautiful dashboards</h3><p>Drag-and-drop boards that update in real time and look great on mobile.</p></div>
+    <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></div><h3>40+ integrations</h3><p>Stripe, Shopify, GA4, HubSpot, Postgres, crypto gateways and more.</p></div>
+    <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.2-7.5 9.5-4.3-1.3-7.5-4.9-7.5-9.5V6zM9 12l2.2 2.2L15.5 10"/></svg></div><h3>Private by design</h3><p>SOC-ready controls, row-level permissions and EU / Asia data regions.</p></div>
+  </div>
+</div></section>
+<section id="how" style="background:linear-gradient(180deg,transparent,#f3f2ff)"><div class="wrap">
+  <div class="head"><small>How it works</small><h2>From zero to insights in 10 minutes.</h2></div>
+  <div class="steps"><div class="step"><h3>Connect your sources</h3><p>One click for Stripe, Shopify and GA4. Paste a read-only key for databases.</p></div><div class="step"><h3>Nova learns your business</h3><p>It maps your metrics, seasonality and goals — no setup meetings needed.</p></div><div class="step"><h3>Get answers, not charts</h3><p>Daily briefings, alerts and a chat box that actually knows your numbers.</p></div></div>
+</div></section>
+<section id="pricing"><div class="wrap">
+  <div class="head"><small>Pricing</small><h2>Simple pricing that scales with you.</h2></div>
+  <div class="toggle"><div class="seg" id="seg"><button class="on" data-p="m">Monthly</button><button data-p="y">Yearly <em>-20%</em></button><span></span></div></div>
+  <div class="plans">
+    <div class="plan"><small>Starter</small><div class="price" data-m="0" data-y="0">$0<span> / month</span></div><p style="color:var(--ink2)">For side projects and early startups.</p><ul><li>3 data sources</li><li>Weekly briefings</li><li>1 seat</li></ul><a class="btn g" href="#">Get started</a></div>
+    <div class="plan hot"><small>Growth</small><div class="price" data-m="49" data-y="39">$49<span> / month</span></div><p style="opacity:.75">For teams that live in their numbers.</p><ul><li>Unlimited sources</li><li>Daily briefings + alerts</li><li>Ask Nova chat</li><li>5 seats</li></ul><a class="btn b" href="#">Start 14-day trial</a></div>
+    <div class="plan"><small>Scale</small><div class="price" data-m="199" data-y="159">$199<span> / month</span></div><p style="color:var(--ink2)">For companies with many products.</p><ul><li>Everything in Growth</li><li>Custom AI agents</li><li>SSO &amp; audit log</li><li>Unlimited seats</li></ul><a class="btn g" href="#">Talk to sales</a></div>
+  </div>
+</div></section>
+<section id="faq" style="padding-top:20px"><div class="wrap">
+  <div class="head"><small>FAQ</small><h2>Questions, answered.</h2></div>
+  <div class="faq">
+    <details open><summary>Do I need a data engineer to set up Nova?</summary><p>No. Most teams connect their first source in under two minutes. Nova handles modelling automatically.</p></details>
+    <details><summary>Is my data used to train AI models?</summary><p>Never. Your data stays in your workspace and is only used to answer your questions.</p></details>
+    <details><summary>Can I cancel anytime?</summary><p>Yes — monthly plans can be cancelled in one click, and yearly plans are refundable within 30 days.</p></details>
+    <details><summary>Do you support payments in Bangladesh?</summary><p>Yes. Pay by card, bKash, or USDT — invoices are generated automatically.</p></details>
+  </div>
+</div></section>
+<div class="cta-band"><h2>Stop staring at dashboards.</h2><p>Let Nova tell you what matters — every morning, in plain language.</p><a class="btn" style="background:#fff;color:var(--ink)" href="#pricing">Start free</a></div>
+</main>
+<footer><div class="wrap"><span>© 2026 Nova Labs — fictional demo brand</span><span>Designed &amp; built by Xiraiya</span></div></footer>
+<a class="by" href="../index.html" target="_top">Demo site by <b>Xiraiya</b></a>
+<script>
+(function(){var seg=document.getElementById('seg'),thumb=seg.querySelector('span'),btns=seg.querySelectorAll('button');
+function move(b){thumb.style.left=b.offsetLeft+'px';thumb.style.width=b.offsetWidth+'px'}
+btns.forEach(function(b){b.addEventListener('click',function(){btns.forEach(function(x){x.classList.toggle('on',x===b)});move(b);var k=b.dataset.p;
+document.querySelectorAll('.price').forEach(function(p){p.firstChild.nodeValue='$'+p.dataset[k]})})});
+requestAnimationFrame(function(){move(seg.querySelector('.on'))});window.addEventListener('resize',function(){move(seg.querySelector('.on'))});})();
+</script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Motion Academy — After Effects-Style Animation Tutorials &amp; Code Guides | Xiraiya</title>
+<meta name="description" content="Learn motion design and development with Xiraiya: an After Effects-style tutorial player with a real timeline, keyframes and effect controls, plus code guides for Telegram bots, Chrome extensions, Minecraft plugins and crypto webhooks.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://sknoyon324234234234.github.io/Personal/tutorials.html">
+<meta name="theme-color" content="#07070b">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Xiraiya">
+<meta property="og:title" content="Motion Academy — scrub the timeline, learn the motion | Xiraiya">
+<meta property="og:description" content="After Effects-style lessons you can scrub frame by frame, then export as CSS. Plus real code guides.">
+<meta property="og:url" content="https://sknoyon324234234234.github.io/Personal/tutorials.html">
+<meta property="og:image" content="https://sknoyon324234234234.github.io/Personal/assets/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+JP:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+JP:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@400;600;700;800;900&display=swap"></noscript>
+<link rel="stylesheet" href="assets/css/core.css">
+<link rel="stylesheet" href="assets/css/tutorials.css">
+<script>document.documentElement.classList.add('js')</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Motion Academy by Xiraiya",
+  "description": "Interactive motion design lessons with a scrubbable timeline, keyframes and CSS export, plus developer guides for bots, extensions, plugins and payment webhooks.",
+  "provider": { "@type": "Person", "name": "Xiraiya", "url": "https://sknoyon324234234234.github.io/Personal/" },
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "url": "https://sknoyon324234234234.github.io/Personal/tutorials.html",
+  "hasCourseInstance": { "@type": "CourseInstance", "courseMode": "online", "courseWorkload": "PT1H" }
+}
+</script>
+</head>
+<body data-page="academy" id="top">
+<script src="assets/js/icons.js"></script>
+<header class="site-header" id="site-header"></header>
+
+<main id="main">
+  <section class="page-hero">
+    <div class="glow" aria-hidden="true"></div>
+    <div class="kanji-bg" aria-hidden="true">学</div>
+    <div class="container container-wide page-hero-inner">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><svg class="ic"><use href="#i-chevron-right"/></svg><span>Motion Academy</span></nav>
+      <h1 class="h1" data-split="ready">Motion Academy<span class="accent">.</span></h1>
+      <p class="lead" data-reveal>Tutorials that work like After Effects. Press play, scrub the timeline frame by frame, expand layers to see every keyframe, read the effect controls — then export the animation as CSS for your own site.</p>
+      <div class="ac-keys" data-reveal><span><kbd>Space</kbd> play / pause</span><span><kbd>J</kbd> <kbd>L</kbd> previous / next keyframe</span><span><kbd>,</kbd> <kbd>.</kbd> step one frame</span><span><kbd>Home</kbd> go to start</span></div>
+    </div>
+  </section>
+
+  <section class="ae-wrap" aria-label="Tutorial player">
+    <div class="ae" id="ae">
+      <div class="ae-menubar" aria-hidden="true"><span class="ae-logo">MA</span><span>File</span><span>Edit</span><span>Composition</span><span>Layer</span><span>Effect</span><span>Animation</span><span>View</span><span>Window</span><span>Help</span><span class="ae-ws">Workspace: <b>Motion Academy</b></span></div>
+      <div class="ae-top">
+        <aside class="ae-panel ae-project" aria-label="Lessons">
+          <div class="ae-ph">Project · Lessons</div>
+          <ol class="ae-lessons"></ol>
+        </aside>
+        <div class="ae-panel ae-comp">
+          <div class="ae-ph"><span>Composition: <b class="ae-comp-name"></b></span><span class="ae-comp-tools"><label title="Show motion paths"><input type="checkbox" class="sr-only" id="opt-path" checked><span class="switch" aria-hidden="true"></span>Paths</label><label title="Title / action safe guides"><input type="checkbox" class="sr-only" id="opt-safe"><span class="switch" aria-hidden="true"></span>Safe</label></span></div>
+          <div class="ae-viewer"><div class="ae-stage-wrap"><div class="ae-stage"></div><svg class="ae-paths" viewBox="-480 -270 960 540" aria-hidden="true"></svg><div class="ae-safe" aria-hidden="true"></div></div></div>
+          <div class="ae-viewer-bar"><span class="mono ae-res">960 × 540 · 30 fps</span><span class="mono ae-zoomv">Fit</span><span class="mono ae-tc-mini">0:00:00:00</span></div>
+        </div>
+        <aside class="ae-panel ae-effects" aria-label="Effect controls">
+          <div class="ae-ph">Effect Controls: <b class="ae-sel-name">—</b></div>
+          <div class="ae-fx"></div>
+        </aside>
+      </div>
+      <div class="ae-panel ae-timeline">
+        <div class="ae-transport">
+          <div class="ae-tc"><b class="mono ae-timecode">0:00:00:00</b><small class="mono ae-frame">00000 (30.00 fps)</small></div>
+          <div class="ae-btns">
+            <button type="button" data-act="start" aria-label="Go to start"><svg class="ic"><use href="#i-skip-back"/></svg></button>
+            <button type="button" data-act="prevkey" aria-label="Previous keyframe"><svg class="ic"><use href="#i-chevron-left"/></svg></button>
+            <button type="button" data-act="play" class="ae-play" aria-label="Play"><svg class="ic"><use href="#i-play"/></svg></button>
+            <button type="button" data-act="nextkey" aria-label="Next keyframe"><svg class="ic"><use href="#i-chevron-right"/></svg></button>
+            <button type="button" data-act="end" aria-label="Go to end"><svg class="ic"><use href="#i-skip-fwd"/></svg></button>
+            <button type="button" data-act="loop" class="is-on" aria-pressed="true" aria-label="Loop"><svg class="ic"><use href="#i-loop"/></svg></button>
+            <select class="ae-speed" aria-label="Playback speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select>
+          </div>
+          <div class="ae-tl-actions"><button type="button" class="btn btn-ghost btn-sm" data-act="expand"><svg class="ic"><use href="#i-layers"/></svg>Expand all</button><button type="button" class="btn btn-primary btn-sm" data-act="export"><svg class="ic"><use href="#i-code"/></svg>Export CSS</button></div>
+        </div>
+        <div class="ae-tl">
+          <div class="ae-tl-head"><div class="ae-col-h"><span>#</span><span></span><span>Layer name</span></div><div class="ae-ruler" aria-label="Timeline ruler — click or drag to scrub"></div></div>
+          <div class="ae-rows"></div>
+          <div class="ae-playhead" aria-hidden="true"><i></i></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ac-lesson">
+    <div class="container container-wide ac-grid">
+      <div>
+        <span class="eyebrow">Lesson notes</span>
+        <h2 class="h3 ac-title" style="margin:14px 0 18px"></h2>
+        <ol class="ac-notes"></ol>
+      </div>
+      <div class="ac-export">
+        <div class="ac-export-h"><span class="eyebrow no-line">Exported CSS · live from the timeline</span><button type="button" class="btn btn-ghost btn-sm ac-copy"><svg class="ic"><use href="#i-copy"/></svg>Copy</button></div>
+        <pre class="code ac-css"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ac-ease">
+    <div class="container container-wide">
+      <div class="section-head">
+        <span class="num"><span class="hanko sm">緩</span> Easing lab</span>
+        <h2 class="h2" data-split>The curve is <span class="grad-text">the feeling.</span></h2>
+        <p class="lead" data-reveal>Same distance, same duration — completely different personality. Click a row to copy its curve.</p>
+      </div>
+      <div class="ease-list"></div>
+    </div>
+  </section>
+
+  <section class="section ac-guides">
+    <div class="container container-wide">
+      <div class="section-head">
+        <span class="num"><span class="hanko sm">書</span> Code guides</span>
+        <h2 class="h2" data-split>Build it yourself — <span class="grad-text">or hire me.</span></h2>
+        <p class="lead" data-reveal>Short, real snippets from the kinds of projects I ship every week.</p>
+      </div>
+      <div class="guides">
+        <details class="guide card" data-reveal open>
+          <summary><span class="g-ic"><svg class="ic"><use href="#i-send"/></svg></span><span><b>Telegram shop bot in 20 lines</b><small>Node.js · grammY · inline keyboards</small></span><svg class="ic g-chev"><use href="#i-chevron-down"/></svg></summary>
+<pre class="code"><span class="k">import</span> { Bot, InlineKeyboard } <span class="k">from</span> <span class="s">'grammy'</span>;
+
+<span class="k">const</span> bot = <span class="k">new</span> <span class="t">Bot</span>(process.env.BOT_TOKEN);
+<span class="k">const</span> products = [{ id: <span class="s">'lamp'</span>, name: <span class="s">'Neon Katana Lamp'</span>, price: <span class="n">59</span> }];
+
+bot.<span class="f">command</span>(<span class="s">'start'</span>, ctx =&gt; ctx.<span class="f">reply</span>(<span class="s">'Welcome to Kage Shop!'</span>, {
+  reply_markup: <span class="k">new</span> <span class="t">InlineKeyboard</span>().<span class="f">text</span>(<span class="s">'Catalog'</span>, <span class="s">'catalog'</span>)
+}));
+
+bot.<span class="f">callbackQuery</span>(<span class="s">'catalog'</span>, <span class="k">async</span> ctx =&gt; {
+  <span class="k">const</span> kb = <span class="k">new</span> <span class="t">InlineKeyboard</span>();
+  products.<span class="f">forEach</span>(p =&gt; kb.<span class="f">text</span>(<span class="s">`${p.name} — ${p.price} USDT`</span>, <span class="s">`buy:${p.id}`</span>).<span class="f">row</span>());
+  <span class="k">await</span> ctx.<span class="f">editMessageText</span>(<span class="s">'Pick a product:'</span>, { reply_markup: kb });
+});
+
+bot.<span class="f">callbackQuery</span>(<span class="s">/^buy:(.+)$/</span>, <span class="k">async</span> ctx =&gt; {
+  <span class="k">const</span> p = products.<span class="f">find</span>(x =&gt; x.id === ctx.match[<span class="n">1</span>]);
+  <span class="k">await</span> ctx.<span class="f">reply</span>(<span class="s">`Send ${p.price} USDT (TRC20). Payment is detected automatically.`</span>);
+  <span class="k">await</span> ctx.<span class="f">answerCallbackQuery</span>();
+});
+
+bot.<span class="f">start</span>();</pre>
+        </details>
+        <details class="guide card" data-reveal>
+          <summary><span class="g-ic"><svg class="ic"><use href="#i-puzzle"/></svg></span><span><b>Chrome extension that highlights keywords</b><small>Manifest V3 · content script · storage</small></span><svg class="ic g-chev"><use href="#i-chevron-down"/></svg></summary>
+<pre class="code"><span class="c">// manifest.json</span>
+{
+  <span class="s">"manifest_version"</span>: <span class="n">3</span>,
+  <span class="s">"name"</span>: <span class="s">"FocusKit"</span>,
+  <span class="s">"version"</span>: <span class="s">"1.0.0"</span>,
+  <span class="s">"permissions"</span>: [<span class="s">"storage"</span>],
+  <span class="s">"content_scripts"</span>: [{ <span class="s">"matches"</span>: [<span class="s">"&lt;all_urls&gt;"</span>], <span class="s">"js"</span>: [<span class="s">"content.js"</span>] }]
+}
+
+<span class="c">// content.js</span>
+chrome.storage.sync.<span class="f">get</span>({ words: [<span class="s">'crypto'</span>, <span class="s">'agents'</span>] }, ({ words }) =&gt; {
+  <span class="k">const</span> re = <span class="k">new</span> <span class="t">RegExp</span>(<span class="s">`\\b(${words.join('|')})`</span>, <span class="s">'gi'</span>);
+  <span class="k">const</span> walker = document.<span class="f">createTreeWalker</span>(document.body, NodeFilter.SHOW_TEXT);
+  <span class="k">const</span> hits = [];
+  <span class="k">while</span> (walker.<span class="f">nextNode</span>()) <span class="k">if</span> (re.<span class="f">test</span>(walker.currentNode.data)) hits.<span class="f">push</span>(walker.currentNode);
+  hits.<span class="f">forEach</span>(node =&gt; {
+    <span class="k">const</span> span = document.<span class="f">createElement</span>(<span class="s">'span'</span>);
+    span.innerHTML = node.data.<span class="f">replace</span>(re, <span class="s">'&lt;mark&gt;$1&lt;/mark&gt;'</span>);
+    node.<span class="f">replaceWith</span>(span);
+  });
+});</pre>
+        </details>
+        <details class="guide card" data-reveal>
+          <summary><span class="g-ic"><svg class="ic"><use href="#i-cube"/></svg></span><span><b>Paper plugin: a /daily reward command</b><small>Java 21 · Paper API · Vault economy</small></span><svg class="ic g-chev"><use href="#i-chevron-down"/></svg></summary>
+<pre class="code"><span class="k">public final class</span> <span class="t">RealmCore</span> <span class="k">extends</span> <span class="t">JavaPlugin</span> {
+  <span class="k">private</span> <span class="t">Economy</span> eco;
+
+  <span class="n">@Override</span>
+  <span class="k">public void</span> <span class="f">onEnable</span>() {
+    eco = getServer().getServicesManager().getRegistration(<span class="t">Economy</span>.<span class="k">class</span>).getProvider();
+    getCommand(<span class="s">"daily"</span>).setExecutor(<span class="k">new</span> <span class="t">DailyCommand</span>(eco));
+    getLogger().info(<span class="s">"RealmCore enabled"</span>);
+  }
+}
+
+<span class="c"># plugin.yml</span>
+name: RealmCore
+main: net.blockrealm.core.RealmCore
+api-version: <span class="s">'1.21'</span>
+depend: [Vault]
+commands:
+  daily:
+    description: Claim your daily coins</pre>
+        </details>
+        <details class="guide card" data-reveal>
+          <summary><span class="g-ic"><svg class="ic"><use href="#i-shield"/></svg></span><span><b>Verify a crypto payment webhook</b><small>Node.js · Express · HMAC-SHA256 · timing-safe compare</small></span><svg class="ic g-chev"><use href="#i-chevron-down"/></svg></summary>
+<pre class="code"><span class="k">import</span> crypto <span class="k">from</span> <span class="s">'node:crypto'</span>;
+<span class="k">import</span> express <span class="k">from</span> <span class="s">'express'</span>;
+
+<span class="k">const</span> app = <span class="f">express</span>();
+
+app.<span class="f">post</span>(<span class="s">'/webhooks/crypto'</span>, express.<span class="f">raw</span>({ type: <span class="s">'application/json'</span> }), (req, res) =&gt; {
+  <span class="k">const</span> sig = req.<span class="f">get</span>(<span class="s">'X-Signature'</span>) || <span class="s">''</span>;
+  <span class="k">const</span> expected = <span class="s">'sha256='</span> + crypto
+    .<span class="f">createHmac</span>(<span class="s">'sha256'</span>, process.env.WEBHOOK_SECRET)
+    .<span class="f">update</span>(req.body).<span class="f">digest</span>(<span class="s">'hex'</span>);
+
+  <span class="k">const</span> valid = sig.length === expected.length &amp;&amp;
+    crypto.<span class="f">timingSafeEqual</span>(Buffer.<span class="f">from</span>(sig), Buffer.<span class="f">from</span>(expected));
+  <span class="k">if</span> (!valid) <span class="k">return</span> res.<span class="f">sendStatus</span>(<span class="n">401</span>);
+
+  <span class="k">const</span> event = JSON.<span class="f">parse</span>(req.body);
+  <span class="k">if</span> (event.event === <span class="s">'payment.confirmed'</span> &amp;&amp; event.confirmations &gt;= <span class="n">3</span>) {
+    <span class="f">fulfillOrder</span>(event.invoice); <span class="c">// idempotent: safe if the webhook is retried</span>
+  }
+  res.<span class="f">sendStatus</span>(<span class="n">200</span>);
+});</pre>
+        </details>
+      </div>
+      <div class="flex wrap" style="margin-top:34px" data-reveal><a class="btn btn-primary btn-lg" href="hire.html" data-magnetic>Skip the tutorial — hire me <svg class="ic"><use href="#i-arrow-right"/></svg></a><a class="btn btn-ghost btn-lg" href="showcase.html">See these running in the Lab</a></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="site-footer"></footer>
+
+<script src="assets/js/config.js" defer></script>
+<script src="assets/js/core.js" defer></script>
+<script src="assets/js/tutorials.js" defer></script>
+</body>
+</html>
