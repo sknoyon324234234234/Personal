@@ -17,7 +17,15 @@
     <image:image><image:loc>https://sknoyon324234234234.github.io/Personal/assets/img/demos/blockrealm.jpg</image:loc></image:image>
     <image:image><image:loc>https://sknoyon324234234234.github.io/Personal/assets/img/demos/studio-kami.jpg</image:loc></image:image>
     <image:image><image:loc>https://sknoyon324234234234.github.io/Personal/assets/img/demos/pulse-app.jpg</image:loc></image:image>
+    <image:image><image:loc>https://sknoyon324234234234.github.io/Personal/assets/img/demos/aurum.jpg</image:loc></image:image>
+    <image:image><image:loc>https://sknoyon324234234234.github.io/Personal/assets/img/demos/mori-tea.jpg</image:loc></image:image>
+    <image:image><image:loc>https://sknoyon324234234234.github.io/Personal/assets/img/demos/haven.jpg</image:loc></image:image>
+    <image:image><image:loc>https://sknoyon324234234234.github.io/Personal/assets/img/demos/ledger.jpg</image:loc></image:image>
+    <image:image><image:loc>https://sknoyon324234234234.github.io/Personal/assets/img/demos/nomad.jpg</image:loc></image:image>
+    <image:image><image:loc>https://sknoyon324234234234.github.io/Personal/assets/img/demos/devdocs.jpg</image:loc></image:image>
   </url>
+  <url><loc>https://sknoyon324234234234.github.io/Personal/pages.html</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://sknoyon324234234234.github.io/Personal/dev-world.html</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://sknoyon324234234234.github.io/Personal/components.html</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://sknoyon324234234234.github.io/Personal/tutorials.html</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 </urlset>

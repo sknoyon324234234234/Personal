@@ -370,7 +370,7 @@ html:not(.js) .loader { display: none; }
 }
 .panel::before { content: ''; position: absolute; inset: 0; z-index: -1; background-image: radial-gradient(rgba(var(--fx),.1) 1px, transparent 1.3px); background-size: 9px 9px; -webkit-mask-image: linear-gradient(200deg, #000, transparent 55%); mask-image: linear-gradient(200deg, #000, transparent 55%); }
 .panel:hover { border-color: var(--pc); }
-.pn-shop { --pc: var(--gold); } .pn-kit { --pc: var(--violet); } .pn-demos { --pc: var(--cyan); } .pn-academy { --pc: var(--pink); } .pn-hire { --pc: var(--lime); }
+.pn-shop { --pc: var(--gold); } .pn-kit { --pc: var(--violet); } .pn-demos { --pc: var(--cyan); } .pn-academy { --pc: var(--pink); } .pn-hire { --pc: var(--lime); } .pn-pages { --pc: var(--red); } .pn-world { --pc: var(--cyan); }
 .pn-num { position: absolute; top: 24px; left: 28px; font: 500 12px/1 var(--font-mono); letter-spacing: .2em; color: var(--pc); }
 .pn-jp { position: absolute; right: -14px; top: -34px; z-index: -1; font-size: 230px; line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(var(--fx),.09); }
 .pn-body { position: relative; display: grid; gap: 12px; }
@@ -403,6 +403,19 @@ html:not(.js) .loader { display: none; }
 .art-demos span:nth-child(2) { inset: 26% 6% 0 46%; border-color: var(--cyan); animation: shopBob 4s ease-in-out infinite; }
 .art-demos span:nth-child(3) { inset: 40% 0 -6% 82%; border-radius: 6px; border-color: var(--red); animation: shopBob 4s ease-in-out .6s infinite; }
 .art-demos span::before { content: ''; position: absolute; left: 10%; right: 30%; top: 16%; height: 10%; border-radius: 4px; background: rgba(var(--fx),.1); }
+.art-pages { position: relative; }
+.art-pages span { position: absolute; border-radius: 8px; border: 2px solid var(--line-2); background: var(--surface); }
+.art-pages span:nth-child(1) { inset: 0 34% 0 0; background: linear-gradient(180deg, rgba(196,50,29,.16) 0 22%, var(--surface) 22%); }
+.art-pages span:nth-child(2) { inset: 12% 0 36% 72%; border-color: var(--red); animation: shopBob 4s ease-in-out infinite; }
+.art-pages span:nth-child(3) { inset: 70% 4% 4% 72%; border-radius: 999px; background: var(--red); border-color: var(--red); animation: shopBob 4s ease-in-out .5s infinite; }
+.art-pages span:nth-child(4) { left: 8%; right: 42%; top: 36%; height: 12%; border: 0; border-radius: 4px; background: rgba(var(--fx), .12); box-shadow: 0 26px 0 rgba(var(--fx), .08), 0 52px 0 rgba(var(--fx), .08); }
+.art-world { position: relative; border-radius: 10px; background: #0f0d0b; border: 2px solid var(--line-2); overflow: hidden; }
+.art-world span { position: absolute; left: 10%; height: 9%; border-radius: 3px; background: #7ee787; opacity: .8; }
+.art-world span:nth-child(1) { top: 16%; width: 40%; }
+.art-world span:nth-child(2) { top: 34%; width: 62%; background: #79c0ff; }
+.art-world span:nth-child(3) { top: 52%; width: 30%; background: #f2cc60; }
+.art-world span:nth-child(4) { top: 70%; width: 10px; background: #f06a52; animation: blinkCaret 1s steps(1) infinite; }
+@keyframes blinkCaret { 50% { opacity: 0; } }
 .art-academy { display: grid; align-content: center; gap: 12px; }
 .art-academy span { position: relative; height: 22px; border-radius: 5px; background: rgba(223,127,115,.08); border: 1px solid rgba(223,127,115,.25); }
 .art-academy span::before, .art-academy span::after { content: ''; position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px; background: var(--pink); transform: rotate(45deg); }

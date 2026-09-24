@@ -18,7 +18,9 @@ It's a cinematic, ukiyo-e inspired portfolio where visitors can try a live, inte
 | `showcase.html` (**The Lab**) | 11 interactive stages: live website preview, drag-and-drop automation workflow, working Telegram shop bot, Chrome extension popup that edits a page, **BlockRealm**, a playable Minecraft-style survival game (see below), desktop OS with an EXE installer and app, Android app, configurable AI agent, AI chat widget (English + Bangla), e-commerce autopilot feed and an auto-confirming crypto checkout |
 | `shop.html` | Full e-commerce demo: filters, product modal, cart, promo codes, AI shopping assistant, checkout with Crypto / bKash / Nagad / card / COD, and an autopilot admin dashboard |
 | `components.html` (**UI Kit**) | Figma-style workspace with 50 live components (headers, bars, heroes, buttons, cards, forms, footers, loaders, alerts). It has a layers panel, zoom/pan, an inspector that reads real computed styles, copyable HTML/CSS/JS and present mode |
-| `demos.html` + `demos/` | Six complete demo websites (SaaS, restaurant, crypto dashboard, Minecraft server, agency, app landing) and a desktop/laptop/tablet/phone preview studio |
+| `demos.html` + `demos/` | Twelve complete demo websites and a desktop/laptop/tablet/phone preview studio: Nova AI (SaaS), Sakura Bistro (restaurant), Vault (crypto dashboard), BlockRealm (Minecraft server), Studio Kami (agency), Pulse (app landing), **Aurum** (luxury watch store with a live watch and configurator), **Mori Tea** (tea shop with a brewing timer), **Haven** (architecture and homes with a time-of-day slider and mortgage calculator), **Ledger** (banking dashboard with a send-money keypad), **Nomad** (travel booking with a date-range picker and drag-and-drop trip planner) and **Kumo Docs** (developer docs with Ctrl K search and a live API console) |
+| `pages.html` (**Pages Studio**) | Eight page templates (homepage, log in, sign up, pricing, dashboard, blog post, contact, 404) built from 45 section variants. A toolbar swaps variants, reorders, hides, duplicates and adds sections, and restyles everything live: palettes and custom colours, surface tone, light/dark, 8 font pairs, radius, spacing, shadows, borders and 8 button styles (solid, outline, soft, gradient, glass, brutal, 3D, neon) with shape, size and hover effects. It has Select and Text-edit modes, device sizes, undo/redo, a contrast check, share links and one-click HTML export |
+| `dev-world.html` (**Dev World**) | A developer village on an illustrated map: a terminal with 30+ commands, a live HTML/CSS/JS playground with a console, nine dev tools (JSON, regex, Base64, UUID, passwords, colours, SHA hashes, JWT, timestamps), a mock REST API console with fetch/curl/Python snippets, and a career timeline drawn as a git graph with a contribution heatmap |
 | `tutorials.html` (**Motion Academy**) | After Effects-style tutorial player with a keyframe engine, timeline, layers, effect controls with an easing graph, motion paths, lesson notes, live CSS export, an easing lab and code guides |
 | `hire.html` | Packages, a 4-step project configurator with an instant estimate, and a brief hand-off by email, Telegram or WhatsApp. Also covers payment methods, next steps and an FAQ with FAQPage schema |
 | `404.html` | Custom "lost shinobi" page |
@@ -93,14 +95,16 @@ grep -rl "sknoyon324234234234.github.io/Personal/" --include=*.html --include=*.
 ## Project structure
 
 ```
-index.html  showcase.html  shop.html  components.html  demos.html  tutorials.html  hire.html  404.html
-demos/                 six standalone demo websites
+index.html  showcase.html  shop.html  components.html  demos.html  pages.html  dev-world.html  tutorials.html  hire.html  404.html
+demos/                 twelve standalone demo websites
 assets/css/            core.css (design system), one stylesheet per page, phone.css (phone layout)
 assets/js/config.js    your details, prices, services, packages
 assets/js/icons.js     custom SVG icon sprite (no emoji)
 assets/js/core.js      header/footer, tab bar, transitions, reveals, mascot, particles, Command Center, quests
 assets/js/lab/         one script per Lab stage
 assets/js/kit-data.js  UI Kit component library (HTML + CSS for each component)
+assets/js/pages-kit.js Pages Studio template generator (sections, tokens, export)
+assets/js/world.js     Dev World terminal, playground, toolbox, API console and git graph
 assets/img/            favicon, app icons, social share image, demo thumbnails
 tools/                 og.html + render-assets.js (regenerate images)
 sitemap.xml  robots.txt  site.webmanifest  .nojekyll

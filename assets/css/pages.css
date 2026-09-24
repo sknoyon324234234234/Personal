@@ -124,7 +124,8 @@
 .cc { display: grid; gap: 6px; }
 .cc div { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: 10px; background: var(--bg); font-size: 12.5px; }
 .cc b { font: 600 12px var(--font-mono); padding: 2px 8px; border-radius: 999px; }
-.cc .pass { background: rgba(77, 116, 36, .16); color: var(--lime); }
+.cc .pass { background: rgba(77, 116, 36, .12); color: #3b5a1b; }
+html[data-mode="ink"] .cc .pass { color: var(--lime); }
 .cc .fail { background: rgba(196, 50, 29, .14); color: var(--red); }
 .cc .aa { font-weight: 700; margin-right: 6px; }
 
