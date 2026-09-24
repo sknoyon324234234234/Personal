@@ -69,6 +69,8 @@
         // scroll carried on the back
         '<g transform="rotate(-16 200 290)"><rect x="40" y="268" width="320" height="44" rx="22" fill="#e9dfc6" stroke="#6b5a40" stroke-width="2"/><path d="M60 276H340M60 304H340" stroke="#c9bb98" stroke-width="2"/>' +
           '<rect x="30" y="262" width="26" height="56" rx="8" fill="#b8321f" stroke="#5a1a0e" stroke-width="2"/><rect x="344" y="262" width="26" height="56" rx="8" fill="#b8321f" stroke="#5a1a0e" stroke-width="2"/><path d="M200 268V312" stroke="#b8321f" stroke-width="5"/></g>' +
+        // mane shadow for depth
+        '<path d="M206 36 234 84 268 48 278 98 326 74 312 124 364 122 330 158 380 182 334 202 372 246 326 246 354 298 308 286 326 342 282 306 270 258H142L130 306 86 342 104 286 58 298 86 246 40 246 78 202 32 182 82 158 48 122 100 124 86 74 134 98 144 48 178 84Z" fill="#6b6152" opacity=".22"/>' +
         // long mane behind (sways)
         '<path class="m-tail" d="M248 236C300 262 336 330 330 420L310 390 314 446 288 404 284 458 266 400 252 426 250 330 236 268Z" fill="url(#' + p + 'h)" stroke="#a79e8e" stroke-width="1.5" stroke-linejoin="round"/>' +
         '<path d="M200 28 228 76 262 40 272 90 320 66 306 116 358 114 324 150 374 174 328 194 366 238 320 238 348 290 302 278 320 334 276 298 264 250H136L124 298 80 334 98 278 52 290 80 238 34 238 72 194 26 174 76 150 42 114 94 116 80 66 128 90 138 40 172 76Z" fill="url(#' + p + 'h)" stroke="#a79e8e" stroke-width="1.5" stroke-linejoin="round"/>' +
@@ -94,6 +96,8 @@
         // laptop
         '<g class="m-laptop"><ellipse cx="200" cy="338" rx="86" ry="16" fill="#d9a441" opacity=".16"/>' +
           '<rect x="132" y="340" width="136" height="86" rx="6" fill="#1d1813" stroke="#4a3b2e" stroke-width="2"/>' +
+          '<clipPath id="' + p + 'scr"><rect x="140" y="348" width="120" height="70" rx="3"/></clipPath>' +
+          '<g clip-path="url(#' + p + 'scr)"><g class="m-code" fill="#6fb3a8" opacity=".75"><rect x="146" y="354" width="40" height="3" rx="1.5"/><rect x="152" y="362" width="62" height="3" rx="1.5" fill="#d9a441"/><rect x="152" y="370" width="30" height="3" rx="1.5"/><rect x="146" y="378" width="54" height="3" rx="1.5" fill="#e0442e"/><rect x="152" y="386" width="70" height="3" rx="1.5"/><rect x="152" y="394" width="24" height="3" rx="1.5" fill="#d9a441"/><rect x="146" y="402" width="48" height="3" rx="1.5"/><rect x="152" y="410" width="66" height="3" rx="1.5"/><rect x="146" y="418" width="40" height="3" rx="1.5"/><rect x="152" y="426" width="62" height="3" rx="1.5" fill="#d9a441"/><rect x="152" y="434" width="30" height="3" rx="1.5"/><rect x="146" y="442" width="54" height="3" rx="1.5" fill="#e0442e"/><rect x="152" y="450" width="70" height="3" rx="1.5"/><rect x="152" y="458" width="24" height="3" rx="1.5" fill="#d9a441"/></g></g>' +
           '<g class="m-logo"><rect x="186" y="369" width="28" height="28" fill="#e0442e" transform="rotate(-4 200 383)"/><text x="200" y="390" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="17" fill="#efe4cc">開</text></g>' +
           '<path d="M124 426H276L268 436H132Z" fill="#2c241c"/></g>' +
         '<ellipse cx="142" cy="400" rx="14" ry="12" fill="url(#' + p + 's)"/><ellipse cx="258" cy="400" rx="14" ry="12" fill="url(#' + p + 's)"/>' +
@@ -107,11 +111,12 @@
         '<g class="m-eye"><path d="M142 206C144 190 188 188 192 204 192 222 180 230 166 230 152 230 142 222 142 206Z" fill="#fffaf0"/>' +
           '<g clip-path="url(#' + p + 'el)"><g class="m-iris"><ellipse cx="168" cy="210" rx="12" ry="15" fill="url(#' + p + 'i)"/><ellipse cx="168" cy="212" rx="5" ry="8" fill="#1d1208"/><circle cx="163" cy="204" r="3.8" fill="#fff"/></g></g>' +
           '<path d="M138 202C146 184 188 180 196 198L192 203C184 192 150 192 144 206Z" fill="#1d1208"/></g>' +
-        '<g class="m-eye"><path d="M258 206C256 190 212 188 208 204 208 222 220 230 234 230 248 230 258 222 258 206Z" fill="#fffaf0"/>' +
+        '<g class="m-eye m-eye-r"><path d="M258 206C256 190 212 188 208 204 208 222 220 230 234 230 248 230 258 222 258 206Z" fill="#fffaf0"/>' +
           '<g clip-path="url(#' + p + 'er)"><g class="m-iris"><ellipse cx="232" cy="210" rx="12" ry="15" fill="url(#' + p + 'i)"/><ellipse cx="232" cy="212" rx="5" ry="8" fill="#1d1208"/><circle cx="227" cy="204" r="3.8" fill="#fff"/></g></g>' +
           '<path d="M262 202C254 184 212 180 204 198L208 203C216 192 250 192 256 206Z" fill="#1d1208"/></g>' +
         // brows, nose, grin
-        '<path d="M144 180 182 190M256 180 218 190" stroke="#f4efe4" stroke-width="7" stroke-linecap="round"/><path d="M144 180 182 190M256 180 218 190" stroke="#a79e8e" stroke-width="2" stroke-linecap="round" opacity=".6"/>' +
+        '<g class="m-brows"><path d="M144 180 182 190M256 180 218 190" stroke="#f4efe4" stroke-width="7" stroke-linecap="round"/><path d="M144 180 182 190M256 180 218 190" stroke="#a79e8e" stroke-width="2" stroke-linecap="round" opacity=".6"/></g>' +
+        '<ellipse cx="152" cy="238" rx="12" ry="6" fill="#ff7f6e" opacity=".28"/><ellipse cx="248" cy="238" rx="12" ry="6" fill="#ff7f6e" opacity=".28"/>' +
         '<path d="M199 234 196 242H202" stroke="#c98c70" stroke-width="1.8" fill="none" stroke-linecap="round"/>' +
         '<path d="M182 250C194 258 210 257 220 246" stroke="#7a2a1c" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M210 253 213 259 215 252Z" fill="#fff"/>' +
         // side locks + spiky fringe
@@ -124,22 +129,144 @@
         '<text x="200" y="158" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="14" fill="#3a3128">&lt;/&gt;</text>' +
         '<g fill="#7d7466"><circle cx="170" cy="144" r="1.6"/><circle cx="230" cy="144" r="1.6"/><circle cx="170" cy="160" r="1.6"/><circle cx="230" cy="160" r="1.6"/></g>' +
       '</g>' +
-      // the toad familiar
-      '<g class="m-toad">' +
-        '<ellipse cx="92" cy="500" rx="74" ry="14" fill="#000" opacity=".28"/>' +
-        '<path d="M26 492C18 452 44 420 92 418 140 420 166 452 158 492Z" fill="url(#' + p + 't)" stroke="#5a2e12" stroke-width="2"/>' +
-        '<g fill="#7a3c18" opacity=".7"><circle cx="58" cy="452" r="7"/><circle cx="124" cy="446" r="6"/><circle cx="96" cy="436" r="4"/><circle cx="140" cy="470" r="5"/><circle cx="42" cy="476" r="4"/></g>' +
-        '<ellipse class="m-throat" cx="92" cy="480" rx="38" ry="16" fill="#ecd3a6"/>' +
-        '<path d="M52 470C72 480 112 480 132 470" stroke="#5a2e12" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
-        '<g class="m-toad-eyes"><circle cx="60" cy="426" r="15" fill="url(#' + p + 't)" stroke="#5a2e12" stroke-width="2"/><circle cx="124" cy="424" r="15" fill="url(#' + p + 't)" stroke="#5a2e12" stroke-width="2"/>' +
-          '<circle cx="60" cy="425" r="9" fill="#f0c040"/><circle cx="124" cy="423" r="9" fill="#f0c040"/><rect x="53" y="423" width="14" height="4" rx="2" fill="#1d1208"/><rect x="117" y="421" width="14" height="4" rx="2" fill="#1d1208"/></g>' +
-        '<path d="M36 494C30 500 30 506 40 506H62M148 494C154 500 154 506 144 506H122" stroke="#5a2e12" stroke-width="3" fill="url(#' + p + 't)"/>' +
-        '<path d="M74 456 110 456 92 470Z" fill="#b8321f"/><path d="M78 458 106 458" stroke="#efe4cc" stroke-width="1.5"/>' +
-      '</g>' +
+      // the toad familiar (with a fly it will eventually catch)
+      toadG(p) +
       // floating paper talismans (ofuda)
       '<g class="m-holo h1"><g transform="rotate(-8 44 150)"><rect x="24" y="100" width="40" height="104" fill="#efe4cc" stroke="#b8321f" stroke-width="2"/><rect x="29" y="105" width="30" height="94" fill="none" stroke="#b8321f" stroke-width="1"/><text x="44" y="146" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="20" fill="#1d1208">AI</text><text x="44" y="178" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="18" fill="#b8321f">術</text></g></g>' +
       '<g class="m-holo h2"><g transform="rotate(7 356 330)"><rect x="336" y="280" width="40" height="104" fill="#efe4cc" stroke="#b8321f" stroke-width="2"/><rect x="341" y="285" width="30" height="94" fill="none" stroke="#b8321f" stroke-width="1"/><text x="356" y="326" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="15" fill="#1d1208">{ }</text><text x="356" y="360" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="18" fill="#b8321f">码</text></g></g>' +
       '<g class="m-holo h3"><g transform="rotate(-4 350 64)"><rect x="330" y="20" width="40" height="92" fill="#efe4cc" stroke="#b8321f" stroke-width="2"/><text x="350" y="60" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="20" fill="#b8321f">忍</text><text x="350" y="92" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="11" fill="#1d1208">&lt;/&gt;</text></g></g>' +
+      '</svg>';
+  }
+
+
+  function toadG(p) {
+    return '<g class="m-toad">' +
+      '<ellipse cx="92" cy="500" rx="74" ry="14" fill="#000" opacity=".2"/>' +
+      '<path d="M26 492C18 452 44 420 92 418 140 420 166 452 158 492Z" fill="url(#' + p + 't)" stroke="#5a2e12" stroke-width="2"/>' +
+      '<g fill="#7a3c18" opacity=".7"><circle cx="58" cy="452" r="7"/><circle cx="124" cy="446" r="6"/><circle cx="96" cy="436" r="4"/><circle cx="140" cy="470" r="5"/><circle cx="42" cy="476" r="4"/></g>' +
+      '<ellipse class="m-throat" cx="92" cy="480" rx="38" ry="16" fill="#ecd3a6"/>' +
+      '<path d="M52 470C72 480 112 480 132 470" stroke="#5a2e12" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+      '<path class="m-tongue" d="M100 468C118 446 134 424 150 398" stroke="#e0607a" stroke-width="5" fill="none" stroke-linecap="round"/>' +
+      '<g class="m-toad-eyes"><circle cx="60" cy="426" r="15" fill="url(#' + p + 't)" stroke="#5a2e12" stroke-width="2"/><circle cx="124" cy="424" r="15" fill="url(#' + p + 't)" stroke="#5a2e12" stroke-width="2"/>' +
+        '<circle cx="60" cy="425" r="9" fill="#f0c040"/><circle cx="124" cy="423" r="9" fill="#f0c040"/><rect x="53" y="423" width="14" height="4" rx="2" fill="#1d1208"/><rect x="117" y="421" width="14" height="4" rx="2" fill="#1d1208"/></g>' +
+      '<path d="M36 494C30 500 30 506 40 506H62M148 494C154 500 154 506 144 506H122" stroke="#5a2e12" stroke-width="3" fill="url(#' + p + 't)"/>' +
+      '<path d="M74 456 110 456 92 470Z" fill="#b8321f"/><path d="M78 458 106 458" stroke="#efe4cc" stroke-width="1.5"/>' +
+      '<g class="m-fly"><ellipse cx="-3" cy="-4" rx="4" ry="2.4" fill="#cfe3ef" opacity=".85" class="m-wing"/><ellipse cx="3" cy="-4" rx="4" ry="2.4" fill="#cfe3ef" opacity=".85" class="m-wing"/><circle r="3" fill="#1d1208"/></g>' +
+    '</g>';
+  }
+  function slugG(p) {
+    // a leopard slug: mantle with growth rings and a breathing pore, tubercled skin, keel tail,
+    // two long eye stalks + two short feelers, wet highlights and a slime trail (plus a support headset)
+    var spots = '';
+    [[268, 496, 3.2], [282, 489, 2.6], [296, 495, 3.4], [310, 488, 2.4], [252, 500, 2.2], [322, 494, 2.8], [288, 500, 2], [304, 501, 2.2], [274, 501, 1.8], [338, 489, 2.4], [350, 482, 2], [340, 474, 2.6], [356, 470, 1.8]].forEach(function (d) {
+      spots += '<ellipse cx="' + d[0] + '" cy="' + d[1] + '" rx="' + d[2] + '" ry="' + (d[2] * .7).toFixed(1) + '" />';
+    });
+    return '<g class="m-slug">' +
+      '<path d="M206 510C236 506 272 508 300 508" stroke="#cfd8dc" stroke-width="7" stroke-linecap="round" opacity=".45"/><path d="M214 508C240 506 262 507 286 507" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/>' +
+      '<ellipse cx="300" cy="507" rx="78" ry="6" fill="#000" opacity=".16"/>' +
+      // body + keel tail
+      '<path d="M222 506C232 500 256 494 290 490 310 486 332 478 350 470 362 466 374 468 380 478 386 490 380 504 368 507Z" fill="url(#' + p + 'sl)" stroke="#5b4a3a" stroke-width="1.6"/>' +
+      '<path d="M226 504C252 497 284 494 318 488" stroke="#5b4a3a" stroke-width="1.2" fill="none" opacity=".45"/>' +
+      '<g fill="#3e3025" opacity=".75">' + spots + '</g>' +
+      // mantle saddle with growth rings + pneumostome
+      '<path d="M318 486C318 470 334 460 352 458 368 457 380 464 382 476 372 482 350 488 318 486Z" fill="url(#' + p + 'mt)" stroke="#5b4a3a" stroke-width="1.4"/>' +
+      '<path d="M326 482C330 470 344 464 358 463M334 481C338 473 348 469 360 469M344 480C348 476 354 474 362 474" stroke="#5b4a3a" stroke-width="1" fill="none" opacity=".5"/>' +
+      '<ellipse cx="338" cy="482" rx="3" ry="2" fill="#2a1f18"/>' +
+      // head, feelers and eye stalks
+      '<path d="M372 486C380 484 388 488 388 496 386 504 376 506 368 504Z" fill="url(#' + p + 'sl)" stroke="#5b4a3a" stroke-width="1.2"/>' +
+      '<path d="M384 498 394 504M382 502 390 510" stroke="#6b5846" stroke-width="2.4" stroke-linecap="round"/>' +
+      '<g class="m-stalk"><path d="M378 488C380 474 384 462 388 450M384 490C390 478 396 470 402 460" stroke="#6b5846" stroke-width="3.2" stroke-linecap="round" fill="none"/>' +
+        '<circle cx="388" cy="448" r="3.6" fill="#2a1f18"/><circle cx="402" cy="458" r="3.6" fill="#2a1f18"/><circle cx="387" cy="447" r="1.2" fill="#fff"/><circle cx="401" cy="457" r="1.2" fill="#fff"/></g>' +
+      // wet sheen
+      '<path d="M244 498C268 491 292 489 314 485" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".55" fill="none"/><path d="M336 466C346 462 358 461 368 463" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".6" fill="none"/>' +
+      '<circle cx="262" cy="495" r="1.6" fill="#fff" opacity=".8"/><circle cx="300" cy="490" r="1.3" fill="#fff" opacity=".8"/>' +
+      // tiny support headset
+      '<path d="M364 470C364 450 396 446 400 466" stroke="#1d1813" stroke-width="2.6" fill="none"/><rect x="360" y="468" width="7" height="10" rx="3" fill="#1d1813"/><path d="M363 478C364 488 372 492 380 492" stroke="#1d1813" stroke-width="2" fill="none"/><circle cx="381" cy="492" r="2.6" fill="#d63a24"/>' +
+    '</g>';
+  }
+  function crewDefs(p) {
+    return '<linearGradient id="' + p + 't" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c98044"/><stop offset="1" stop-color="#8a4a22"/></linearGradient>' +
+      '<linearGradient id="' + p + 'sl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdb99f"/><stop offset=".55" stop-color="#a48b70"/><stop offset="1" stop-color="#7c6650"/></linearGradient>' +
+      '<linearGradient id="' + p + 'mt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bda78c"/><stop offset="1" stop-color="#8a735c"/></linearGradient>';
+  }
+  function miniToad() { var p = 'mt' + (++uid); return '<svg class="mascot mini-crew" viewBox="14 392 160 128" role="img" aria-label="Gama the toad"><defs>' + crewDefs(p) + '</defs>' + toadG(p) + '</svg>'; }
+  function miniSlug() { var p = 'ms' + (++uid); return '<svg class="mascot mini-crew" viewBox="200 436 210 82" role="img" aria-label="Namekuji the slug in a support headset"><defs>' + crewDefs(p) + '</defs>' + slugG(p) + '</svg>'; }
+
+  // An original "slug princess" from the same 1839 Jiraiya folk tale: head of QA, tea enthusiast.
+  function tsunade(opts) {
+    opts = opts || {};
+    var p = 'ts' + (++uid), spirals = '';
+    [[112, 360], [120, 410], [288, 360], [280, 410], [150, 468], [250, 468]].forEach(function (c) {
+      spirals += '<path d="M' + c[0] + ' ' + c[1] + 'm-8 0a8 8 0 1 1 8 8a5 5 0 1 1 -5 -5a2 2 0 1 1 2 2" />';
+    });
+    return '<svg class="mascot tsunade ' + (opts.cls || '') + '" viewBox="0 0 400 540" role="img" aria-label="Tsunade, head of QA — an original slug-princess character with a clipboard, a cup of tea and a slug in a headset">' +
+      '<defs>' + crewDefs(p) +
+      '<radialGradient id="' + p + 'g" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#3f8f84" stop-opacity=".28"/><stop offset=".6" stop-color="#d9a441" stop-opacity=".08"/><stop offset="1" stop-color="#d9a441" stop-opacity="0"/></radialGradient>' +
+      '<linearGradient id="' + p + 'h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e6b0"/><stop offset=".6" stop-color="#e2c77e"/><stop offset="1" stop-color="#b8974e"/></linearGradient>' +
+      '<linearGradient id="' + p + 's" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8e2cf"/><stop offset="1" stop-color="#ecc4a6"/></linearGradient>' +
+      '<linearGradient id="' + p + 'k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5f9a58"/><stop offset="1" stop-color="#2f5f35"/></linearGradient>' +
+      '<linearGradient id="' + p + 'o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6b650"/><stop offset="1" stop-color="#a87a22"/></linearGradient>' +
+      '<radialGradient id="' + p + 'i" cx=".45" cy=".3" r=".8"><stop offset="0" stop-color="#ffe0b0"/><stop offset=".45" stop-color="#c47a2c"/><stop offset="1" stop-color="#4a2008"/></radialGradient>' +
+      '<clipPath id="' + p + 'el"><path d="M144 208C148 194 184 192 190 206 188 222 178 228 166 228 154 228 146 220 144 208Z"/></clipPath>' +
+      '<clipPath id="' + p + 'er"><path d="M256 208C252 194 216 192 210 206 212 222 222 228 234 228 246 228 254 220 256 208Z"/></clipPath>' +
+      '</defs>' +
+      '<circle cx="200" cy="280" r="200" fill="url(#' + p + 'g)"/>' +
+      '<g transform="translate(200 510) scale(1 .22)" opacity=".9"><g class="m-spin"><circle r="170" fill="none" stroke="#3f8f84" stroke-width="3"/><circle r="148" fill="none" stroke="#d9a441" stroke-opacity=".6" stroke-width="2" stroke-dasharray="2 9"/></g><g class="m-spin rev"><path d="M-70 0a70 70 0 1 1 70 70a44 44 0 1 1 -44 -44" fill="none" stroke="#d9a441" stroke-width="3"/></g></g>' +
+      '<g class="m-body">' +
+        // long hair behind
+        '<path class="m-tail" d="M128 150C96 232 98 330 124 404L170 392C154 330 150 250 166 196ZM272 150C304 232 302 330 276 404L230 392C246 330 250 250 234 196Z" fill="url(#' + p + 'h)"/>' +
+        '<path d="M142 186H258V330H142Z" fill="url(#' + p + 'h)"/>' +
+        // zori + tabi
+        '<path d="M158 470 156 504H190L192 470ZM208 470 210 504H244L242 470Z" fill="#f3efe8"/><path d="M148 506H198V514H148ZM202 506H252V514H202Z" fill="#b8321f"/><path d="M170 504 176 494 182 504M220 504 226 494 232 504" stroke="#1d1813" stroke-width="3" fill="none"/>' +
+        // kimono
+        '<path d="M108 484C102 404 112 334 156 304L200 296 244 304C288 334 298 404 292 484Z" fill="url(#' + p + 'k)"/>' +
+        '<g fill="none" stroke="#e6b650" stroke-width="2" opacity=".75">' + spirals + '</g>' +
+        '<path d="M164 298 200 384 236 298" fill="none" stroke="#b8321f" stroke-width="7" stroke-linejoin="round"/><path d="M172 298 200 372 228 298" fill="none" stroke="#f7f2ea" stroke-width="7" stroke-linejoin="round"/>' +
+        '<path d="M150 340C170 350 230 350 250 340" stroke="#1f4526" stroke-width="2" fill="none" opacity=".5"/><path d="M140 452C170 462 230 462 262 452" stroke="#1f4526" stroke-width="2" fill="none" opacity=".4"/>' +
+        '<path d="M128 382C160 376 240 376 272 382V392H128Z" fill="#e79aa6"/>' +
+        '<path d="M126 390H274V428H126Z" fill="url(#' + p + 'o)"/><path d="M126 398H274M126 420H274" stroke="#8a6320" stroke-width="1.5" opacity=".6"/>' +
+        '<g fill="none" stroke="#8a6320" stroke-width="1.4" opacity=".55"><path d="M140 409h12l6-6 6 6h12M190 409h12l6-6 6 6h12M240 409h12l6-6 6 6h12"/></g>' +
+        '<path d="M126 409H274" stroke="#b8321f" stroke-width="3.5"/><circle cx="200" cy="409" r="7" fill="#b8321f"/><circle cx="200" cy="409" r="3" fill="#e6b650"/>' +
+        // sleeves
+        '<path d="M154 306C114 322 94 368 92 430L146 438C146 398 154 362 172 338Z" fill="url(#' + p + 'k)" stroke="#1f4526" stroke-width="1.5"/>' +
+        '<path d="M246 306C286 322 306 368 308 430L254 438C254 398 246 362 228 338Z" fill="url(#' + p + 'k)" stroke="#1f4526" stroke-width="1.5"/>' +
+        // tea cup with steam
+        '<g class="m-tea"><path class="m-steam" d="M112 370C104 360 120 352 112 342M124 372C116 362 132 354 124 344" stroke="#c9c2b2" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M100 380H136L132 400C130 406 106 406 104 400Z" fill="#efe4cc" stroke="#6b5a40" stroke-width="2"/><path d="M104 386H132" stroke="#3f8f84" stroke-width="3"/><ellipse cx="118" cy="406" rx="16" ry="12" fill="url(#' + p + 's)"/></g>' +
+        // QA clipboard with a stamp
+        '<g transform="rotate(7 250 380)"><rect x="214" y="330" width="74" height="96" rx="6" fill="#8a5a2b" stroke="#5a3a1a" stroke-width="2"/><rect x="222" y="344" width="58" height="76" fill="#fffaf0"/><rect x="238" y="324" width="26" height="12" rx="3" fill="#c9c2b2" stroke="#7d7466" stroke-width="1.5"/>' +
+          '<text x="251" y="360" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="9" fill="#1d1208">QA LOG</text>' +
+          '<path d="M228 370l3 3 5-6M228 382l3 3 5-6M228 394l3 3 5-6" stroke="#3f8f84" stroke-width="2" fill="none"/><path d="M242 371h30M242 383h26M242 395h30" stroke="#c9bb98" stroke-width="2"/>' +
+          '<g class="m-stamp"><circle cx="262" cy="408" r="12" fill="none" stroke="#d63a24" stroke-width="2.5"/><text x="262" y="412" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="11" fill="#d63a24">OK</text></g></g>' +
+        '<ellipse cx="282" cy="418" rx="14" ry="12" fill="url(#' + p + 's)"/>' +
+        '<path d="M184 262V294C190 300 210 300 216 294V262Z" fill="#eac1a3"/>' +
+        // head
+        '<path d="M130 160C128 204 142 238 170 258 182 267 193 271 200 271S218 267 230 258C258 238 272 204 270 160 270 120 240 100 200 100S130 120 130 160Z" fill="url(#' + p + 's)"/>' +
+        '<ellipse cx="154" cy="240" rx="13" ry="6" fill="#ff7f6e" opacity=".32"/><ellipse cx="246" cy="240" rx="13" ry="6" fill="#ff7f6e" opacity=".32"/>' +
+        '<ellipse cx="166" cy="198" rx="24" ry="9" fill="#c9566a" opacity=".22"/><ellipse cx="234" cy="198" rx="24" ry="9" fill="#c9566a" opacity=".22"/>' +
+        '<g class="m-eye"><path d="M144 208C148 194 184 192 190 206 188 222 178 228 166 228 154 228 146 220 144 208Z" fill="#fffaf0"/>' +
+          '<g clip-path="url(#' + p + 'el)"><g class="m-iris"><ellipse cx="167" cy="211" rx="11" ry="13" fill="url(#' + p + 'i)"/><ellipse cx="167" cy="213" rx="4.5" ry="7" fill="#1d1208"/><circle cx="162" cy="206" r="3.4" fill="#fff"/></g></g>' +
+          '<path d="M140 204C148 188 186 186 194 204L189 206C182 196 152 196 146 210ZM140 204 128 194 144 200Z" fill="#1b1524"/><path d="M146 196 142 190M156 192 154 186M168 191 168 185" stroke="#1b1524" stroke-width="1.6" stroke-linecap="round"/><path d="M150 226C160 230 174 230 184 224" stroke="#1b1524" stroke-width="1" fill="none" opacity=".45"/></g>' +
+        '<g class="m-eye m-eye-r"><path d="M256 208C252 194 216 192 210 206 212 222 222 228 234 228 246 228 254 220 256 208Z" fill="#fffaf0"/>' +
+          '<g clip-path="url(#' + p + 'er)"><g class="m-iris"><ellipse cx="233" cy="211" rx="11" ry="13" fill="url(#' + p + 'i)"/><ellipse cx="233" cy="213" rx="4.5" ry="7" fill="#1d1208"/><circle cx="228" cy="206" r="3.4" fill="#fff"/></g></g>' +
+          '<path d="M260 204C252 188 214 186 206 204L211 206C218 196 248 196 254 210ZM260 204 272 194 256 200Z" fill="#1b1524"/><path d="M254 196 258 190M244 192 246 186M232 191 232 185" stroke="#1b1524" stroke-width="1.6" stroke-linecap="round"/><path d="M250 226C240 230 226 230 216 224" stroke="#1b1524" stroke-width="1" fill="none" opacity=".45"/></g>' +
+        '<g class="m-brows"><path d="M146 180C160 180 174 184 186 192" stroke="#8a6a2a" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M254 180C240 180 226 184 214 192" stroke="#8a6a2a" stroke-width="4.5" fill="none" stroke-linecap="round"/></g>' +
+        '<path d="M203 220C204 230 204 236 201 242" stroke="#d9a080" stroke-width="2" fill="none" opacity=".6"/><path d="M196 243C198 245 202 245 205 243" stroke="#c98c70" stroke-width="1.8" fill="none" stroke-linecap="round"/>' +
+        '<path d="M189 252C194 250 198 249 200 250 202 249 206 250 211 252 206 254 194 254 189 252Z" fill="#c9555a"/><path d="M191 253C195 256 205 256 209 253 205 255 195 255 191 253Z" fill="#b04448"/><path d="M194 252C198 253 203 253 207 252" stroke="#ff9a8a" stroke-width="1" opacity=".7"/>' +
+        // hair: side locks, fringe, bun and pins
+        '<path d="M130 166C116 206 122 250 132 286 140 300 150 296 146 280 142 256 146 220 152 170ZM270 166C284 206 278 250 268 286 260 300 250 296 254 280 258 256 254 220 248 170Z" fill="url(#' + p + 'h)"/>' +
+        '<path d="M136 190C132 220 134 252 142 280M264 190C268 220 266 252 258 280" stroke="#fff6d6" stroke-width="2" fill="none" opacity=".6"/>' +
+        '<g class="m-earrings"><path d="M138 244V256M262 244V256" stroke="#d9a441" stroke-width="1.6"/><circle cx="138" cy="260" r="4.5" fill="#e6b650" stroke="#8a6320" stroke-width="1"/><circle cx="262" cy="260" r="4.5" fill="#e6b650" stroke="#8a6320" stroke-width="1"/><circle cx="138" cy="270" r="3" fill="#d63a24"/><circle cx="262" cy="270" r="3" fill="#d63a24"/></g>' +
+        '<path d="M126 174C126 118 168 96 202 98 240 98 276 122 274 176 262 150 238 134 210 132 218 148 214 164 206 174 196 150 176 140 152 142 140 150 132 162 126 174Z" fill="url(#' + p + 'h)"/>' +
+        '<path d="M160 118C178 108 200 106 222 110" stroke="#fff6d6" stroke-width="3" stroke-linecap="round" fill="none" opacity=".7"/>' +
+        '<ellipse cx="200" cy="90" rx="52" ry="31" fill="url(#' + p + 'h)"/><circle cx="200" cy="60" r="26" fill="url(#' + p + 'h)"/>' +
+        '<path d="M160 86C176 72 222 70 240 84M182 52C192 44 208 44 218 52" stroke="#fff6d6" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><path d="M150 96C170 108 230 108 250 96" stroke="#9c7d3a" stroke-width="2" fill="none" opacity=".6"/>' +
+        '<path d="M232 72C244 64 256 66 262 74 256 72 248 74 244 80Z" fill="#e79aa6"/><circle cx="252" cy="74" r="3" fill="#fff" opacity=".8"/>' +
+        '<g class="m-pins"><path d="M150 48 250 104" stroke="#d9a441" stroke-width="4" stroke-linecap="round"/><path d="M250 44 158 104" stroke="#d9a441" stroke-width="4" stroke-linecap="round"/><circle cx="148" cy="46" r="6" fill="#d63a24"/><circle cx="252" cy="42" r="6" fill="#d63a24"/><path d="M252 48v14M258 48v10" stroke="#d63a24" stroke-width="2"/></g>' +
+        '<path d="M176 76C184 70 196 68 208 70" stroke="#fff6d6" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>' +
+      '</g>' +
+      '<g transform="translate(92 124) scale(.76)">' + slugG(p) + '</g>' +
+      '<g class="m-holo h1"><g transform="rotate(-7 44 150)"><rect x="24" y="100" width="40" height="104" fill="#efe4cc" stroke="#3f8f84" stroke-width="2"/><rect x="29" y="105" width="30" height="94" fill="none" stroke="#3f8f84" stroke-width="1"/><text x="44" y="146" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="19" fill="#1d1208">QA</text><text x="44" y="178" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="18" fill="#3f8f84">癒</text></g></g>' +
+      '<g class="m-holo h2"><g transform="rotate(6 356 110)"><rect x="336" y="60" width="40" height="100" fill="#efe4cc" stroke="#d63a24" stroke-width="2"/><text x="356" y="102" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="20" fill="#d63a24">承</text><text x="356" y="136" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="11" fill="#1d1208">OK</text></g></g>' +
       '</svg>';
   }
 
@@ -207,6 +334,7 @@
         '<nav class="hdr-nav" aria-label="Primary">' + links + '</nav>' +
         '<div class="hdr-actions">' +
           '<button type="button" class="hdr-search" data-palette aria-label="Search and quests (Ctrl K)">' + icon('search') + '<span>Search</span><kbd>Ctrl K</kbd></button>' +
+          '<button type="button" class="mode-btn" data-mode-toggle aria-label="Switch to ink (dark) mode" title="Paper / ink mode"><span class="mb-sun">' + icon('sun') + '</span><span class="mb-moon">' + icon('moon') + '</span></button>' +
           '<span class="status' + (C.available === false ? ' off' : '') + '"><i></i>' + (C.available === false ? 'Booked — waitlist open' : 'Available for work') + '</span>' +
           '<a class="btn btn-primary btn-sm" href="hire.html" data-magnetic>' + roll('Hire me') + icon('arrow-up-right', 'ic-up') + '</a>' +
           '<button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mmenu"><span></span><span></span></button>' +
@@ -287,7 +415,7 @@
       '</div>' +
       '<div class="ftr-word" aria-hidden="true">' + esc((C.name || 'Xiraiya').toUpperCase()) + '</div>' +
       '<div class="container container-wide ftr-bottom">' +
-        '<span>© <span data-year></span> ' + esc(C.name) + ' · Designed & coded by hand in ' + esc(C.city) + ', ' + esc(C.country) + '.</span>' +
+        '<span>© <span data-year></span> ' + esc(C.name) + ' · Hand-made in ' + esc(C.city) + ', ' + esc(C.country) + ' with ink, tea and one very patient toad.</span>' +
         '<a class="to-top" href="#top" data-no-transition>Back to top ' + icon('arrow-up') + '</a>' +
       '</div>';
   }
@@ -626,6 +754,94 @@
   }
 
 
+
+
+  // Poke a character: it hops and cracks a joke in the nearest speech bubble
+  var JOKES = {
+    sage: ['Ouch! That is my coding hand.', 'Stop poking, I am compiling.', 'I do not fix bugs. The toad eats them.', 'Deploy on a Friday? Bold. I like it.', 'My mane is 40% hair, 60% ideas.', 'Tsunade approved this joke. Barely.', 'The toad is my senior DevOps engineer.', 'Ribbit means "ship it" in toad.'],
+    tsunade: ['Tests first. Tea second.', 'I stamp OK only when it is perfect.', 'Your build is broken. I am already healing it.', 'The slug answers tickets faster than it moves.', 'Xiraiya wrote it. I made it work.', 'No console errors on my watch.']
+  };
+  function pokeMascots() {
+    document.addEventListener('click', function (e) {
+      var m = e.target.closest && e.target.closest('svg.mascot');
+      if (!m || m.classList.contains('mini-crew')) return;
+      m.classList.remove('hop'); void m.getBoundingClientRect(); m.classList.add('hop');
+      var box = m.closest('.hero-visual, .nf-mascot, .hire-mascot, .crew-card') || m.parentElement;
+      var bubble = box && $('.bubble', box);
+      var list = m.classList.contains('tsunade') ? JOKES.tsunade : JOKES.sage;
+      var line = list[(Math.random() * list.length) | 0];
+      if (bubble) {
+        var t = $('.typer', bubble) || bubble;
+        t.textContent = line;
+        bubble.classList.remove('pop'); void bubble.offsetWidth; bubble.classList.add('pop');
+      } else toast(line);
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     Paper (light) / ink (dark) mode, pointer-aware button fills,
+     inertia smooth scrolling
+     ------------------------------------------------------------------ */
+  function modeToggle() {
+    function label() {
+      var ink = root.getAttribute('data-mode') === 'ink';
+      $$('[data-mode-toggle]').forEach(function (b) { b.setAttribute('aria-label', ink ? 'Switch to paper (light) mode' : 'Switch to ink (dark) mode'); b.setAttribute('aria-pressed', ink ? 'true' : 'false'); });
+      var m = $('meta[name="theme-color"]'); if (m) m.setAttribute('content', ink ? '#0f0d0b' : '#f6f1e7');
+    }
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('[data-mode-toggle]')) return;
+      var ink = root.getAttribute('data-mode') !== 'ink';
+      root.classList.add('mode-anim');
+      if (ink) root.setAttribute('data-mode', 'ink'); else root.removeAttribute('data-mode');
+      try { localStorage.setItem('xr-mode', ink ? 'ink' : 'paper'); } catch (err) { /* ignore */ }
+      label();
+      toast(ink ? 'Ink mode. The toad approves.' : 'Paper mode. Fresh washi, fresh ideas.');
+      setTimeout(function () { root.classList.remove('mode-anim'); }, 700);
+    });
+    label();
+  }
+  function buttonFills() {
+    document.addEventListener('pointerover', function (e) {
+      var b = e.target.closest && e.target.closest('.btn');
+      if (!b || (e.relatedTarget && b.contains(e.relatedTarget))) return;
+      var r = b.getBoundingClientRect();
+      b.style.setProperty('--bx', (e.clientX - r.left).toFixed(0) + 'px');
+      b.style.setProperty('--by', (e.clientY - r.top).toFixed(0) + 'px');
+      b.style.setProperty('--btn-grow', Math.ceil(Math.hypot(r.width, r.height) / 4.4));
+    }, { passive: true });
+  }
+  // Inertia scrolling for mouse wheels (trackpads, touch, keyboard and scrollbars stay native)
+  function smoothScroll() {
+    if (reduce || !fine || !window.requestAnimationFrame) return;
+    var target = scrollY, current = scrollY, running = false;
+    function scrollable(el) {
+      for (; el && el !== document.body && el !== document.documentElement; el = el.parentElement) {
+        if (el.scrollHeight > el.clientHeight + 2) {
+          var oy = getComputedStyle(el).overflowY;
+          if (oy === 'auto' || oy === 'scroll') return true;
+        }
+      }
+      return false;
+    }
+    function step() {
+      current += (target - current) * .12;
+      if (Math.abs(target - current) < .6) { current = target; running = false; }
+      window.scrollTo({ top: current, behavior: 'instant' });
+      if (running) requestAnimationFrame(step);
+    }
+    window.addEventListener('wheel', function (e) {
+      if (e.ctrlKey || e.defaultPrevented || e.deltaMode !== 0 || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      if (Math.abs(e.deltaY) < 40 && !running) return; // small deltas = trackpad, keep native
+      if (scrollable(e.target) || document.body.style.overflow === 'hidden') return;
+      e.preventDefault();
+      if (!running) { target = current = scrollY; }
+      var max = document.documentElement.scrollHeight - innerHeight;
+      target = clamp(target + e.deltaY, 0, max);
+      if (!running) { running = true; requestAnimationFrame(step); }
+    }, { passive: false });
+    window.addEventListener('scroll', function () { if (!running) target = current = scrollY; }, { passive: true });
+  }
+
   /* ------------------------------------------------------------------
      Command Center: search every page, demo and action (Ctrl / Cmd + K)
      + visitor quest log (try things, earn XP) + a hidden Konami secret
@@ -930,7 +1146,10 @@
   buildFooter();
   buildTabbar();
   overlays();
-  $$('[data-mascot]').forEach(function (el) { el.innerHTML = mascot({ cls: el.getAttribute('data-mascot') }); });
+  $$('[data-mascot]').forEach(function (el) {
+    var k = el.getAttribute('data-mascot');
+    el.innerHTML = k === 'tsunade' ? tsunade() : k === 'tsunade-portrait' ? tsunade({ cls: 'portrait' }) : k === 'toad' ? miniToad() : k === 'slug' ? miniSlug() : mascot({ cls: k });
+  });
   fillConfig();
   reveals();
   marquees();
@@ -943,6 +1162,10 @@
   clock();
   transitions();
   commandCenter();
+  modeToggle();
+  pokeMascots();
+  buttonFills();
+  smoothScroll();
   watchMascots();
   $$('canvas[data-petals]').forEach(function (c) { petals(c, { density: parseFloat(c.getAttribute('data-petals')) || 26000 }); });
   loader();

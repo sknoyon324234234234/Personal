@@ -120,6 +120,12 @@ node tools/render-assets.js
 - Every shop, product, brand, person and review inside the demos is **fictional**.
 - **No payment is ever requested or processed**: the crypto, bKash, Nagad and card flows are simulations and are labelled that way on screen. The demo wallet addresses and QR codes are decorative.
 - Design: an ukiyo-e "ink and vermilion" look (warm sumi black, washi cream, seal red, gold leaf) with film-style motion. It includes letterbox bars, ink-bleed reveals, calligraphy letters, brush strokes, seal stamps and an ink-wash page transition.
-- Character: an original toad sage in the kabuki / folklore tradition of Jiraiya (児雷也, 1839). It is not a copy of any anime character.
+- Themes: **paper** (light, default) and **ink** (dark). The moon/sun button in the header switches between them and remembers the choice. Colours live as tokens at the top of `assets/css/core.css`.
+- Characters (original designs, not copies of any anime character, drawn in the kabuki / folklore tradition of the 1839 tale of Jiraiya 児雷也):
+  - **Xiraiya**, the toad sage developer. He winks and waggles his eyebrows, and his toad Gama snaps flies out of the air.
+  - **Tsunade**, head of QA. She has a clipboard, tea and a stamp that slams "OK".
+  - **Namekuji**, a leopard slug who works customer support in a tiny headset.
+  - Click any character and they tell a joke. Meet them all in "The crew" section on the home page.
+- Motion: pill buttons with a fill that grows from the pointer and an arrow swap, lifting cards, inertia smooth scrolling for mouse wheels, and ink-bleed reveals.
 - Fonts: Shippori Mincho B1, Zen Kaku Gothic New and JetBrains Mono from Google Fonts, loaded without blocking rendering.
 - "Minecraft" is a trademark of Mojang/Microsoft and "Telegram" of Telegram FZ-LLC. The demos only use generic, original artwork.
