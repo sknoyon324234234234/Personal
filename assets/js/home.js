@@ -82,11 +82,16 @@
       var r = hs.getBoundingClientRect();
       var total = r.height - vh;
       var p = total > 0 ? XR.clamp(-r.top / total, 0, 1) : 0;
-      var dist = track.scrollWidth - innerWidth;
+      var lastP = panels[panels.length - 1], firstP = panels[0];
+      /* travel from the first panel centred to the last panel centred */
+      var dist = lastP && firstP ? (lastP.offsetLeft + lastP.offsetWidth / 2) - (firstP.offsetLeft + firstP.offsetWidth / 2) : track.scrollWidth - innerWidth;
       track.style.transform = 'translate3d(' + (-p * Math.max(0, dist)).toFixed(1) + 'px,0,0)';
       if (prog) prog.style.setProperty('--p', p.toFixed(4));
+      tilt3d();
     } else if (track) {
       track.style.transform = '';
+      panels.forEach(function (pn) { pn.style.transform = ''; pn.style.opacity = ''; });
+      tilt3d(true);
     }
     if (stepsWrap && stepsLine) {
       var s = stepsWrap.getBoundingClientRect();
@@ -94,8 +99,46 @@
       stepsLine.style.setProperty('--p', sp.toFixed(4));
     }
   }
+  /* 3D gallery: panels turn and sink as they leave the centre; the HUD follows the front one */
+  var panels = $$('.panel'), hudN = $('.hs-count b'), hudT = $('.hs-title'), dots = $$('.hs-dots button'), active = -1;
+  function tilt3d(flat) {
+    var mid = innerWidth / 2, best = 0, bestD = Infinity;
+    panels.forEach(function (pn, i) {
+      var r = pn.getBoundingClientRect(), c = r.left + r.width / 2, d = (c - mid) / (r.width + 30);
+      var a = Math.abs(d);
+      if (a < bestD) { bestD = a; best = i; }
+      if (XR.reduce || flat) return;
+      var k = Math.min(a, 2.2);
+      pn.style.transform = 'rotateY(' + (-XR.clamp(d, -1.6, 1.6) * 24).toFixed(2) + 'deg) translateZ(' + (-k * 150).toFixed(1) + 'px) scale(' + (1 - Math.min(a, 1.5) * .06).toFixed(3) + ')';
+      pn.style.opacity = (1 - Math.min(a, 1.8) * .3).toFixed(3);
+    });
+    if (best !== active) {
+      active = best;
+      panels.forEach(function (pn, i) { pn.classList.toggle('is-active', i === best); });
+      dots.forEach(function (d, i) { d.classList.toggle('on', i === best); d.setAttribute('aria-current', i === best ? 'true' : 'false'); });
+      if (hudN) hudN.textContent = String(best + 1).padStart(2, '0');
+      var h = panels[best] && panels[best].querySelector('.pn-body .h3');
+      if (hudT && h) { hudT.textContent = h.textContent; hudT.classList.remove('swap'); void hudT.offsetWidth; hudT.classList.add('swap'); }
+    }
+  }
+  dots.forEach(function (d, i) {
+    d.addEventListener('click', function () {
+      if (!hs) return;
+      var total = hs.offsetHeight - innerHeight, top = hs.getBoundingClientRect().top + scrollY;
+      window.scrollTo({ top: top + total * (panels.length > 1 ? i / (panels.length - 1) : 0), behavior: XR.reduce ? 'auto' : 'smooth' });
+    });
+  });
+  if (XR.fine) panels.forEach(function (pn) {
+    pn.addEventListener('pointermove', function (e) {
+      var r = pn.getBoundingClientRect();
+      pn.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
+      pn.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%');
+    });
+  });
+
   function req() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
   window.addEventListener('scroll', req, { passive: true });
+  if (track) track.addEventListener('scroll', req, { passive: true });
   window.addEventListener('resize', req);
   update();
 

@@ -106,6 +106,30 @@
       '<path d="M' + (x + 5 * s) + ' ' + (y - 8) + 'l' + (2 * s) + ' 9M' + (x + 9 * s) + ' ' + (y - 8.5) + 'l' + (1.6 * s) + ' 9M' + (x + 12.5 * s) + ' ' + (y - 6.5) + 'l' + (.8 * s) + ' 7" stroke="#c08a6c" stroke-width=".8" opacity=".7"/></g>';
   }
 
+
+  /* 3D shading pass: every skin, cloth, hair and toad shape gets a twin painted with a
+     light-to-shadow gradient (lit from the upper left), plus soft contact shadows.
+     Pure gradients, no SVG filters, so the animations stay cheap. */
+  function shade3d(p, svg) {
+    var defs = '<radialGradient id="' + p + 'v" cx=".32" cy=".24" r=".92" fx=".3" fy=".2">' +
+        '<stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".3" stop-color="#fff" stop-opacity=".1"/>' +
+        '<stop offset=".58" stop-color="#000" stop-opacity="0"/><stop offset=".86" stop-color="#1a0d06" stop-opacity=".22"/><stop offset="1" stop-color="#1a0d06" stop-opacity=".38"/></radialGradient>' +
+      '<linearGradient id="' + p + 'rim" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#ffd9a8" stop-opacity=".55"/><stop offset=".18" stop-color="#ffd9a8" stop-opacity="0"/></linearGradient>' +
+      '<radialGradient id="' + p + 'ao" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#1a0d06" stop-opacity=".42"/><stop offset="1" stop-color="#1a0d06" stop-opacity="0"/></radialGradient>';
+    var twin = new RegExp('<(path|ellipse|circle|rect)\\b([^>]*?)\\sfill="url\\(#' + p + '(s|r|k|t|o|h|hb|m|sl|mt)\\)"([^>]*?)/>', 'g');
+    var hair = new RegExp('<g fill="url\\(#' + p + '(?:h|hb)\\)"[^>]*>((?:(?!</g>).)*)</g>', 'g');
+    function clean(a) { return a.replace(/\s(stroke(-[a-z]+)?|class|filter)="[^"]*"/g, ''); }
+    return svg
+      .replace('<defs>', '<defs>' + defs)
+      .replace(twin, function (m, tag, pre, key, post) {
+        var copy = '<' + tag + clean(pre) + ' fill="url(#' + p + 'v)"' + clean(post) + ' pointer-events="none"/>';
+        var rim = key === 's' || key === 'r' || key === 'k' ? '<' + tag + clean(pre) + ' fill="url(#' + p + 'rim)"' + clean(post) + ' pointer-events="none"/>' : '';
+        return m + copy + rim;
+      })
+      .replace(hair, function (m, body) { return m + '<g fill="url(#' + p + 'v)" pointer-events="none">' + body + '</g>'; })
+      .replace('<g class="m-look">', '<ellipse cx="200" cy="200" rx="30" ry="11" fill="url(#' + p + 'ao)"/><ellipse cx="200" cy="356" rx="58" ry="10" fill="url(#' + p + 'ao)"/><g class="m-look">');
+  }
+
   function mascot(opts) {
     opts = opts || {};
     var p = 'mx' + (++uid), R = rng(7);
@@ -125,7 +149,7 @@
     var fringe = [[174, 100, -118, 34, 22, -12], [188, 96, -100, 30, 20, -8], [202, 95, -84, 30, 20, 8], [216, 96, -68, 32, 20, 10], [229, 100, -54, 34, 22, 14]];
     var sideL = [[165, 106, 98, 96, 22, 14], [159, 114, 104, 158, 26, 20]], sideR = [[235, 106, 82, 96, 22, -14], [241, 114, 76, 158, 26, -20]];
     var H = 'url(#' + p + 'h)';
-    return '<svg class="mascot sage ' + (opts.cls || '') + '" viewBox="0 0 400 540" role="img" aria-label="' + esc(C.name || 'Xiraiya') + ' — an original toad-sage character with a long white mane, red haori and a toad companion">' +
+    return shade3d(p, '<svg class="mascot sage ' + (opts.cls || '') + '" viewBox="0 0 400 540" role="img" aria-label="' + esc(C.name || 'Xiraiya') + ' — an original toad-sage character with a long white mane, red haori and a toad companion">' +
       '<defs>' + crewDefs(p) +
       '<radialGradient id="' + p + 'g" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#e0442e" stop-opacity=".26"/><stop offset=".6" stop-color="#d9a441" stop-opacity=".07"/><stop offset="1" stop-color="#d9a441" stop-opacity="0"/></radialGradient>' +
       '<linearGradient id="' + p + 'h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#ece7dd"/><stop offset="1" stop-color="#bdb5a6"/></linearGradient>' +
@@ -206,7 +230,7 @@
       '<g class="m-holo h1"><g transform="rotate(-8 44 150)"><rect x="24" y="100" width="40" height="104" fill="#efe4cc" stroke="#b8321f" stroke-width="2"/><rect x="29" y="105" width="30" height="94" fill="none" stroke="#b8321f" stroke-width="1"/><text x="44" y="146" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="20" fill="#1d1208">AI</text><text x="44" y="178" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="18" fill="#b8321f">術</text></g></g>' +
       '<g class="m-holo h2"><g transform="rotate(7 356 330)"><rect x="336" y="280" width="40" height="104" fill="#efe4cc" stroke="#b8321f" stroke-width="2"/><rect x="341" y="285" width="30" height="94" fill="none" stroke="#b8321f" stroke-width="1"/><text x="356" y="326" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="15" fill="#1d1208">{ }</text><text x="356" y="360" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="18" fill="#b8321f">码</text></g></g>' +
       '<g class="m-holo h3"><g transform="rotate(-4 350 64)"><rect x="330" y="20" width="40" height="92" fill="#efe4cc" stroke="#b8321f" stroke-width="2"/><text x="350" y="60" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="20" fill="#b8321f">忍</text><text x="350" y="92" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="11" fill="#1d1208">&lt;/&gt;</text></g></g>' +
-      '</svg>';
+      '</svg>');
   }
 
 
@@ -260,8 +284,8 @@
       '<linearGradient id="' + p + 'sl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdb99f"/><stop offset=".55" stop-color="#a48b70"/><stop offset="1" stop-color="#7c6650"/></linearGradient>' +
       '<linearGradient id="' + p + 'mt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bda78c"/><stop offset="1" stop-color="#8a735c"/></linearGradient>';
   }
-  function miniToad() { var p = 'mt' + (++uid); return '<svg class="mascot mini-crew" viewBox="14 392 160 128" role="img" aria-label="Gama the toad"><defs>' + crewDefs(p) + '</defs>' + toadG(p) + '</svg>'; }
-  function miniSlug() { var p = 'ms' + (++uid); return '<svg class="mascot mini-crew" viewBox="200 436 210 82" role="img" aria-label="Namekuji the slug in a support headset"><defs>' + crewDefs(p) + '</defs>' + slugG(p) + '</svg>'; }
+  function miniToad() { var p = 'mt' + (++uid); return shade3d(p, '<svg class="mascot mini-crew" viewBox="14 392 160 128" role="img" aria-label="Gama the toad"><defs>' + crewDefs(p) + '</defs>' + toadG(p) + '</svg>'); }
+  function miniSlug() { var p = 'ms' + (++uid); return shade3d(p, '<svg class="mascot mini-crew" viewBox="200 436 210 82" role="img" aria-label="Namekuji the slug in a support headset"><defs>' + crewDefs(p) + '</defs>' + slugG(p) + '</svg>'); }
 
   // An original "slug princess" from the same 1839 folk tale: head of QA, tea enthusiast.
   function tsunade(opts) {
@@ -278,7 +302,7 @@
     mane.reverse();
     var sideL = [[166, 104, 96, 110, 22, 10], [161, 112, 100, 150, 24, 14]], sideR = [[234, 104, 84, 110, 22, -10], [239, 112, 80, 150, 24, -14]];
     var H = 'url(#' + p + 'h)';
-    return '<svg class="mascot tsunade ' + (opts.cls || '') + '" viewBox="0 0 400 540" role="img" aria-label="Tsunade, head of QA — an original slug-princess character in a green kimono with a clipboard, a cup of tea and a slug in a headset">' +
+    return shade3d(p, '<svg class="mascot tsunade ' + (opts.cls || '') + '" viewBox="0 0 400 540" role="img" aria-label="Tsunade, head of QA — an original slug-princess character in a green kimono with a clipboard, a cup of tea and a slug in a headset">' +
       '<defs>' + crewDefs(p) +
       '<radialGradient id="' + p + 'g" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#3f8f84" stop-opacity=".24"/><stop offset=".6" stop-color="#d9a441" stop-opacity=".07"/><stop offset="1" stop-color="#d9a441" stop-opacity="0"/></radialGradient>' +
       '<linearGradient id="' + p + 'h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbeec3"/><stop offset=".5" stop-color="#e7c979"/><stop offset="1" stop-color="#c29a4a"/></linearGradient>' +
@@ -347,7 +371,7 @@
       '<g transform="translate(92 124) scale(.76)">' + slugG(p) + '</g>' +
       '<g class="m-holo h1"><g transform="rotate(-7 44 150)"><rect x="24" y="100" width="40" height="104" fill="#efe4cc" stroke="#3f8f84" stroke-width="2"/><rect x="29" y="105" width="30" height="94" fill="none" stroke="#3f8f84" stroke-width="1"/><text x="44" y="146" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="19" fill="#1d1208">QA</text><text x="44" y="178" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="18" fill="#3f8f84">癒</text></g></g>' +
       '<g class="m-holo h2"><g transform="rotate(6 356 110)"><rect x="336" y="60" width="40" height="100" fill="#efe4cc" stroke="#d63a24" stroke-width="2"/><text x="356" y="102" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="20" fill="#d63a24">承</text><text x="356" y="136" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="11" fill="#1d1208">OK</text></g></g>' +
-      '</svg>';
+      '</svg>');
   }
 
   // Eyes follow the pointer
