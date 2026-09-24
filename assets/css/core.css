@@ -575,9 +575,17 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-100%); 
 .bubble::after { content: "";  position: absolute; left: 26px; bottom: -12px; border: 7px solid transparent; border-top: 8px solid var(--paper); border-left: 8px solid var(--paper); }
 
 /* ---------- responsive ---------- */
-@media (max-width: 1100px) {
-  .hdr-nav a { padding: 0 11px; }
+@media (max-width: 1500px) {
   .status { display: none; }
+}
+@media (max-width: 1320px) {
+  .hdr-nav a { padding: 0 10px; }
+  .hdr-nav a::after { left: 10px; right: 10px; }
+}
+@media (max-width: 1140px) {
+  .hdr-nav { display: none; }
+  .menu-btn { display: block; }
+  .hdr-actions { margin-left: auto; }
 }
 @media (max-width: 980px) {
   :root { --header-h: 68px; }
@@ -602,14 +610,14 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-100%); 
 }
 
 /* iframes that are scaled with transforms must keep their real width */
-.br-frame iframe, .st-screen iframe { max-width: none; }
+.br-frame iframe, .st-screen iframe, .pst-frame iframe { max-width: none; }
 
 /* ---------- header search button ---------- */
 .hdr-search { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 8px 0 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); font-size: 13.5px; transition: border-color .3s, color .3s; }
 .hdr-search:hover { color: var(--ink); border-color: var(--line-2); }
 .hdr-search .ic { font-size: 16px; }
 .hdr-search kbd, .palette kbd { font: 500 11px/1 var(--font-mono); padding: 4px 6px; border-radius: 6px; border: 1px solid var(--line-2); color: var(--ink-3); background: rgba(var(--fx),.04); }
-@media (max-width: 1240px) { .hdr-search span, .hdr-search kbd { display: none; } .hdr-search { width: 44px; justify-content: center; padding: 0; } }
+@media (max-width: 1320px) { .hdr-search span, .hdr-search kbd { display: none; } .hdr-search { width: 44px; justify-content: center; padding: 0; } }
 
 /* ---------- Command Center ---------- */
 .palette { position: fixed; inset: 0; z-index: 180; display: grid; place-items: start center; padding: 10vh 16px 16px; visibility: hidden; }

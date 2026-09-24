@@ -310,10 +310,12 @@
      ------------------------------------------------------------------ */
   var NAV = [
     { id: 'home', href: 'index.html', label: 'Home', jp: '家' },
-    { id: 'lab', href: 'showcase.html', label: 'The Lab', jp: '技' },
-    { id: 'shop', href: 'shop.html', label: 'Shop Demo', jp: '店' },
+    { id: 'lab', href: 'showcase.html', label: 'The Lab', short: 'Lab', jp: '技' },
+    { id: 'shop', href: 'shop.html', label: 'Shop Demo', short: 'Shop', jp: '店' },
     { id: 'kit', href: 'components.html', label: 'UI Kit', jp: '型' },
-    { id: 'demos', href: 'demos.html', label: 'Demo Sites', jp: '演' },
+    { id: 'demos', href: 'demos.html', label: 'Demo Sites', short: 'Demos', jp: '演' },
+    { id: 'pages', href: 'pages.html', label: 'Pages', jp: '頁' },
+    { id: 'world', href: 'dev-world.html', label: 'Dev World', jp: '里' },
     { id: 'academy', href: 'tutorials.html', label: 'Academy', jp: '学' },
     { id: 'hire', href: 'hire.html', label: 'Hire Me', jp: '雇' }
   ];
@@ -324,7 +326,7 @@
     var h = $('#site-header');
     if (!h) return;
     var links = NAV.filter(function (n) { return n.id !== 'hire'; }).map(function (n) {
-      return '<a href="' + n.href + '"' + (n.id === page ? ' aria-current="page"' : '') + '>' + roll(n.label) + '</a>';
+      return '<a href="' + n.href + '"' + (n.id === page ? ' aria-current="page"' : '') + (n.short ? ' title="' + esc(n.label) + '"' : '') + '>' + roll(n.short || n.label) + '</a>';
     }).join('');
     h.innerHTML =
       '<a class="skip" href="#main">Skip to content</a>' +
@@ -854,6 +856,11 @@
     { id: 'page-demos', label: 'Look at the demo sites', xp: 10 },
     { id: 'page-academy', label: 'Visit the Motion Academy', xp: 10 },
     { id: 'page-hire', label: 'Check the Hire page', xp: 10 },
+    { id: 'page-pages', label: 'Open the Pages Studio', xp: 10 },
+    { id: 'page-world', label: 'Walk into Dev World', xp: 10 },
+    { id: 'studio-export', label: 'Export a page from the studio', xp: 20 },
+    { id: 'world-terminal', label: 'Run a command in the village terminal', xp: 20 },
+    { id: 'world-tool', label: 'Use a tool in the Dev Toolbox', xp: 20 },
     { id: 'stage-web', label: 'Try the live website preview', xp: 20 },
     { id: 'stage-automation', label: 'Run the automation workflow', xp: 20 },
     { id: 'stage-telegram', label: 'Chat with the Telegram bot', xp: 20 },
@@ -896,7 +903,7 @@
 
   function paletteItems() {
     var items = [];
-    NAV.forEach(function (n) { items.push({ g: 'Pages', t: n.label, s: n.jp, ic: n.id === 'hire' ? 'briefcase' : n.id === 'shop' ? 'cart' : n.id === 'lab' ? 'sparkle' : n.id === 'kit' ? 'layers' : n.id === 'demos' ? 'monitor' : n.id === 'academy' ? 'film' : 'home', href: n.href }); });
+    NAV.forEach(function (n) { items.push({ g: 'Pages', t: n.label, s: n.jp, ic: n.id === 'hire' ? 'briefcase' : n.id === 'shop' ? 'cart' : n.id === 'lab' ? 'sparkle' : n.id === 'kit' ? 'layers' : n.id === 'demos' ? 'monitor' : n.id === 'academy' ? 'film' : n.id === 'pages' ? 'window' : n.id === 'world' ? 'terminal' : 'home', href: n.href }); });
     SERVICES.forEach(function (sv) { items.push({ g: 'Live demos in the Lab', t: sv.name, s: 'from ' + fmtPrice(sv.priceFrom), ic: sv.icon, href: 'showcase.html#' + sv.id }); });
     [['Nova AI', 'SaaS landing page', 'nova-saas'], ['Sakura Bistro', 'Restaurant', 'sakura-bistro'], ['Vault', 'Crypto dashboard', 'vault-dashboard'], ['BlockRealm', 'Minecraft server site', 'blockrealm'], ['Studio Kami', 'Agency', 'studio-kami'], ['Pulse', 'App landing page', 'pulse-app'], ['Aurum', 'Luxury watch store', 'aurum'], ['Mori Tea', 'Tea shop', 'mori-tea'], ['Haven', 'Architecture and homes', 'haven'], ['Ledger', 'Banking dashboard', 'ledger'], ['Nomad', 'Travel booking', 'nomad'], ['Kumo Docs', 'Developer docs', 'devdocs']].forEach(function (d) {
       items.push({ g: 'Demo websites', t: d[0], s: d[1], ic: 'window', href: 'demos/' + d[2] + '.html' });
@@ -999,7 +1006,7 @@
       }
     });
     // page-visit quests + quests for trying each Lab stage
-    var pageQuest = { home: 'page-home', lab: 'page-lab', shop: 'page-shop', kit: 'page-kit', demos: 'page-demos', academy: 'page-academy', hire: 'page-hire' }[page];
+    var pageQuest = { home: 'page-home', lab: 'page-lab', shop: 'page-shop', kit: 'page-kit', demos: 'page-demos', academy: 'page-academy', hire: 'page-hire', pages: 'page-pages', world: 'page-world' }[page];
     if (pageQuest) setTimeout(function () { quest(pageQuest); }, 2200);
     document.addEventListener('pointerdown', function (e) {
       var st = e.target.closest && e.target.closest('[data-stage]');
