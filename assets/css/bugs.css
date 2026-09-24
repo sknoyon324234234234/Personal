@@ -1,1 +1,139 @@
-/* XIRAIYA — Bug World (placeholder) */
+/* =====================================================================
+   XIRAIYA — Ant World · 蟻の国 (see assets/js/bugs.js)
+   Washi: vermilion Aka ants and sumi-black Kuro ants on paper.
+   Sumi ink: Kuro ants get a moonlit rim so they stay visible at night.
+   ===================================================================== */
+:root {
+  --ant-aka: #b3301c;
+  --ant-aka-hi: #f0a08a;
+  --ant-aka-rim: none;
+  --ant-kuro: #1d1712;
+  --ant-kuro-hi: #8d7a66;
+  --ant-kuro-rim: none;
+  --ant-queen: #d9a441;
+  --ant-mound: #c2a47a;
+  --ant-mound-2: #97774f;
+  --ant-hole: #2a1d12;
+  --ant-water: 64, 140, 170;
+  --ant-sugar: #fffdf8;
+  --ant-sugar-2: #e6dccb;
+}
+html[data-mode="ink"] {
+  --ant-aka: #e2553b;
+  --ant-aka-hi: #ffb09c;
+  --ant-kuro: #0a0806;
+  --ant-kuro-hi: #6d6254;
+  --ant-kuro-rim: rgba(239, 228, 204, .62);
+  --ant-mound: #4c3b29;
+  --ant-mound-2: #75603f;
+  --ant-hole: #030202;
+  --ant-water: 111, 179, 200;
+  --ant-sugar: #fffaf0;
+  --ant-sugar-2: #b9ad98;
+}
+
+/* the world: one canvas over the page that never takes a click */
+.ant-canvas {
+  position: fixed; left: 0; top: 0; z-index: 97;
+  pointer-events: none; transition: opacity .4s;
+}
+.ant-canvas.is-covered, .menu-open .ant-canvas { opacity: 0; }
+
+/* letters the ants carried away (the text stays in the DOM for screen readers) */
+.ant-char { transition: color .9s var(--ease-out), -webkit-text-fill-color .9s var(--ease-out), text-shadow .9s; }
+.ant-char.ant-gone { color: transparent !important; -webkit-text-fill-color: transparent !important; text-shadow: none !important; }
+
+/* aim mode: drop sugar or spill water */
+html.ant-aiming, html.ant-aiming * { cursor: crosshair !important; }
+
+/* ---------- control button + panel ---------- */
+.ant-ui { position: fixed; left: 18px; bottom: 18px; z-index: 99; font-family: var(--font-body); }
+.ant-fab {
+  position: relative; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%;
+  color: var(--ink); background: rgba(var(--bg-rgb), .92); border: 1px solid var(--line-2);
+  box-shadow: var(--shadow); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  transition: transform .4s var(--ease-spring), border-color .3s, color .3s;
+}
+.ant-fab:hover { transform: translateY(-2px) rotate(-8deg); border-color: var(--red); color: var(--red); }
+.ant-fab svg { width: 24px; height: 24px; }
+.ant-fab-n {
+  position: absolute; top: -5px; right: -7px; min-width: 22px; height: 20px; padding: 0 6px; border-radius: 10px;
+  display: grid; place-items: center; font: 700 10.5px/1 var(--font-mono); color: var(--on-red); background: var(--red);
+  box-shadow: 0 0 0 2px var(--bg);
+}
+.ant-ui.is-off .ant-fab { color: var(--ink-3); }
+.ant-ui.is-off .ant-fab-n { display: none; }
+.ant-ui.is-off .ant-fab::after { content: ''; position: absolute; width: 30px; height: 1.6px; background: currentColor; transform: rotate(-40deg); border-radius: 1px; }
+.ant-fab.is-hint { animation: antHint 1.4s var(--ease-out) 3; }
+@keyframes antHint { 0%, 100% { box-shadow: var(--shadow), 0 0 0 0 rgba(196, 50, 29, .45); } 60% { box-shadow: var(--shadow), 0 0 0 14px rgba(196, 50, 29, 0); } }
+
+.ant-panel {
+  position: absolute; left: 0; bottom: 58px; width: min(344px, calc(100vw - 36px)); max-height: min(78vh, 640px); overflow-y: auto;
+  padding: 16px; border-radius: 18px; color: var(--ink); background: var(--surface); border: 1px solid var(--line-2);
+  box-shadow: var(--shadow-lg); transform-origin: 22px calc(100% + 30px); animation: antPop .35s var(--ease-out);
+  overscroll-behavior: contain;
+}
+.ant-panel[hidden] { display: none; }
+@keyframes antPop { from { opacity: 0; transform: translateY(8px) scale(.96); } }
+.ant-hd { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ant-hd b { font: 800 19px/1.1 var(--font-display); }
+.ant-jp { margin-left: 8px; font: 600 13px/1 var(--font-jp); color: var(--red); }
+.ant-x { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; color: var(--ink-3); border: 1px solid var(--line); }
+.ant-x:hover { color: var(--ink); border-color: var(--line-2); }
+.ant-x svg { width: 14px; height: 14px; }
+.ant-sub { margin: 8px 0 14px; font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+
+.ant-bar { position: relative; height: 8px; border-radius: 4px; overflow: hidden; background: var(--ant-kuro); box-shadow: inset 0 0 0 1px var(--line); }
+html[data-mode="ink"] .ant-bar { box-shadow: inset 0 0 0 1px var(--ant-kuro-rim); }
+.ant-bar i { position: absolute; inset: 0 auto 0 0; width: 50%; background: var(--ant-aka); transition: width .8s var(--ease-out); }
+.ant-bar-cap { display: flex; justify-content: space-between; margin: 6px 0 12px; font: 500 10.5px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+
+.ant-cols { display: grid; gap: 8px; }
+.ant-col { display: grid; grid-template-columns: 12px 1fr auto; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); }
+.ant-col i { width: 12px; height: 12px; border-radius: 50%; }
+.ant-col[data-col="0"] i { background: var(--ant-aka); }
+.ant-col[data-col="1"] i { background: var(--ant-kuro); box-shadow: 0 0 0 1px var(--line-2); }
+.ant-col b { font-size: 14px; }
+.ant-col b span { margin-left: 5px; font: 600 12px/1 var(--font-jp); color: var(--ink-3); }
+.ant-col small { display: block; margin-top: 3px; font: 500 11px/1.3 var(--font-mono); color: var(--ink-3); }
+.ant-col em { font: 700 18px/1 var(--font-mono); font-style: normal; }
+
+.ant-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 12px 0; }
+.ant-stats div { padding: 8px 6px; border-radius: 10px; text-align: center; border: 1px solid var(--line); }
+.ant-stats dt { font: 500 9.5px/1.2 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.ant-stats dd { margin: 4px 0 0; font: 700 16px/1 var(--font-mono); }
+
+.ant-log { display: grid; gap: 5px; min-height: 30px; margin: 0 0 12px; padding: 0; list-style: none; }
+.ant-log li { display: grid; grid-template-columns: 8px 1fr; gap: 8px; align-items: baseline; font-size: 12.5px; line-height: 1.4; color: var(--ink-2); animation: antPop .4s var(--ease-out); }
+.ant-log li::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); transform: translateY(-1px); }
+.ant-log li[data-c="0"]::before { background: var(--ant-aka); }
+.ant-log li[data-c="1"]::before { background: var(--ant-kuro); box-shadow: 0 0 0 1px var(--line-2); }
+.ant-log li[data-c="w"]::before { background: rgb(var(--ant-water)); }
+.ant-log li.is-empty { color: var(--ink-3); }
+.ant-log li.is-empty::before { display: none; }
+
+.ant-acts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.ant-acts button {
+  display: flex; align-items: center; gap: 8px; min-width: 0; height: 38px; padding: 0 11px; border-radius: 11px;
+  font: 600 12.5px/1 var(--font-body); color: var(--ink); background: rgba(var(--fx), .04); border: 1px solid var(--line);
+  transition: border-color .25s, background .25s, color .25s;
+}
+.ant-acts button:hover { border-color: var(--line-2); background: rgba(var(--fx), .07); }
+.ant-acts button[aria-pressed="true"] { color: var(--on-red); background: var(--red); border-color: var(--red); }
+.ant-acts button svg { flex: none; width: 16px; height: 16px; }
+.ant-acts button span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ant-acts .ant-wide { grid-column: 1 / -1; justify-content: center; }
+.ant-ui.is-off .ant-acts button:not(.ant-wide) { opacity: .45; pointer-events: none; }
+
+.ant-ui :focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+@media (max-width: 760px) {
+  .ant-ui { left: 12px; bottom: calc(var(--tabbar-h, 62px) + env(safe-area-inset-bottom, 0px) + 12px); }
+  .ant-fab { width: 42px; height: 42px; }
+  .ant-panel { max-height: min(66vh, 560px); padding: 14px; }
+  .ant-sub { display: none; }
+  .ant-hd { margin-bottom: 12px; }
+  .ant-stats div { padding: 6px 4px; }
+  .ant-stats dd { font-size: 14px; }
+}
+@media print { .ant-canvas, .ant-ui { display: none !important; } }
