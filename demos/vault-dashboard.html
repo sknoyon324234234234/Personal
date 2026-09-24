@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vault — Crypto portfolio dashboard (demo app by Xiraiya)</title>
+<meta name="description" content="Demo crypto dashboard web app designed and built by Xiraiya.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"></noscript>
+<style>
+:root{--bg:#07090f;--panel:#0e121c;--panel2:#141a27;--line:rgba(255,255,255,.07);--ink:#eef2fb;--ink2:#9aa3b8;--ink3:#5e6780;--acc:#3ee6b0;--acc2:#4c8dff;--red:#ff5c7a;--gold:#f5b942}
+*{box-sizing:border-box}body{margin:0;font:500 14px/1.5 Manrope,system-ui,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}h1,h2,h3,p{margin:0}
+.mono{font-family:'IBM Plex Mono',monospace}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{position:sticky;top:0;height:100vh;padding:22px 14px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px;background:var(--panel)}
+.logo{display:flex;align-items:center;gap:10px;padding:0 10px 22px;font-weight:800;font-size:19px}
+.logo i{width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 8px 20px -8px var(--acc)}
+aside a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;color:var(--ink2);text-decoration:none;cursor:pointer;transition:.25s}
+aside a:hover{background:rgba(255,255,255,.04);color:var(--ink)}
+aside a.on{background:rgba(62,230,176,.1);color:var(--acc)}
+aside svg{width:18px;height:18px;flex:none}
+.pro{margin-top:auto;padding:16px;border-radius:16px;background:linear-gradient(145deg,rgba(62,230,176,.18),rgba(76,141,255,.18));border:1px solid var(--line)}
+.pro b{display:block;font-size:14px}.pro p{font-size:12.5px;color:var(--ink2);margin:4px 0 12px}
+.pro button{width:100%;height:36px;border:0;border-radius:10px;background:var(--ink);color:var(--bg);font-weight:700}
+main{padding:22px 26px 40px;min-width:0}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.top h1{font-size:22px;font-weight:800;margin-right:auto}
+.top h1 small{display:block;font-size:12.5px;font-weight:500;color:var(--ink3)}
+.search{display:flex;align-items:center;gap:10px;height:42px;width:280px;padding:0 14px;border-radius:12px;background:var(--panel);border:1px solid var(--line);color:var(--ink3)}
+.search input{flex:1;min-width:0;background:none;border:0;outline:none}
+.ib{position:relative;width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.ib em{position:absolute;top:9px;right:10px;width:7px;height:7px;border-radius:50%;background:var(--red)}
+.av{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,#ff5c7a,#8b6cff)}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.card{padding:20px;border-radius:20px;background:var(--panel);border:1px solid var(--line);min-width:0}
+.card h3{font-size:14px;font-weight:700;color:var(--ink2);display:flex;justify-content:space-between;align-items:center}
+.bal{grid-column:span 4;background:radial-gradient(circle at 100% 0,rgba(62,230,176,.18),transparent 55%),var(--panel)}
+.bal .v{font-size:36px;font-weight:800;letter-spacing:-.02em;margin:10px 0 4px}
+.chg{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:7px;font-size:12px;font-weight:700}
+.up{color:var(--acc);background:rgba(62,230,176,.1)}.dn{color:var(--red);background:rgba(255,92,122,.1)}
+.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px}
+.acts button{display:grid;justify-items:center;gap:6px;padding:12px 4px;border-radius:14px;border:1px solid var(--line);background:var(--panel2);font-size:12px;font-weight:600;transition:.25s}
+.acts button:hover{border-color:var(--acc);color:var(--acc)}
+.acts svg{width:18px;height:18px}
+.chartc{grid-column:span 8}
+.tf{display:flex;gap:4px;padding:3px;border-radius:10px;background:var(--panel2)}
+.tf button{height:28px;padding:0 10px;border:0;border-radius:8px;background:none;color:var(--ink3);font-size:12px;font-weight:700}
+.tf button.on{background:var(--ink);color:var(--bg)}
+canvas{display:block;width:100%;height:230px;margin-top:10px}
+.assets{grid-column:span 8}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th{text-align:left;padding:10px 8px;font-size:11.5px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--line)}
+td{padding:12px 8px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+.coin{display:flex;align-items:center;gap:10px}
+.coin i{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:12px;color:#07090f}
+.coin b{display:block}.coin small{color:var(--ink3)}
+.price.flash-up{animation:fu .8s}.price.flash-dn{animation:fd .8s}
+@keyframes fu{0%{color:var(--acc)}}@keyframes fd{0%{color:var(--red)}}
+.spark{width:90px;height:30px}
+.swap{grid-column:span 4;display:grid;gap:10px;align-content:start}
+.fld{padding:14px;border-radius:14px;background:var(--panel2);border:1px solid var(--line)}
+.fld small{color:var(--ink3);font-size:12px}
+.fld div{display:flex;align-items:center;gap:10px;margin-top:6px}
+.fld input{flex:1;min-width:0;background:none;border:0;outline:none;font-size:24px;font-weight:800}
+.fld select{height:38px;padding:0 10px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-weight:700}
+.flip{justify-self:center;width:40px;height:40px;margin:-18px 0;z-index:1;display:grid;place-items:center;border-radius:12px;border:4px solid var(--panel);background:var(--acc);color:#07090f;transition:transform .4s}
+.flip:hover{transform:rotate(180deg)}
+.rate{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink2)}
+.go{height:50px;border:0;border-radius:14px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#07090f;font-weight:800;font-size:15px}
+.tx{grid-column:span 12}
+.txl{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.t{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--panel2)}
+.t i{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-style:normal}
+.t b{display:block;font-size:13.5px}.t small{color:var(--ink3);font-size:12px}
+.t span{margin-left:auto;font-weight:700;font-size:13px}
+.toast{position:fixed;right:20px;bottom:20px;padding:14px 18px;border-radius:14px;background:var(--ink);color:var(--bg);font-weight:700;transform:translateY(120%);transition:transform .5s cubic-bezier(.16,1,.3,1);z-index:30}
+.toast.show{transform:none}
+.by{position:fixed;left:14px;bottom:14px;z-index:20;padding:8px 12px;border-radius:10px;background:#fff;color:#07090f;font-size:12px;font-weight:800;text-decoration:none;box-shadow:0 10px 30px -10px #000}
+.by b{color:#e8113d}
+@media(max-width:1100px){.bal,.swap{grid-column:span 6}.chartc,.assets{grid-column:span 12}.txl{grid-template-columns:1fr 1fr}}
+@media(max-width:820px){.app{grid-template-columns:1fr}aside{display:none}.search{display:none}.bal,.swap{grid-column:span 12}main{padding:16px}.hide-s{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="logo"><i></i>Vault</div>
+    <a class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>Dashboard</a>
+    <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg>Markets</a>
+    <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7a2 2 0 0 1 2-2h11v4M4 7v10a2 2 0 0 0 2 2h14V9H6a2 2 0 0 1-2-2z"/></svg>Wallets</a>
+    <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2.5l3 3-3 3M4 11.5v-1a5 5 0 0 1 5-5h11M7 21.5l-3-3 3-3M20 12.5v1a5 5 0 0 1-5 5H4"/></svg>Swap</a>
+    <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.3 2"/></svg>History</a>
+    <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Settings</a>
+    <div class="pro"><b>Vault Pro</b><p>Auto-DCA bots, tax reports and price alerts on Telegram.</p><button>Upgrade</button></div>
+  </aside>
+  <main>
+    <div class="top">
+      <h1>Good evening, Rafi<small>Your portfolio is up today — nice.</small></h1>
+      <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input placeholder="Search assets…"></label>
+      <span class="ib"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></svg><em></em></span>
+      <span class="av">R</span>
+    </div>
+    <div class="grid">
+      <div class="card bal">
+        <h3>Total balance <span class="chg up" id="balChg">+4.21%</span></h3>
+        <div class="v mono" id="bal">$48,210.44</div>
+        <small style="color:var(--ink3)">≈ 0.7503 BTC · updated live</small>
+        <div class="acts"><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M6 11l6-6 6 6"/></svg>Send</button><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M6 13l6 6 6-6"/></svg>Receive</button><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2.5l3 3-3 3M4 11.5v-1a5 5 0 0 1 5-5h11M7 21.5l-3-3 3-3M20 12.5v1a5 5 0 0 1-5 5H4"/></svg>Swap</button><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Buy</button></div>
+      </div>
+      <div class="card chartc">
+        <h3>Portfolio value <div class="tf" id="tf"><button>1D</button><button class="on">1W</button><button>1M</button><button>1Y</button></div></h3>
+        <canvas id="chart" aria-label="Portfolio value chart"></canvas>
+      </div>
+      <div class="card assets">
+        <h3>Your assets <span style="font-size:12px;color:var(--ink3)" class="mono">prices update every 2s</span></h3>
+        <table><thead><tr><th>Asset</th><th>Price</th><th>24h</th><th class="hide-s">7d</th><th>Holdings</th></tr></thead><tbody id="rows"></tbody></table>
+      </div>
+      <div class="card swap">
+        <h3>Quick swap</h3>
+        <div class="fld"><small>You pay</small><div><input id="amt" value="500" inputmode="decimal" aria-label="Amount to pay"><select id="from"><option>USDT</option><option>BTC</option><option>ETH</option><option>BNB</option><option>SOL</option></select></div></div>
+        <button class="flip" id="flip" aria-label="Flip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 4v16M4 17l3 3 3-3M17 20V4M14 7l3-3 3 3"/></svg></button>
+        <div class="fld"><small>You receive</small><div><input id="out" readonly aria-label="Amount to receive"><select id="to"><option>BTC</option><option>USDT</option><option selected>ETH</option><option>BNB</option><option>SOL</option></select></div></div>
+        <div class="rate"><span id="rate"></span><span>Fee 0.1%</span></div>
+        <button class="go" id="go">Swap now</button>
+      </div>
+      <div class="card tx">
+        <h3>Recent activity</h3>
+        <div class="txl">
+          <div class="t"><i style="background:rgba(62,230,176,.12);color:var(--acc)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></i><div><b>Received BTC</b><small>from bc1q…7h2 · 2h ago</small></div><span style="color:var(--acc)">+0.0120</span></div>
+          <div class="t"><i style="background:rgba(76,141,255,.12);color:var(--acc2)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2.5l3 3-3 3M4 11.5v-1a5 5 0 0 1 5-5h11M7 21.5l-3-3 3-3M20 12.5v1a5 5 0 0 1-5 5H4"/></svg></i><div><b>Swapped ETH → USDT</b><small>Vault Swap · 5h ago</small></div><span>1,200</span></div>
+          <div class="t"><i style="background:rgba(255,92,122,.12);color:var(--red)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></i><div><b>Sent USDT</b><small>to TXr…9aP · yesterday</small></div><span style="color:var(--red)">-250.00</span></div>
+          <div class="t"><i style="background:rgba(245,185,66,.12);color:var(--gold)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></i><div><b>DCA bot bought SOL</b><small>weekly plan · 2d ago</small></div><span>+1.40</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<a class="by" href="../index.html" target="_top">Demo app by <b>Xiraiya</b></a>
+<script>
+(function(){
+var A=[{s:'BTC',n:'Bitcoin',p:64250,c:'#f7931a',h:.4121,ch:2.4},{s:'ETH',n:'Ethereum',p:3180,c:'#8c9eff',h:3.82,ch:3.1},{s:'USDT',n:'Tether',p:1,c:'#26a17b',h:6420,ch:0.01},{s:'BNB',n:'BNB',p:590,c:'#f3ba2f',h:4.1,ch:-1.2},{s:'SOL',n:'Solana',p:152,c:'#14f195',h:22.6,ch:5.8}];
+var rows=document.getElementById('rows');
+function fmt(n,d){return n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function spark(up){var p='',y=15;for(var i=0;i<12;i++){y=Math.max(3,Math.min(27,y+(Math.random()-(up?.62:.38))*8));p+=(i?'L':'M')+(i*8)+' '+y.toFixed(1)}return '<svg class="spark" viewBox="0 0 90 30"><path d="'+p+'" fill="none" stroke="'+(up?'#3ee6b0':'#ff5c7a')+'" stroke-width="2"/></svg>'}
+function render(){rows.innerHTML=A.map(function(a){return '<tr><td><div class="coin"><i style="background:'+a.c+'">'+a.s[0]+'</i><div><b>'+a.n+'</b><small>'+a.s+'</small></div></div></td><td class="mono price" data-s="'+a.s+'">$'+fmt(a.p,a.p<10?4:2)+'</td><td><span class="chg '+(a.ch>=0?'up':'dn')+'">'+(a.ch>=0?'+':'')+a.ch.toFixed(2)+'%</span></td><td class="hide-s">'+spark(a.ch>=0)+'</td><td class="mono">'+fmt(a.h,a.h<10?4:2)+'<br><small style="color:var(--ink3)">$'+fmt(a.h*a.p,2)+'</small></td></tr>'}).join('')}
+render();
+function total(){return A.reduce(function(s,a){return s+a.h*a.p},0)}
+var bal=document.getElementById('bal');
+setInterval(function(){A.forEach(function(a){if(a.s==='USDT')return;var old=a.p;a.p=a.p*(1+(Math.random()-.48)*.004);var cell=rows.querySelector('[data-s="'+a.s+'"]');if(cell){cell.textContent='$'+fmt(a.p,2);cell.classList.remove('flash-up','flash-dn');void cell.offsetWidth;cell.classList.add(a.p>=old?'flash-up':'flash-dn')}});bal.textContent='$'+fmt(total(),2);calc();pushPoint()},2000);
+// chart
+var cv=document.getElementById('chart'),ctx=cv.getContext('2d'),data=[],tfN={'1D':24,'1W':42,'1M':60,'1Y':52};
+function seed(n){data=[];var v=total()*.86;for(var i=0;i<n;i++){v*=1+(Math.random()-.42)*.03;data.push(v)}data[n-1]=total()}
+function pushPoint(){data.push(total());data.shift();draw()}
+function draw(){var r=cv.getBoundingClientRect(),dpr=Math.min(2,devicePixelRatio||1);cv.width=r.width*dpr;cv.height=r.height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);var W=r.width,H=r.height,min=Math.min.apply(0,data),max=Math.max.apply(0,data),pad=(max-min)*.15||1;min-=pad;max+=pad;
+ctx.clearRect(0,0,W,H);ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;for(var g=1;g<4;g++){ctx.beginPath();ctx.moveTo(0,H*g/4);ctx.lineTo(W,H*g/4);ctx.stroke()}
+var pts=data.map(function(v,i){return[i/(data.length-1)*W,H-(v-min)/(max-min)*H]});
+var gr=ctx.createLinearGradient(0,0,0,H);gr.addColorStop(0,'rgba(62,230,176,.35)');gr.addColorStop(1,'rgba(62,230,176,0)');
+ctx.beginPath();pts.forEach(function(p,i){i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])});ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle=gr;ctx.fill();
+ctx.beginPath();pts.forEach(function(p,i){i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])});ctx.strokeStyle='#3ee6b0';ctx.lineWidth=2.2;ctx.stroke();
+var l=pts[pts.length-1];ctx.beginPath();ctx.arc(l[0]-3,l[1],5,0,7);ctx.fillStyle='#3ee6b0';ctx.fill();ctx.beginPath();ctx.arc(l[0]-3,l[1],11,0,7);ctx.fillStyle='rgba(62,230,176,.2)';ctx.fill()}
+document.querySelectorAll('#tf button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#tf button').forEach(function(x){x.classList.toggle('on',x===b)});seed(tfN[b.textContent]);draw()})});
+seed(42);draw();window.addEventListener('resize',draw);
+// swap
+var amt=document.getElementById('amt'),out=document.getElementById('out'),from=document.getElementById('from'),to=document.getElementById('to'),rate=document.getElementById('rate');
+function price(s){return A.find(function(a){return a.s===s}).p}
+function calc(){var v=parseFloat(amt.value)||0,r=price(from.value)/price(to.value);out.value=fmt(v*r*.999,to.value==='USDT'?2:6);rate.textContent='1 '+from.value+' ≈ '+fmt(r,r<1?6:2)+' '+to.value}
+[amt,from,to].forEach(function(el){el.addEventListener('input',calc)});
+document.getElementById('flip').addEventListener('click',function(){var f=from.value;from.value=to.value;to.value=f;calc()});
+var toast=document.getElementById('toast');
+document.getElementById('go').addEventListener('click',function(){toast.textContent='Swapped '+amt.value+' '+from.value+' → '+out.value+' '+to.value+' (demo)';toast.classList.add('show');setTimeout(function(){toast.classList.remove('show')},2600)});
+calc();
+})();
+</script>
+</body>
+</html>

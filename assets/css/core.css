@@ -531,3 +531,6 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-100%); 
   .grain { display: none; }
   .js [data-reveal], .js .split .c { opacity: 1; transform: none; filter: none; clip-path: none; }
 }
+
+/* iframes that are scaled with transforms must keep their real width */
+.br-frame iframe, .st-screen iframe { max-width: none; }
