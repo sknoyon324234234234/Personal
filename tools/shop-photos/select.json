@@ -1,0 +1,300 @@
+{
+ "thread": {
+  "hero": {
+   "from": "maison/look",
+   "i": 3,
+   "xl": true
+  },
+  "look": {
+   "from": "maison/look",
+   "i": 2
+  },
+  "blazer": {
+   "from": "maison/blazer",
+   "i": 4
+  },
+  "fairisle": {
+   "from": "maison/knit",
+   "i": 1
+  },
+  "navyknit": {
+   "from": "northside/sweater",
+   "i": 0
+  },
+  "cardigan": {
+   "from": "northside/sweater",
+   "i": 2
+  },
+  "denim": {
+   "from": "northside/denim",
+   "i": 4
+  },
+  "chinos": {
+   "from": "northside/chinos",
+   "i": 4
+  },
+  "coat": {
+   "from": "northside/coat",
+   "i": 3
+  },
+  "dress": {
+   "from": "maison/skirt",
+   "i": 7
+  },
+  "oxford": {
+   "from": "northside/boots",
+   "i": 3
+  },
+  "brogue": {
+   "from": "northside/boots",
+   "i": 7
+  },
+  "belt": {
+   "from": "northside/belt",
+   "i": 5
+  }
+ },
+ "aurelia": {
+  "hero": {
+   "from": "aurelia/solitaire",
+   "i": 3,
+   "xl": true
+  },
+  "look": {
+   "from": "aurelia/ring",
+   "i": 7
+  },
+  "bangle": {
+   "from": "aurelia/bracelet",
+   "i": 4
+  },
+  "cuff": {
+   "from": "aurelia/bracelet",
+   "i": 5
+  },
+  "coil": {
+   "from": "aurelia/bracelet",
+   "i": 6
+  },
+  "tennis": {
+   "from": "aurelia/bracelet",
+   "i": 7
+  },
+  "solitaire": {
+   "from": "aurelia/solitaire",
+   "i": 4
+  },
+  "agate": {
+   "from": "aurelia/chain",
+   "i": 2
+  },
+  "locket": {
+   "from": "aurelia/chain",
+   "i": 5
+  },
+  "watch": {
+   "from": "aurelia/watch",
+   "i": 6
+  },
+  "rosegold": {
+   "from": "aurelia/watch",
+   "i": 2
+  }
+ },
+ "glow": {
+  "hero": {
+   "from": "glow/look",
+   "i": 4,
+   "xl": true
+  },
+  "look": {
+   "from": "glow/palette",
+   "i": 2
+  },
+  "serum": {
+   "from": "glow/serum",
+   "i": 0
+  },
+  "lipstick": {
+   "from": "glow/lipstick",
+   "i": 2
+  },
+  "palette": {
+   "from": "glow/palette",
+   "i": 6
+  },
+  "blush": {
+   "from": "glow/brushes",
+   "i": 5
+  },
+  "trio": {
+   "from": "glow/brushes",
+   "i": 6
+  },
+  "kabuki": {
+   "from": "glow/brushes",
+   "i": 0
+  },
+  "brushroll": {
+   "from": "glow/brushes",
+   "i": 2
+  },
+  "base": {
+   "from": "glow/palette",
+   "i": 3
+  },
+  "perfume": {
+   "from": "glow/perfume",
+   "i": 3
+  },
+  "brushcup": {
+   "from": "glow/brushes",
+   "i": 1
+  }
+ },
+ "pebble": {
+  "hero": {
+   "from": "pebble/booties",
+   "i": 0,
+   "xl": true
+  },
+  "look": {
+   "from": "pebble/look",
+   "i": 7
+  },
+  "romper": {
+   "from": "pebble/romper",
+   "i": 4
+  },
+  "sleepsuit": {
+   "from": "pebble/romper",
+   "i": 5
+  },
+  "shoes": {
+   "from": "pebble/booties",
+   "i": 7
+  },
+  "lilac": {
+   "from": "pebble/beanie",
+   "i": 0
+  },
+  "mint": {
+   "from": "pebble/beanie",
+   "i": 2
+  },
+  "mittens": {
+   "from": "pebble/beanie",
+   "i": 1
+  },
+  "dress": {
+   "from": "pebble/dungarees",
+   "i": 0
+  },
+  "letters": {
+   "from": "pebble/look",
+   "i": 0
+  }
+ },
+ "deshi": {
+  "hero": {
+   "from": "deshi/silk",
+   "i": 1,
+   "xl": true
+  },
+  "look": {
+   "from": "deshi/dupatta",
+   "i": 2
+  },
+  "saree": {
+   "from": "deshi/silk",
+   "i": 2
+  },
+  "panjabi": {
+   "from": "deshi/panjabi",
+   "i": 2
+  },
+  "silkprint": {
+   "from": "deshi/dupatta",
+   "i": 4
+  },
+  "paisley": {
+   "from": "deshi/dupatta",
+   "i": 3
+  },
+  "bandhani": {
+   "from": "deshi/dupatta",
+   "i": 7
+  },
+  "gold": {
+   "from": "deshi/bangles",
+   "i": 1
+  },
+  "glass": {
+   "from": "deshi/bangles",
+   "i": 7
+  },
+  "runner": {
+   "from": "deshi/silk",
+   "i": 4
+  },
+  "jutti": {
+   "from": "deshi/jutti",
+   "i": 7
+  }
+ },
+ "carry": {
+  "hero": {
+   "from": "carry/hero",
+   "i": 7,
+   "xl": true
+  },
+  "look": {
+   "from": "carry/wallet",
+   "i": 4
+  },
+  "messenger": {
+   "from": "carry/hero",
+   "i": 5
+  },
+  "duffel": {
+   "from": "carry/duffel",
+   "i": 0
+  },
+  "backpack": {
+   "from": "carry/backpack",
+   "i": 0
+  },
+  "satchel": {
+   "from": "carry/backpack",
+   "i": 7
+  },
+  "field": {
+   "from": "carry/backpack",
+   "i": 6
+  },
+  "wallet": {
+   "from": "carry/wallet",
+   "i": 3
+  },
+  "billfold": {
+   "from": "carry/wallet",
+   "i": 7
+  },
+  "shades": {
+   "from": "carry/sunglasses",
+   "i": 3
+  },
+  "scarf": {
+   "from": "carry/scarf",
+   "i": 3
+  },
+  "watch": {
+   "from": "carry/watch",
+   "i": 5
+  },
+  "bluewatch": {
+   "from": "carry/watch",
+   "i": 2
+  }
+ }
+}

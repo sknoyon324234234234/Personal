@@ -109,6 +109,7 @@ async function candidates() {
 }
 
 async function final() {
+  // select.json: {store: {name: {from: "store/slot", i: index, xl: bool}}}
   const sel = JSON.parse(fs.readFileSync(path.join(HERE, 'select.json'), 'utf8'));
   const cand = JSON.parse(fs.readFileSync(path.join(HERE, 'candidates.json'), 'utf8'));
   const credPath = path.join(OUT, 'credits.json');
@@ -117,14 +118,18 @@ async function final() {
     const dir = path.join(OUT, store);
     fs.mkdirSync(dir, { recursive: true });
     credits[store] = credits[store] || {};
-    for (const slot of Object.keys(sel[store])) {
-      const pick = sel[store][slot], i = typeof pick === 'number' ? pick : pick.i, xl = typeof pick === 'object' && pick.xl;
-      const c = cand[store][slot][i];
-      const buf = await get(sized(c, xl ? 1800 : 1000));
-      await sharp(buf).rotate().resize(xl ? 1800 : 1000, xl ? 1800 : 1000, { fit: 'inside', withoutEnlargement: true }).jpeg({ quality: xl ? 70 : 74, mozjpeg: true, progressive: true }).toFile(path.join(dir, slot + '.jpg'));
-      credits[store][slot] = { photographer: c.by, link: c.link, license: c.license };
-      console.log(store, slot, c.by);
-      await sleep(200);
+    for (const name of Object.keys(sel[store])) {
+      const pick = sel[store][name], parts = pick.from.split('/');
+      const c = cand[parts[0]] && cand[parts[0]][parts[1]] && cand[parts[0]][parts[1]][pick.i];
+      if (!c) { console.log('! missing', store, name, pick.from, pick.i); continue; }
+      try {
+        const buf = await get(sized(c, pick.xl ? 1800 : 1000));
+        const W = pick.xl ? 1800 : 1000;
+        await sharp(buf).rotate().resize(W, W, { fit: 'inside', withoutEnlargement: true }).jpeg({ quality: pick.xl ? 72 : 76, mozjpeg: true, progressive: true }).toFile(path.join(dir, name + '.jpg'));
+        credits[store][name] = { photographer: c.by, link: c.link, license: c.license };
+        console.log(store, name, c.by, c.license);
+      } catch (e) { console.log('! failed', store, name, e.message); }
+      await sleep(300);
     }
   }
   fs.writeFileSync(credPath, JSON.stringify(credits, null, 1) + '\n');
