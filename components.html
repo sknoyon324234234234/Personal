@@ -48,18 +48,51 @@
 <header class="site-header" id="site-header"></header>
 
 <main id="main">
-  <section class="page-hero kit-hero">
-    <div class="glow" aria-hidden="true"></div>
-    <div class="kanji-bg" aria-hidden="true">型</div>
-    <div class="container container-wide page-hero-inner">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><svg class="ic"><use href="#i-chevron-right"/></svg><span>UI Kit</span></nav>
-      <h1 class="h1" data-split="ready">The UI Kit<span class="accent">.</span></h1>
-      <p class="lead" data-reveal>Every header, nav bar, footer, button, card, form and loader I design — live on a Figma-style canvas. Click any frame to inspect its real styles, hover it to try the motion, and copy the code.</p>
-      <div class="kit-stats" data-reveal><span><b class="k-count">50</b> components</span><span><b>10</b> categories</span><span><b>0</b> dependencies</span><span><b>100%</b> copy-paste ready</span></div>
+  <section class="page-hero kit-hero kx-hero">
+    <div class="container container-wide kx-hero-in">
+      <div class="kx-copy">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><svg class="ic"><use href="#i-chevron-right"/></svg><span>UI Kit</span></nav>
+        <p class="kx-file"><span class="kx-live" aria-hidden="true"></span>Xiraiya Design System <b>v3.2</b> <span class="muted">· edited 2 hours ago</span></p>
+        <h1 class="h1 kx-title" data-split="ready">The UI Kit<span class="accent">.</span></h1>
+        <p class="lead" data-reveal>Every header, bar, button, card, form and loader I ship, laid out as a working Figma file. Select a frame to read its real styles, pull a button apart to see how it is specced, and tune the motion curves before you copy the code.</p>
+        <dl class="kx-meta" data-reveal>
+          <div><dt>Components</dt><dd class="k-count">50</dd></div>
+          <div><dt>Variants</dt><dd>214</dd></div>
+          <div><dt>Tokens</dt><dd>86</dd></div>
+          <div><dt>Dependencies</dt><dd>0</dd></div>
+        </dl>
+        <div class="flex wrap" data-reveal><a class="btn btn-primary" href="#kit-file">Open the file <svg class="ic"><use href="#i-chevron-down"/></svg></a><a class="btn btn-ghost" href="#anatomy">Take a button apart</a></div>
+      </div>
+
+      <div class="kx-board" data-reveal aria-label="Live specimen of kit components">
+        <span class="kx-flabel"><svg class="ic"><use href="#i-frame"/></svg>Specimen / v3.2</span>
+        <div class="kx-sp kx-sp-btn">
+          <span class="kx-tag">Button / Primary</span>
+          <div class="kx-bw">
+            <button type="button" class="kx-sbtn" id="kxShip">Ship it <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            <i class="rl rl-x" aria-hidden="true"><b>22</b></i><i class="rl rl-y" aria-hidden="true"><b>14</b></i><i class="rl-r" aria-hidden="true"><b class="kx-rv">r 12</b></i>
+          </div>
+          <div class="kx-pin" aria-hidden="true"><span>M</span><p><b>Mina</b> 22 on the sides feels right now. Ship it.</p></div>
+        </div>
+        <div class="kx-sp kx-sp-ctl">
+          <span class="kx-tag">Controls</span>
+          <label class="kx-sw"><input type="checkbox" checked id="kxAuto"><span aria-hidden="true"></span>Autosave</label>
+          <label class="kx-rng"><span>Corner radius <b class="kx-rv2">12</b></span><input type="range" min="0" max="24" value="12" id="kxR" aria-label="Corner radius of the specimen"></label>
+        </div>
+        <div class="kx-sp kx-sp-type">
+          <span class="kx-tag">Type</span>
+          <b class="kx-aa">Aa</b><p><span>Shippori Mincho B1</span>Display · 800</p><p><span>Zen Kaku Gothic New</span>Body · 400</p>
+        </div>
+        <div class="kx-sp kx-sp-col">
+          <span class="kx-tag">Colour</span>
+          <ul><li style="--c:#c4321d"><i></i>Shu<code>#C4321D</code></li><li style="--c:#1f1813"><i></i>Sumi<code>#1F1813</code></li><li style="--c:#efe4cc"><i></i>Washi<code>#EFE4CC</code></li><li style="--c:#2c6f65"><i></i>Aotake<code>#2C6F65</code></li><li style="--c:#d9a441"><i></i>Kincha<code>#D9A441</code></li></ul>
+        </div>
+        <div class="kx-toast" id="kxToast" role="status"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Exported 12 frames to code</span></div>
+      </div>
     </div>
   </section>
 
-  <section class="kit" aria-label="Component workspace">
+  <section class="kit" id="kit-file" aria-label="Component workspace">
     <div class="kit-app">
       <div class="kit-top">
         <div class="kt-left">
@@ -74,6 +107,7 @@
         </div>
         <div class="kt-file"><span class="muted">Xiraiya Design System</span> / <b class="kt-page">All components</b></div>
         <div class="kt-right">
+          <div class="kt-peers" aria-label="3 people in this file"><span style="--c:#7c5cff" title="Mina · Design">M</span><span style="--c:#0f9d76" title="Rafi · Frontend">R</span><span class="me" title="You">You</span></div>
           <div class="kt-zoom"><button type="button" data-zoom="-1" aria-label="Zoom out"><svg class="ic"><use href="#i-minus"/></svg></button><button type="button" class="kt-zv" data-zoom="fit" title="Zoom to fit">100%</button><button type="button" data-zoom="1" aria-label="Zoom in"><svg class="ic"><use href="#i-plus"/></svg></button></div>
           <button type="button" class="btn btn-primary btn-sm kt-present" aria-label="Present"><svg class="ic"><use href="#i-play"/></svg><span>Present</span></button>
         </div>
@@ -84,13 +118,72 @@
           <label class="kl-search"><svg class="ic"><use href="#i-search"/></svg><input type="search" placeholder="Find component…" aria-label="Find component"></label>
           <div class="kl-tree" role="tree"></div>
         </aside>
-        <div class="kit-canvas-wrap" tabindex="0" aria-label="Canvas — scroll to pan, Ctrl + wheel to zoom">
-          <div class="kit-canvas"></div>
+        <div class="kc-view">
+          <span class="kr-corner" aria-hidden="true"></span><canvas class="kr kr-x" aria-hidden="true"></canvas><canvas class="kr kr-y" aria-hidden="true"></canvas>
+          <div class="kit-canvas-wrap" tabindex="0" aria-label="Canvas — scroll to pan, Ctrl + wheel to zoom">
+            <div class="kit-canvas"></div>
+          </div>
         </div>
         <aside class="kit-inspect" aria-label="Inspect">
           <div class="ki-tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-ki="design">Design</button><button type="button" role="tab" aria-selected="false" data-ki="code">Code</button><button type="button" class="ki-close" aria-label="Close inspector"><svg class="ic"><use href="#i-close"/></svg></button></div>
           <div class="ki-body"><div class="ki-empty"><svg class="ic"><use href="#i-cursor"/></svg><p>Select a frame on the canvas to inspect its styles and code.</p></div></div>
         </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section kx-anat" id="anatomy">
+    <div class="container container-wide">
+      <div class="kx-head">
+        <span class="num"><span class="hanko sm">解</span> Anatomy</span>
+        <h2 class="h2" data-split>One button, <em>taken apart.</em></h2>
+        <p class="lead" data-reveal>Before anything goes on the canvas it gets a spec like this. Change the tokens on the right and watch every state, measurement and line of CSS follow.</p>
+      </div>
+      <div class="kx-anat-grid">
+        <div class="kx-spec" data-reveal>
+          <div class="kx-stage" id="kxStage">
+            <svg class="kx-lines" id="kxLines" aria-hidden="true"></svg>
+            <button type="button" class="kx-btn kx-big" id="kxBig"><svg class="kx-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span class="kx-lbl">Download invoice</span></button>
+            <ol class="kx-callouts" id="kxCallouts"></ol>
+          </div>
+          <div class="kx-states" id="kxStates" aria-label="Button states"></div>
+        </div>
+        <aside class="kx-tok" data-reveal aria-label="Design tokens">
+          <h3>Tokens</h3>
+          <div class="kx-ctl"><span>Accent</span><div class="kx-acc" id="kxAcc" role="radiogroup" aria-label="Accent colour"></div></div>
+          <label class="kx-ctl"><span>Radius <b id="kxRadV">12px</b></span><input type="range" id="kxRad" min="0" max="28" value="12"></label>
+          <div class="kx-ctl"><span>Density</span><div class="kx-seg" id="kxDen" role="radiogroup" aria-label="Density"><button type="button" role="radio" aria-checked="false" data-v="0">Compact</button><button type="button" role="radio" aria-checked="true" data-v="1">Regular</button><button type="button" role="radio" aria-checked="false" data-v="2">Roomy</button></div></div>
+          <div class="kx-ctl"><span>Label weight</span><div class="kx-seg" id="kxWt" role="radiogroup" aria-label="Label weight"><button type="button" role="radio" aria-checked="false" data-v="500">500</button><button type="button" role="radio" aria-checked="true" data-v="700">700</button></div></div>
+          <div class="kx-ctl"><span>Contrast on accent <b id="kxCr">5.9 : 1</b></span><div class="kx-crbar"><i id="kxCrI"></i><s style="left:45%" title="WCAG AA 4.5"></s></div></div>
+          <div class="kx-out"><div class="kx-out-h"><span>tokens.css</span><button type="button" class="ki-copy" id="kxCopyTok"><svg class="ic"><use href="#i-copy"/></svg>Copy</button></div><pre class="code" id="kxTokCode"></pre></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section kx-motion" id="motion">
+    <div class="container container-wide">
+      <div class="kx-head">
+        <span class="num"><span class="hanko sm">動</span> Motion</span>
+        <h2 class="h2" data-split>Easing you can feel, <em>then copy.</em></h2>
+        <p class="lead" data-reveal>Drag the two handles. The dot, the card and the menu below all run on the same curve, so you can judge it on real UI instead of a bouncing ball.</p>
+      </div>
+      <div class="kx-mo-grid" data-reveal>
+        <div class="kx-graph">
+          <svg viewBox="-40 -80 400 480" id="kxBz" role="img" aria-label="Cubic bezier curve editor"></svg>
+          <div class="kx-presets" id="kxPre"></div>
+        </div>
+        <div class="kx-play">
+          <div class="kx-lane"><span>Move</span><div class="kx-track"><i id="kxDot"></i></div></div>
+          <div class="kx-lane"><span>Enter</span><div class="kx-card-wrap"><div class="kx-card" id="kxCard"><b>Invoice sent</b><small>to Amina · ৳42,000</small></div></div></div>
+          <div class="kx-lane"><span>Menu</span><div class="kx-menu-wrap"><div class="kx-menu" id="kxMenu"><i>Rename</i><i>Duplicate</i><i>Move to…</i><i class="red">Delete</i></div></div></div>
+          <div class="kx-pctl">
+            <button type="button" class="btn btn-primary btn-sm" id="kxRun"><svg class="ic"><use href="#i-play"/></svg>Play</button>
+            <label><span>Duration <b id="kxDurV">600ms</b></span><input type="range" id="kxDur" min="120" max="1400" step="20" value="600"></label>
+            <label class="kx-loop"><input type="checkbox" id="kxLoop" checked> Loop</label>
+          </div>
+          <div class="kx-out"><div class="kx-out-h"><span>motion.css</span><button type="button" class="ki-copy" id="kxCopyEase"><svg class="ic"><use href="#i-copy"/></svg>Copy</button></div><pre class="code" id="kxEaseCode"></pre></div>
+        </div>
       </div>
     </div>
   </section>
@@ -104,12 +197,12 @@
           <p class="lead" data-reveal>Your project gets its own design system: tokens, components and motion rules — then the exact same components in production code. No “the developer changed my design” moments.</p>
           <div class="flex wrap" data-reveal><a class="btn btn-primary btn-lg" href="hire.html?service=web" data-magnetic>Design &amp; build my UI <svg class="ic"><use href="#i-arrow-right"/></svg></a><a class="btn btn-ghost btn-lg" href="showcase.html">See it live in the Lab</a></div>
         </div>
-        <ul class="kit-perks">
-          <li data-reveal><svg class="ic"><use href="#i-palette"/></svg><div><b>Design tokens</b><p>Colors, type scale, spacing and radius as variables — change once, update everywhere.</p></div></li>
-          <li data-reveal style="--d:.08s"><svg class="ic"><use href="#i-layers"/></svg><div><b>Component variants</b><p>States for hover, focus, loading, disabled and dark mode, documented.</p></div></li>
-          <li data-reveal style="--d:.16s"><svg class="ic"><use href="#i-film"/></svg><div><b>Motion specs</b><p>Durations and easing curves defined in the file, matched exactly in code.</p></div></li>
-          <li data-reveal style="--d:.24s"><svg class="ic"><use href="#i-code"/></svg><div><b>Accessible code</b><p>Semantic HTML, keyboard support, contrast-checked colors, reduced-motion fallbacks.</p></div></li>
-        </ul>
+        <ol class="kx-log" data-reveal aria-label="Release notes">
+          <li><div class="kx-lv"><b>v3.2</b><time datetime="2026-09-18">18 Sep 2026</time></div><ul><li class="add">Toast stack pauses while you hover it</li><li class="add">OTP input accepts a pasted code</li><li class="fix">Segmented control ink no longer jumps on resize</li></ul></li>
+          <li><div class="kx-lv"><b>v3.1</b><time datetime="2026-08-02">2 Aug 2026</time></div><ul><li class="add">Command palette with arrow-key navigation</li><li class="add">Katana slash and glitch text loaders</li><li class="chg">Focus rings moved to <code>:focus-visible</code></li></ul></li>
+          <li><div class="kx-lv"><b>v3.0</b><time datetime="2026-06-14">14 Jun 2026</time></div><ul><li class="chg">Every colour, radius and duration is now a token</li><li class="add">Dark frames for all 50 components</li></ul></li>
+          <li><div class="kx-lv"><b>v2.4</b><time datetime="2026-04-29">29 Apr 2026</time></div><ul><li class="add">Checkout stepper and bottom navigation</li><li class="fix">Pricing card contrast passes AA</li></ul></li>
+        </ol>
       </div>
     </div>
   </section>
@@ -128,5 +221,6 @@
 <script src="assets/js/bugs.js" defer></script>
 <script src="assets/js/kit-data.js" defer></script>
 <script src="assets/js/components.js" defer></script>
+<script src="assets/js/kit-studio.js" defer></script>
 </body>
 </html>
