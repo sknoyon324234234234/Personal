@@ -1,6 +1,5 @@
 /* =====================================================================
-   XIRAIYA — UI Kit studio: specimen board, rulers, collaborator cursors,
-   button anatomy with live tokens, and a cubic-bezier motion editor.
+   XIRAIYA — UI Kit studio: specimen board, button anatomy with live tokens, and a cubic-bezier motion editor.
    ===================================================================== */
 (function () {
   'use strict';
@@ -33,118 +32,6 @@
     $('#kxAuto').addEventListener('change', function (e) { flash(e.target.checked ? 'Autosave is on' : 'Autosave paused'); });
     if (!XR.fine) $('.kx-pin').classList.add('on');
     XR.whenVisible(board, function () { setTimeout(function () { flash('Exported 12 frames to code'); }, 1400); }, '0px');
-  }
-
-  /* ---------- rulers ---------- */
-  var wrap = $('.kit-canvas-wrap'), canvas = $('.kit-canvas'), rx = $('.kr-x'), ry = $('.kr-y');
-  function zoomNow() { var m = /scale\(([\d.]+)\)/.exec(canvas.style.transform || ''); return m ? +m[1] : 1; }
-  function selBox(z) {
-    var sel = $('.kf.is-sel .kf-frame', canvas);
-    if (!sel) return null;
-    var fr = sel.getBoundingClientRect(), cr = canvas.getBoundingClientRect();
-    return { x0: (fr.left - cr.left) / z, x1: (fr.right - cr.left) / z, y0: (fr.top - cr.top) / z, y1: (fr.bottom - cr.top) / z };
-  }
-  function ruler(cv, horiz, z, scroll, sb) {
-    var dpr = window.devicePixelRatio || 1, len = horiz ? cv.clientWidth : cv.clientHeight;
-    if (!len) return;
-    var W = horiz ? len : 20, H = horiz ? 20 : len;
-    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
-    var c = cv.getContext('2d');
-    c.setTransform(dpr, 0, 0, dpr, 0, 0);
-    c.clearRect(0, 0, W, H);
-    var steps = [10, 20, 50, 100, 200, 500, 1000], step = 1000;
-    for (var i = 0; i < steps.length; i++) { if (steps[i] * z >= 60) { step = steps[i]; break; } }
-    if (sb) {
-      var a = (horiz ? sb.x0 : sb.y0) * z - scroll, b = (horiz ? sb.x1 : sb.y1) * z - scroll;
-      c.fillStyle = 'rgba(13,153,255,.22)';
-      if (horiz) c.fillRect(a, 0, b - a, 20); else c.fillRect(0, a, 20, b - a);
-    }
-    c.font = '9px "JetBrains Mono", monospace';
-    c.textBaseline = 'top';
-    var u = Math.floor(scroll / z / step) * step, end = (scroll + len) / z + step, minor = step / 5;
-    for (; u <= end; u += minor) {
-      var p = Math.round(u * z - scroll) + .5, major = Math.abs(u / step - Math.round(u / step)) < 1e-6;
-      c.strokeStyle = major ? 'rgba(255,255,255,.34)' : 'rgba(255,255,255,.16)';
-      c.beginPath();
-      if (horiz) { c.moveTo(p, 20); c.lineTo(p, major ? 8 : 15); } else { c.moveTo(20, p); c.lineTo(major ? 8 : 15, p); }
-      c.stroke();
-      if (major) {
-        c.fillStyle = 'rgba(255,255,255,.5)';
-        if (horiz) c.fillText(Math.round(u), p + 3, 2);
-        else { c.save(); c.translate(2, p - 3); c.rotate(-Math.PI / 2); c.fillText(Math.round(u), 0, 0); c.restore(); }
-      }
-    }
-    if (sb) {
-      c.fillStyle = '#0d99ff';
-      [horiz ? sb.x0 : sb.y0, horiz ? sb.x1 : sb.y1].forEach(function (v, k) {
-        var q = v * z - scroll, t = String(Math.round(v)), w = c.measureText(t).width + 6;
-        if (horiz) { var lx = k ? q - w : q; c.fillRect(lx, 0, w, 12); c.fillStyle = '#fff'; c.fillText(t, lx + 3, 2); c.fillStyle = '#0d99ff'; }
-        else { c.save(); c.translate(0, k ? q : q + w); c.rotate(-Math.PI / 2); c.fillRect(0, 0, w, 12); c.fillStyle = '#fff'; c.fillText(t, 3, 2); c.restore(); c.fillStyle = '#0d99ff'; }
-      });
-    }
-  }
-  var rq = 0;
-  function drawRulers() {
-    rq = 0;
-    if (!rx || !rx.offsetParent) return;
-    var z = zoomNow(), sb = selBox(z);
-    ruler(rx, true, z, wrap.scrollLeft, sb);
-    ruler(ry, false, z, wrap.scrollTop, sb);
-  }
-  function reqRulers() { if (!rq) rq = requestAnimationFrame(drawRulers); }
-  if (wrap && canvas && rx) {
-    wrap.addEventListener('scroll', reqRulers, { passive: true });
-    window.addEventListener('resize', reqRulers);
-    new MutationObserver(reqRulers).observe(canvas, { attributes: true, attributeFilter: ['style'] });
-    $('.kit-app').addEventListener('click', function () { setTimeout(reqRulers, 40); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(reqRulers);
-    setTimeout(reqRulers, 1700);
-  }
-
-  /* ---------- collaborator cursors ---------- */
-  var PEERS = [
-    { n: 'Mina', c: '#7c5cff', say: ['Can we try 12 px here?', 'Love this easing', 'This one ships Friday', 'Dark mode looks right'] },
-    { n: 'Rafi', c: '#0f9d76', say: ['Copied the CSS', 'Works on a 320 px phone', 'Contrast passes AA', 'Hover feels good'] }
-  ];
-  if (wrap && canvas && !XR.reduce && window.matchMedia('(min-width: 961px)').matches) {
-    var active = false, app = $('.kit-app');
-    PEERS.forEach(function (p, i) {
-      var el = document.createElement('div');
-      el.className = 'kpc';
-      el.style.setProperty('--pc', p.c);
-      el.innerHTML = '<svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2 1.5l5.6 14 2-5.8 5.9-2z" fill="' + p.c + '" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/></svg><b>' + p.n + '</b><em></em>';
-      canvas.appendChild(el);
-      p.el = el; p.x = 300 + i * 260; p.y = 200 + i * 60; p.frame = null;
-      el.style.transform = 'translate(' + p.x + 'px,' + p.y + 'px)';
-    });
-    var hop = function (p) {
-      if (!active || document.hidden) { p.t = setTimeout(function () { hop(p); }, 1500); return; }
-      var z = zoomNow(), cr = canvas.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
-      var seen = $$('.kf', canvas).filter(function (f) {
-        var r = f.getBoundingClientRect();
-        return r.right > wr.left + 30 && r.left < wr.right - 30 && r.bottom > wr.top + 30 && r.top < wr.bottom - 30;
-      }).filter(function (f) { return f !== p.frame && !PEERS.some(function (q) { return q !== p && q.frame === f; }); });
-      if (seen.length) {
-        var f = seen[Math.floor(Math.random() * seen.length)], r = $('.kf-frame', f).getBoundingClientRect();
-        p.x = (r.left - cr.left) / z + r.width / z * (.25 + Math.random() * .5);
-        p.y = (r.top - cr.top) / z + r.height / z * (.3 + Math.random() * .45);
-        p.el.style.transform = 'translate(' + p.x.toFixed(1) + 'px,' + p.y.toFixed(1) + 'px) scale(' + (1 / z).toFixed(3) + ')';
-        setTimeout(function () {
-          if (p.frame) p.frame.classList.remove('peer');
-          p.frame = f;
-          f.style.setProperty('--pc', p.c);
-          f.classList.add('peer');
-          if (Math.random() < .4) {
-            $('em', p.el).textContent = p.say[Math.floor(Math.random() * p.say.length)];
-            p.el.classList.add('talk');
-            setTimeout(function () { p.el.classList.remove('talk'); }, 2300);
-          }
-        }, 1500);
-      }
-      p.t = setTimeout(function () { hop(p); }, 3000 + Math.random() * 2600);
-    };
-    new IntersectionObserver(function (en) { active = en[0].isIntersecting; }, { threshold: .25 }).observe(app);
-    setTimeout(function () { PEERS.forEach(function (p, i) { setTimeout(function () { hop(p); }, i * 1300); }); }, 2200);
   }
 
   /* ---------- anatomy + tokens ---------- */
