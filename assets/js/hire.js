@@ -29,7 +29,7 @@
   var byId = {};
   S.forEach(function (s) { byId[s.id] = s; });
   var q = new URLSearchParams(location.search).get('service');
-  if (q && byId[q]) state.svc.push(q);
+  if (q) q.split(',').forEach(function (id) { if (byId[id] && state.svc.indexOf(id) < 0) state.svc.push(id); });
 
   $$('[data-pack]').forEach(function (b) {
     b.addEventListener('click', function () {

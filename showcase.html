@@ -24,6 +24,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=VT323&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=VT323&display=swap"></noscript>
 <link rel="stylesheet" href="assets/css/core.css">
 <link rel="stylesheet" href="assets/css/lab.css">
+<link rel="stylesheet" href="assets/css/lab-deck.css">
 <link rel="stylesheet" href="assets/css/circuit.css">
 <link rel="stylesheet" href="assets/css/bugs.css">
 <link rel="stylesheet" href="assets/css/phone.css">
@@ -48,26 +49,30 @@
 <header class="site-header" id="site-header"></header>
 
 <main id="main">
-  <section class="page-hero lab-hero">
-    <div class="glow" aria-hidden="true"></div>
+  <section class="page-hero lab-hero lh">
+    <canvas class="lh-net" aria-hidden="true"></canvas>
     <div class="kanji-bg" aria-hidden="true">技</div>
-    <div class="container container-wide page-hero-inner">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><svg class="ic"><use href="#i-chevron-right"/></svg><span>The Lab</span></nav>
-      <h1 class="display" data-split="ready">The <span class="grad-text">Lab.</span></h1>
-      <p class="lead" data-reveal>Eleven live stages. Every one of them is interactive — chat with the bot, drag the workflow nodes, install the EXE, run the AI agent, pay the crypto invoice. This is exactly how your project will feel.</p>
-      <ol class="lab-index" data-reveal style="--d:.15s">
-        <li><a href="#web"><span>01</span><svg class="ic"><use href="#i-globe"/></svg>Websites</a></li>
-        <li><a href="#automation"><span>02</span><svg class="ic"><use href="#i-flow"/></svg>Automation</a></li>
-        <li><a href="#telegram"><span>03</span><svg class="ic"><use href="#i-send"/></svg>Telegram Bots</a></li>
-        <li><a href="#extension"><span>04</span><svg class="ic"><use href="#i-puzzle"/></svg>Chrome Extensions</a></li>
-        <li><a href="#minecraft"><span>05</span><svg class="ic"><use href="#i-cube"/></svg>Minecraft Plugins</a></li>
-        <li><a href="#desktop"><span>06</span><svg class="ic"><use href="#i-window"/></svg>Desktop EXE</a></li>
-        <li><a href="#mobile"><span>07</span><svg class="ic"><use href="#i-phone"/></svg>Mobile APK</a></li>
-        <li><a href="#ai-agent"><span>08</span><svg class="ic"><use href="#i-chip"/></svg>AI Agents</a></li>
-        <li><a href="#ai-chat"><span>09</span><svg class="ic"><use href="#i-chat"/></svg>AI Chat</a></li>
-        <li><a href="#ecommerce"><span>10</span><svg class="ic"><use href="#i-bag"/></svg>E-commerce</a></li>
-        <li><a href="#crypto"><span>11</span><svg class="ic"><use href="#i-btc"/></svg>Crypto Payments</a></li>
-      </ol>
+    <div class="container container-wide lh-grid">
+      <div class="lh-copy">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><svg class="ic"><use href="#i-chevron-right"/></svg><span>The Lab</span></nav>
+        <p class="eyebrow">Control room · 実験室</p>
+        <h1 class="display" data-split="ready">The <span class="grad-text">Lab.</span></h1>
+        <p class="lead" data-reveal>Eleven live systems, zero screenshots. Chat with the bot, drag the workflow, install the EXE, run the AI agent, pay the crypto invoice. This is exactly how your project will feel.</p>
+        <dl class="lh-stats" data-reveal style="--d:.1s">
+          <div><dt>Live demos</dt><dd>11</dd></div>
+          <div><dt>Screenshots</dt><dd>0</dd></div>
+          <div><dt>You have tried</dt><dd><span data-lab-done>0</span><small>/11</small></dd></div>
+        </dl>
+        <div class="lh-ctas" data-reveal style="--d:.15s">
+          <a class="btn btn-primary btn-lg" href="#web" data-magnetic>Start the tour <svg class="ic"><use href="#i-arrow-right"/></svg></a>
+          <button type="button" class="btn btn-ghost btn-lg" data-lab-random><svg class="ic"><use href="#i-zap"/></svg> Surprise me</button>
+        </div>
+      </div>
+      <div class="lh-console" data-reveal="scale" style="--d:.1s">
+        <div class="lh-bar"><span class="lh-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="lh-path">xiraiya://lab</span><em class="lh-live">11 systems online</em></div>
+        <ol class="lh-tiles" aria-label="Lab chapters"><li><a href="#web" data-ch="web"><span class="lh-n">01</span><svg class="ic"><use href="#i-globe"/></svg><b>Websites</b><small>Preview studio</small><i class="lh-ok" aria-hidden="true"></i></a></li><li><a href="#automation" data-ch="automation"><span class="lh-n">02</span><svg class="ic"><use href="#i-flow"/></svg><b>Automation</b><small>Drag-and-drop workflow</small><i class="lh-ok" aria-hidden="true"></i></a></li><li><a href="#telegram" data-ch="telegram"><span class="lh-n">03</span><svg class="ic"><use href="#i-send"/></svg><b>Telegram Bots</b><small>Working shop bot</small><i class="lh-ok" aria-hidden="true"></i></a></li><li><a href="#extension" data-ch="extension"><span class="lh-n">04</span><svg class="ic"><use href="#i-puzzle"/></svg><b>Chrome Extensions</b><small>Edits a live page</small><i class="lh-ok" aria-hidden="true"></i></a></li><li><a href="#minecraft" data-ch="minecraft"><span class="lh-n">05</span><svg class="ic"><use href="#i-cube"/></svg><b>Minecraft Plugins</b><small>Playable survival game</small><i class="lh-ok" aria-hidden="true"></i></a></li><li><a href="#desktop" data-ch="desktop"><span class="lh-n">06</span><svg class="ic"><use href="#i-window"/></svg><b>Desktop EXE</b><small>Installer + app</small><i class="lh-ok" aria-hidden="true"></i></a></li><li><a href="#mobile" data-ch="mobile"><span class="lh-n">07</span><svg class="ic"><use href="#i-phone"/></svg><b>Mobile APK</b><small>Tap-through Android app</small><i class="lh-ok" aria-hidden="true"></i></a></li><li><a href="#ai-agent" data-ch="ai-agent"><span class="lh-n">08</span><svg class="ic"><use href="#i-chip"/></svg><b>AI Agents</b><small>Configure and run</small><i class="lh-ok" aria-hidden="true"></i></a></li><li><a href="#ai-chat" data-ch="ai-chat"><span class="lh-n">09</span><svg class="ic"><use href="#i-chat"/></svg><b>AI Chat</b><small>English + Bangla</small><i class="lh-ok" aria-hidden="true"></i></a></li><li><a href="#ecommerce" data-ch="ecommerce"><span class="lh-n">10</span><svg class="ic"><use href="#i-bag"/></svg><b>E-commerce</b><small>Store autopilot feed</small><i class="lh-ok" aria-hidden="true"></i></a></li><li><a href="#crypto" data-ch="crypto"><span class="lh-n">11</span><svg class="ic"><use href="#i-btc"/></svg><b>Crypto Payments</b><small>Auto-confirming checkout</small><i class="lh-ok" aria-hidden="true"></i></a></li><li class="lh-combo"><a href="#combo"><svg class="ic"><use href="#i-sliders"/></svg><b>Build your combo</b><small>Price it in seconds</small></a></li></ol>
+        <p class="lh-keys"><kbd>J</kbd><kbd>K</kbd> next / previous <span>·</span> <kbd>F</kbd> focus a demo <span>·</span> <kbd>Esc</kbd> exit</p>
+      </div>
     </div>
   </section>
 
@@ -629,16 +634,23 @@
     </div>
   </section>
 
-  <section class="section lab-end">
-    <div class="container container-wide center">
+  <section class="section lab-end lab-combo" id="combo" aria-labelledby="combo-t">
+    <div class="container container-wide">
       <div class="section-head center">
-        <span class="num"><span class="hanko sm">終</span> The end of the Lab — for now</span>
-        <h2 class="h2" data-split>Liked what you <span class="grad-text">played with?</span></h2>
-        <p class="lead" data-reveal>Every stage above is a slice of a real project type. Tell me which one you need — or mix them.</p>
+        <span class="num"><span class="hanko sm">終</span> Build your combo · 組み合わせ</span>
+        <h2 class="h2" id="combo-t" data-split>Mix the systems you <span class="grad-text">need.</span></h2>
+        <p class="lead" data-reveal>Pick everything you want built. You get a starting price and a delivery window right away, and the Hire page opens with your picks already selected.</p>
       </div>
-      <div class="flex wrap" style="justify-content:center" data-reveal>
-        <a class="btn btn-primary btn-lg" href="hire.html" data-magnetic>Get an instant estimate <svg class="ic"><use href="#i-arrow-right"/></svg></a>
-        <a class="btn btn-ghost btn-lg" href="components.html">See the UI Kit</a>
+      <div class="combo" data-reveal>
+        <div class="combo-picks" role="group" aria-label="Services"></div>
+        <aside class="combo-sum" aria-live="polite">
+          <small>Starting from</small>
+          <b class="combo-total">$0</b>
+          <span class="combo-meta">Pick at least one system</span>
+          <ul class="combo-list"></ul>
+          <a class="btn btn-primary btn-lg combo-go" href="hire.html">Get my estimate <svg class="ic"><use href="#i-arrow-right"/></svg></a>
+          <a class="btn btn-ghost combo-kit" href="components.html">See the UI Kit</a>
+        </aside>
       </div>
     </div>
   </section>
@@ -650,6 +662,7 @@
 <script src="assets/js/core.js" defer></script>
 <script src="assets/js/circuit.js" defer></script>
 <script src="assets/js/bugs.js" defer></script>
+<script src="assets/js/lab/deck.js" defer></script>
 <script src="assets/js/lab/lab.js" defer></script>
 <script src="assets/js/lab/web.js" defer></script>
 <script src="assets/js/lab/automation.js" defer></script>
