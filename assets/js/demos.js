@@ -6,6 +6,11 @@
   var $ = XR.$, $$ = XR.$$;
 
   var DEMOS = [
+    { id: 'aurele', name: 'Aurèle' },
+    { id: 'nordhem', name: 'Nordhem' },
+    { id: 'halide', name: 'Halide' },
+    { id: 'kage', name: 'Kage Build' },
+    { id: 'stride', name: 'Stride' },
     { id: 'nova-saas', name: 'Nova AI' },
     { id: 'sakura-bistro', name: 'Sakura Bistro' },
     { id: 'vault-dashboard', name: 'Vault' },
@@ -15,17 +20,7 @@
     { id: 'haven', name: 'Haven' },
     { id: 'ledger', name: 'Ledger' },
     { id: 'nomad', name: 'Nomad' },
-    { id: 'devdocs', name: 'Kumo Docs' },
-    { id: 'orbital', name: 'Orbital' },
-    { id: 'kinetik', name: 'Kinetik' },
-    { id: 'echo', name: 'Echo' },
-    { id: 'medica', name: 'Medica' },
-    { id: 'grove', name: 'Grove' },
-    { id: 'nimbus', name: 'Nimbus' },
-    { id: 'neon-drift', name: 'Neon Drift' },
-    { id: 'flowboard', name: 'Flowboard' },
-    { id: 'summit', name: 'Summit 26' },
-    { id: 'quill', name: 'Quill' }
+    { id: 'devdocs', name: 'Kumo Docs' }
   ];
   var DEV = { desktop: [1440, 900], laptop: [1280, 800], tablet: [820, 1180], phone: [390, 844] };
 

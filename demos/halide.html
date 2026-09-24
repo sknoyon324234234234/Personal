@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halide — Film cameras and lab (demo site by Xiraiya)</title>
+<meta name="description" content="Demo camera store and film lab website designed and built by Xiraiya.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{--bg:#0f0e0d;--bg2:#181715;--bg3:#211f1c;--paper:#ece6da;--mute:#8f887c;--amber:#f2a900;--red:#e0442b;--line:rgba(236,230,218,.12)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--paper);font:400 16px/1.6 Archivo,system-ui,sans-serif;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:-50%;z-index:100;pointer-events:none;opacity:.07;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 1s steps(4) infinite}
+@keyframes grain{25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-1%)}}
+a{color:inherit;text-decoration:none}h1,h2,h3,h4,p{margin:0}button,input,select{font:inherit;color:inherit}button{cursor:pointer;background:none;border:0;padding:0}img{display:block;max-width:100%}
+.m{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.cond{font-stretch:62%;font-weight:800;text-transform:uppercase;letter-spacing:-.01em}
+.wrap{max-width:1360px;margin:0 auto;padding:0 28px}
+.btn{display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 22px;background:var(--amber);color:#111;font:700 13px/1 'Space Mono',monospace;text-transform:uppercase;letter-spacing:.06em;transition:background .2s,transform .2s}
+.btn:hover{background:var(--paper)}.btn:active{transform:translateY(2px)}
+.btn.line{background:none;color:var(--paper);box-shadow:inset 0 0 0 1px var(--line)}.btn.line:hover{box-shadow:inset 0 0 0 1px var(--paper)}
+header{position:sticky;top:0;z-index:50;background:rgba(15,14,13,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:20px}
+.logo{display:flex;align-items:center;gap:10px;font:900 22px/1 Archivo;font-stretch:125%;letter-spacing:.02em}
+.logo svg{width:26px;height:26px}
+header nav{display:flex;gap:26px}header nav a{color:var(--mute);transition:color .2s}header nav a:hover{color:var(--paper)}
+.bag{display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;box-shadow:inset 0 0 0 1px var(--line)}.bag b{color:var(--amber)}
+.hero{display:grid;grid-template-columns:.9fr 1.1fr;min-height:calc(100vh - 64px);border-bottom:1px solid var(--line)}
+.hero .l{padding:60px 28px 50px max(28px,calc(50vw - 652px));display:flex;flex-direction:column;justify-content:space-between;gap:40px}
+.hero h1{font-size:clamp(84px,11.5vw,190px);line-height:.8}
+.hero h1 span{display:block;color:var(--amber)}
+.hero p{max-width:420px;color:#bdb5a7;font-size:18px;margin:26px 0 30px}
+.hero .meta{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}
+.hero .meta div{padding:16px 0}.hero .meta b{display:block;font:800 30px/1 Archivo;font-stretch:75%}
+.vf{position:relative;overflow:hidden;background:#000;cursor:crosshair}
+.vf img{width:100%;height:100%;object-fit:cover;transition:filter .5s}
+.vf .fr{position:absolute;inset:34px;pointer-events:none}
+.vf .fr i{position:absolute;width:40px;height:40px;border:2px solid rgba(255,255,255,.85)}
+.vf .fr i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0}.vf .fr i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0}.vf .fr i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0}.vf .fr i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0}
+.af{position:absolute;width:74px;height:74px;margin:-37px 0 0 -37px;border:1.5px solid rgba(255,255,255,.9);left:50%;top:50%;transition:left .25s ease-out,top .25s ease-out,border-color .2s;pointer-events:none}
+.af.lock{border-color:#6cff6c;animation:lock .3s}@keyframes lock{50%{transform:scale(.85)}}
+.af::before,.af::after{content:'';position:absolute;background:rgba(255,255,255,.9)}.af::before{left:50%;top:-10px;width:1.5px;height:8px}.af::after{top:50%;left:-10px;height:1.5px;width:8px}
+.read{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:28px;padding:14px;background:linear-gradient(transparent,rgba(0,0,0,.75));font:700 15px 'Space Mono',monospace;color:#fff}
+.read .meter{display:flex;align-items:center;gap:2px}.read .meter i{width:3px;height:10px;background:rgba(255,255,255,.35)}.read .meter i.c{height:16px;background:#fff}.read .meter i.on{background:var(--amber)}
+.rec{position:absolute;top:48px;left:60px;display:flex;align-items:center;gap:8px;font:700 13px 'Space Mono',monospace;color:#fff}.rec::before{content:'';width:10px;height:10px;border-radius:50%;background:var(--red);animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.2}}
+.shots{position:absolute;top:48px;right:60px;font:700 13px 'Space Mono',monospace;color:#fff}
+.strip{background:#000;padding:26px 0;overflow:hidden;border-bottom:1px solid var(--line)}
+.strip .rail{display:flex;width:max-content;animation:roll 55s linear infinite}
+.strip:hover .rail{animation-play-state:paused}
+@keyframes roll{to{transform:translateX(-50%)}}
+.fm{position:relative;padding:22px 7px;background:#1b1712;flex:none}
+.fm::before,.fm::after{content:'';position:absolute;left:0;right:0;height:10px;background:repeating-linear-gradient(90deg,transparent 0 6px,#000 6px 14px,transparent 14px 20px);top:6px}
+.fm::after{top:auto;bottom:6px}
+.fm img{width:230px;height:154px;object-fit:cover;filter:sepia(.25) saturate(1.1) contrast(1.05)}
+.fm span{position:absolute;bottom:-1px;left:12px;font:700 9px 'Space Mono',monospace;color:#f08a24;letter-spacing:.1em}
+.fm span.r{left:auto;right:12px}
+section{padding:110px 0;border-bottom:1px solid var(--line)}
+.sh{display:grid;grid-template-columns:auto 1fr auto;gap:30px;align-items:end;margin-bottom:46px}
+.sh .no{font:700 13px 'Space Mono',monospace;color:var(--amber)}
+.sh h2{font-size:clamp(52px,7vw,110px);line-height:.85}
+.sh p{max-width:340px;color:var(--mute)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:26px}
+.chips button{height:36px;padding:0 14px;box-shadow:inset 0 0 0 1px var(--line);font:700 12px 'Space Mono',monospace;text-transform:uppercase;color:var(--mute);transition:.2s}
+.chips button[aria-pressed=true]{background:var(--paper);color:#111;box-shadow:none}
+.chips button b{color:var(--amber);margin-left:4px}.chips button[aria-pressed=true] b{color:var(--red)}
+.cams{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.cam{background:var(--bg);padding:18px;display:flex;flex-direction:column;gap:12px;position:relative;transition:background .3s}
+.cam:hover{background:var(--bg2)}.cam.hide{display:none}
+.cam .ph{aspect-ratio:4/3;overflow:hidden;background:#000;position:relative}
+.cam img{width:100%;height:100%;object-fit:cover;transition:transform .8s}.cam:hover img{transform:scale(1.05)}
+.cam .top{display:flex;justify-content:space-between}
+.grade{display:inline-grid;place-items:center;min-width:34px;height:24px;padding:0 6px;background:var(--paper);color:#111;font:700 12px 'Space Mono',monospace}
+.grade.b{background:var(--amber)}
+.cam h3{font-size:24px;line-height:1;font-stretch:75%;font-weight:800;text-transform:uppercase}
+.cam ul{list-style:none;padding:0;margin:0;display:grid;gap:4px;color:var(--mute);font-size:14px}.cam li::before{content:'✓ ';color:var(--amber)}
+.cam .bt{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px dashed var(--line)}
+.cam .bt b{font:800 26px/1 Archivo;font-stretch:75%}
+.cam .bt button{font:700 12px 'Space Mono',monospace;text-transform:uppercase;color:var(--amber)}.cam .bt button:hover{color:var(--paper)}
+.cam .bt button.held{color:var(--mute)}
+.sold{position:absolute;top:14px;right:-38px;transform:rotate(35deg);background:var(--red);color:#fff;padding:3px 40px;font:700 11px 'Space Mono',monospace}
+.expo{display:grid;grid-template-columns:1fr 1.1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+.expo>div{background:var(--bg);padding:34px}
+.lbl{display:block;margin:0 0 12px;color:var(--mute)}
+.lights{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:28px}
+.lights button{padding:12px;text-align:left;box-shadow:inset 0 0 0 1px var(--line);transition:.2s}.lights button small{display:block;font:700 10px 'Space Mono',monospace;color:var(--mute);margin-top:2px}
+.lights button[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--amber);background:rgba(242,169,0,.06)}
+.lights svg{width:22px;height:22px;margin-bottom:6px;color:var(--amber)}
+.isos{display:flex;gap:0;box-shadow:inset 0 0 0 1px var(--line);margin-bottom:28px}
+.isos button{flex:1;height:44px;font:700 13px 'Space Mono',monospace;border-right:1px solid var(--line)}.isos button:last-child{border:0}
+.isos button[aria-pressed=true]{background:var(--paper);color:#111}
+input[type=range]{width:100%;accent-color:var(--amber)}
+.frame{position:relative;aspect-ratio:3/2;background:#000;overflow:hidden;margin-bottom:22px}
+.frame img{width:100%;height:100%;object-fit:cover;transition:filter .4s}
+.frame .ev{position:absolute;left:14px;top:12px;font:700 13px 'Space Mono',monospace;background:rgba(0,0,0,.6);padding:4px 8px}
+.frame .ex{position:absolute;right:14px;top:12px;font:700 13px 'Space Mono',monospace;background:var(--amber);color:#111;padding:4px 8px}
+table{width:100%;border-collapse:collapse;font:400 14px 'Space Mono',monospace}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}th{color:var(--mute);font-weight:400;font-size:11px;text-transform:uppercase}
+tr.best td{color:#111;background:var(--amber);font-weight:700}
+tr.warn td{color:#6f685e}
+.lab{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+.lab>div{background:var(--bg);padding:34px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);box-shadow:inset 0 0 0 1px var(--line);margin-bottom:22px}
+.seg button{padding:12px;font:700 12px 'Space Mono',monospace;text-transform:uppercase;border-right:1px solid var(--line)}.seg button:last-child{border:0}
+.seg button[aria-pressed=true]{background:var(--paper);color:#111}
+.price{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0;border-bottom:1px dashed var(--line)}
+.price b{font:800 22px/1 Archivo;font-stretch:75%}
+.tot{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:14px;flex-wrap:wrap}.tot b{font:800 54px/1 Archivo;font-stretch:62%;color:var(--amber)}
+.qty{display:flex;align-items:center;gap:12px;font:700 16px 'Space Mono',monospace}.qty button{width:36px;height:36px;box-shadow:inset 0 0 0 1px var(--line)}
+.track{display:flex;margin-bottom:26px}.track input{flex:1;height:52px;background:var(--bg2);border:1px solid var(--line);border-right:0;padding:0 16px;font:700 16px 'Space Mono',monospace;text-transform:uppercase;outline:0}.track input:focus{border-color:var(--amber)}
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:0}
+.steps li{display:grid;grid-template-columns:28px 1fr auto;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);opacity:.35;transition:opacity .4s}
+.steps li.done,.steps li.now{opacity:1}
+.steps li i{width:14px;height:14px;border:2px solid var(--mute);border-radius:50%;margin-top:5px}
+.steps li.done i{background:var(--amber);border-color:var(--amber)}.steps li.now i{border-color:var(--red);background:var(--red);animation:blink 1s infinite}
+.steps li span{font:700 12px 'Space Mono',monospace;color:var(--mute)}
+.roll{display:flex;gap:14px;align-items:center;padding:14px;background:var(--bg2);margin-bottom:16px;font-size:14px}
+.roll .can{width:34px;height:48px;border-radius:5px;background:linear-gradient(90deg,#b8b2a6,#f3efe7 40%,#9d978b);position:relative;flex:none}.roll .can::before{content:'';position:absolute;inset:9px 0;background:var(--amber)}
+.shelf{display:grid;grid-template-columns:repeat(6,1fr);gap:20px}
+.box{perspective:800px;text-align:center}
+.box .b3{height:190px;border-radius:3px;position:relative;transform:rotateY(-18deg) rotateX(4deg);transform-style:preserve-3d;transition:transform .6s cubic-bezier(.2,.8,.2,1);box-shadow:18px 20px 30px -12px rgba(0,0,0,.7);padding:16px 12px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;overflow:hidden}
+.box:hover .b3{transform:rotateY(0) rotateX(0) translateY(-8px)}
+.b3::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.25),transparent 40%)}
+.b3 small{font:700 9px 'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase}
+.b3 b{font:900 30px/.85 Archivo;font-stretch:62%;text-transform:uppercase;display:block}
+.b3 .iso{font:900 44px/1 Archivo;font-stretch:62%}
+.box h4{margin-top:18px;font-weight:600}.box p{color:var(--mute);font-size:14px}
+.box button{margin-top:8px;font:700 11px 'Space Mono',monospace;text-transform:uppercase;color:var(--amber)}
+footer{padding:80px 0 30px}
+footer .g{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}
+footer h4{font:700 12px 'Space Mono',monospace;text-transform:uppercase;color:var(--mute);margin-bottom:14px}
+footer ul{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+footer .big{font-size:clamp(90px,17vw,260px);line-height:.8;margin:60px 0 20px;color:var(--bg3);font-stretch:125%;font-weight:900}
+footer .bot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:var(--mute)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,100px);opacity:0;background:var(--amber);color:#111;padding:12px 18px;font:700 13px 'Space Mono',monospace;z-index:90;transition:.4s cubic-bezier(.2,.8,.2,1)}.toast.on{transform:translate(-50%,0);opacity:1}
+.rv{opacity:0;transform:translateY(30px);transition:opacity .9s,transform .9s cubic-bezier(.2,.8,.2,1)}.rv.in{opacity:1;transform:none}
+@media(max-width:1100px){.cams{grid-template-columns:repeat(2,1fr)}.shelf{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.hero,.expo,.lab{grid-template-columns:minmax(0,1fr)}.hero h1{font-size:17vw}.vf{min-height:420px}header nav{display:none}.sh{grid-template-columns:1fr}.hero .l{padding:40px 16px}footer .g{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.wrap{padding:0 16px}.cams{grid-template-columns:1fr}.shelf{grid-template-columns:repeat(2,1fr)}.lights{grid-template-columns:repeat(2,1fr)}.expo>div,.lab>div{padding:22px}.vf .fr{inset:18px}.rec{left:34px;top:30px}.shots{right:34px;top:30px}.read{gap:14px;font-size:12px}section{padding:80px 0}.isos button{font-size:11px}}
+@media(prefers-reduced-motion:reduce){*,body::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a href="#" class="logo"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><circle cx="16" cy="16" r="14"/><path d="M16 2l5 12M30 16l-12 5M16 30l-5-12M2 16l12-5M26 6l-8 10M26 26l-10-8M6 26l8-10M6 6l10 8"/></svg>HALIDE</a>
+  <nav class="m"><a href="#cameras">Cameras</a><a href="#exposure">Exposure</a><a href="#lab">Lab</a><a href="#film">Film</a></nav>
+  <button class="bag m" id="bagB">Bag <b id="bagN">0</b></button>
+</div></header>
+
+<div class="hero">
+  <div class="l">
+    <div>
+      <span class="m" style="color:var(--amber)">Camera store · Film lab · Since 2011</span>
+      <h1 class="cond" style="margin-top:24px">Shoot<span>slower.</span></h1>
+      <p>Tested film cameras with a one-year guarantee, and a lab that develops your rolls in two days. Move over the viewfinder and meter the light.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#cameras">See tested cameras</a><a class="btn line" href="#lab">Send us a roll</a></div>
+    </div>
+    <div class="meta m"><div><b id="c1">412</b>cameras tested</div><div><b>48 h</b>lab turnaround</div><div><b>1 yr</b>guarantee</div></div>
+  </div>
+  <div class="vf" id="vf">
+    <img src="../assets/img/shop/halide/x100-xl.jpg" alt="A rangefinder camera lit in pink and cyan" id="vfImg">
+    <div class="fr"><i></i><i></i><i></i><i></i></div>
+    <div class="af" id="af"></div>
+    <span class="rec">Live view</span><span class="shots" id="shots">[ 36 ]</span>
+    <div class="read"><span id="rS">1/125</span><span id="rA">F2.8</span><span class="meter" id="meter"></span><span>ISO 400</span></div>
+  </div>
+</div>
+
+<div class="strip" aria-hidden="true"><div class="rail" id="rail"></div></div>
+
+<section id="cameras"><div class="wrap">
+  <div class="sh"><span class="no">01</span><h2 class="cond">Tested<br>cameras</h2><p>Every camera goes through a 38-point check. We shoot a roll through it, develop it and only then does it go on this page.</p></div>
+  <div class="chips" id="fil"></div>
+  <div class="cams" id="cams"></div>
+</div></section>
+
+<section id="exposure"><div class="wrap">
+  <div class="sh"><span class="no">02</span><h2 class="cond">Exposure<br>without a meter</h2><p>The sunny 16 rule in your pocket. Pick the light and your film speed and we list every setting that works.</p></div>
+  <div class="expo rv">
+    <div>
+      <span class="lbl m">The light right now</span>
+      <div class="lights" id="lights"></div>
+      <span class="lbl m">Film speed</span>
+      <div class="isos" id="isos"><button data-v="100" aria-pressed="false">100</button><button data-v="200" aria-pressed="false">200</button><button data-v="400" aria-pressed="true">400</button><button data-v="800" aria-pressed="false">800</button><button data-v="1600" aria-pressed="false">1600</button><button data-v="3200" aria-pressed="false">3200</button></div>
+      <span class="lbl m">Push or pull <b id="compV" style="color:var(--amber)">±0 stops</b></span>
+      <input type="range" id="comp" min="-3" max="3" step="1" value="0" aria-label="Exposure compensation">
+    </div>
+    <div>
+      <div class="frame"><img id="frameImg" src="../assets/img/shop/halide/tabletop.jpg" alt="Preview frame"><span class="ev" id="evL">EV 15</span><span class="ex" id="exL">Correct</span></div>
+      <table><thead><tr><th>Aperture</th><th>Shutter</th><th>Good for</th></tr></thead><tbody id="tbl"></tbody></table>
+    </div>
+  </div>
+</div></section>
+
+<section id="lab"><div class="wrap">
+  <div class="sh"><span class="no">03</span><h2 class="cond">The lab</h2><p>Colour, black and white and slide film. Drop rolls at the counter or post them in our free mailer.</p></div>
+  <div class="lab rv">
+    <div>
+      <span class="lbl m">Format</span>
+      <div class="seg" id="fmt" data-one><button aria-pressed="true" data-v="0">35 mm</button><button aria-pressed="false" data-v="3">120</button><button aria-pressed="false" data-v="6">Half frame</button></div>
+      <span class="lbl m">Scan</span>
+      <div class="seg" id="scan" data-one><button aria-pressed="false" data-v="0">No scan</button><button aria-pressed="true" data-v="8">Standard</button><button aria-pressed="false" data-v="16">Large TIFF</button></div>
+      <div class="price"><span>Develop (C-41 / B&amp;W)</span><b id="pDev">$12</b></div>
+      <div class="price"><span>Scans, sent by link</span><b id="pScan">$8</b></div>
+      <div class="price"><span>Negatives sleeved and posted back</span><b>Free</b></div>
+      <div class="tot"><div class="qty"><button id="qm" aria-label="Fewer rolls">−</button><span id="qn">3</span> rolls<button id="qp" aria-label="More rolls">+</button></div><b id="pTot">$60</b></div>
+      <p class="m" style="color:var(--mute);margin-top:10px" id="disc">5 rolls or more: 10% off the lot</p>
+    </div>
+    <div>
+      <span class="lbl m">Track a roll</span>
+      <form class="track" id="trackF"><input id="code" value="HL-2471" aria-label="Order code"><button class="btn">Track</button></form>
+      <div id="trk"></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="film"><div class="wrap">
+  <div class="sh"><span class="no">04</span><h2 class="cond">On the<br>fridge</h2><p>We keep every roll cold. Stock counts are live, and when it says three left, there really are three.</p></div>
+  <div class="shelf" id="shelf"></div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="g">
+    <div><div class="logo">HALIDE</div><p style="color:var(--mute);margin-top:14px;max-width:340px">2130 SE Division St, Portland. Open Tuesday to Sunday, 11 to 7. Darkroom nights every Wednesday.</p></div>
+    <div><h4>Shop</h4><ul><li><a href="#cameras">Cameras</a></li><li><a href="#film">Film</a></li><li><a href="#">Lenses</a></li><li><a href="#">Gift cards</a></li></ul></div>
+    <div><h4>Lab</h4><ul><li><a href="#lab">Prices</a></li><li><a href="#lab">Track a roll</a></li><li><a href="#">Mailers</a></li><li><a href="#">Push and pull</a></li></ul></div>
+    <div><h4>Learn</h4><ul><li><a href="#exposure">Exposure guide</a></li><li><a href="#">Workshops</a></li><li><a href="#">Repairs</a></li><li><a href="#">Journal</a></li></ul></div>
+  </div>
+  <div class="big">HALIDE</div>
+  <div class="bot m"><span>© 2026 Halide Film Co.</span><span>Demo website by Xiraiya · photos from Unsplash</span></div>
+</div></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
+  var IMG='../assets/img/shop/halide/';
+  function toast(t){var el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove('on')},2300)}
+  var bag=0;function toBag(msg){bag++;$('#bagN').textContent=bag;toast(msg)}
+  $('#bagB').addEventListener('click',function(){toast(bag?bag+' item'+(bag>1?'s':'')+' in your bag. This is a demo, so checkout is off':'Your bag is empty')});
+  /* viewfinder */
+  var vf=$('#vf'),af=$('#af'),m=$('#meter'),shots=36,SS=['1/30','1/60','1/125','1/250','1/500','1/1000'],AP=['F1.4','F2','F2.8','F4','F5.6','F8'];
+  m.innerHTML=Array.apply(null,Array(11)).map(function(_,i){return '<i'+(i===5?' class="c"':'')+'></i>'}).join('');
+  vf.addEventListener('mousemove',function(e){var r=vf.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;af.style.left=x*100+'%';af.style.top=y*100+'%';af.classList.remove('lock');
+    var light=Math.max(0,Math.min(1,1-Math.hypot(x-.62,y-.45)*1.5));$('#rS').textContent=SS[Math.round(light*5)];$('#rA').textContent=AP[Math.round((1-light)*2+2)];
+    var k=Math.round((light-.5)*10);$$('i',m).forEach(function(el,i){el.classList.toggle('on',k>=0?(i>5&&i<=5+k):(i<5&&i>=5+k))})});
+  vf.addEventListener('click',function(){af.classList.remove('lock');void af.offsetWidth;af.classList.add('lock');shots=shots>1?shots-1:36;$('#shots').textContent='[ '+(shots<10?'0':'')+shots+' ]';vf.animate([{filter:'brightness(3)'},{filter:'brightness(1)'}],{duration:260})});
+  /* film strip */
+  var fr=['f2','tlr','onestep','x100','press','rx','instamatic','tele','tabletop'],h='';
+  for(var k=0;k<2;k++)fr.forEach(function(f,i){var n=i+1+k*9;h+='<div class="fm"><img src="'+IMG+f+'.jpg" alt="" loading="lazy"><span>▸ '+n+'</span><span class="r">KODAK 400TX  '+n+'A</span></div>'});
+  $('#rail').innerHTML=h;
+  /* cameras */
+  var C=[
+    {n:'Nikon F2',y:1971,t:'35mm',g:'A',p:540,img:'f2',l:['All speeds 1s to 1/2000','Fresh light seals','Nikkor 50mm f/1.4 included']},
+    {n:'Rolleicord V',y:1957,t:'Medium format',g:'A-',p:420,img:'tlr',l:['6×6 on 120 film','Taking lens cleaned','Leather case']},
+    {n:'Polaroid OneStep 2',y:2017,t:'Instant',g:'A',p:110,img:'onestep',l:['Battery holds charge','Flash tested','Two packs of i-Type free']},
+    {n:'Graflex Speed Graphic',y:1948,t:'Large format',g:'B+',p:690,img:'press',l:['4×5 sheet film','Bellows light-tight','Flash gun works']},
+    {n:'Kodak Instamatic 104',y:1965,t:'35mm',g:'B',p:45,img:'instamatic',l:['Takes 126 film','Shutter fires','Great first camera'],sold:1},
+    {n:'Sony RX100 III',y:2014,t:'Digital',g:'A-',p:380,img:'rx',l:['4,200 shutter count','Two batteries','Screen with no marks']},
+    {n:'Fujifilm X100V',y:2020,t:'Digital',g:'A',p:1190,img:'x100',l:['Silver body','Classic Chrome recipes loaded','Hood and filter']},
+    {n:'Nikkor 85mm f/1.8',y:1979,t:'Lenses',g:'A-',p:260,img:'tele',l:['No haze or fungus','Smooth focus','Both caps']}
+  ];
+  var types=['All','35mm','Medium format','Large format','Instant','Digital','Lenses'];
+  $('#fil').innerHTML=types.map(function(t,i){var n=t==='All'?C.length:C.filter(function(c){return c.t===t}).length;return '<button aria-pressed="'+(i===0)+'" data-t="'+t+'">'+t+'<b>'+n+'</b></button>'}).join('');
+  $('#cams').innerHTML=C.map(function(c,i){return '<article class="cam rv" data-t="'+c.t+'"><div class="top m"><span>'+c.t+' · '+c.y+'</span><span class="grade'+(c.g[0]==='B'?' b':'')+'" title="Condition grade">'+c.g+'</span></div><div class="ph"><img loading="lazy" src="'+IMG+c.img+'.jpg" alt="'+c.n+'">'+(c.sold?'<span class="sold">Sold</span>':'')+'</div><h3>'+c.n+'</h3><ul>'+c.l.map(function(l){return '<li>'+l+'</li>'}).join('')+'</ul><div class="bt"><b>$'+c.p.toLocaleString()+'</b><button data-hold="'+i+'"'+(c.sold?' disabled class="held">Sold':'>Hold for 48h')+'</button></div></article>'}).join('');
+  $('#fil').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$$('#fil button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});var t=b.getAttribute('data-t');$$('.cam').forEach(function(c){c.classList.toggle('hide',t!=='All'&&c.getAttribute('data-t')!==t)})});
+  $('#cams').addEventListener('click',function(e){var b=e.target.closest('[data-hold]');if(!b||b.disabled)return;b.disabled=true;b.classList.add('held');b.textContent='Held for you';toBag(C[+b.getAttribute('data-hold')].n+' is held until Friday')});
+  /* exposure */
+  var L=[{n:'Snow or sand',ev:16,d:'M3 12h2M19 12h2M12 3v2M12 19v2M12 8a4 4 0 100 8 4 4 0 000-8z'},{n:'Bright sun',ev:15,d:'M12 7a5 5 0 100 10 5 5 0 000-10zM12 1v3M12 20v3M4 4l2 2M18 18l2 2M1 12h3M20 12h3M4 20l2-2M18 6l2-2'},{n:'Hazy sun',ev:14,d:'M12 8a4 4 0 100 8 4 4 0 000-8zM3 18h18M5 21h14'},{n:'Cloudy bright',ev:13,d:'M7 18h10a4 4 0 000-8 6 6 0 00-11 2 3 3 0 001 6z'},{n:'Overcast',ev:12,d:'M6 19h12a4 4 0 000-8 6 6 0 00-11 1 3.5 3.5 0 00-1 7zM4 8h6'},{n:'Open shade',ev:11,d:'M3 21l9-16 9 16zM12 11v6'},{n:'Sunset',ev:10,d:'M3 17h18M7 13a5 5 0 0110 0M12 3v4M5 7l2 2M19 7l-2 2M6 21h12'},{n:'Bright room',ev:8,d:'M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7V17h8v-2.3A7 7 0 0012 2z'},{n:'Night street',ev:5,d:'M21 13A9 9 0 1111 3a7 7 0 0010 10z'}];
+  $('#lights').innerHTML=L.map(function(l,i){return '<button aria-pressed="'+(i===1)+'" data-i="'+i+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="'+l.d+'"/></svg><br>'+l.n+'<small>EV '+l.ev+'</small></button>'}).join('');
+  var ex={li:1,iso:400,comp:0},SH=[1/4000,1/2000,1/1000,1/500,1/250,1/125,1/60,1/30,1/15,1/8,1/4,1/2,1,2,4,8,15,30],AP2=[1.4,2,2.8,4,5.6,8,11,16,22],USE={1.4:'Low light, soft background',2:'Portraits',2.8:'Portraits, street at night',4:'Street, two people',5.6:'Everyday',8:'Street, zone focus',11:'Landscapes',16:'Landscapes, deep focus',22:'Everything sharp'};
+  function fmtS(t){return t>=1?t+'s':'1/'+Math.round(1/t)}
+  function expo(){
+    var ev=L[ex.li].ev+Math.log2(ex.iso/100),rows='',best=null,target=ev>=13?8:ev>=10?5.6:2.8;
+    AP2.forEach(function(N){var t=N*N/Math.pow(2,ev),s=SH.reduce(function(a,b){return Math.abs(Math.log2(b/t))<Math.abs(Math.log2(a/t))?b:a}),off=Math.abs(Math.log2(s/t))>.8,hand=s>1/30;
+      rows+='<tr class="'+(N===target&&!off?'best':off?'warn':'')+'"><td>f/'+N+'</td><td>'+(off?(t<1/4000?'Too bright':'Over 30s'):fmtS(s))+'</td><td>'+(off?'—':(hand?'Tripod: ':'')+USE[N])+'</td></tr>'});
+    $('#tbl').innerHTML=rows;$('#evL').textContent='EV '+(Math.round(ev*10)/10)+' @ ISO '+ex.iso;
+    var c=ex.comp;$('#compV').textContent=(c>0?'+':c<0?'−':'±')+Math.abs(c)+' stop'+(Math.abs(c)===1?'':'s');
+    $('#exL').textContent=c===0?'Correct':c>0?'Over by '+c:'Under by '+(-c);$('#exL').style.background=c===0?'var(--amber)':'var(--red)';
+    var lum=Math.pow(1.55,c)*(L[ex.li].ev<9?.8:1);$('#frameImg').style.filter='brightness('+lum.toFixed(2)+') contrast('+(1+Math.abs(c)*.08)+') saturate('+(c<0?1-(-c*.12):1+c*.05)+')';
+  }
+  $('#lights').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$$('#lights button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});ex.li=+b.getAttribute('data-i');expo()});
+  $('#isos').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$$('#isos button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});ex.iso=+b.getAttribute('data-v');expo()});
+  $('#comp').addEventListener('input',function(){ex.comp=+this.value;expo()});expo();
+  /* lab pricing */
+  var lab={f:0,s:8,q:3};
+  $$('[data-one]').forEach(function(g){g.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$$('button',g).forEach(function(x){x.setAttribute('aria-pressed',x===b)});if(g.id==='fmt')lab.f=+b.getAttribute('data-v');if(g.id==='scan')lab.s=+b.getAttribute('data-v');price()})});
+  function price(){var dev=12+lab.f,sc=lab.s+(lab.s&&lab.f===6?4:0),per=dev+sc,t=per*lab.q,d=lab.q>=5;if(d)t=t*.9;
+    $('#pDev').textContent='$'+dev;$('#pScan').textContent=sc?'$'+sc:'—';$('#qn').textContent=lab.q;$('#pTot').textContent='$'+(Math.round(t*100)/100).toString().replace(/\.(\d)$/,'.$10');
+    $('#disc').textContent=d?'10% off applied for '+lab.q+' rolls':'5 rolls or more: 10% off the lot';$('#disc').style.color=d?'var(--amber)':'var(--mute)'}
+  $('#qm').addEventListener('click',function(){lab.q=Math.max(1,lab.q-1);price()});$('#qp').addEventListener('click',function(){lab.q=Math.min(40,lab.q+1);price()});price();
+  /* tracker */
+  var ST=['Received at the counter','In the developer','Drying and cutting','Scanning','Ready: link sent'];
+  function track(code){code=code.trim().toUpperCase();var n=0;for(var i=0;i<code.length;i++)n+=code.charCodeAt(i);var at=n%5,films=['Portra 400','HP5 Plus','Ektar 100','Tri-X 400','CineStill 800T'],f=films[n%5];
+    var t0=new Date(Date.now()-at*6*36e5);function tm(i){var d=new Date(t0.getTime()+i*6*36e5);return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+' '+('0'+d.getHours()).slice(-2)+':00'}
+    $('#trk').innerHTML='<div class="roll"><span class="can"></span><div><b>'+code+' · '+f+'</b><div class="m" style="color:var(--mute)">36 exp · '+(n%3===0?'push +1':'box speed')+' · standard scans</div></div></div><ol class="steps">'+ST.map(function(s,i){return '<li class="'+(i<at?'done':i===at?'now':'')+'"><i></i><b>'+s+'</b><span>'+(i<=at?tm(i):'—')+'</span></li>'}).join('')+'</ol>'}
+  $('#trackF').addEventListener('submit',function(e){e.preventDefault();var v=$('#code').value;if(!/\w{2,}/.test(v)){toast('Enter the code on your receipt');return}track(v)});track('HL-2471');
+  /* film shelf */
+  var FS=[{n:'Portra',iso:400,bg:'linear-gradient(160deg,#f6c243,#e58a1f)',fg:'#3a1f06',k:'Kodak',p:17,s:12,t:'Colour negative'},{n:'HP5 Plus',iso:400,bg:'#f2f0ea',fg:'#111',k:'Ilford',p:9,s:40,t:'Black and white',stripe:'#111'},{n:'Ektar',iso:100,bg:'linear-gradient(160deg,#f3b52f,#d6461f)',fg:'#fff',k:'Kodak',p:14,s:7,t:'Colour negative'},{n:'Tri-X',iso:400,bg:'linear-gradient(160deg,#f7d33a,#e9b010)',fg:'#111',k:'Kodak',p:13,s:22,t:'Black and white',stripe:'#e0442b'},{n:'CineStill',iso:800,bg:'#161616',fg:'#e0442b',k:'Tungsten 800T',p:18,s:3,t:'Night colour'},{n:'Velvia',iso:50,bg:'linear-gradient(160deg,#1f8a4c,#0d4f2c)',fg:'#fff',k:'Fujifilm',p:22,s:5,t:'Slide film'}];
+  $('#shelf').innerHTML=FS.map(function(f,i){return '<div class="box rv"><div class="b3" style="background:'+f.bg+';color:'+f.fg+'"><small>'+f.k+'</small><div><span class="iso">'+f.iso+'</span><b>'+f.n+'</b>'+(f.stripe?'<i style="display:block;height:6px;margin-top:10px;background:'+f.stripe+'"></i>':'')+'</div><small>135-36 · '+f.t+'</small></div><h4>'+f.k.split(' ')[0]+' '+f.n+' '+f.iso+'</h4><p>$'+f.p+' · <span id="st'+i+'">'+(f.s<=5?'only '+f.s+' left':f.s+' in the fridge')+'</span></p><button data-f="'+i+'">Add a roll</button></div>'}).join('');
+  $('#shelf').addEventListener('click',function(e){var b=e.target.closest('[data-f]');if(!b)return;var i=+b.getAttribute('data-f'),f=FS[i];if(f.s<1){toast('Sold out. We restock on Tuesdays');return}f.s--;$('#st'+i).textContent=f.s<1?'sold out':f.s<=5?'only '+f.s+' left':f.s+' in the fridge';toBag('A roll of '+f.n+' '+f.iso+' is in your bag')});
+  /* reveal */
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.1});
+  $$('.rv').forEach(function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>

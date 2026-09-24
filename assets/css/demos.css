@@ -16,6 +16,7 @@
 .dm-play { position: absolute; left: 50%; top: 50%; z-index: 2; width: 64px; height: 64px; margin: -32px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; color: #fff; background: var(--red); box-shadow: 0 12px 30px -8px var(--red); transform: scale(.6); opacity: 0; transition: transform .5s var(--ease-out), opacity .3s; }
 .dm:hover .dm-play, .dm-shot:focus-visible .dm-play { transform: none; opacity: 1; }
 .dm-body { display: grid; gap: 10px; padding: 20px; flex: 1; align-content: start; }
+.dm-new { position: absolute; left: 14px; top: 14px; z-index: 2; padding: 5px 10px; border-radius: 999px; background: var(--red); color: #fff; font: 600 10px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; box-shadow: 0 8px 20px -8px var(--red); }
 .dm-type { font: 500 11px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--red); }
 .dm-body .h4 { font-size: 22px; }
 .dm-body p { color: var(--ink-2); font-size: 14.5px; }

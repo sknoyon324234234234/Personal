@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stride — Sneaker drops (demo site by Xiraiya)</title>
+<meta name="description" content="Demo sneaker drop and raffle website designed and built by Xiraiya.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@500&display=swap">
+<style>
+:root{--bg:#f3f2ee;--ink:#0d0d0d;--mu:#6e6c66;--blue:#2f3cff;--hot:#ff4d2e;--card:#fff;--line:rgba(13,13,13,.12)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 'DM Sans',system-ui,sans-serif;overflow-x:hidden}
+a{color:inherit;text-decoration:none}h1,h2,h3,h4,p{margin:0}button,input,select{font:inherit;color:inherit}button{cursor:pointer;background:none;border:0;padding:0}img{display:block;max-width:100%}
+.A{font-family:Anton,Impact,sans-serif;text-transform:uppercase;font-weight:400;letter-spacing:.005em}
+.mono{font:500 12px 'DM Mono',monospace;letter-spacing:.04em;text-transform:uppercase}
+.wrap{max-width:1400px;margin:0 auto;padding:0 28px}
+.btn{display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 26px;background:var(--ink);color:#fff;font:400 18px/1 Anton;text-transform:uppercase;letter-spacing:.03em;border-radius:999px;transition:background .2s,transform .2s}
+.btn:hover{background:var(--blue)}.btn:active{transform:scale(.97)}
+.btn.hot{background:var(--hot)}.btn.hot:hover{background:var(--ink)}
+.tick{background:var(--ink);color:#fff;overflow:hidden;white-space:nowrap;height:36px;display:flex;align-items:center}
+.tick div{display:inline-flex;gap:40px;animation:tk 30s linear infinite;padding-left:40px}.tick span::after{content:'✺';margin-left:40px;color:var(--hot)}
+@keyframes tk{to{transform:translateX(-50%)}}
+header{position:sticky;top:0;z-index:50;background:rgba(243,242,238,.88);backdrop-filter:blur(12px)}
+header .wrap{display:flex;align-items:center;height:70px;gap:30px}
+.logo{font:400 30px/1 Anton;letter-spacing:.02em;display:flex;align-items:center;gap:6px}.logo i{width:14px;height:14px;background:var(--hot);border-radius:50%;display:block}
+header nav{display:flex;gap:24px;margin-right:auto;font-weight:500}header nav a{opacity:.6}header nav a:hover{opacity:1}
+.sz{display:inline-flex;align-items:center;height:38px;padding:0 14px;border-radius:999px;box-shadow:inset 0 0 0 1.5px var(--ink);font-weight:700;font-size:14px}
+.bagb{height:38px;padding:0 14px;border-radius:999px;background:var(--ink);color:#fff;font-weight:700;font-size:14px}
+.hero{position:relative;padding:30px 0 70px;overflow:hidden}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:center}
+.hero h1{font:400 clamp(96px,min(14vw,25vh),250px)/.8 Anton;text-transform:uppercase;letter-spacing:-.01em;position:relative;z-index:2}
+.hero h1 span{display:block;color:transparent;-webkit-text-stroke:2px var(--ink)}
+.hero h1 b{font-weight:400;color:var(--blue)}
+.hero .info{display:flex;gap:30px;margin:28px 0;align-items:center;flex-wrap:wrap}
+.hero .price{font:400 44px/1 Anton}.hero .price s{font-size:22px;color:var(--mu);margin-left:8px}
+.cd{display:flex;gap:8px}.cd div{background:var(--ink);color:#fff;border-radius:12px;min-width:74px;padding:10px 8px 8px;text-align:center}.cd b{display:block;font:400 38px/1 Anton;font-variant-numeric:tabular-nums}.cd small{font:500 10px 'DM Mono';letter-spacing:.1em;opacity:.6}
+.shoe{position:relative;transform:rotate(-5deg);transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.shoe:hover{transform:rotate(-2deg) scale(1.02)}
+.shoe .ph{border-radius:28px;overflow:hidden;aspect-ratio:1/1.08;box-shadow:0 50px 80px -40px rgba(47,60,255,.55)}
+.shoe img{width:100%;height:100%;object-fit:cover}
+.stk{position:absolute;right:-26px;top:-30px;width:150px;height:150px;animation:spin 16s linear infinite;z-index:3}
+.stk text{font:500 12.5px 'DM Mono';letter-spacing:.18em;fill:#fff}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lbl2{position:absolute;left:-18px;bottom:40px;background:#fff;border-radius:16px;padding:12px 16px;box-shadow:0 20px 40px -20px rgba(0,0,0,.3);transform:rotate(5deg);font-size:14px;z-index:3}
+.lbl2 b{display:block;font:400 22px/1.1 Anton;text-transform:uppercase}
+section{padding:100px 0}
+.sh{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:34px;flex-wrap:wrap}
+.sh h2{font:400 clamp(56px,8vw,128px)/.85 Anton;text-transform:uppercase}.sh h2 em{font-style:normal;color:var(--hot)}
+.sh p{max-width:360px;color:var(--mu)}
+.sizes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:30px;align-items:center}
+.sizes button{width:62px;height:50px;border-radius:14px;background:var(--card);font-weight:700;box-shadow:inset 0 0 0 1px var(--line);transition:.2s}
+.sizes button:hover{box-shadow:inset 0 0 0 2px var(--ink)}
+.sizes button[aria-pressed=true]{background:var(--ink);color:#fff;box-shadow:none;transform:translateY(-3px)}
+.sizes .mono{margin-left:10px;color:var(--mu)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--card);border-radius:24px;padding:12px;display:flex;flex-direction:column;transition:opacity .3s,transform .3s}
+.card .im{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:4/3.3;background:#eceae4}
+.card img{width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.8,.2,1)}.card:hover img{transform:scale(1.07) rotate(-2deg)}
+.card .st{position:absolute;left:12px;top:12px;background:#fff;border-radius:999px;padding:6px 12px;font:500 11px 'DM Mono';text-transform:uppercase}
+.card .st.low{background:var(--hot);color:#fff}.card .st.out{background:var(--ink);color:#fff}
+.card .in{padding:14px 8px 6px;display:flex;justify-content:space-between;align-items:end;gap:10px}
+.card h3{font:400 28px/1 Anton;text-transform:uppercase}.card p{color:var(--mu);font-size:14px;margin-top:4px}
+.card .pr{font:400 26px/1 Anton}
+.card .add{margin:10px 8px 6px;height:46px;border-radius:12px;background:var(--bg);font-weight:700;transition:.2s}.card .add:hover{background:var(--ink);color:#fff}
+.card.out{opacity:.5}.card.out .add{pointer-events:none;text-decoration:line-through}
+.card .bars{display:flex;gap:3px;margin:0 8px 4px}.card .bars i{flex:1;height:4px;border-radius:2px;background:#e2e0da}.card .bars i.on{background:var(--ink)}.card .bars i.sel{background:var(--hot)}
+.raf{background:var(--blue);color:#fff;border-radius:36px;padding:60px;display:grid;grid-template-columns:1fr 1fr;gap:50px;position:relative;overflow:hidden}
+.raf::before{content:'RAFFLE RAFFLE RAFFLE';position:absolute;left:-2%;bottom:-40px;font:400 190px/1 Anton;color:rgba(255,255,255,.07);white-space:nowrap}
+.raf h2{font:400 clamp(56px,7vw,110px)/.85 Anton;text-transform:uppercase}
+.raf p{opacity:.8;margin:20px 0;max-width:420px}
+.raf ol{padding-left:20px;margin:0;display:grid;gap:8px;opacity:.9}
+form.f{position:relative;display:grid;gap:12px;align-content:start}
+.f input,.f select{height:56px;border-radius:14px;border:0;background:rgba(255,255,255,.12);padding:0 18px;outline:0;color:#fff;font-weight:500}
+.f input::placeholder{color:rgba(255,255,255,.6)}.f input:focus,.f select:focus{background:rgba(255,255,255,.2);box-shadow:inset 0 0 0 2px #fff}
+.f select option{color:var(--ink)}
+.f .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tg{display:grid;grid-template-columns:1fr 1fr;background:rgba(255,255,255,.12);border-radius:14px;padding:4px}
+.tg button{height:48px;border-radius:11px;font-weight:700;transition:.2s}.tg button[aria-pressed=true]{background:#fff;color:var(--blue)}
+.f .btn{background:#fff;color:var(--ink);justify-content:center}.f .btn:hover{background:var(--hot);color:#fff}
+.chkl{display:flex;gap:10px;font-size:14px;opacity:.85;align-items:flex-start}.chkl input{height:18px;width:18px;accent-color:var(--hot);margin-top:2px}
+.ticket{display:none;position:relative;background:#fff;color:var(--ink);border-radius:20px;overflow:hidden;animation:tin .7s cubic-bezier(.2,.8,.2,1)}
+.ticket.on{display:grid;grid-template-columns:1fr 150px}
+@keyframes tin{from{transform:translateY(40px) rotate(3deg);opacity:0}}
+.ticket .l{padding:24px;border-right:2px dashed var(--line);position:relative}
+.ticket .l::before,.ticket .l::after{content:'';position:absolute;right:-13px;width:24px;height:24px;border-radius:50%;background:var(--blue)}.ticket .l::before{top:-12px}.ticket .l::after{bottom:-12px}
+.ticket h4{font:400 40px/1 Anton;text-transform:uppercase;margin:6px 0 14px}
+.ticket dl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0}.ticket dt{font:500 10px 'DM Mono';text-transform:uppercase;color:var(--mu)}.ticket dd{margin:0;font-weight:700}
+.ticket .r{padding:20px 16px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:10px}
+.bc{display:flex;gap:2px;height:90px;align-items:stretch}.bc i{background:var(--ink)}
+.ticket .odds{font:400 30px/1 Anton;color:var(--hot);text-align:center}.ticket .odds small{display:block;font:500 10px 'DM Mono';color:var(--mu)}
+.cal{border-top:2px solid var(--ink)}
+.row{display:grid;grid-template-columns:120px 90px 1fr 120px 160px 50px;gap:20px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line);transition:background .2s}
+.row:hover{background:rgba(13,13,13,.03)}
+.row .dt{font:400 54px/.9 Anton}.row .dt small{display:block;font:500 11px 'DM Mono';color:var(--mu)}
+.row img{width:90px;height:66px;border-radius:12px;object-fit:cover}
+.row h3{font:400 28px/1 Anton;text-transform:uppercase}.row p{color:var(--mu);font-size:14px}
+.row .p{font:400 24px Anton}
+.pill{justify-self:start;padding:7px 12px;border-radius:999px;font:500 11px 'DM Mono';text-transform:uppercase;box-shadow:inset 0 0 0 1px var(--line)}
+.pill.open{background:var(--hot);color:#fff;box-shadow:none}.pill.gone{background:var(--ink);color:#fff;box-shadow:none}
+.bell{width:44px;height:44px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--line);display:grid;place-items:center;transition:.2s}.bell svg{width:18px;height:18px}
+.bell[aria-pressed=true]{background:var(--ink);color:#fff;box-shadow:none;animation:ring .5s}
+@keyframes ring{25%{transform:rotate(14deg)}50%{transform:rotate(-12deg)}75%{transform:rotate(6deg)}}
+footer{background:var(--ink);color:#fff;padding:80px 0 30px;margin-top:40px;overflow:hidden}
+footer .g{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}
+footer h4{font:500 11px 'DM Mono';text-transform:uppercase;opacity:.5;margin-bottom:14px;letter-spacing:.1em}
+footer ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}footer a:hover{color:var(--hot)}
+footer .big{font:400 clamp(120px,27vw,420px)/.78 Anton;letter-spacing:-.01em;margin:60px 0 20px;color:var(--hot)}
+footer .bot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;opacity:.55;font-size:13px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,100px);opacity:0;background:var(--ink);color:#fff;padding:13px 20px;border-radius:999px;font-weight:700;font-size:14px;z-index:90;transition:.45s cubic-bezier(.2,.8,.2,1)}.toast.on{transform:translate(-50%,0);opacity:1}
+.rv{opacity:0;transform:translateY(34px);transition:opacity .8s,transform .8s cubic-bezier(.2,.8,.2,1)}.rv.in{opacity:1;transform:none}
+@media(max-width:1000px){.hero .wrap,.raf{grid-template-columns:minmax(0,1fr)}.grid{grid-template-columns:1fr 1fr}header nav{display:none}header .wrap{justify-content:space-between}.row{grid-template-columns:80px 1fr auto 50px}.row img,.row .p{display:none}.raf{padding:36px}.shoe{max-width:520px;margin:30px auto 0}footer .g{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.wrap{padding:0 16px}.grid{grid-template-columns:1fr}.hero h1{font-size:30vw}.cd div{min-width:62px}.cd b{font-size:30px}.stk{right:-6px;width:110px;height:110px}.lbl2{left:6px}.raf{padding:26px;border-radius:26px}.f .two{grid-template-columns:1fr}.ticket.on{grid-template-columns:1fr}.ticket .l{border-right:0;border-bottom:2px dashed var(--line)}.ticket .l::before,.ticket .l::after{display:none}.row{grid-template-columns:64px 1fr 44px;gap:12px}.row .pill{display:none}.row .dt{font-size:40px}section{padding:76px 0}.sizes button{width:54px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="tick mono" aria-hidden="true"><div id="tk"></div></div>
+<header><div class="wrap">
+  <a href="#" class="logo">STRIDE<i></i></a>
+  <nav><a href="#drop">This drop</a><a href="#shop">Shop by size</a><a href="#raffle">Raffle</a><a href="#calendar">Calendar</a></nav>
+  <a class="sz" href="#shop" id="szChip">Pick size</a><button class="bagb" id="bagb">Bag 0</button>
+</div></header>
+
+<section class="hero" id="drop" style="padding-top:30px"><div class="wrap">
+  <div>
+    <span class="mono" style="color:var(--mu)">Drop 07 · 500 pairs · Raffle only</span>
+    <h1 style="margin-top:14px">Prism <span>Volt</span><b>'26</b></h1>
+    <div class="info">
+      <div class="price">$180<s>$240 resale</s></div>
+      <div class="cd" id="cd"><div><b>00</b><small>DAYS</small></div><div><b>00</b><small>HRS</small></div><div><b>00</b><small>MIN</small></div><div><b>00</b><small>SEC</small></div></div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn hot" href="#raffle">Enter the raffle</a><a class="btn" href="#shop">Shop in stock</a></div>
+  </div>
+  <div class="shoe">
+    <svg class="stk" viewBox="0 0 150 150" aria-hidden="true"><circle cx="75" cy="75" r="75" fill="#0d0d0d"/><defs><path id="cp" d="M75,75 m-56,0 a56,56 0 1,1 112,0 a56,56 0 1,1 -112,0"/></defs><text><textPath href="#cp">LIMITED 500 PAIRS · DROP 07 · STRIDE ·</textPath></text><path d="M75 52l6 16h17l-14 10 5 17-14-10-14 10 5-17-14-10h17z" fill="#ff4d2e"/></svg>
+    <div class="ph"><img src="../assets/img/shop/stride/prism-xl.jpg" alt="Blue and pink Prism Volt sneaker on a lit pedestal"></div>
+    <div class="lbl2"><span class="mono" style="color:var(--mu)">Colourway</span><b>Volt / Coral</b>Knit upper, Boost foam</div>
+  </div>
+</div></section>
+
+<section id="shop" style="padding-top:40px"><div class="wrap">
+  <div class="sh"><h2>Size <em>first.</em><br>Then fall in love.</h2><p>Pick your size once. We only show you what we can actually ship in it, and we remember it for next time.</p></div>
+  <div class="sizes" id="sizes"></div>
+  <div class="grid" id="grid"></div>
+</div></section>
+
+<section id="raffle" style="padding-top:40px"><div class="wrap">
+  <div class="raf rv">
+    <div style="position:relative">
+      <span class="mono" style="opacity:.7">Closes Sunday at 20:00</span>
+      <h2 style="margin-top:14px">One entry.<br>One pair.<br>No bots.</h2>
+      <p>We draw at random. Winners get a text with a 2-hour checkout link. Everyone else gets first dibs on restocks.</p>
+      <ol><li>One entry per person. We check phone numbers.</li><li>Pick up in Gulshan or pay $12 for delivery.</li><li>If you win, the size is locked. No swaps.</li></ol>
+    </div>
+    <div>
+      <form class="f" id="rf">
+        <div class="two"><input id="rn" required placeholder="Full name" aria-label="Full name" autocomplete="name"><input id="rp" required placeholder="Phone number" aria-label="Phone number" inputmode="tel" autocomplete="tel"></div>
+        <select id="rs" aria-label="Size"></select>
+        <div class="tg" id="tg"><button type="button" aria-pressed="true">Pick up in store</button><button type="button" aria-pressed="false">Deliver to me</button></div>
+        <label class="chkl"><input type="checkbox" required> I am a real human and I will not resell this pair within 30 days.</label>
+        <button class="btn">Enter the raffle</button>
+      </form>
+      <div class="ticket" id="ticket" role="status"></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="calendar" style="padding-top:20px"><div class="wrap">
+  <div class="sh"><h2>Release <em>calendar</em></h2><p>Tap the bell and we send one text when the raffle opens. Just one.</p></div>
+  <div class="cal" id="cal"></div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="g">
+    <div><div class="logo">STRIDE<i></i></div><p style="opacity:.6;margin-top:14px;max-width:320px">Gulshan Avenue, Dhaka · GEC Circle, Chattogram · Zindabazar, Sylhet. Open 12 to 10, every day.</p></div>
+    <div><h4>Shop</h4><ul><li><a href="#shop">Sneakers</a></li><li><a href="#calendar">Upcoming</a></li><li><a href="#">Care kits</a></li></ul></div>
+    <div><h4>Help</h4><ul><li><a href="#">Size guide</a></li><li><a href="#">Returns</a></li><li><a href="#">Raffle rules</a></li></ul></div>
+    <div><h4>Follow</h4><ul><li><a href="#">Instagram</a></li><li><a href="#">TikTok</a></li><li><a href="#">Discord</a></li></ul></div>
+  </div>
+  <div class="big">STRIDE</div>
+  <div class="bot"><span>© 2026 Stride Sneakers</span><span>Demo website by Xiraiya · photos from Unsplash</span></div>
+</div></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
+  var IMG='../assets/img/shop/stride/';
+  function toast(t){var el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove('on')},2300)}
+  var store={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+  var tkT=['Drop 07: Prism Volt','Raffle closes Sunday 20:00','Free pickup in Dhaka, Chattogram and Sylhet','Next drop: Shadow Trail GTX','Authenticity checked by hand'];
+  $('#tk').innerHTML=tkT.concat(tkT).concat(tkT).concat(tkT).map(function(t){return '<span>'+t+'</span>'}).join('');
+  /* countdown to next Sunday 20:00 */
+  var end=new Date();end.setDate(end.getDate()+((7-end.getDay())%7||7));end.setHours(20,0,0,0);
+  function cd(){var s=Math.max(0,Math.floor((end-Date.now())/1000)),v=[Math.floor(s/86400),Math.floor(s%86400/3600),Math.floor(s%3600/60),s%60];$$('#cd b').forEach(function(b,i){var t=('0'+v[i]).slice(-2);if(b.textContent!==t)b.textContent=t})}
+  cd();setInterval(cd,1000);
+  /* products and stock */
+  var SZ=[38,39,40,41,42,43,44,45,46];
+  var P=[
+    {n:'Prism Volt',d:'Knit, Boost foam',p:180,img:'prism',raffle:1},
+    {n:'Court Hi',d:'Triple white leather',p:120,img:'court'},
+    {n:"Canvas Hi '77",d:'Chocolate canvas',p:75,img:'canvas'},
+    {n:'EQT Runner',d:'Primeknit, black and pink',p:150,img:'eqt'},
+    {n:'Knit Runner',d:'Black, recycled upper',p:110,img:'knit'},
+    {n:'Shadow Trail',d:'Black, grippy outsole',p:135,img:'shadow'}];
+  P.forEach(function(p,i){p.s={};SZ.forEach(function(z,j){var v=(i*7+j*13+i*j)%9;p.s[z]=p.raffle?0:(v<2?0:v<4?v-1:v+2)})});
+  var size=+store.get('stride-size')||0,bag=0;
+  $('#sizes').innerHTML=SZ.map(function(z){return '<button aria-pressed="'+(z===size)+'" data-z="'+z+'">'+z+'</button>'}).join('')+'<span class="mono" id="szNote">EU sizes</span>';
+  $('#rs').innerHTML='<option value="">Your size (EU)</option>'+SZ.map(function(z){return '<option'+(z===size?' selected':'')+'>'+z+'</option>'}).join('');
+  function grid(){
+    $('#grid').innerHTML=P.map(function(p,i){var st=size?p.s[size]:null,out=size&&!st&&!p.raffle,lab=p.raffle?'Raffle only':!size?'Pick a size':out?'Sold out in '+size:st<=3?'Only '+st+' left in '+size:st+' in '+size;
+      return '<article class="card rv'+(out?' out':'')+'"><div class="im"><img loading="lazy" src="'+IMG+p.img+'.jpg" alt="'+p.n+'"><span class="st'+(p.raffle?' low':out?' out':st&&st<=3?' low':'')+'">'+lab+'</span></div><div class="in"><div><h3>'+p.n+'</h3><p>'+p.d+'</p></div><span class="pr">$'+p.p+'</span></div><div class="bars" title="Stock by size">'+SZ.map(function(z){return '<i class="'+(z===size?'sel':p.s[z]?'on':'')+'"></i>'}).join('')+'</div>'+(p.raffle?'<a class="add" href="#raffle" style="display:grid;place-items:center">Enter the raffle</a>':'<button class="add" data-add="'+i+'">'+(size?'Add size '+size:'Choose a size first')+'</button>')+'</article>'}).join('');
+    var n=size?P.filter(function(p){return p.s[size]>0}).length:P.length;$('#szNote').textContent=size?n+' of '+P.length+' styles ship in EU '+size:'EU sizes';
+    $('#szChip').textContent=size?'EU '+size:'Pick size';
+    $$('#grid .rv').forEach(function(e){e.classList.add('in')});
+  }
+  $('#sizes').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;size=+b.getAttribute('data-z');store.set('stride-size',size);$$('#sizes button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});$('#rs').value=size;grid()});
+  $('#grid').addEventListener('click',function(e){var b=e.target.closest('[data-add]');if(!b)return;if(!size){toast('Pick your size first');$('#sizes').scrollIntoView({block:'center'});return}var p=P[+b.getAttribute('data-add')];if(!p.s[size]){toast('Sold out in '+size);return}p.s[size]--;bag++;$('#bagb').textContent='Bag '+bag;toast(p.n+' in EU '+size+' is in your bag');grid()});
+  $('#bagb').addEventListener('click',function(){toast(bag?'Checkout is off in this demo':'Your bag is empty')});
+  grid();
+  /* raffle */
+  $('#tg').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$$('#tg button').forEach(function(x){x.setAttribute('aria-pressed',x===b)})});
+  $('#rf').addEventListener('submit',function(e){e.preventDefault();var z=$('#rs').value;if(!z){toast('Pick a size for the raffle');$('#rs').focus();return}
+    var nm=$('#rn').value.trim(),no='#'+(4000+Math.floor(Math.random()*5000)),odds=Math.round(19000/500+(Math.abs(+z-42)*-4));
+    var bars='',seed=0;for(var i=0;i<no.length;i++)seed+=no.charCodeAt(i)*(i+3);for(var j=0;j<34;j++){seed=(seed*9301+49297)%233280;bars+='<i style="width:'+(1+seed%4)+'px"></i>'}
+    var t=$('#ticket');t.innerHTML='<div class="l"><span class="mono" style="color:var(--mu)">Entry '+no+'</span><h4>Prism Volt</h4><dl><div><dt>Name</dt><dd>'+nm.replace(/[<>&"]/g,'')+'</dd></div><div><dt>Size</dt><dd>EU '+z+'</dd></div><div><dt>Draw</dt><dd>Sun 20:00</dd></div><div><dt>Collect</dt><dd>'+($('#tg [aria-pressed=true]').textContent.indexOf('store')>0?'Gulshan store':'Delivery')+'</dd></div></dl></div><div class="r"><div class="bc">'+bars+'</div><div class="odds">1 in '+Math.max(12,odds)+'<small>Odds in your size</small></div></div>';
+    $('#rf').style.display='none';t.classList.add('on');toast('You are in. Good luck')});
+  /* calendar */
+  var C=[{d:'Mon',n:"Canvas Hi '77 Mocha",m:'Vintage canvas',p:80,img:'canvas',s:'gone',l:'Sold out'},{d:'Sun',n:'Prism Volt',m:'Knit, Boost foam',p:180,img:'prism',s:'open',l:'Raffle open'},{d:'Fri',n:'Shadow Trail GTX',m:'Waterproof, black',p:165,img:'shadow',s:'soon',l:'Raffle in 5 days'},{d:'Tue',n:'Court Hi "Ivory"',m:'Tumbled leather',p:130,img:'court',s:'soon',l:'First come'},{d:'Sat',n:'EQT Runner OG',m:'1991 colourway',p:150,img:'eqt',s:'soon',l:'Raffle'}];
+  var now=new Date();
+  $('#cal').innerHTML=C.map(function(c,i){var k=i-1,dt=new Date(now.getTime()+(k===0?(end-now):k*8*864e5));if(c.s==='gone')dt=new Date(now.getTime()-9*864e5);var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dt.getMonth()];
+    return '<div class="row rv"><div class="dt">'+('0'+dt.getDate()).slice(-2)+'<small>'+mo+' · '+['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dt.getDay()]+'</small></div><img loading="lazy" src="'+IMG+c.img+'.jpg" alt=""><div><h3>'+c.n+'</h3><p>'+c.m+'</p></div><span class="p">$'+c.p+'</span><span class="pill '+(c.s==='open'?'open':c.s==='gone'?'gone':'')+'">'+c.l+'</span>'+(c.s==='gone'?'<span></span>':'<button class="bell" aria-pressed="false" aria-label="Remind me about '+c.n+'" data-b="'+c.n+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></button>')+'</div>'}).join('');
+  $('#cal').addEventListener('click',function(e){var b=e.target.closest('.bell');if(!b)return;var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);toast(on?'We will text you when '+b.getAttribute('data-b')+' opens':'Reminder removed')});
+  /* reveal */
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.1});
+  $$('.rv').forEach(function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>

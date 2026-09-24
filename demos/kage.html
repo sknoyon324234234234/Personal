@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kage Build — Custom gaming PCs (demo site by Xiraiya)</title>
+<meta name="description" content="Demo custom PC builder website designed and built by Xiraiya.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#08090b;--s1:#0f1114;--s2:#15181c;--s3:#1d2126;--tx:#e9ecef;--mu:#7f8894;--ac:#b6ff3b;--ac2:#3be8ff;--warn:#ffb020;--line:rgba(233,236,239,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--tx);font:400 15px/1.6 'IBM Plex Sans',system-ui,sans-serif;overflow-x:hidden}
+a{color:inherit;text-decoration:none}h1,h2,h3,h4,p{margin:0}button,input{font:inherit;color:inherit}button{cursor:pointer;background:none;border:0;padding:0}img{display:block;max-width:100%}
+.d{font-family:'Chakra Petch',sans-serif;text-transform:uppercase;letter-spacing:.01em}
+.mono{font-family:'IBM Plex Mono',monospace}
+.wrap{max-width:1380px;margin:0 auto;padding:0 28px}
+.cut{clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:48px;padding:0 24px;background:var(--ac);color:#0b0d08;font:700 14px/1 'Chakra Petch';text-transform:uppercase;letter-spacing:.06em;transition:filter .2s,transform .2s}
+.btn:hover{filter:brightness(1.12)}.btn:active{transform:translateY(1px)}
+.btn.o{background:var(--s2);color:var(--tx);box-shadow:inset 0 0 0 1px var(--line)}.btn.o:hover{box-shadow:inset 0 0 0 1px var(--ac)}
+.lbl{font:500 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:var(--mu)}
+header{position:sticky;top:0;z-index:50;background:rgba(8,9,11,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;height:66px;gap:30px}
+.logo{display:flex;align-items:baseline;gap:8px;font:700 22px/1 'Chakra Petch';letter-spacing:.04em}.logo span{color:var(--ac)}.logo small{font:500 12px 'IBM Plex Mono';color:var(--mu);letter-spacing:.2em}
+header nav{display:flex;gap:26px;margin-right:auto;color:var(--mu)}header nav a:hover{color:var(--tx)}
+.pill{display:flex;align-items:center;gap:10px;height:38px;padding:0 14px;background:var(--s2);font:500 13px 'IBM Plex Mono'}.pill i{width:8px;height:8px;border-radius:50%;background:var(--ac);box-shadow:0 0 10px var(--ac)}
+.hero{position:relative;padding:70px 0 60px;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/100% 64px,linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/64px 100%;mask:radial-gradient(ellipse at 70% 40%,#000,transparent 70%);-webkit-mask:radial-gradient(ellipse at 70% 40%,#000,transparent 70%)}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+.hero h1{font:700 clamp(50px,6.6vw,104px)/.92 'Chakra Petch';text-transform:uppercase;letter-spacing:-.01em;margin:20px 0 24px}
+.hero h1 em{font-style:normal;color:var(--ac);display:block}
+.hero p{color:var(--mu);font-size:18px;max-width:500px;margin-bottom:32px}
+.kata{position:absolute;right:-10px;top:10px;font:700 180px/1 'Chakra Petch';color:rgba(182,255,59,.04);writing-mode:vertical-rl;pointer-events:none}
+.rig{position:relative;aspect-ratio:1/1.02}
+.rig .ph{position:absolute;inset:0;overflow:hidden;background:#000}
+.rig img{width:100%;height:100%;object-fit:cover;filter:saturate(1.2) contrast(1.05)}
+.rig .ph::after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(8,9,11,.9))}
+.tel{position:absolute;background:rgba(15,17,20,.82);backdrop-filter:blur(10px);border:1px solid var(--line);padding:12px 14px;min-width:150px}
+.tel b{display:block;font:600 26px/1.1 'Chakra Petch'}.tel b small{font-size:13px;color:var(--mu);margin-left:4px}
+.tel.t1{left:-30px;top:40px}.tel.t2{right:-20px;top:36%}.tel.t3{left:20px;right:20px;bottom:20px;display:flex;gap:18px;align-items:center}
+.tel canvas{flex:1;height:48px;width:100%}
+.hot{color:var(--warn)}
+.bar{display:flex;gap:30px;padding:22px 0;border-block:1px solid var(--line);margin-top:50px;flex-wrap:wrap}.bar div{display:flex;gap:10px;align-items:center;color:var(--mu)}.bar b{color:var(--tx);font:600 20px 'Chakra Petch'}
+section{padding:100px 0}
+.sh{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:40px;flex-wrap:wrap}
+.sh h2{font:700 clamp(40px,5vw,72px)/.95 'Chakra Petch';text-transform:uppercase;margin-top:12px}.sh h2 span{color:var(--ac)}
+.sh p{color:var(--mu);max-width:420px}
+.cfg{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:start}
+.step{background:var(--s1);border:1px solid var(--line);margin-bottom:14px}
+.step>header{position:static;background:none;backdrop-filter:none;display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.step>header .n{font:600 12px 'IBM Plex Mono';color:var(--bg);background:var(--ac);width:26px;height:26px;display:grid;place-items:center}
+.step>header h3{font:600 18px 'Chakra Petch';text-transform:uppercase;flex:1}.step>header span{font:500 13px 'IBM Plex Mono';color:var(--mu)}
+.opts{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:1px;background:var(--line)}
+.op{background:var(--s1);padding:16px 34px 16px 18px;text-align:left;position:relative;transition:background .2s}
+.op:hover{background:var(--s2)}
+.op b{display:block;font-weight:600;font-size:15px;margin-bottom:2px}.op small{display:block;color:var(--mu);font:400 12px/1.5 'IBM Plex Mono'}
+.op .pr{display:block;margin-top:10px;font:600 15px 'Chakra Petch'}
+.op[aria-pressed=true]{background:var(--s3);box-shadow:inset 0 0 0 1px var(--ac)}
+.op[aria-pressed=true]::after{content:'';position:absolute;right:12px;top:12px;width:16px;height:16px;background:var(--ac);clip-path:polygon(14% 44%,0 65%,50% 100%,100% 16%,80% 0,43% 62%)}
+.op .tagx{display:block;margin-top:6px;font:500 10px 'IBM Plex Mono';color:var(--ac2);letter-spacing:.1em;text-transform:uppercase}
+.sum{position:sticky;top:86px;background:var(--s1);border:1px solid var(--line)}
+.sum .top{padding:22px;border-bottom:1px solid var(--line)}
+.sum .price{font:700 46px/1 'Chakra Petch';margin:8px 0 4px}
+.sum .emi{color:var(--mu);font:400 13px 'IBM Plex Mono'}
+.sum .blk{padding:18px 22px;border-bottom:1px solid var(--line)}
+.res{display:flex;box-shadow:inset 0 0 0 1px var(--line);margin:10px 0 14px}.res button{flex:1;height:34px;font:500 12px 'IBM Plex Mono'}.res button[aria-pressed=true]{background:var(--tx);color:var(--bg)}
+.fps{display:grid;gap:10px}
+.fps div{display:grid;grid-template-columns:110px 1fr 58px;gap:10px;align-items:center;font-size:13px}
+.fps i{height:8px;background:var(--s3);position:relative;overflow:hidden}.fps i::after{content:'';position:absolute;inset:0;width:var(--w);background:linear-gradient(90deg,var(--ac2),var(--ac));transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.fps b{font:600 15px 'Chakra Petch';text-align:right}
+.pw{display:flex;justify-content:space-between;font:500 13px 'IBM Plex Mono';margin-top:10px}
+.meter{height:10px;background:var(--s3);margin-top:8px;position:relative}.meter i{position:absolute;left:0;top:0;bottom:0;background:var(--ac);transition:width .6s,background .3s}.meter s{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--tx);transition:left .6s}
+.chk{display:grid;gap:8px;font-size:14px}
+.chk div{display:flex;gap:10px;align-items:flex-start}.chk div::before{content:'';flex:none;width:8px;height:8px;margin-top:7px;background:var(--ac)}
+.chk div.w::before{background:var(--warn)}.chk div.w{color:var(--warn)}
+.chk button{color:var(--tx);text-decoration:underline;text-underline-offset:3px;margin-left:4px}
+.sum .act{padding:18px 22px;display:grid;grid-template-columns:1fr auto;gap:10px}
+.code{font:500 12px 'IBM Plex Mono';color:var(--mu);padding:0 22px 18px}
+.gear{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:16px;scrollbar-width:thin;scrollbar-color:var(--s3) transparent}
+.gc{flex:none;width:290px;background:var(--s1);border:1px solid var(--line);scroll-snap-align:start;display:flex;flex-direction:column}
+.gc .im{aspect-ratio:4/3;overflow:hidden;background:#000}.gc img{width:100%;height:100%;object-fit:cover;transition:transform .8s}.gc:hover img{transform:scale(1.06)}
+.gc .in{padding:16px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.gc h3{font:600 17px 'Chakra Petch';text-transform:uppercase}.gc p{color:var(--mu);font-size:13px}
+.gc .ft{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px}.gc .ft b{font:600 18px 'Chakra Petch'}
+.gc .ft button{height:34px;padding:0 14px;box-shadow:inset 0 0 0 1px var(--line);font:500 12px 'IBM Plex Mono';text-transform:uppercase}.gc .ft button:hover,.gc .ft button.on{box-shadow:inset 0 0 0 1px var(--ac);color:var(--ac)}
+.lab2{display:grid;grid-template-columns:1.1fr 1fr;gap:28px}
+.term{background:#050607;border:1px solid var(--line);font:400 13px/1.8 'IBM Plex Mono';padding:18px 20px;min-height:360px;position:relative}
+.term .tb{display:flex;gap:6px;margin-bottom:14px}.term .tb i{width:10px;height:10px;border-radius:50%;background:var(--s3)}
+.term .ok{color:var(--ac)}.term .dim{color:var(--mu)}.term .cy{color:var(--ac2)}
+.term .cur::after{content:'▋';animation:bl 1s steps(2) infinite;color:var(--ac)}@keyframes bl{50%{opacity:0}}
+.promise{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+.promise div{background:var(--s1);padding:24px}
+.promise b{display:block;font:700 34px/1 'Chakra Petch';color:var(--ac);margin-bottom:8px}
+.promise p{color:var(--mu);font-size:14px}
+footer{border-top:1px solid var(--line);padding:70px 0 30px}
+footer .g{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}
+footer h4{font:500 11px 'IBM Plex Mono';letter-spacing:.12em;text-transform:uppercase;color:var(--mu);margin-bottom:14px}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}footer a:hover{color:var(--ac)}
+footer .big{font:700 clamp(80px,16vw,240px)/.8 'Chakra Petch';color:var(--s2);margin:60px 0 24px;letter-spacing:-.02em}
+footer .bot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:var(--mu);font:400 12px 'IBM Plex Mono'}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,100px);opacity:0;background:var(--ac);color:#0b0d08;padding:12px 18px;font:600 14px 'Chakra Petch';text-transform:uppercase;z-index:90;transition:.4s cubic-bezier(.2,.8,.2,1)}.toast.on{transform:translate(-50%,0);opacity:1}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .8s,transform .8s cubic-bezier(.2,.8,.2,1)}.rv.in{opacity:1;transform:none}
+@media(max-width:1100px){.cfg{grid-template-columns:1fr}.sum{position:relative;top:0}}
+@media(max-width:900px){.hero .wrap,.lab2{grid-template-columns:minmax(0,1fr)}header nav{display:none}header .wrap{justify-content:space-between}.tel.t1{left:10px}.tel.t2{right:10px}footer .g{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.opts{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.wrap{padding:0 16px}.promise{grid-template-columns:1fr}.fps div{grid-template-columns:92px 1fr 50px}section{padding:76px 0}.tel{min-width:0;padding:10px}.tel b{font-size:20px}.kata{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a href="#" class="logo">KAGE<span>/</span>BUILD <small>カゲ</small></a>
+  <nav><a href="#build">Configure</a><a href="#gear">Gear</a><a href="#tested">Stress test</a><a href="#">Support</a></nav>
+  <a class="pill" href="#build"><i></i><span>Your build</span> <b id="pillP">৳0</b></a>
+</div></header>
+
+<section class="hero" style="padding-top:70px"><div class="wrap">
+  <span class="kata">影ビルド</span>
+  <div>
+    <span class="lbl">Custom PCs · Assembled in Dhaka</span>
+    <h1>Built in the dark. <em>Tuned to the frame.</em></h1>
+    <p>Pick every part, see real frame rates before you pay, and get a machine that has already run twelve hours of stress tests on our bench.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn cut" href="#build">Configure your rig</a><a class="btn o cut" href="#tested">See how we test</a></div>
+    <div class="bar"><div><b>2,840</b> rigs shipped</div><div><b>3 yr</b> parts and labour</div><div><b>72 h</b> build time</div></div>
+  </div>
+  <div class="rig">
+    <div class="ph cut"><img src="../assets/img/shop/kage/tower.jpg" alt="Open PC case with green lit fans"></div>
+    <div class="tel t1 cut"><span class="lbl">CPU package</span><b id="tC">62<small>°C</small></b></div>
+    <div class="tel t2 cut"><span class="lbl">GPU hotspot</span><b id="tG">71<small>°C</small></b></div>
+    <div class="tel t3 cut"><div><span class="lbl">Frame rate</span><b id="tF">164<small>fps</small></b></div><canvas id="spark" width="600" height="96"></canvas></div>
+  </div>
+</div></section>
+
+<section id="build" style="padding-top:40px"><div class="wrap">
+  <div class="sh"><div><span class="lbl">01 · Configurator</span><h2>Build it <span>your way</span></h2></div><p>Every choice updates the price, the frame rates, the power draw and our compatibility checks. No surprises at checkout.</p></div>
+  <div class="cfg">
+    <div id="steps"></div>
+    <aside class="sum cut">
+      <div class="top"><span class="lbl">Total, assembled and tested</span><div class="price mono" id="tot">৳0</div><div class="emi" id="emi">or ৳0 / month over 12 months, 0% EMI</div></div>
+      <div class="blk"><span class="lbl">Estimated frame rates · high settings</span>
+        <div class="res" id="res"><button data-v="1.35" aria-pressed="false">1080p</button><button data-v="1" aria-pressed="true">1440p</button><button data-v=".52" aria-pressed="false">4K</button></div>
+        <div class="fps" id="fps"></div></div>
+      <div class="blk"><span class="lbl">Power under load</span><div class="pw"><span id="watt">0 W</span><span id="psu">PSU: 650 W Gold</span></div><div class="meter"><i id="mI"></i><s id="mS"></s></div></div>
+      <div class="blk"><span class="lbl">Compatibility</span><div class="chk" id="chk" style="margin-top:10px"></div></div>
+      <div class="act"><button class="btn" id="buy">Add to cart</button><button class="btn o" id="share" title="Copy build code">Share</button></div>
+      <div class="code" id="code">Build code KG-0000</div>
+    </aside>
+  </div>
+</div></section>
+
+<section id="gear" style="padding-top:40px"><div class="wrap">
+  <div class="sh"><div><span class="lbl">02 · Desk setup</span><h2>Finish the <span>desk</span></h2></div><p>Add any of these to a build and we knock 5% off the whole order. They ship in the same box.</p></div>
+  <div class="gear" id="gearL"></div>
+</div></section>
+
+<section id="tested" style="padding-top:40px"><div class="wrap">
+  <div class="sh"><div><span class="lbl">03 · The bench</span><h2>Twelve hours <span>of pain</span></h2></div><p>Before a rig leaves, it runs the same tests every time. You get the full log in the box, signed by the person who built it.</p></div>
+  <div class="lab2">
+    <div class="term cut" id="term"><div class="tb"><i></i><i></i><i></i></div><div id="log"></div></div>
+    <div class="promise">
+      <div><b>12 h</b><p>Prime95, OCCT and 3DMark loops back to back with the side panel on.</p></div>
+      <div><b>0</b><p>WHEA errors allowed. One error and the part goes back to the supplier.</p></div>
+      <div><b>3 yr</b><p>Parts and labour. We pick it up from anywhere in Dhaka for free.</p></div>
+      <div><b>1 day</b><p>Average repair turnaround in 2025, with a loaner rig if it takes longer.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="g">
+    <div><a href="#" class="logo">KAGE<span>/</span>BUILD</a><p style="color:var(--mu);margin-top:14px;max-width:340px">Level 4, Bashundhara City annex, Panthapath, Dhaka. Open every day from 11 to 9, except Tuesday.</p></div>
+    <div><h4>Build</h4><ul><li><a href="#build">Configurator</a></li><li><a href="#">Prebuilt rigs</a></li><li><a href="#">Upgrades</a></li></ul></div>
+    <div><h4>Help</h4><ul><li><a href="#">Warranty</a></li><li><a href="#">EMI banks</a></li><li><a href="#">Track order</a></li></ul></div>
+    <div><h4>Social</h4><ul><li><a href="#">Discord</a></li><li><a href="#">YouTube</a></li><li><a href="#">Facebook</a></li></ul></div>
+  </div>
+  <div class="big">KAGE</div>
+  <div class="bot"><span>© 2026 Kage Build Ltd.</span><span>Demo website by Xiraiya · photos from Unsplash · frame rates are estimates</span></div>
+</div></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
+  function tk(n){return '৳'+Math.round(n).toLocaleString('en-IN')}
+  function toast(t){var el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove('on')},2400)}
+  var S=[
+    {k:'cpu',t:'Processor',o:[
+      {n:'Ryzen 5 7600',s:'6 cores · 5.1 GHz · 65 W',p:24500,w:88,sc:1},
+      {n:'Ryzen 7 7800X3D',s:'8 cores · 96 MB V-Cache · 120 W',p:46000,w:120,sc:1.34,tag:'Best for games'},
+      {n:'Core i7-14700K',s:'20 cores · 5.6 GHz · 253 W',p:48500,w:253,sc:1.24},
+      {n:'Ryzen 9 9950X',s:'16 cores · 5.7 GHz · 170 W',p:72000,w:170,sc:1.4,tag:'Streaming and editing'}]},
+    {k:'gpu',t:'Graphics',o:[
+      {n:'RTX 4060',s:'8 GB · DLSS 3 · 115 W',p:38000,w:115,sc:1},
+      {n:'RX 7800 XT',s:'16 GB · 263 W',p:62000,w:263,sc:1.62},
+      {n:'RTX 4070 Super',s:'12 GB · DLSS 3 · 220 W',p:75000,w:220,sc:1.8,tag:'Most picked'},
+      {n:'RTX 4080 Super',s:'16 GB · DLSS 3 · 320 W',p:135000,w:320,sc:2.55}]},
+    {k:'ram',t:'Memory',o:[
+      {n:'16 GB DDR5',s:'2 × 8 GB · 5600 MT/s',p:6500,w:6,sc:.95},
+      {n:'32 GB DDR5',s:'2 × 16 GB · 6000 CL30',p:12500,w:8,sc:1,tag:'Sweet spot'},
+      {n:'64 GB DDR5',s:'2 × 32 GB · 6000 CL30',p:24000,w:10,sc:1.01}]},
+    {k:'ssd',t:'Storage',o:[
+      {n:'1 TB NVMe',s:'Gen 4 · 7,000 MB/s',p:8500,w:5},
+      {n:'2 TB NVMe',s:'Gen 4 · 7,300 MB/s',p:15500,w:6},
+      {n:'2 TB NVMe + 4 TB HDD',s:'Games on SSD, clips on HDD',p:27000,w:14}]},
+    {k:'cool',t:'Cooling',o:[
+      {n:'Tower air cooler',s:'Dual fan · handles 180 W',p:4500,w:4,max:180},
+      {n:'240 mm liquid',s:'AIO · handles 250 W',p:11000,w:8,max:250},
+      {n:'360 mm liquid',s:'AIO · handles 320 W · ARGB',p:17500,w:10,max:320}]},
+    {k:'case',t:'Case',o:[
+      {n:'Kage Shadow',s:'Mid tower · mesh front · black',p:9500,w:12},
+      {n:'Kage Glass',s:'Dual chamber · glass · white',p:13000,w:16},
+      {n:'Kage Mini',s:'Small form factor · 14 litres',p:14500,w:8,sff:1}]}
+  ];
+  var pick={cpu:1,gpu:2,ram:1,ssd:1,cool:1,case:0},res=1;
+  $('#steps').innerHTML=S.map(function(st,i){return '<div class="step cut rv" data-k="'+st.k+'"><header><span class="n">'+(i+1)+'</span><h3>'+st.t+'</h3><span data-sel></span></header><div class="opts" style="--n:'+st.o.length+'">'+st.o.map(function(o,j){return '<button class="op" data-j="'+j+'" aria-pressed="false"><b>'+o.n+'</b><small>'+o.s+'</small>'+(o.tag?'<span class="tagx">'+o.tag+'</span>':'')+'<span class="pr">'+tk(o.p)+'</span></button>'}).join('')+'</div></div>'}).join('');
+  $('#steps').addEventListener('click',function(e){var b=e.target.closest('.op');if(!b)return;var k=b.closest('.step').getAttribute('data-k');pick[k]=+b.getAttribute('data-j');upd()});
+  $('#res').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$$('#res button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});res=+b.getAttribute('data-v');upd()});
+  var G=[{n:'Valorant',b:290,g:.35,c:1.2},{n:'Counter-Strike 2',b:230,g:.55,c:1.05},{n:'Fortnite',b:118,g:.8,c:.5},{n:'Cyberpunk 2077',b:58,g:1,c:.2}];
+  function o(k){var st=S.filter(function(s){return s.k===k})[0];return st.o[pick[k]]}
+  var shown=0,gearSel={},GEAR=[
+    {id:'mon',n:'27" 1440p 240 Hz',d:'Fast IPS, 1 ms, G-Sync compatible',p:52000,img:'monitor'},
+    {id:'uw',n:'34" ultrawide',d:'3440 × 1440, 165 Hz, curved',p:68000,img:'ultrawide'},
+    {id:'kb',n:'Kage 75 keyboard',d:'Hot-swap, gasket mount, PBT caps',p:14500,img:'keyboard'},
+    {id:'ms',n:'Shade wireless mouse',d:'58 g, 4K polling, 90 h battery',p:7800,img:'mouse'},
+    {id:'lap',n:'Kage Air 14 laptop',d:'For the couch. RTX 4050, 1.4 kg',p:142000,img:'laptop'},
+    {id:'tab',n:'Pen display',d:'For the artists. 13", 8K levels',p:39000,img:'tablet'},
+    {id:'ram',n:'RGB memory kit',d:'Upgrade later: 2 × 16 GB',p:13500,img:'ram'},
+    {id:'hdd',n:'8 TB archive drive',d:'For every clip you ever saved',p:21000,img:'hdd'},
+    {id:'usb',n:'USB-C 240 W cable',d:'Braided, 2 m',p:1400,img:'usbc'},
+    {id:'lan',n:'Cat 6 cable, 5 m',d:'Because Wi-Fi drops in ranked',p:600,img:'cat6'}];
+  function total(){var t=0;S.forEach(function(s){t+=o(s.k).p});t+=7500;var g=0;for(var id in gearSel)if(gearSel[id])g+=GEAR.filter(function(x){return x.id===id})[0].p;return {t:(t+g)*(g?.95:1),g:g}}
+  function count(el,to){var from=+(el.getAttribute('data-v')||0),t0=performance.now();el.setAttribute('data-v',to);(function f(now){var k=Math.min(1,(now-t0)/500),v=from+(to-from)*(1-Math.pow(1-k,3));el.textContent=tk(v);if(k<1)requestAnimationFrame(f)})(t0)}
+  function upd(){
+    $$('.step').forEach(function(st){var k=st.getAttribute('data-k');$$('.op',st).forEach(function(b){b.setAttribute('aria-pressed',+b.getAttribute('data-j')===pick[k])});st.querySelector('[data-sel]').textContent=o(k).n});
+    var T=total();count($('#tot'),T.t);$('#pillP').textContent=tk(T.t);$('#emi').textContent='or '+tk(T.t/12)+' / month over 12 months, 0% EMI'+(T.g?' · 5% desk bundle applied':'');
+    var cpu=o('cpu'),gpu=o('gpu'),ram=o('ram'),rows='',best=[];
+    G.forEach(function(g){var f=g.b*Math.pow(gpu.sc*res,g.g)*Math.pow(cpu.sc*ram.sc,g.c),mx=g.b*Math.pow(2.55*1.35,g.g)*Math.pow(1.4,g.c);rows+='<div><span>'+g.n+'</span><i style="--w:'+Math.min(100,f/mx*100).toFixed(1)+'%"></i><b>'+Math.round(f)+'</b></div>'});
+    $('#fps').innerHTML=rows;
+    var w=cpu.w+gpu.w+ram.w+o('ssd').w+o('cool').w+o('case').w+45,psu=w*1.35<=650?650:w*1.35<=750?750:w*1.35<=850?850:1000;
+    $('#watt').textContent=Math.round(w)+' W under load';$('#psu').textContent='PSU: '+psu+' W Gold';$('#mI').style.width=(w/1000*100)+'%';$('#mS').style.left=(psu/1000*100-.2)+'%';$('#mI').style.background=w/psu>.8?'var(--warn)':'var(--ac)';
+    var ck=[],cool=o('cool');
+    if(cpu.w>cool.max)ck.push('<div class="w">'+cpu.n+' pulls '+cpu.w+' W, more than the '+cool.n.toLowerCase()+' can hold. <button data-fix="cool">Switch to 360 mm</button></div>');
+    else ck.push('<div>Cooler has '+(cool.max-cpu.w)+' W of headroom over the '+cpu.n+'</div>');
+    if(o('case').sff&&(gpu.w>250||cool.max>250))ck.push('<div class="w">'+(gpu.w>250?gpu.n+' is too long':'The 360 mm radiator will not fit')+' for the Kage Mini. <button data-fix="case">Use Kage Shadow</button></div>');
+    else ck.push('<div>'+gpu.n+' fits the '+o('case').n+' with room to spare</div>');
+    ck.push('<div>'+psu+' W Gold PSU included, running at '+Math.round(w/psu*100)+'% under full load</div>');
+    if(ram.sc<1)ck.push('<div class="w">16 GB will stutter in newer games with Discord open. <button data-fix="ram">Go 32 GB</button></div>');
+    $('#chk').innerHTML=ck.join('');
+    var code='KG-'+[pick.cpu,pick.gpu,pick.ram,pick.ssd,pick.cool,pick.case].join('')+'-'+(Math.round(T.t)%9973).toString(36).toUpperCase();$('#code').textContent='Build code '+code;upd.code=code;
+  }
+  $('#chk').addEventListener('click',function(e){var b=e.target.closest('[data-fix]');if(!b)return;var f=b.getAttribute('data-fix');if(f==='cool')pick.cool=2;if(f==='case')pick.case=0;if(f==='ram')pick.ram=1;upd();toast('Fixed. Your build is compatible')});
+  $('#buy').addEventListener('click',function(){toast('Build '+upd.code+' added. We start in 24 h')});
+  $('#share').addEventListener('click',function(){var c=upd.code;try{navigator.clipboard.writeText(location.href.split('#')[0]+'#'+c)}catch(e){}toast('Link for '+c+' copied')});
+  $('#gearL').innerHTML=GEAR.map(function(g){return '<article class="gc cut"><div class="im"><img loading="lazy" src="../assets/img/shop/kage/'+g.img+'.jpg" alt="'+g.n+'"></div><div class="in"><h3>'+g.n+'</h3><p>'+g.d+'</p><div class="ft"><b>'+tk(g.p)+'</b><button data-g="'+g.id+'">Add to build</button></div></div></article>'}).join('');
+  $('#gearL').addEventListener('click',function(e){var b=e.target.closest('[data-g]');if(!b)return;var id=b.getAttribute('data-g');gearSel[id]=!gearSel[id];b.classList.toggle('on',gearSel[id]);b.textContent=gearSel[id]?'In your build':'Add to build';upd();if(gearSel[id])toast('Added. 5% off the whole order')});
+  upd();
+  /* live telemetry */
+  var cv=$('#spark'),cx=cv.getContext('2d'),pts=[],t=0;for(var i=0;i<60;i++)pts.push(160+Math.sin(i/4)*10);
+  function tick(){t++;var f=158+Math.sin(t/7)*12+(Math.random()-.5)*14;pts.push(f);pts.shift();cx.clearRect(0,0,600,96);
+    var gr=cx.createLinearGradient(0,0,600,0);gr.addColorStop(0,'rgba(59,232,255,.2)');gr.addColorStop(1,'#b6ff3b');cx.strokeStyle=gr;cx.lineWidth=3;cx.beginPath();
+    pts.forEach(function(p,i){var x=i/59*600,y=96-(p-120)/80*96;i?cx.lineTo(x,y):cx.moveTo(x,y)});cx.stroke();cx.lineTo(600,96);cx.lineTo(0,96);cx.fillStyle='rgba(182,255,59,.07)';cx.fill();
+    if(t%4===0){$('#tF').innerHTML=Math.round(f)+'<small>fps</small>';var c=60+Math.round(Math.random()*6),g2=69+Math.round(Math.random()*5);$('#tC').innerHTML=c+'<small>°C</small>';$('#tG').innerHTML=g2+'<small>°C</small>';$('#tG').classList.toggle('hot',g2>72)}}
+  var tel=null;new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!tel&&!matchMedia('(prefers-reduced-motion:reduce)').matches)tel=setInterval(tick,120);else if(!e.isIntersecting&&tel){clearInterval(tel);tel=null}})}).observe($('.rig'));tick();
+  /* stress log */
+  var LOG=[['dim','$ kage-bench --rig '+upd.code+' --hours 12'],['cy','» BIOS 3.20 · XMP/EXPO profile 1 loaded'],['','  memtest86  pass 4/4 ........... '],['ok','OK'],['','  prime95    small FFT 4h ........ '],['ok','OK  peak 84°C'],['','  occt       power 2h ............ '],['ok','OK  0 WHEA'],['','  3dmark     time spy x40 ........ '],['ok','OK  97.8% stability'],['','  fan curve  idle 31 dB / load 38 dB '],['ok','OK'],['cy','» Cable check, photos taken, log signed: Rafi'],['ok','✔ Ready to ship']];
+  var started=false;
+  new IntersectionObserver(function(es){if(!es[0].isIntersecting||started)return;started=true;var i=0,lg=$('#log'),line=null;(function nx(){if(i>=LOG.length){lg.insertAdjacentHTML('beforeend','<span class="cur"></span>');return}var L=LOG[i++];if(L[0]==='ok'&&line){line.insertAdjacentHTML('beforeend','<span class="ok">'+L[1]+'</span>')}else{line=document.createElement('div');line.className=L[0];line.textContent=L[1];lg.appendChild(line)}setTimeout(nx,L[0]==='ok'?260:520)})()},{threshold:.4}).observe($('#term'));
+  /* reveal */
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
+  $$('.rv').forEach(function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>
