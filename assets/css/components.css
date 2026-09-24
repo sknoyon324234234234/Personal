@@ -152,3 +152,7 @@
   .kt-tools button:nth-child(n+3) { display: none; }
   .kit-cta-grid { grid-template-columns: 1fr; }
 }
+@media (max-width: 480px) {
+  .kt-present { width: 34px; padding: 0; justify-content: center; }
+  .kt-present span { display: none; }
+}

@@ -46,7 +46,20 @@ window.XIRAIYA_CONFIG = {
     methods: ['USDT (TRC20 / BEP20)', 'Bitcoin', 'Ethereum', 'BNB / Binance Pay', 'bKash', 'Nagad', 'Payoneer', 'Bank transfer']
   },
 
-  currency: '$'
+  currency: '$',
+
+  // ---- PACKAGES shown on the Hire page (edit names, prices and features) -----
+  packages: [
+    { name: 'Spark', jp: '火', price: 149, per: 'project', tagline: 'Launch something small, fast.',
+      features: ['Landing page or single-purpose bot', 'Mobile-first design', 'Basic SEO & analytics', '7 days of free fixes', 'Delivery in 3–7 days'] },
+    { name: 'Blade', jp: '刃', price: 499, per: 'project', tagline: 'For businesses ready to automate.', popular: true,
+      features: ['Web app, store or advanced bot', 'Custom UI design in Figma', 'Payments: crypto, bKash, card', 'AI chat or automation workflow', '30 days of free fixes'] },
+    { name: 'Legend', jp: '伝', price: 1499, per: 'project', tagline: 'The full autopilot system.',
+      features: ['Store / platform + admin dashboard', 'AI agents with custom tools', 'Telegram bot + mobile app', 'Crypto auto-payments & webhooks', '60 days support + handover docs'] }
+  ],
+
+  // Typical first reply time shown on the Hire page
+  replyTime: 'within a few hours (GMT+6)'
 };
 
 /* ---------------------------------------------------------------------------

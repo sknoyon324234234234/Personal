@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /tools/
+
+Sitemap: https://sknoyon324234234234.github.io/Personal/sitemap.xml

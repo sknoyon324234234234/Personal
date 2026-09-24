@@ -360,10 +360,20 @@
           n.replaceWith(frag);
         } else if (n.nodeType === 1 && n.tagName !== 'BR') {
           if (n.classList.contains('no-split') || n.classList.contains('grad-text')) {
-            var w = document.createElement('span'), c = document.createElement('span');
-            w.className = 'w'; w.setAttribute('aria-hidden', 'true');
-            c.className = 'c'; c.style.setProperty('--ci', ci++);
-            n.replaceWith(w); w.appendChild(c); c.appendChild(n);
+            // keep the element whole per word (so gradients stay intact) but let phrases wrap between words
+            var words = n.children.length ? [null] : n.textContent.trim().split(/\s+/);
+            var group = document.createDocumentFragment(), mark = document.createTextNode('');
+            n.replaceWith(mark);
+            words.forEach(function (word, i) {
+              if (i) group.appendChild(document.createTextNode(' '));
+              var w = document.createElement('span'), c = document.createElement('span');
+              w.className = 'w'; w.setAttribute('aria-hidden', 'true');
+              c.className = 'c'; c.style.setProperty('--ci', ci++);
+              var piece = word === null ? n : n.cloneNode(false);
+              if (word !== null) piece.textContent = word;
+              c.appendChild(piece); w.appendChild(c); group.appendChild(w);
+            });
+            mark.replaceWith(group);
           } else walk(n);
         }
       });
