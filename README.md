@@ -41,6 +41,7 @@ The Minecraft chapter of the Lab is a small survival game that shows off the kin
 - On screens up to 760px wide, `assets/css/phone.css` switches to a simplified layout. It has an app-style bottom tab bar, compact home sections, one Lab chapter at a time with Prev/Next buttons, and lighter effects.
 - **Command Center:** press `Ctrl K` (or `Cmd K`) or the search button to jump to any page, demo, service or action.
 - **Visitor quest log:** visitors earn XP for visiting pages and trying each Lab demo. It's shown inside the Command Center, and completed quests pop up as toasts. There is also a hidden secret: the Konami code.
+- **Ant World (蟻の国):** two tiny ant colonies (red Aka and black Kuro) live on every page (`assets/js/bugs.js`). They build a nest in each section, walk the edges of buttons, cards, images, the header and the footer, bite pieces out of them and carry letters home. They also swim through rain puddles and fight over nests. Everything they eat grows back, and the text stays in the page for screen readers. The ant button (bottom left) shows the war and lets visitors drop sugar, spill water, start a war, restore the site or hide the ants. Add `data-ants="off"` to a page's `<body>` to turn it off there.
 
 ## Make it yours: edit one file
 
