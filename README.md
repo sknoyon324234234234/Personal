@@ -3,7 +3,7 @@
 ![Xiraiya — websites, bots, apps & AI agents](assets/img/og-cover.png)
 
 The personal website of **Xiraiya**, a 21-year-old full-stack developer from Rajshahi, Bangladesh with 5+ years of experience.
-It's a cinematic, anime-inspired portfolio where visitors can try a live, interactive version of every service before they hire.
+It's a cinematic, ukiyo-e inspired portfolio where visitors can try a live, interactive version of every service before they hire.
 
 - **Pure HTML, CSS and JavaScript.** No framework and no build step. Open it, edit it and deploy it anywhere.
 - **No emojis.** Every icon is a custom SVG from `assets/js/icons.js`.
@@ -119,5 +119,7 @@ node tools/render-assets.js
 
 - Every shop, product, brand, person and review inside the demos is **fictional**.
 - **No payment is ever requested or processed**: the crypto, bKash, Nagad and card flows are simulations and are labelled that way on screen. The demo wallet addresses and QR codes are decorative.
-- Fonts: Unbounded, Plus Jakarta Sans, JetBrains Mono and Noto Serif JP from Google Fonts, loaded without blocking rendering.
+- Design: an ukiyo-e "ink and vermilion" look (warm sumi black, washi cream, seal red, gold leaf) with film-style motion. It includes letterbox bars, ink-bleed reveals, calligraphy letters, brush strokes, seal stamps and an ink-wash page transition.
+- Character: an original toad sage in the kabuki / folklore tradition of Jiraiya (児雷也, 1839). It is not a copy of any anime character.
+- Fonts: Shippori Mincho B1, Zen Kaku Gothic New and JetBrains Mono from Google Fonts, loaded without blocking rendering.
 - "Minecraft" is a trademark of Mojang/Microsoft and "Telegram" of Telegram FZ-LLC. The demos only use generic, original artwork.

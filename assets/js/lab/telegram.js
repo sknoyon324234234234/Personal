@@ -4,10 +4,10 @@
   var XR = window.XR, LAB = window.LAB;
 
   var PRODUCTS = [
-    { id: 'lamp', name: 'Neon Katana Lamp', price: 59, icon: 'sword', c: '#ff2e4d', stock: 14, d: 'RGB desk lamp shaped like a katana. USB-C, 16M colors.' },
-    { id: 'phones', name: 'Ronin Headphones', price: 129, icon: 'volume', c: '#27e1d6', stock: 6, d: 'Wireless ANC headphones, 40h battery, low-latency mode.' },
-    { id: 'kb', name: 'Mecha Keyboard K2', price: 89, icon: 'grid', c: '#8b6cff', stock: 21, d: 'Hot-swap 75% mechanical keyboard with gasket mount.' },
-    { id: 'hoodie', name: 'Kitsune Hoodie', price: 64, icon: 'tag', c: '#ffc24b', stock: 9, d: 'Heavyweight cotton hoodie with embroidered fox crest.' }
+    { id: 'lamp', name: 'Neon Katana Lamp', price: 59, icon: 'sword', c: '#e0442e', stock: 14, d: 'RGB desk lamp shaped like a katana. USB-C, 16M colors.' },
+    { id: 'phones', name: 'Ronin Headphones', price: 129, icon: 'volume', c: '#6fb3a8', stock: 6, d: 'Wireless ANC headphones, 40h battery, low-latency mode.' },
+    { id: 'kb', name: 'Mecha Keyboard K2', price: 89, icon: 'grid', c: '#9483c2', stock: 21, d: 'Hot-swap 75% mechanical keyboard with gasket mount.' },
+    { id: 'hoodie', name: 'Kitsune Hoodie', price: 64, icon: 'tag', c: '#d9a441', stock: 9, d: 'Heavyweight cotton hoodie with embroidered fox crest.' }
   ];
 
   LAB.register('telegram', function (stage) {

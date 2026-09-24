@@ -33,99 +33,113 @@
   function brandMark(cls) {
     var id = 'bm' + (++uid);
     return '<svg class="brand-mark ' + (cls || '') + '" viewBox="0 0 40 40" aria-hidden="true">' +
-      '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff2e4d"/><stop offset="1" stop-color="#8b6cff"/></linearGradient></defs>' +
+      '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e0442e"/><stop offset="1" stop-color="#d9a441"/></linearGradient></defs>' +
       '<path d="M20 2 38 20 20 38 2 20Z" fill="none" stroke="url(#' + id + ')" stroke-width="2.2"/>' +
-      '<path d="M12 11h5.5L28 29h-5.5Z" fill="#f4f0e8"/>' +
+      '<path d="M12 11h5.5L28 29h-5.5Z" fill="#efe4cc"/>' +
       '<path d="M28 11h-5.5L12 29h5.5Z" fill="url(#' + id + ')"/></svg>';
   }
 
   function mascot(opts) {
     opts = opts || {};
     var p = 'mx' + (++uid);
-    return '<svg class="mascot ' + (opts.cls || '') + '" viewBox="0 0 400 540" role="img" aria-label="' + esc(C.name || 'Xiraiya') + ' — animated anime-style developer character">' +
+    // An original "toad sage" in the kabuki / folklore tradition of Jiraiya (児雷也, 1839):
+    // wild white mane, kumadori eye strokes, red haori with a wave hem, scroll on the back, and a toad familiar.
+    var waves = '';
+    for (var wx = 96; wx < 310; wx += 22) waves += '<path d="M' + wx + ' 478a11 11 0 0 1 22 0" /><path d="M' + (wx + 5) + ' 478a6 6 0 0 1 12 0" />';
+    return '<svg class="mascot ' + (opts.cls || '') + '" viewBox="0 0 400 540" role="img" aria-label="' + esc(C.name || 'Xiraiya') + ' — an original toad-sage character with a white mane, red haori and a toad companion">' +
       '<defs>' +
-      '<linearGradient id="' + p + 'h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#e4e7f8"/><stop offset="1" stop-color="#a7aee0"/></linearGradient>' +
-      '<linearGradient id="' + p + 'h2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d3d7f4"/><stop offset="1" stop-color="#7f86c2"/></linearGradient>' +
-      '<linearGradient id="' + p + 's" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9dc"/><stop offset="1" stop-color="#ffd2bb"/></linearGradient>' +
-      '<linearGradient id="' + p + 'r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4262"/><stop offset="1" stop-color="#a50e27"/></linearGradient>' +
-      '<radialGradient id="' + p + 'i" cx=".5" cy=".3" r=".75"><stop offset="0" stop-color="#8ffff5"/><stop offset=".5" stop-color="#17b8b0"/><stop offset="1" stop-color="#083c4a"/></radialGradient>' +
-      '<linearGradient id="' + p + 'p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5f8ff"/><stop offset="1" stop-color="#95a1c2"/></linearGradient>' +
-      '<radialGradient id="' + p + 'g" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff2e4d" stop-opacity=".5"/><stop offset=".6" stop-color="#8b6cff" stop-opacity=".12"/><stop offset="1" stop-color="#8b6cff" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="' + p + 'g" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#e0442e" stop-opacity=".32"/><stop offset=".6" stop-color="#d9a441" stop-opacity=".08"/><stop offset="1" stop-color="#d9a441" stop-opacity="0"/></radialGradient>' +
+      '<linearGradient id="' + p + 'h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf7ee"/><stop offset=".6" stop-color="#e8e1d2"/><stop offset="1" stop-color="#b9b0a0"/></linearGradient>' +
+      '<linearGradient id="' + p + 's" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6dcc6"/><stop offset="1" stop-color="#e9bf9f"/></linearGradient>' +
+      '<linearGradient id="' + p + 'r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d23c26"/><stop offset="1" stop-color="#8f2517"/></linearGradient>' +
+      '<radialGradient id="' + p + 'i" cx=".45" cy=".3" r=".8"><stop offset="0" stop-color="#ffe3a0"/><stop offset=".45" stop-color="#d9962a"/><stop offset="1" stop-color="#5a3208"/></radialGradient>' +
+      '<linearGradient id="' + p + 't" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c98044"/><stop offset="1" stop-color="#8a4a22"/></linearGradient>' +
       '<clipPath id="' + p + 'el"><path d="M142 206C144 190 188 188 192 204 192 222 180 230 166 230 152 230 142 222 142 206Z"/></clipPath>' +
       '<clipPath id="' + p + 'er"><path d="M258 206C256 190 212 188 208 204 208 222 220 230 234 230 248 230 258 222 258 206Z"/></clipPath>' +
+      '<clipPath id="' + p + 'coat"><path d="M100 482C94 404 104 334 150 302L200 292 250 302C296 334 306 404 300 482Z"/></clipPath>' +
       '</defs>' +
-      // aura
-      '<circle cx="200" cy="270" r="200" fill="url(#' + p + 'g)"/>' +
-      // magic circle
-      '<g transform="translate(200 505) scale(1 .2)" opacity=".9">' +
-        '<g class="m-spin"><circle r="170" fill="none" stroke="#ff2e4d" stroke-width="3" stroke-dasharray="4 10"/><circle r="150" fill="none" stroke="#ff2e4d" stroke-opacity=".6" stroke-width="2"/></g>' +
-        '<g class="m-spin rev"><circle r="120" fill="none" stroke="#27e1d6" stroke-opacity=".7" stroke-width="2" stroke-dasharray="30 12"/><path d="M0-120 104 60-104 60Z M0 120-104-60 104-60Z" fill="none" stroke="#8b6cff" stroke-opacity=".6" stroke-width="2"/></g>' +
+      '<circle cx="200" cy="280" r="200" fill="url(#' + p + 'g)"/>' +
+      // summoning seal under the feet
+      '<g transform="translate(200 510) scale(1 .22)" opacity=".95">' +
+        '<g class="m-spin"><circle r="172" fill="none" stroke="#e0442e" stroke-width="3"/><circle r="152" fill="none" stroke="#e0442e" stroke-opacity=".55" stroke-width="2" stroke-dasharray="2 9"/>' +
+          '<path d="M0-172V-120M0 172V120M-172 0H-120M172 0H120M-122-122-85-85M122 122 85 85M122-122 85-85M-122 122-85 85" stroke="#e0442e" stroke-width="3"/></g>' +
+        '<g class="m-spin rev"><circle r="104" fill="none" stroke="#d9a441" stroke-opacity=".8" stroke-width="2"/><path d="M0-104 90 52-90 52Z" fill="none" stroke="#d9a441" stroke-opacity=".6" stroke-width="2"/></g>' +
       '</g>' +
       '<g class="m-body">' +
-        // ponytail
-        '<path class="m-tail" d="M292 170C342 196 376 252 368 336L348 304 352 362 324 322 318 380 298 318 286 344 282 250Z" fill="url(#' + p + 'h2)"/>' +
-        // back hair
-        '<path d="M112 250 92 206 64 214 84 170 52 150 96 136 82 92 126 108 134 58 170 92 196 38 222 88 262 56 266 104 310 88 300 132 346 146 312 170 334 208 300 206 290 250Z" fill="url(#' + p + 'h)" stroke="#8d93c7" stroke-width="1.5" stroke-linejoin="round"/>' +
+        // scroll carried on the back
+        '<g transform="rotate(-16 200 290)"><rect x="40" y="268" width="320" height="44" rx="22" fill="#e9dfc6" stroke="#6b5a40" stroke-width="2"/><path d="M60 276H340M60 304H340" stroke="#c9bb98" stroke-width="2"/>' +
+          '<rect x="30" y="262" width="26" height="56" rx="8" fill="#b8321f" stroke="#5a1a0e" stroke-width="2"/><rect x="344" y="262" width="26" height="56" rx="8" fill="#b8321f" stroke="#5a1a0e" stroke-width="2"/><path d="M200 268V312" stroke="#b8321f" stroke-width="5"/></g>' +
+        // long mane behind (sways)
+        '<path class="m-tail" d="M248 236C300 262 336 330 330 420L310 390 314 446 288 404 284 458 266 400 252 426 250 330 236 268Z" fill="url(#' + p + 'h)" stroke="#a79e8e" stroke-width="1.5" stroke-linejoin="round"/>' +
+        '<path d="M200 28 228 76 262 40 272 90 320 66 306 116 358 114 324 150 374 174 328 194 366 238 320 238 348 290 302 278 320 334 276 298 264 250H136L124 298 80 334 98 278 52 290 80 238 34 238 72 194 26 174 76 150 42 114 94 116 80 66 128 90 138 40 172 76Z" fill="url(#' + p + 'h)" stroke="#a79e8e" stroke-width="1.5" stroke-linejoin="round"/>' +
+        '<path d="M92 132 120 150M70 208 104 204M310 132 282 150M332 208 298 204M150 60 160 96M252 60 242 96" stroke="#c8c0b0" stroke-width="3" stroke-linecap="round"/>' +
         // headband tails
-        '<g class="m-tails"><path d="M268 148C302 136 326 162 368 142L374 156C330 180 302 156 270 166Z" fill="#1c1a33"/><path d="M268 158C298 164 318 192 356 190L352 204C312 206 294 178 268 172Z" fill="#26234a"/></g>' +
-        // legs + shoes
-        '<path d="M152 460 150 500H188L190 460ZM210 460 212 500H250L248 460Z" fill="#1d1b33"/>' +
-        '<path d="M140 506C140 490 190 488 194 500V512H140ZM206 500C210 488 260 490 260 506V512H206Z" fill="#f4f0e8"/>' +
-        '<path d="M142 504H192M208 504H258" stroke="#ff2e4d" stroke-width="3"/>' +
-        // hoodie
-        '<path d="M112 472C108 402 118 330 160 300 172 292 186 290 200 290S228 292 240 300C282 330 292 402 288 472Z" fill="url(#' + p + 'r)"/>' +
-        '<path d="M158 298C168 318 232 318 242 298 236 286 164 286 158 298Z" fill="#7d0a1d"/>' +
-        '<path d="M200 318V472" stroke="#7d0a1d" stroke-width="3"/>' +
-        '<path d="M186 314 182 352M214 314 218 352" stroke="#f4f0e8" stroke-width="3" stroke-linecap="round"/>' +
-        '<path d="M114 456C170 466 230 466 286 456L288 472H112Z" fill="#7d0a1d"/>' +
+        '<g class="m-tails"><path d="M270 150C304 138 330 160 374 138L380 152C334 178 304 156 272 166Z" fill="#241c16"/><path d="M270 160C300 168 322 196 360 194L356 208C314 210 296 182 270 174Z" fill="#33281f"/></g>' +
+        // legs: hakama + geta
+        '<path d="M150 470 146 504H192L194 470ZM206 470 208 504H254L250 470Z" fill="#2c2a33"/>' +
+        '<path d="M138 506H196V514H138ZM204 506H262V514H204Z" fill="#7a5230"/><path d="M144 514V520M188 514V520M210 514V520M254 514V520" stroke="#4a3018" stroke-width="5"/>' +
+        '<path d="M160 504 168 496 176 504M222 504 230 496 238 504" stroke="#efe4cc" stroke-width="3" fill="none"/>' +
+        // haori coat with wave hem
+        '<path d="M100 482C94 404 104 334 150 302L200 292 250 302C296 334 306 404 300 482Z" fill="url(#' + p + 'r)"/>' +
+        '<g clip-path="url(#' + p + 'coat)"><rect x="90" y="462" width="220" height="30" fill="#6e1c10"/><g fill="none" stroke="#efe4cc" stroke-width="2" opacity=".85">' + waves + '</g></g>' +
+        '<path d="M178 296 200 372 222 296Z" fill="#2f4a38"/><path d="M186 298 200 350 214 298" fill="none" stroke="#efe4cc" stroke-width="2"/>' +
+        '<path d="M176 296 194 420M224 296 206 420" stroke="#241c16" stroke-width="9" stroke-linecap="round"/>' +
+        '<path d="M150 400H250" stroke="#241c16" stroke-width="10"/><path d="M196 394h8v12h-8z" fill="#d9a441"/>' +
+        // wide sleeves
+        '<path d="M150 306C110 322 90 368 88 428L142 436C142 396 150 360 168 336Z" fill="url(#' + p + 'r)" stroke="#6e1c10" stroke-width="1.5"/>' +
+        '<path d="M250 306C290 322 310 368 312 428L258 436C258 396 250 360 232 336Z" fill="url(#' + p + 'r)" stroke="#6e1c10" stroke-width="1.5"/>' +
+        '<path d="M90 420 142 428M310 420 258 428" stroke="#efe4cc" stroke-width="3"/>' +
         // neck
-        '<path d="M184 262V292C190 298 210 298 216 292V262Z" fill="#f2bea5"/>' +
-        // arms
-        '<path d="M152 318C128 342 122 382 138 408L162 400C154 380 158 352 170 336Z" fill="#c8173a"/>' +
-        '<path d="M248 318C272 342 278 382 262 408L238 400C246 380 242 352 230 336Z" fill="#c8173a"/>' +
+        '<path d="M184 262V294C190 300 210 300 216 294V262Z" fill="#e7b999"/>' +
         // laptop
-        '<g class="m-laptop"><ellipse cx="200" cy="336" rx="86" ry="16" fill="#27e1d6" opacity=".18"/>' +
-          '<rect x="132" y="338" width="136" height="88" rx="10" fill="#1a1a2a" stroke="#3a3a58" stroke-width="2"/>' +
-          '<g class="m-logo"><path d="M200 364 218 382 200 400 182 382Z" fill="none" stroke="#ff2e4d" stroke-width="2"/><path d="M193 373h4l10 18h-4Z" fill="#f4f0e8"/><path d="M207 373h-4l-10 18h4Z" fill="#ff2e4d"/></g>' +
-          '<path d="M124 426H276L268 436H132Z" fill="#2b2b44"/></g>' +
-        // hands
-        '<ellipse cx="142" cy="398" rx="14" ry="12" fill="url(#' + p + 's)"/><ellipse cx="258" cy="398" rx="14" ry="12" fill="url(#' + p + 's)"/>' +
+        '<g class="m-laptop"><ellipse cx="200" cy="338" rx="86" ry="16" fill="#d9a441" opacity=".16"/>' +
+          '<rect x="132" y="340" width="136" height="86" rx="6" fill="#1d1813" stroke="#4a3b2e" stroke-width="2"/>' +
+          '<g class="m-logo"><rect x="186" y="369" width="28" height="28" fill="#e0442e" transform="rotate(-4 200 383)"/><text x="200" y="390" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="17" fill="#efe4cc">開</text></g>' +
+          '<path d="M124 426H276L268 436H132Z" fill="#2c241c"/></g>' +
+        '<ellipse cx="142" cy="400" rx="14" ry="12" fill="url(#' + p + 's)"/><ellipse cx="258" cy="400" rx="14" ry="12" fill="url(#' + p + 's)"/>' +
         // head
-        '<path d="M131 190C118 186 116 210 128 218 132 220 136 214 136 206ZM269 190C282 186 284 210 272 218 268 220 264 214 264 206Z" fill="#ffd8c4"/>' +
+        '<path d="M131 190C118 186 116 210 128 218 132 220 136 214 136 206ZM269 190C282 186 284 210 272 218 268 220 264 214 264 206Z" fill="#efc7aa"/>' +
         '<path d="M130 160C128 204 142 238 170 258 182 267 193 271 200 271S218 267 230 258C258 238 272 204 270 160 270 120 240 100 200 100S130 120 130 160Z" fill="url(#' + p + 's)"/>' +
-        '<path d="M134 168C160 190 240 190 266 168V150H134Z" fill="#f0b39a" opacity=".45"/>' +
-        '<ellipse cx="150" cy="236" rx="13" ry="6" fill="#ff6f86" opacity=".35"/><ellipse cx="250" cy="236" rx="13" ry="6" fill="#ff6f86" opacity=".35"/>' +
+        '<path d="M134 172C160 190 240 190 266 172V154H134Z" fill="#d9a080" opacity=".35"/>' +
+        // kabuki kumadori strokes sweeping up from the eyes
+        '<g stroke="#c9361f" stroke-width="3.4" stroke-linecap="round" fill="none"><path d="M158 234C154 242 150 248 146 252"/><path d="M168 236C165 245 161 252 156 258"/><path d="M242 234C246 242 250 248 254 252"/><path d="M232 236C235 245 239 252 244 258"/></g>' +
         // eyes
-        '<g class="m-eye"><path d="M142 206C144 190 188 188 192 204 192 222 180 230 166 230 152 230 142 222 142 206Z" fill="#fff"/>' +
-          '<g clip-path="url(#' + p + 'el)"><g class="m-iris"><ellipse cx="168" cy="210" rx="13" ry="16" fill="url(#' + p + 'i)"/><ellipse cx="168" cy="212" rx="6" ry="8.5" fill="#05232c"/><circle cx="162" cy="203" r="4.3" fill="#fff"/><circle cx="173" cy="219" r="2" fill="#fff" opacity=".85"/></g></g>' +
-          '<path d="M138 204C144 184 188 180 196 200L192 204C184 192 150 192 144 208ZM138 204 128 196 141 199Z" fill="#1d1733"/>' +
-          '<path d="M150 228C160 232 174 232 184 226" stroke="#1d1733" stroke-width="1.6" fill="none" opacity=".55"/></g>' +
-        '<g class="m-eye"><path d="M258 206C256 190 212 188 208 204 208 222 220 230 234 230 248 230 258 222 258 206Z" fill="#fff"/>' +
-          '<g clip-path="url(#' + p + 'er)"><g class="m-iris"><ellipse cx="232" cy="210" rx="13" ry="16" fill="url(#' + p + 'i)"/><ellipse cx="232" cy="212" rx="6" ry="8.5" fill="#05232c"/><circle cx="226" cy="203" r="4.3" fill="#fff"/><circle cx="237" cy="219" r="2" fill="#fff" opacity=".85"/></g></g>' +
-          '<path d="M262 204C256 184 212 180 204 200L208 204C216 192 250 192 256 208ZM262 204 272 196 259 199Z" fill="#1d1733"/>' +
-          '<path d="M250 228C240 232 226 232 216 226" stroke="#1d1733" stroke-width="1.6" fill="none" opacity=".55"/></g>' +
-        // nose + mouth
-        '<path d="M199 234 197 241H202" stroke="#dc9c86" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
-        '<path d="M186 252C194 258 206 258 214 250" stroke="#8f3446" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M205 256 208 261 210 255Z" fill="#fff"/>' +
-        // front hair
-        '<path d="M124 166C118 108 152 80 200 78S282 108 276 166Z" fill="url(#' + p + 'h)"/>' +
-        '<path d="M158 98C172 88 188 86 204 86M150 116C160 104 170 98 184 96" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>' +
-        '<path d="M232 92C248 98 260 110 266 124" stroke="#9ba1d6" stroke-width="3" stroke-linecap="round" opacity=".7"/>' +
-        // headband
-        '<path d="M126 150C160 134 240 134 274 150V172C240 158 160 158 126 172Z" fill="#1c1a33"/>' +
-        '<path d="M164 142C188 138 212 138 236 142V166C212 162 188 162 164 166Z" fill="url(#' + p + 'p)" stroke="#6f7aa0" stroke-width="1.5"/>' +
-        '<text x="200" y="159" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="15" fill="#3b4466">&lt;/&gt;</text>' +
-        '<g fill="#6f7aa0"><circle cx="170" cy="146" r="1.6"/><circle cx="230" cy="146" r="1.6"/><circle cx="170" cy="161" r="1.6"/><circle cx="230" cy="161" r="1.6"/></g>' +
-        // bangs
-        '<path d="M128 166C124 198 132 228 142 246L148 214 158 172ZM158 168 170 198 180 166ZM186 166 198 194 210 165ZM216 166 228 196 242 168ZM272 166C276 198 268 228 258 246L252 214 242 172Z" fill="url(#' + p + 'h)" stroke="#9ba1d6" stroke-width="1" stroke-linejoin="round"/>' +
-        // brows
-        '<path d="M148 182 180 188M252 182 220 188" stroke="#7f86c2" stroke-width="4" stroke-linecap="round"/>' +
+        '<g class="m-eye"><path d="M142 206C144 190 188 188 192 204 192 222 180 230 166 230 152 230 142 222 142 206Z" fill="#fffaf0"/>' +
+          '<g clip-path="url(#' + p + 'el)"><g class="m-iris"><ellipse cx="168" cy="210" rx="12" ry="15" fill="url(#' + p + 'i)"/><ellipse cx="168" cy="212" rx="5" ry="8" fill="#1d1208"/><circle cx="163" cy="204" r="3.8" fill="#fff"/></g></g>' +
+          '<path d="M138 202C146 184 188 180 196 198L192 203C184 192 150 192 144 206Z" fill="#1d1208"/></g>' +
+        '<g class="m-eye"><path d="M258 206C256 190 212 188 208 204 208 222 220 230 234 230 248 230 258 222 258 206Z" fill="#fffaf0"/>' +
+          '<g clip-path="url(#' + p + 'er)"><g class="m-iris"><ellipse cx="232" cy="210" rx="12" ry="15" fill="url(#' + p + 'i)"/><ellipse cx="232" cy="212" rx="5" ry="8" fill="#1d1208"/><circle cx="227" cy="204" r="3.8" fill="#fff"/></g></g>' +
+          '<path d="M262 202C254 184 212 180 204 198L208 203C216 192 250 192 256 206Z" fill="#1d1208"/></g>' +
+        // brows, nose, grin
+        '<path d="M144 180 182 190M256 180 218 190" stroke="#f4efe4" stroke-width="7" stroke-linecap="round"/><path d="M144 180 182 190M256 180 218 190" stroke="#a79e8e" stroke-width="2" stroke-linecap="round" opacity=".6"/>' +
+        '<path d="M199 234 196 242H202" stroke="#c98c70" stroke-width="1.8" fill="none" stroke-linecap="round"/>' +
+        '<path d="M182 250C194 258 210 257 220 246" stroke="#7a2a1c" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M210 253 213 259 215 252Z" fill="#fff"/>' +
+        // side locks + spiky fringe
+        '<path d="M130 158C120 196 124 232 136 256L144 212 146 176ZM270 158C280 196 276 232 264 256L256 212 254 176Z" fill="url(#' + p + 'h)" stroke="#a79e8e" stroke-width="1"/>' +
+        '<path d="M126 164 142 190 152 168 166 186 176 166 190 184 200 164 210 184 224 166 234 186 248 168 258 190 274 164Z" fill="url(#' + p + 'h)" stroke="#a79e8e" stroke-width="1" stroke-linejoin="round"/>' +
+        '<path d="M124 118C150 96 250 96 276 118L272 150H128Z" fill="url(#' + p + 'h)"/>' +
+        // headband with a steel plate
+        '<path d="M124 146C160 132 240 132 276 146V170C240 158 160 158 124 170Z" fill="#241c16"/>' +
+        '<path d="M164 140C188 136 212 136 236 140V166C212 162 188 162 164 166Z" fill="#c9c2b2" stroke="#7d7466" stroke-width="1.5"/>' +
+        '<text x="200" y="158" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="14" fill="#3a3128">&lt;/&gt;</text>' +
+        '<g fill="#7d7466"><circle cx="170" cy="144" r="1.6"/><circle cx="230" cy="144" r="1.6"/><circle cx="170" cy="160" r="1.6"/><circle cx="230" cy="160" r="1.6"/></g>' +
       '</g>' +
-      // holograms
-      '<g class="m-holo h1"><rect x="8" y="262" width="104" height="70" rx="9" fill="rgba(39,225,214,.07)" stroke="#27e1d6" stroke-opacity=".7"/><path d="M22 282h40M22 295h62M22 308h30M22 320h52" stroke="#27e1d6" stroke-width="3.2" stroke-linecap="round" opacity=".85"/><circle cx="96" cy="276" r="4" fill="#ff2e4d"/></g>' +
-      '<g class="m-holo h2"><rect x="294" y="352" width="98" height="74" rx="9" fill="rgba(139,108,255,.08)" stroke="#8b6cff" stroke-opacity=".8"/><path d="M310 410V396M326 410V384M342 410V390M358 410V372M374 410V380" stroke="#8b6cff" stroke-width="7" stroke-linecap="round"/></g>' +
-      '<g class="m-holo h3"><circle cx="62" cy="120" r="30" fill="rgba(255,46,77,.08)" stroke="#ff2e4d" stroke-opacity=".8"/><text x="62" y="128" text-anchor="middle" font-family="Unbounded,sans-serif" font-weight="800" font-size="20" fill="#ff2e4d">AI</text></g>' +
-      '<g class="m-holo h4"><rect x="318" y="40" width="70" height="44" rx="8" fill="rgba(255,194,75,.08)" stroke="#ffc24b" stroke-opacity=".8"/><text x="353" y="68" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="14" fill="#ffc24b">{ }</text></g>' +
+      // the toad familiar
+      '<g class="m-toad">' +
+        '<ellipse cx="92" cy="500" rx="74" ry="14" fill="#000" opacity=".28"/>' +
+        '<path d="M26 492C18 452 44 420 92 418 140 420 166 452 158 492Z" fill="url(#' + p + 't)" stroke="#5a2e12" stroke-width="2"/>' +
+        '<g fill="#7a3c18" opacity=".7"><circle cx="58" cy="452" r="7"/><circle cx="124" cy="446" r="6"/><circle cx="96" cy="436" r="4"/><circle cx="140" cy="470" r="5"/><circle cx="42" cy="476" r="4"/></g>' +
+        '<ellipse class="m-throat" cx="92" cy="480" rx="38" ry="16" fill="#ecd3a6"/>' +
+        '<path d="M52 470C72 480 112 480 132 470" stroke="#5a2e12" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+        '<g class="m-toad-eyes"><circle cx="60" cy="426" r="15" fill="url(#' + p + 't)" stroke="#5a2e12" stroke-width="2"/><circle cx="124" cy="424" r="15" fill="url(#' + p + 't)" stroke="#5a2e12" stroke-width="2"/>' +
+          '<circle cx="60" cy="425" r="9" fill="#f0c040"/><circle cx="124" cy="423" r="9" fill="#f0c040"/><rect x="53" y="423" width="14" height="4" rx="2" fill="#1d1208"/><rect x="117" y="421" width="14" height="4" rx="2" fill="#1d1208"/></g>' +
+        '<path d="M36 494C30 500 30 506 40 506H62M148 494C154 500 154 506 144 506H122" stroke="#5a2e12" stroke-width="3" fill="url(#' + p + 't)"/>' +
+        '<path d="M74 456 110 456 92 470Z" fill="#b8321f"/><path d="M78 458 106 458" stroke="#efe4cc" stroke-width="1.5"/>' +
+      '</g>' +
+      // floating paper talismans (ofuda)
+      '<g class="m-holo h1"><g transform="rotate(-8 44 150)"><rect x="24" y="100" width="40" height="104" fill="#efe4cc" stroke="#b8321f" stroke-width="2"/><rect x="29" y="105" width="30" height="94" fill="none" stroke="#b8321f" stroke-width="1"/><text x="44" y="146" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="20" fill="#1d1208">AI</text><text x="44" y="178" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="18" fill="#b8321f">術</text></g></g>' +
+      '<g class="m-holo h2"><g transform="rotate(7 356 330)"><rect x="336" y="280" width="40" height="104" fill="#efe4cc" stroke="#b8321f" stroke-width="2"/><rect x="341" y="285" width="30" height="94" fill="none" stroke="#b8321f" stroke-width="1"/><text x="356" y="326" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="15" fill="#1d1208">{ }</text><text x="356" y="360" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="18" fill="#b8321f">码</text></g></g>' +
+      '<g class="m-holo h3"><g transform="rotate(-4 350 64)"><rect x="330" y="20" width="40" height="92" fill="#efe4cc" stroke="#b8321f" stroke-width="2"/><text x="350" y="60" text-anchor="middle" font-family="Shippori Mincho B1,serif" font-weight="800" font-size="20" fill="#b8321f">忍</text><text x="350" y="92" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="11" fill="#1d1208">&lt;/&gt;</text></g></g>' +
       '</svg>';
   }
 
@@ -561,7 +575,7 @@
     opts = opts || {};
     var ctx = canvas.getContext('2d'), dpr = Math.min(2, window.devicePixelRatio || 1);
     var W, H, parts = [], running = true, visible = true;
-    var colors = opts.colors || ['#ff2e4d', '#ff6b81', '#ffd1dc', '#f4f0e8', '#8b6cff'];
+    var colors = opts.colors || ['#e0442e', '#f2a7a0', '#f6c9c1', '#eab3a8', '#d9a441'];
     function resize() {
       var r = canvas.getBoundingClientRect();
       W = r.width; H = r.height;
@@ -575,7 +589,7 @@
       var petal = Math.random() < (opts.petalRatio == null ? .55 : opts.petalRatio);
       return {
         x: Math.random() * W, y: init ? Math.random() * H : -20,
-        s: petal ? 5 + Math.random() * 8 : .8 + Math.random() * 1.8,
+        s: petal ? 3.5 + Math.random() * 5 : .8 + Math.random() * 1.4,
         vy: petal ? .35 + Math.random() * .8 : .1 + Math.random() * .3,
         vx: -.2 + Math.random() * .6, a: Math.random() * 6.28, va: -.03 + Math.random() * .06,
         sw: Math.random() * 6.28, petal: petal, c: colors[(Math.random() * colors.length) | 0],
@@ -831,7 +845,7 @@
     var iv = setInterval(function () {
       n--;
       if (n <= 0) { clearInterval(iv); finish(); return; }
-      if (num) { num.textContent = n; num.classList.remove('pop'); void num.offsetWidth; num.classList.add('pop'); }
+      if (num) { num.textContent = ['〇', '一', '二', '三'][n] || n; num.classList.remove('pop'); void num.offsetWidth; num.classList.add('pop'); }
     }, 520);
     L.addEventListener('click', function () { clearInterval(iv); finish(); });
     document.addEventListener('keydown', function k() { clearInterval(iv); finish(); document.removeEventListener('keydown', k); });
@@ -866,7 +880,7 @@
     for (x = 8; x < N - 8; x++) { cells[6][x] = x % 2 === 0; cells[x][6] = x % 2 === 0; }
     var d = '';
     for (y = 0; y < N; y++) for (x = 0; x < N; x++) if (cells[y][x]) d += 'M' + x + ' ' + y + 'h1v1h-1z';
-    el.innerHTML = '<svg viewBox="0 0 ' + N + ' ' + N + '" shape-rendering="crispEdges" aria-hidden="true"><path d="' + d + '" fill="#0b0b12"/></svg>';
+    el.innerHTML = '<svg viewBox="0 0 ' + N + ' ' + N + '" shape-rendering="crispEdges" aria-hidden="true"><path d="' + d + '" fill="#15120f"/></svg>';
   }
 
   /* ------------------------------------------------------------------

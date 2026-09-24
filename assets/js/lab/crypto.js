@@ -5,13 +5,13 @@
 
   /* ------------------------ 10: e-commerce autopilot feed ------------------------ */
   var EVENTS = [
-    ['bag', '#ffc24b', 'New order #{n} — Ronin Headphones', 'paid in USDT · auto-confirmed', true],
-    ['chat', '#27e1d6', 'AI assistant closed a sale', 'suggested Mecha Keyboard + wrist rest'],
-    ['refresh', '#8b6cff', 'Abandoned cart recovered', 'Telegram reminder · $64'],
-    ['box', '#a4ff6b', 'Auto-restock triggered', 'Neon Katana Lamp · PO-2293'],
+    ['bag', '#d9a441', 'New order #{n} — Ronin Headphones', 'paid in USDT · auto-confirmed', true],
+    ['chat', '#6fb3a8', 'AI assistant closed a sale', 'suggested Mecha Keyboard + wrist rest'],
+    ['refresh', '#9483c2', 'Abandoned cart recovered', 'Telegram reminder · $64'],
+    ['box', '#a9c46a', 'Auto-restock triggered', 'Neon Katana Lamp · PO-2293'],
     ['send', '#2f9bff', 'Order alert sent to Telegram', '@kage_orders · 0.4s'],
-    ['star-fill', '#ffc24b', '5-star review answered', 'AI reply in Bangla'],
-    ['bag', '#ff2e4d', 'New order #{n} — Kitsune Hoodie', 'bKash · auto-verified', true]
+    ['star-fill', '#d9a441', '5-star review answered', 'AI reply in Bangla'],
+    ['bag', '#e0442e', 'New order #{n} — Kitsune Hoodie', 'bKash · auto-verified', true]
   ];
   LAB.register('ecommerce', function (stage) {
     var list = XR.$('.ec-events', stage), count = XR.$('.ec-count', stage), i = 0, n = 4822, cart = 2;

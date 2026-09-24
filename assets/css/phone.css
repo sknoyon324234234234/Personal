@@ -14,7 +14,7 @@
     display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
     height: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: rgba(9, 9, 14, .97); border-top: 1px solid var(--line);
+    background: rgba(18,15,12, .97); border-top: 1px solid var(--line);
   }
   .tabbar a, .tabbar button {
     position: relative; display: grid; justify-items: center; align-content: center; gap: 5px;
@@ -29,7 +29,7 @@
   .tabbar .tb-hire::before { display: none; }
   .tb-orb {
     width: 48px; height: 48px; margin-top: -24px; border-radius: 50%; display: grid; place-items: center;
-    color: #fff; background: var(--red); border: 4px solid #09090e; box-shadow: 0 10px 24px -8px rgba(255, 46, 77, .7);
+    color: #fff; background: var(--red); border: 4px solid #0d0b08; box-shadow: 0 10px 24px -8px rgba(224,68,46, .7);
   }
   .tb-orb .ic { color: #fff !important; font-size: 19px; }
   .tabbar a:active .ic, .tabbar button:active .ic { transform: scale(.9); }
@@ -47,7 +47,8 @@
   /* calmer, quicker motion */
   .js [data-reveal], .js [data-reveal="left"], .js [data-reveal="right"] { transform: translateY(18px); transition-duration: .55s; }
   .js [data-reveal="scale"] { transform: scale(.97); }
-  .js [data-reveal="blur"] { filter: none; }
+  .js [data-reveal], .js [data-reveal="blur"], .js .split .c { filter: none; }
+  .js [data-reveal="scale"] { clip-path: none; }
   .js [data-reveal].is-in { transform: none; }
   .js .split .c { transition-duration: .55s, .35s; transition-delay: calc(var(--d, 0s) + var(--ci) * 9ms); }
   .card:hover, .svc:hover, .js .bento .svc.is-in:hover { transform: none; }
@@ -64,7 +65,7 @@
   .about-copy > p:nth-of-type(2), .radar-wrap, .cc-skills { display: none; }
   .timeline ol { display: flex; grid-template-columns: none; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 10px; scrollbar-width: none; }
   .timeline ol::-webkit-scrollbar { display: none; }
-  .timeline li { flex: 0 0 68%; scroll-snap-align: start; padding: 30px 16px 16px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255, 255, 255, .02); }
+  .timeline li { flex: 0 0 68%; scroll-snap-align: start; padding: 30px 16px 16px; border: 1px solid var(--line); border-radius: 6px; background: rgba(255, 255, 255, .02); }
   .timeline li::before { left: 16px; top: 14px; width: 10px; height: 10px; }
   .timeline h3 { margin-top: 8px; }
 
@@ -72,7 +73,7 @@
   .bento .svc, .s-chat { grid-column: auto; display: flex; flex-direction: column; gap: 10px; padding: 16px; min-height: 0; }
   .bento .svc-vis, .bento .svc p, .bento .svc .chips, .bento .svc-jp { display: none; }
   .bento .svc-text { display: contents; }
-  .bento .svc-ic { width: 40px; height: 40px; font-size: 19px; border-radius: 12px; }
+  .bento .svc-ic { width: 40px; height: 40px; font-size: 19px; border-radius: 6px; }
   .bento .svc .h3 { font-size: 15px; line-height: 1.25; }
   .bento .svc-more { font-size: 12.5px; color: var(--red); }
 
@@ -81,7 +82,7 @@
   .steps-line { display: none; }
   .steps { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 10px; scrollbar-width: none; }
   .steps::-webkit-scrollbar { display: none; }
-  .step { flex: 0 0 78%; scroll-snap-align: start; padding: 18px; border: 1px solid var(--line); border-radius: 16px; }
+  .step { flex: 0 0 78%; scroll-snap-align: start; padding: 18px; border: 1px solid var(--line); border-radius: 6px; }
   .step:last-child { border-bottom: 1px solid var(--line); }
   .step-n { position: static; margin-bottom: 12px; width: 38px; height: 38px; }
   .step p { font-size: 14px; }
@@ -89,7 +90,7 @@
   .why-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .why { padding: 16px; gap: 10px; }
   .why p { display: none; }
-  .why-ic { width: 42px; height: 42px; font-size: 20px; border-radius: 12px; }
+  .why-ic { width: 42px; height: 42px; font-size: 20px; border-radius: 6px; }
   .why .h4 { font-size: 14.5px; }
 
   /* ---------- THE LAB: one chapter at a time ---------- */
@@ -114,8 +115,8 @@
 }
 
 /* Lab chapter pager (phones) */
-.lab-pager { align-items: center; justify-content: space-between; gap: 10px; margin: 26px var(--gutter) 10px; padding: 10px; border-radius: 18px; border: 1px solid var(--line); background: rgba(255, 255, 255, .02); }
-.lab-pager button { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 12px; font-weight: 600; font-size: 14px; color: var(--ink); background: rgba(255, 255, 255, .05); border: 1px solid var(--line-2); }
+.lab-pager { align-items: center; justify-content: space-between; gap: 10px; margin: 26px var(--gutter) 10px; padding: 10px; border-radius: 6px; border: 1px solid var(--line); background: rgba(255, 255, 255, .02); }
+.lab-pager button { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 6px; font-weight: 600; font-size: 14px; color: var(--ink); background: rgba(255, 255, 255, .05); border: 1px solid var(--line-2); }
 .lab-pager button:disabled { opacity: .35; }
 .lab-pager .lp-next { background: var(--red); border-color: var(--red); color: #fff; }
 .lab-pager span { font: 500 12px/1.3 var(--font-mono); color: var(--ink-3); text-align: center; }

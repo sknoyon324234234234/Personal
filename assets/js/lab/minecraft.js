@@ -34,7 +34,7 @@
   bl(T.BEDROCK, { n: 'Bedrock', s: 1, o: 1, h: Infinity, c: ['#333', '#111'] });
   bl(T.TORCH, { n: 'Torch', h: 0, drop: 'torch', c: ['#ffe14d', '#8a5a2b'] });
   bl(T.GLASS, { n: 'Glass', s: 1, h: .3, drop: 'glass', c: ['#cfefff', '#9fd0e8'] });
-  bl(T.TNT, { n: 'TNT', s: 1, o: 1, h: 0, drop: 'tnt', c: ['#d8372b', '#f4f0e8'] });
+  bl(T.TNT, { n: 'TNT', s: 1, o: 1, h: 0, drop: 'tnt', c: ['#d8372b', '#efe4cc'] });
   bl(T.CHEST, { n: 'Chest', s: 1, o: 1, h: 2.5, drop: 'planks', c: ['#a0692e', '#5a3a1a'] });
   bl(T.FLOWER, { n: 'Poppy', h: 0, c: ['#e8322e', '#3f8a2e'] });
   bl(T.TALLGRASS, { n: 'Grass', h: 0, c: ['#5fbf3b', '#3f8a2e'] });
@@ -290,7 +290,7 @@
       TEX[T.GLASS] = c;
       c = mk(B); g = c.getContext('2d'); g.fillStyle = '#d8372b'; g.fillRect(0, 0, B, B);
       g.fillStyle = '#b02a20'; for (i = 1; i < B; i += 3) g.fillRect(i, 0, 1, B);
-      g.fillStyle = '#f4f0e8'; g.fillRect(0, 5, B, 6); g.fillStyle = '#1c1c1c';
+      g.fillStyle = '#efe4cc'; g.fillRect(0, 5, B, 6); g.fillStyle = '#1c1c1c';
       ['x.x.x.xxx', '.x..x..x.'].forEach(function () { /* keep */ });
       [[2, 6], [3, 6], [4, 6], [3, 7], [3, 8], [3, 9], [6, 6], [6, 7], [6, 8], [6, 9], [7, 7], [8, 8], [9, 6], [9, 7], [9, 8], [9, 9], [11, 6], [12, 6], [13, 6], [12, 7], [12, 8], [12, 9]].forEach(function (p) { g.fillRect(p[0], p[1], 1, 1); });
       TEX[T.TNT] = c;
@@ -947,7 +947,7 @@
     function fireworks() {
       for (var f = 0; f < 5; f++) (function (f) {
         setTimeout(function () {
-          var fx = player.x + (Math.random() - .5) * 14, fy = player.y - 5 - Math.random() * 4, cols = [['#ff2e4d', '#ffd84a'], ['#27e1d6', '#ffffff'], ['#8b6cff', '#ff5fb6']][f % 3];
+          var fx = player.x + (Math.random() - .5) * 14, fy = player.y - 5 - Math.random() * 4, cols = [['#e0442e', '#ffd84a'], ['#6fb3a8', '#ffffff'], ['#9483c2', '#df7f73']][f % 3];
           for (var i = 0; i < 40; i++) { var a = i / 40 * 6.28; parts.push({ x: fx, y: fy, vx: Math.cos(a) * 7, vy: Math.sin(a) * 7, l: .9 + Math.random() * .4, c: cols[i % 2], g: .15, s: 1 }); }
           tone('sine', 200, 60, .3, .06);
         }, f * 260);
@@ -1531,7 +1531,7 @@
     }
     function blend(c) { return '#ff5a5a'; }
     var SKIN = {
-      player: { hair: '#e8ebf8', band: '#1c1a33', face: '#ffd8c4', body: '#e0203f', zip: '#7d0a1d', arm: '#c8173a', legs: '#1d1b33', shoes: '#f4f0e8', eye: '#0b8f8a', fringe: 1 },
+      player: { hair: '#e8ebf8', band: '#1c1a33', face: '#ffd8c4', body: '#e0203f', zip: '#6e1c10', arm: '#b8321f', legs: '#1d1b33', shoes: '#efe4cc', eye: '#0b8f8a', fringe: 1 },
       zombie: { hair: '#2f5a2a', face: '#5f9a4a', body: '#2f9c9c', arm: '#5f9a4a', legs: '#3b3b8f', eye: '#101010', eye1: '#101010', reach: 1, mouth: '#2a4a22' }
     };
     function drawCreeper(m) {

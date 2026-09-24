@@ -53,7 +53,7 @@
       return '<ellipse cx="100" cy="170" rx="48" ry="9" fill="' + c + '" opacity=".4"/><rect x="58" y="164" width="84" height="16" rx="4" fill="#1f1f2e"/>' + s;
     },
     mask: function (c) {
-      return '<path d="M52 58 40 18 74 46ZM148 58 160 18 126 46Z" fill="#f4f0e8"/><path d="M100 36C150 36 168 80 160 120 152 160 126 178 100 178S48 160 40 120C32 80 50 36 100 36Z" fill="' + c + '"/>' +
+      return '<path d="M52 58 40 18 74 46ZM148 58 160 18 126 46Z" fill="#efe4cc"/><path d="M100 36C150 36 168 80 160 120 152 160 126 178 100 178S48 160 40 120C32 80 50 36 100 36Z" fill="' + c + '"/>' +
         '<path d="M70 82 92 92M130 82 108 92" stroke="#1b1b28" stroke-width="6" stroke-linecap="round"/><path d="M62 100 90 110 62 118ZM138 100 110 110 138 118Z" fill="#fff6a6"/>' +
         '<path d="M70 142Q100 160 130 142L124 154Q100 168 76 154Z" fill="#1b1b28"/><path d="M80 146 84 156 88 148ZM112 148 116 156 120 146Z" fill="#fff"/>';
     },
@@ -79,24 +79,24 @@
     }
   };
   function artSVG(p, color) {
-    return '<svg viewBox="0 0 200 200" aria-hidden="true">' + ART[p.art](color || p.colors[0][1], p.c2 || '#ffc24b') + '</svg>';
+    return '<svg viewBox="0 0 200 200" aria-hidden="true">' + ART[p.art](color || p.colors[0][1], p.c2 || '#d9a441') + '</svg>';
   }
 
   /* ------------------------------------------------------------------
      Catalog (fictional demo products)
      ------------------------------------------------------------------ */
   var P = [
-    { id: 'katana', name: 'Neon Katana Lamp', cat: 'Decor', price: 59, rating: 4.9, reviews: 214, art: 'lamp', colors: [['Crimson', '#ff2e4d'], ['Cyan', '#27e1d6'], ['Violet', '#8b6cff']], stock: 4, desc: 'Katana-shaped RGB desk lamp with 16M colours, music sync and a USB-C base. Lights up any setup.', tags: 'gift light desk rgb lamp setup' },
-    { id: 'ronin', name: 'Ronin ANC Headphones', cat: 'Tech', price: 129, was: 159, rating: 4.8, reviews: 512, art: 'phones', colors: [['Crimson', '#ff2e4d'], ['Arctic', '#dfe7f5'], ['Jade', '#27e1d6']], stock: 6, desc: 'Wireless noise-cancelling headphones with a 40-hour battery and a low-latency gaming mode.', tags: 'music audio gaming headphones sound travel' },
-    { id: 'mecha', name: 'Mecha Keyboard K2', cat: 'Tech', price: 89, rating: 4.7, reviews: 389, art: 'keyboard', colors: [['Violet', '#8b6cff'], ['Sakura', '#ff6b9a'], ['Mint', '#5fe0c0']], stock: 21, desc: 'Hot-swappable 75% mechanical keyboard with gasket mount, per-key RGB and tactile switches.', tags: 'gaming desk typing keyboard setup coding' },
+    { id: 'katana', name: 'Neon Katana Lamp', cat: 'Decor', price: 59, rating: 4.9, reviews: 214, art: 'lamp', colors: [['Crimson', '#e0442e'], ['Cyan', '#6fb3a8'], ['Violet', '#9483c2']], stock: 4, desc: 'Katana-shaped RGB desk lamp with 16M colours, music sync and a USB-C base. Lights up any setup.', tags: 'gift light desk rgb lamp setup' },
+    { id: 'ronin', name: 'Ronin ANC Headphones', cat: 'Tech', price: 129, was: 159, rating: 4.8, reviews: 512, art: 'phones', colors: [['Crimson', '#e0442e'], ['Arctic', '#dfe7f5'], ['Jade', '#6fb3a8']], stock: 6, desc: 'Wireless noise-cancelling headphones with a 40-hour battery and a low-latency gaming mode.', tags: 'music audio gaming headphones sound travel' },
+    { id: 'mecha', name: 'Mecha Keyboard K2', cat: 'Tech', price: 89, rating: 4.7, reviews: 389, art: 'keyboard', colors: [['Violet', '#9483c2'], ['Sakura', '#ff6b9a'], ['Mint', '#5fe0c0']], stock: 21, desc: 'Hot-swappable 75% mechanical keyboard with gasket mount, per-key RGB and tactile switches.', tags: 'gaming desk typing keyboard setup coding' },
     { id: 'kitsune', name: 'Kitsune Hoodie', cat: 'Apparel', price: 64, rating: 4.9, reviews: 176, art: 'hoodie', colors: [['Crimson', '#d8203f'], ['Ink', '#34344c'], ['Cream', '#e9e1d0']], sizes: ['S', 'M', 'L', 'XL'], stock: 9, badge: 'new', desc: '450gsm heavyweight cotton hoodie with an embroidered fox crest and an oversized fit.', tags: 'clothes winter gift hoodie fashion' },
     { id: 'shinobi', name: 'Shinobi Backpack', cat: 'Apparel', price: 79, rating: 4.6, reviews: 98, art: 'backpack', colors: [['Ink', '#34344c'], ['Crimson', '#d8203f']], stock: 15, desc: 'Water-resistant 24L backpack with a padded 16" laptop sleeve and a hidden anti-theft pocket.', tags: 'travel laptop school bag backpack' },
-    { id: 'sakura', name: 'Sakura Desk Mat XL', cat: 'Decor', price: 29, rating: 4.8, reviews: 640, art: 'mat', c2: '#ffd1dc', colors: [['Night', '#ff5fb6'], ['Dawn', '#ffc24b']], stock: 40, desc: '900 × 400 mm stitched-edge desk mat with a sakura-at-dusk print and a non-slip base.', tags: 'desk gift gaming mousepad setup cheap' },
-    { id: 'pixel', name: 'Pixel Blade Figure', cat: 'Collectibles', price: 45, rating: 4.5, reviews: 61, art: 'figure', colors: [['Diamond', '#5fe0f0'], ['Gold', '#ffc24b']], stock: 12, badge: 'new', desc: 'Die-cast pixel-art sword on a light-up pedestal. Limited run of 500 pieces.', tags: 'gaming minecraft collect gift figure' },
+    { id: 'sakura', name: 'Sakura Desk Mat XL', cat: 'Decor', price: 29, rating: 4.8, reviews: 640, art: 'mat', c2: '#ffd1dc', colors: [['Night', '#df7f73'], ['Dawn', '#d9a441']], stock: 40, desc: '900 × 400 mm stitched-edge desk mat with a sakura-at-dusk print and a non-slip base.', tags: 'desk gift gaming mousepad setup cheap' },
+    { id: 'pixel', name: 'Pixel Blade Figure', cat: 'Collectibles', price: 45, rating: 4.5, reviews: 61, art: 'figure', colors: [['Diamond', '#5fe0f0'], ['Gold', '#d9a441']], stock: 12, badge: 'new', desc: 'Die-cast pixel-art sword on a light-up pedestal. Limited run of 500 pieces.', tags: 'gaming minecraft collect gift figure' },
     { id: 'oni', name: 'Oni LED Mask', cat: 'Collectibles', price: 39, rating: 4.4, reviews: 83, art: 'mask', colors: [['Crimson', '#d8203f'], ['Violet', '#6b4de6']], stock: 3, desc: 'Hand-painted oni mask with glowing LED eyes. Wall mount included.', tags: 'decor wall gift mask anime' },
-    { id: 'kaze', name: 'Kaze Smartwatch', cat: 'Tech', price: 149, rating: 4.6, reviews: 204, art: 'watch', c2: '#a4ff6b', colors: [['Cyan', '#27e1d6'], ['Crimson', '#ff2e4d']], stock: 18, desc: 'AMOLED smartwatch with heart-rate, SpO2, GPS and a 10-day battery.', tags: 'fitness health sport watch gadget' },
-    { id: 'ramen', name: 'Dragon Ramen Bowl Set', cat: 'Decor', price: 34, rating: 4.9, reviews: 302, art: 'ramen', colors: [['Crimson', '#c8173a'], ['Indigo', '#3b3bd0']], stock: 26, desc: 'Two ceramic ramen bowls with chopsticks, spoons and a hand-painted dragon motif.', tags: 'kitchen food gift bowl home' },
-    { id: 'akira', name: 'Akira Bomber Jacket', cat: 'Apparel', price: 119, was: 139, rating: 4.7, reviews: 88, art: 'jacket', c2: '#ffc24b', colors: [['Crimson', '#c8173a'], ['Olive', '#5b6b3a'], ['Ink', '#34344c']], sizes: ['S', 'M', 'L', 'XL'], stock: 7, desc: 'Satin bomber jacket with a quilted lining and an embroidered back panel.', tags: 'clothes winter style jacket fashion' },
+    { id: 'kaze', name: 'Kaze Smartwatch', cat: 'Tech', price: 149, rating: 4.6, reviews: 204, art: 'watch', c2: '#a9c46a', colors: [['Cyan', '#6fb3a8'], ['Crimson', '#e0442e']], stock: 18, desc: 'AMOLED smartwatch with heart-rate, SpO2, GPS and a 10-day battery.', tags: 'fitness health sport watch gadget' },
+    { id: 'ramen', name: 'Dragon Ramen Bowl Set', cat: 'Decor', price: 34, rating: 4.9, reviews: 302, art: 'ramen', colors: [['Crimson', '#b8321f'], ['Indigo', '#3b3bd0']], stock: 26, desc: 'Two ceramic ramen bowls with chopsticks, spoons and a hand-painted dragon motif.', tags: 'kitchen food gift bowl home' },
+    { id: 'akira', name: 'Akira Bomber Jacket', cat: 'Apparel', price: 119, was: 139, rating: 4.7, reviews: 88, art: 'jacket', c2: '#d9a441', colors: [['Crimson', '#b8321f'], ['Olive', '#5b6b3a'], ['Ink', '#34344c']], sizes: ['S', 'M', 'L', 'XL'], stock: 7, desc: 'Satin bomber jacket with a quilted lining and an embroidered back panel.', tags: 'clothes winter style jacket fashion' },
     { id: 'fox', name: 'Spirit Fox Plush', cat: 'Collectibles', price: 24, rating: 5.0, reviews: 451, art: 'plush', colors: [['Ember', '#ff7a3d'], ['Snow', '#dfe7f5']], stock: 33, desc: 'Ultra-soft 30 cm fox plush. The internet’s favourite desk buddy.', tags: 'gift cute kids plush toy cheap' }
   ];
   var byId = {};
@@ -238,7 +238,7 @@
     save(); renderCart();
     var cc = $('.cart-count'); cc.classList.add('bump'); setTimeout(function () { cc.classList.remove('bump'); }, 300);
     XR.toast(byId[id].name + ' added to cart');
-    feed('cart', '#27e1d6', 'Cart updated — ' + byId[id].name, 'storefront session');
+    feed('cart', '#6fb3a8', 'Cart updated — ' + byId[id].name, 'storefront session');
   }
   function totals() {
     var sub = cart.reduce(function (s, l) { return s + byId[l.id].price * l.qty; }, 0);
@@ -353,7 +353,7 @@
         '<p class="muted" style="font-size:13px">Test card only. Real stores use a hosted, PCI-compliant checkout (Stripe, SSLCommerz…) — card details never touch the site.</p>';
       label.textContent = 'Pay ' + money2(t);
     } else {
-      panel.innerHTML = '<div class="mfs"><span class="mfs-logo" style="--mc:#8b6cff"><span>' + I('truck') + '</span>Cash on delivery</span><p>Pay <b>' + money2(t) + '</b> when your order arrives. An AI call-bot confirms the order by SMS before dispatch to reduce fake orders.</p></div>';
+      panel.innerHTML = '<div class="mfs"><span class="mfs-logo" style="--mc:#9483c2"><span>' + I('truck') + '</span>Cash on delivery</span><p>Pay <b>' + money2(t) + '</b> when your order arrives. An AI call-bot confirms the order by SMS before dispatch to reduce fake orders.</p></div>';
       label.textContent = 'Place order';
     }
   }
@@ -388,14 +388,14 @@
     orders.unshift(order);
     cart = []; promo = null; $('.promo input').value = '';
     save(); renderCart(); render(); renderAdmin(true);
-    feed('bag', '#ffc24b', 'New order ' + id + ' — ' + money2(order.total), order.pay + (order.status === 'paid' ? ' · auto-confirmed' : ' · confirm call scheduled'));
+    feed('bag', '#d9a441', 'New order ' + id + ' — ' + money2(order.total), order.pay + (order.status === 'paid' ? ' · auto-confirmed' : ' · confirm call scheduled'));
     feed('send', '#2f9bff', 'Telegram alert sent to @kage_orders', id);
     $('.done-id', coEl).innerHTML = 'Order <b>' + id + '</b> · ' + esc(order.items) + '<br>Total ' + money2(order.total) + ' · ' + order.pay;
     coStep(2);
     confetti();
   }
   function confetti() {
-    var b = $('.done-burst', coEl), cols = ['#ff2e4d', '#27e1d6', '#ffc24b', '#8b6cff', '#a4ff6b', '#ff5fb6'], h = '';
+    var b = $('.done-burst', coEl), cols = ['#e0442e', '#6fb3a8', '#d9a441', '#9483c2', '#a9c46a', '#df7f73'], h = '';
     for (var i = 0; i < 44; i++) {
       var a = Math.random() * Math.PI * 2, d = 90 + Math.random() * 170;
       h += '<i style="background:' + cols[i % cols.length] + ';--x:' + (Math.cos(a) * d).toFixed(0) + 'px;--y:' + (Math.sin(a) * d * .8 + 40).toFixed(0) + 'px;--r:' + ((Math.random() * 720) | 0) + 'deg;animation-delay:' + (Math.random() * .15).toFixed(2) + 's"></i>';
@@ -469,7 +469,7 @@
     var p = byId[b.getAttribute('data-ai-add')];
     addToCart(p.id, p.colors[0][0], p.sizes ? 'M' : null, 1);
     b.textContent = 'Added'; b.disabled = true;
-    feed('sparkle', '#8b6cff', 'AI assistant added ' + p.name + ' to a cart', 'assisted sale');
+    feed('sparkle', '#9483c2', 'AI assistant added ' + p.name + ' to a cart', 'assisted sale');
   });
   function aiOpen(v) {
     aiBox.hidden = !v;
@@ -484,12 +484,12 @@
      Admin / autopilot
      ------------------------------------------------------------------ */
   var AUTOS = [
-    ['bot', '#27e1d6', 'AI shopping assistant', 'Answered 312 chats · 94% resolved'],
-    ['box', '#ffc24b', 'Auto-restock', 'PO-2293 drafted for Oni LED Mask'],
-    ['refresh', '#8b6cff', 'Abandoned-cart recovery', 'Recovered $412 this week via Telegram'],
-    ['btc', '#a4ff6b', 'Crypto auto-confirm', 'Avg. 58s from payment to fulfilment'],
+    ['bot', '#6fb3a8', 'AI shopping assistant', 'Answered 312 chats · 94% resolved'],
+    ['box', '#d9a441', 'Auto-restock', 'PO-2293 drafted for Oni LED Mask'],
+    ['refresh', '#9483c2', 'Abandoned-cart recovery', 'Recovered $412 this week via Telegram'],
+    ['btc', '#a9c46a', 'Crypto auto-confirm', 'Avg. 58s from payment to fulfilment'],
     ['send', '#2f9bff', 'Telegram order alerts', 'Posting to @kage_orders'],
-    ['star', '#ff5fb6', 'AI review replies', 'Replied to 18 reviews in EN / BN']
+    ['star', '#df7f73', 'AI review replies', 'Replied to 18 reviews in EN / BN']
   ];
   var autoOn = AUTOS.map(function () { return true; });
   var SEED_ORDERS = [
@@ -535,7 +535,7 @@
     var d = xy.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
     var g = '';
     for (i = 1; i < 4; i++) g += '<line class="grid-l" x1="0" x2="' + W + '" y1="' + (H * i / 4) + '" y2="' + (H * i / 4) + '"/>';
-    svg.innerHTML = '<defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff2e4d" stop-opacity=".35"/><stop offset="1" stop-color="#ff2e4d" stop-opacity="0"/></linearGradient></defs>' + g +
+    svg.innerHTML = '<defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0442e" stop-opacity=".35"/><stop offset="1" stop-color="#e0442e" stop-opacity="0"/></linearGradient></defs>' + g +
       '<path class="area" d="' + d + ' L' + W + ' ' + H + ' L0 ' + H + ' Z"/><path class="line" d="' + d + '"/>';
     var days = [];
     for (i = n - 1; i >= 0; i -= 3) { var dt = new Date(Date.now() - i * 864e5); days.push(dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })); }
@@ -572,7 +572,7 @@
     $$('.shop-mode button').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-mode') === m); });
     $('.store').hidden = m !== 'store';
     $('.admin').hidden = m !== 'admin';
-    if (m === 'admin') { renderAdmin(true); if (!feedEl.children.length) { feed('bot', '#27e1d6', 'Autopilot online — 6 agents running', 'system'); feed('btc', '#a4ff6b', 'Crypto watcher connected', 'TRC20 · BEP20 · BTC · ETH'); } }
+    if (m === 'admin') { renderAdmin(true); if (!feedEl.children.length) { feed('bot', '#6fb3a8', 'Autopilot online — 6 agents running', 'system'); feed('btc', '#a9c46a', 'Crypto watcher connected', 'TRC20 · BEP20 · BTC · ETH'); } }
     var top = $('.shop-mode').getBoundingClientRect().top + scrollY - 120;
     if (scrollY > top) window.scrollTo({ top: top, behavior: XR.reduce ? 'auto' : 'smooth' });
   }

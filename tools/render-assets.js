@@ -19,7 +19,7 @@ const out = p => path.join(root, 'assets/img', p);
   for (let attempt = 1; attempt <= 6; attempt++) {
     await og.goto(file('tools/og.html'), { waitUntil: 'networkidle' });
     await og.evaluate(() => document.fonts.ready);
-    const ok = await og.evaluate(() => document.fonts.check('900 54px Unbounded') && document.fonts.check('600 17px "Plus Jakarta Sans"'));
+    const ok = await og.evaluate(() => document.fonts.check('800 54px "Shippori Mincho B1"') && document.fonts.check('500 14px "JetBrains Mono"'));
     if (ok) break;
     console.log('fonts not ready, retrying (' + attempt + ')');
   }

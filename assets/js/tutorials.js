@@ -41,16 +41,16 @@
   var CHECK = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   var CURSOR = '<svg viewBox="0 0 24 24" width="34" height="34"><path d="M5 3l14 7-6 2-2 6z" fill="#fff" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/></svg>';
   var LESSONS = [
-    { id: 'kinetic', title: 'Kinetic type reveal', c: '#ff2e4d', dur: 3.2, bg: '#0b0b12', layers: [
-      { name: 'Underline', type: 'Shape', lc: '#27e1d6', css: 'height:6px;background:#ff2e4d;border-radius:3px;box-shadow:0 0 20px #ff2e4d', st: { y: 72 },
+    { id: 'kinetic', title: 'Kinetic type reveal', c: '#e0442e', dur: 3.2, bg: '#15120f', layers: [
+      { name: 'Underline', type: 'Shape', lc: '#6fb3a8', css: 'height:6px;background:#e0442e;border-radius:3px;box-shadow:0 0 20px #e0442e', st: { y: 72 },
         p: { w: [[1.2, 0, 'io'], [2.0, 360]], o: [[1.2, 0, 'lin'], [1.25, 100]] } },
-      { name: 'Subtitle', type: 'Text', lc: '#8b6cff', html: 'Motion Academy · Lesson 01', css: 'font:500 18px JetBrains Mono,monospace;color:#bdb8cc;letter-spacing:.24em;text-transform:uppercase;white-space:nowrap',
+      { name: 'Subtitle', type: 'Text', lc: '#9483c2', html: 'Motion Academy · Lesson 01', css: 'font:500 18px JetBrains Mono,monospace;color:#bfb29a;letter-spacing:.24em;text-transform:uppercase;white-space:nowrap',
         p: { o: [[1.0, 0, 'out'], [1.6, 100]], y: [[1.0, 140, 'expo'], [1.7, 112]] } },
-      { name: 'Title', type: 'Text', lc: '#ffc24b', html: 'BUILD LEGENDARY', css: 'font:900 66px Unbounded,Arial Black,sans-serif;color:#f4f0e8;white-space:nowrap',
+      { name: 'Title', type: 'Text', lc: '#d9a441', html: 'BUILD LEGENDARY', css: 'font:800 64px "Shippori Mincho B1",Georgia,serif;color:#efe4cc;white-space:nowrap',
         p: { y: [[0.3, 80, 'expo'], [1.1, 0]], o: [[0.3, 0, 'out'], [0.8, 100]], ls: [[0.3, 0.5, 'expo'], [1.5, 0.02]] } },
-      { name: 'Slash', type: 'Shape', lc: '#ff5fb6', css: 'width:760px;height:12px;background:linear-gradient(90deg,transparent,#ff2e4d 30%,#fff 60%,transparent);border-radius:6px;box-shadow:0 0 30px #ff2e4d', st: { r: -6, y: -8 },
+      { name: 'Slash', type: 'Shape', lc: '#df7f73', css: 'width:760px;height:12px;background:linear-gradient(90deg,transparent,#e0442e 30%,#fff 60%,transparent);border-radius:6px;box-shadow:0 0 30px #e0442e', st: { r: -6, y: -8 },
         p: { x: [[0, -1100, 'expo'], [0.6, 0, 'hold'], [1.6, 0, 'in'], [2.2, 1100]] } },
-      { name: 'Background', type: 'Solid', lc: '#7f7b93', css: 'width:960px;height:540px;background:radial-gradient(circle at 50% 50%,#2a0b18,#0b0b12 70%)',
+      { name: 'Background', type: 'Solid', lc: '#857a68', css: 'width:960px;height:540px;background:radial-gradient(circle at 50% 50%,#2a0b18,#15120f 70%)',
         p: { s: [[0, 112, 'out'], [3.2, 100]] } }
     ], notes: [
       [0, 'Background: a slow 112% → 100% scale across the whole shot adds life without drawing attention — a “Ken Burns” push.'],
@@ -60,19 +60,19 @@
       [1.2, 'The underline draws with Easy Ease, so it feels hand-drawn instead of mechanical.'],
       [1.6, 'The slash exits with Ease In: things leaving the frame should accelerate out.']
     ] },
-    { id: 'stinger', title: 'Logo stinger', c: '#8b6cff', dur: 3.0, bg: '#07070b', layers: [
-      { name: 'Flash', type: 'Solid', lc: '#f4f0e8', css: 'width:960px;height:540px;background:#fff', p: { o: [[0.9, 0, 'out'], [1.0, 85, 'in'], [1.35, 0]] } },
-      { name: 'Wordmark', type: 'Text', lc: '#ffc24b', html: 'XIRAIYA', css: 'font:900 60px Unbounded,Arial Black,sans-serif;color:#f4f0e8;white-space:nowrap', st: { y: 150 },
+    { id: 'stinger', title: 'Logo stinger', c: '#9483c2', dur: 3.0, bg: '#0f0d0b', layers: [
+      { name: 'Flash', type: 'Solid', lc: '#efe4cc', css: 'width:960px;height:540px;background:#fff', p: { o: [[0.9, 0, 'out'], [1.0, 85, 'in'], [1.35, 0]] } },
+      { name: 'Wordmark', type: 'Text', lc: '#d9a441', html: 'XIRAIYA', css: 'font:800 60px "Shippori Mincho B1",Georgia,serif;color:#efe4cc;white-space:nowrap', st: { y: 150 },
         p: { clip: [[1.1, 0, 'expo'], [1.9, 100]], ls: [[1.1, 0.5, 'expo'], [2.3, 0.12]] } },
-      { name: 'Shockwave', type: 'Shape', lc: '#ff2e4d', css: 'width:220px;height:220px;border-radius:50%;border:4px solid #ff2e4d', st: { y: -20 },
+      { name: 'Shockwave', type: 'Shape', lc: '#e0442e', css: 'width:220px;height:220px;border-radius:50%;border:4px solid #e0442e', st: { y: -20 },
         p: { s: [[0.95, 0, 'expo'], [1.8, 420]], o: [[0.95, 100, 'lin'], [1.8, 0]] } },
-      { name: 'Blade B', type: 'Shape', lc: '#ff5fb6', css: 'width:30px;height:210px;background:#ff2e4d;border-radius:4px;box-shadow:0 0 30px #ff2e4d', st: { y: -20 },
+      { name: 'Blade B', type: 'Shape', lc: '#df7f73', css: 'width:30px;height:210px;background:#e0442e;border-radius:4px;box-shadow:0 0 30px #e0442e', st: { y: -20 },
         p: { x: [[0.15, 700, 'expo'], [0.95, 0]], r: [[0.15, 90, 'expo'], [0.95, -32]] } },
-      { name: 'Blade A', type: 'Shape', lc: '#27e1d6', css: 'width:30px;height:210px;background:#f4f0e8;border-radius:4px', st: { y: -20 },
+      { name: 'Blade A', type: 'Shape', lc: '#6fb3a8', css: 'width:30px;height:210px;background:#efe4cc;border-radius:4px', st: { y: -20 },
         p: { x: [[0, -700, 'expo'], [0.9, 0]], r: [[0, -90, 'expo'], [0.9, 32]] } },
-      { name: 'Diamond', type: 'Shape', lc: '#8b6cff', css: 'width:200px;height:200px;border:6px solid #8b6cff;box-shadow:0 0 40px rgba(139,108,255,.5)', st: { y: -20 },
+      { name: 'Diamond', type: 'Shape', lc: '#9483c2', css: 'width:200px;height:200px;border:6px solid #9483c2;box-shadow:0 0 40px rgba(148,131,194,.5)', st: { y: -20 },
         p: { r: [[0.9, -135, 'back'], [1.6, 45]], s: [[0.9, 0, 'back'], [1.6, 100]] } },
-      { name: 'Background', type: 'Solid', lc: '#7f7b93', css: 'width:960px;height:540px;background:radial-gradient(circle,#1d0b2a,#07070b 70%)', p: {} }
+      { name: 'Background', type: 'Solid', lc: '#857a68', css: 'width:960px;height:540px;background:radial-gradient(circle,#1d0b2a,#0f0d0b 70%)', p: {} }
     ], notes: [
       [0, 'Two blades fly in from opposite sides with Expo Out and a 150ms offset — asymmetry makes it feel alive.'],
       [0.9, 'The diamond pops in with Back Out: it overshoots past 100% scale, then settles. That overshoot is the “snap”.'],
@@ -80,17 +80,17 @@
       [0.9, 'A 3-frame white flash (0 → 85% → 0) sells the moment. Keep flashes short to avoid discomfort.'],
       [1.1, 'The wordmark is revealed left-to-right with a clip-path mask while tracking relaxes — no fade needed.']
     ] },
-    { id: 'impact', title: 'Anime impact frame', c: '#e8112d', dur: 2.6, bg: '#f4f0e8', layers: [
-      { name: 'Camera', type: 'Null', lc: '#bdb8cc', cam: true,
+    { id: 'impact', title: 'Anime impact frame', c: '#e8112d', dur: 2.6, bg: '#efe4cc', layers: [
+      { name: 'Camera', type: 'Null', lc: '#bfb29a', cam: true,
         p: { x: [[0.56, 0, 'lin'], [0.6, -22, 'lin'], [0.65, 16, 'lin'], [0.7, -11, 'lin'], [0.76, 8, 'lin'], [0.82, -4, 'lin'], [0.9, 0]], r: [[0.56, 0, 'lin'], [0.62, -1.5, 'lin'], [0.72, 1, 'lin'], [0.9, 0]] } },
       { name: 'Invert frame', type: 'Solid', lc: '#111111', css: 'width:960px;height:540px;background:#111', p: { o: [[0.55, 0, 'hold'], [0.56, 100, 'hold'], [0.63, 0]] } },
       { name: 'Kanji 斬', type: 'Text', lc: '#e8112d', html: '斬', css: 'font:900 250px Noto Serif JP,serif;color:#111;line-height:1',
         p: { o: [[0.5, 0, 'hold'], [0.56, 100]], s: [[0.56, 280, 'expo'], [0.78, 100, 'lin'], [2.6, 110]], r: [[0.56, -14, 'back'], [0.95, 0]] } },
-      { name: 'Red slash', type: 'Shape', lc: '#ff5fb6', css: 'width:1300px;height:44px;background:#e8112d', st: { r: -18 },
+      { name: 'Red slash', type: 'Shape', lc: '#df7f73', css: 'width:1300px;height:44px;background:#e8112d', st: { r: -18 },
         p: { sx: [[0.4, 0, 'expo'], [0.56, 100]] } },
-      { name: 'Speed lines', type: 'Shape', lc: '#7f7b93', css: 'width:1400px;height:1400px;background:repeating-conic-gradient(from 0deg,#111 0 1.2deg,transparent 1.2deg 6deg);-webkit-mask:radial-gradient(circle,transparent 18%,#000 55%);mask:radial-gradient(circle,transparent 18%,#000 55%)',
+      { name: 'Speed lines', type: 'Shape', lc: '#857a68', css: 'width:1400px;height:1400px;background:repeating-conic-gradient(from 0deg,#111 0 1.2deg,transparent 1.2deg 6deg);-webkit-mask:radial-gradient(circle,transparent 18%,#000 55%);mask:radial-gradient(circle,transparent 18%,#000 55%)',
         p: { o: [[0.5, 0, 'hold'], [0.56, 100]], r: [[0, 0, 'lin'], [2.6, 40]], s: [[0.56, 150, 'expo'], [0.95, 100]] } },
-      { name: 'Paper', type: 'Solid', lc: '#ffc24b', css: 'width:960px;height:540px;background:radial-gradient(rgba(0,0,0,.14) 1.2px,transparent 1.4px) 0 0/9px 9px,#f4f0e8', p: {} }
+      { name: 'Paper', type: 'Solid', lc: '#d9a441', css: 'width:960px;height:540px;background:radial-gradient(rgba(0,0,0,.14) 1.2px,transparent 1.4px) 0 0/9px 9px,#efe4cc', p: {} }
     ], notes: [
       [0, 'Anticipation: 0.5 seconds of stillness. The calm before the hit makes the hit land harder.'],
       [0.4, 'The red slash wipes in fast (Expo Out over 160ms) — this is the “cut”.'],
@@ -100,15 +100,15 @@
       [0.78, 'After the hit, a slow linear push-in (100% → 110%) keeps tension while the frame holds.']
     ] },
     { id: 'button', title: 'Button micro-interaction', c: '#22c55e', dur: 2.4, bg: '#0e0e14', layers: [
-      { name: 'Cursor', type: 'Shape', lc: '#f4f0e8', html: CURSOR, css: 'width:34px;height:34px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))',
+      { name: 'Cursor', type: 'Shape', lc: '#efe4cc', html: CURSOR, css: 'width:34px;height:34px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))',
         p: { x: [[0, 280, 'io'], [0.8, 50]], y: [[0, 190, 'io'], [0.8, 26]], s: [[0.85, 100, 'out'], [0.95, 82, 'back'], [1.15, 100]] } },
-      { name: 'Label', type: 'Text', lc: '#ffc24b', html: 'Pay 129 USDT', css: 'font:700 22px Plus Jakarta Sans,sans-serif;color:#fff;white-space:nowrap;display:flex;align-items:center;gap:10px',
+      { name: 'Label', type: 'Text', lc: '#d9a441', html: 'Pay 129 USDT', css: 'font:700 22px Plus Jakarta Sans,sans-serif;color:#fff;white-space:nowrap;display:flex;align-items:center;gap:10px',
         p: { text: [[0, 'Pay 129 USDT', 'hold'], [1.25, CHECK + 'Paid']], o: [[1.1, 100, 'in'], [1.25, 0, 'out'], [1.4, 100]], y: [[1.25, 12, 'back'], [1.55, 0]] } },
-      { name: 'Ripple', type: 'Shape', lc: '#27e1d6', css: 'width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.35)', st: { x: 50, y: 20 },
+      { name: 'Ripple', type: 'Shape', lc: '#6fb3a8', css: 'width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.35)', st: { x: 50, y: 20 },
         p: { s: [[0.95, 0, 'out'], [1.6, 420]], o: [[0.95, 60, 'lin'], [1.6, 0]] } },
-      { name: 'Button', type: 'Shape', lc: '#ff2e4d', css: 'width:300px;height:76px;border-radius:38px;box-shadow:0 20px 40px -16px rgba(0,0,0,.8)',
-        p: { bg: [[0, '#ff2e4d', 'hold'], [1.2, '#ff2e4d', 'io'], [1.5, '#22c55e']], s: [[0.85, 100, 'out'], [0.95, 94, 'back'], [1.2, 100]], w: [[1.2, 300, 'io'], [1.6, 210]] } },
-      { name: 'Background', type: 'Solid', lc: '#7f7b93', css: 'width:960px;height:540px;background:radial-gradient(circle at 50% 60%,#171726,#0e0e14 70%)', p: {} }
+      { name: 'Button', type: 'Shape', lc: '#e0442e', css: 'width:300px;height:76px;border-radius:38px;box-shadow:0 20px 40px -16px rgba(0,0,0,.8)',
+        p: { bg: [[0, '#e0442e', 'hold'], [1.2, '#e0442e', 'io'], [1.5, '#22c55e']], s: [[0.85, 100, 'out'], [0.95, 94, 'back'], [1.2, 100]], w: [[1.2, 300, 'io'], [1.6, 210]] } },
+      { name: 'Background', type: 'Solid', lc: '#857a68', css: 'width:960px;height:540px;background:radial-gradient(circle at 50% 60%,#171726,#0e0e14 70%)', p: {} }
     ], notes: [
       [0, 'The cursor travels with Easy Ease — people move a mouse with acceleration and deceleration, never linearly.'],
       [0.85, 'Press: the button squashes to 94% in 100ms, then springs back with Back Out. Feedback in under 150ms feels instant.'],
@@ -116,37 +116,37 @@
       [1.1, 'Label swap: fade out with Ease In, swap the text on a Hold keyframe, then bring the new label up with an overshoot.'],
       [1.2, 'Color and width morph together into a compact success pill. Never animate more than 2–3 properties at once.']
     ] },
-    { id: 'parallax', title: 'Parallax camera move', c: '#27e1d6', dur: 4.0, bg: '#2a0f3a', layers: [
-      { name: 'Camera', type: 'Null', lc: '#bdb8cc', cam: true, p: { s: [[0, 100, 'io'], [4, 112]], y: [[0, 10, 'io'], [4, -10]] } },
-      { name: 'Front hills', type: 'Shape', lc: '#ff2e4d', css: 'width:1500px;height:240px;background:#12061c;border-radius:50% 50% 0 0/100% 100% 0 0', st: { y: 230 },
+    { id: 'parallax', title: 'Parallax camera move', c: '#6fb3a8', dur: 4.0, bg: '#2a0f3a', layers: [
+      { name: 'Camera', type: 'Null', lc: '#bfb29a', cam: true, p: { s: [[0, 100, 'io'], [4, 112]], y: [[0, 10, 'io'], [4, -10]] } },
+      { name: 'Front hills', type: 'Shape', lc: '#e0442e', css: 'width:1500px;height:240px;background:#12061c;border-radius:50% 50% 0 0/100% 100% 0 0', st: { y: 230 },
         p: { x: [[0, 180, 'io'], [4, -180]] } },
-      { name: 'Mid hills', type: 'Shape', lc: '#ff5fb6', css: 'width:1500px;height:300px;background:#3a1450;border-radius:40% 60% 0 0/100% 100% 0 0', st: { y: 210 },
+      { name: 'Mid hills', type: 'Shape', lc: '#df7f73', css: 'width:1500px;height:300px;background:#3a1450;border-radius:40% 60% 0 0/100% 100% 0 0', st: { y: 210 },
         p: { x: [[0, 100, 'io'], [4, -100]] } },
-      { name: 'Mountains', type: 'Shape', lc: '#8b6cff', css: 'width:1400px;height:320px;background:#6b2a6e;clip-path:polygon(0 100%,14% 30%,26% 70%,40% 10%,55% 60%,68% 22%,82% 66%,100% 18%,100% 100%)', st: { y: 150 },
+      { name: 'Mountains', type: 'Shape', lc: '#9483c2', css: 'width:1400px;height:320px;background:#6b2a6e;clip-path:polygon(0 100%,14% 30%,26% 70%,40% 10%,55% 60%,68% 22%,82% 66%,100% 18%,100% 100%)', st: { y: 150 },
         p: { x: [[0, 45, 'io'], [4, -45]] } },
-      { name: 'Clouds', type: 'Shape', lc: '#f4f0e8', css: 'width:240px;height:36px;border-radius:18px;background:rgba(255,255,255,.75);box-shadow:120px -26px 0 -6px rgba(255,255,255,.55),-260px 40px 0 -10px rgba(255,255,255,.45)', st: { y: -150 },
+      { name: 'Clouds', type: 'Shape', lc: '#efe4cc', css: 'width:240px;height:36px;border-radius:18px;background:rgba(255,255,255,.75);box-shadow:120px -26px 0 -6px rgba(255,255,255,.55),-260px 40px 0 -10px rgba(255,255,255,.45)', st: { y: -150 },
         p: { x: [[0, -260, 'lin'], [4, 260]] } },
-      { name: 'Sun', type: 'Shape', lc: '#ffc24b', css: 'width:230px;height:230px;border-radius:50%;background:radial-gradient(circle at 45% 40%,#ffd36b,#ff7a3d 60%,#e8112d);box-shadow:0 0 90px rgba(255,122,61,.7)', st: { y: -10 },
+      { name: 'Sun', type: 'Shape', lc: '#d9a441', css: 'width:230px;height:230px;border-radius:50%;background:radial-gradient(circle at 45% 40%,#ffd36b,#ff7a3d 60%,#e8112d);box-shadow:0 0 90px rgba(255,122,61,.7)', st: { y: -10 },
         p: { x: [[0, 16, 'io'], [4, -16]], y: [[0, 20, 'io'], [4, -30]] } },
-      { name: 'Sky', type: 'Solid', lc: '#7f7b93', css: 'width:960px;height:540px;background:linear-gradient(180deg,#1a0b3a,#7a1f5c 65%,#ff7a3d)', p: {} }
+      { name: 'Sky', type: 'Solid', lc: '#857a68', css: 'width:960px;height:540px;background:linear-gradient(180deg,#1a0b3a,#7a1f5c 65%,#ff7a3d)', p: {} }
     ], notes: [
       [0, 'Parallax rule: the further away a layer is, the less it moves. Front hills move 360px, mountains 90px, the sun 32px.'],
       [0, 'Every layer shares the same Easy Ease, so it reads as one camera move instead of layers sliding separately.'],
       [0, 'The camera Null adds a slow 12% zoom and a slight tilt up — depth plus a hint of “reveal”.'],
       [0, 'Clouds drift linearly and in the opposite direction — ambient motion that never stops.']
     ] },
-    { id: 'loader', title: 'Loader loop', c: '#ffc24b', dur: 2.0, bg: '#0b0b12', layers: [
-      { name: 'Label', type: 'Text', lc: '#bdb8cc', html: 'LOADING', css: 'font:600 16px JetBrains Mono,monospace;color:#bdb8cc;letter-spacing:.4em', st: { y: 130 },
+    { id: 'loader', title: 'Loader loop', c: '#d9a441', dur: 2.0, bg: '#15120f', layers: [
+      { name: 'Label', type: 'Text', lc: '#bfb29a', html: 'LOADING', css: 'font:600 16px JetBrains Mono,monospace;color:#bfb29a;letter-spacing:.4em', st: { y: 130 },
         p: { o: [[0, 35, 'io'], [1, 100, 'io'], [2, 35]] } },
-      { name: 'Dot 3', type: 'Shape', lc: '#27e1d6', css: 'width:26px;height:26px;border-radius:50%;background:#27e1d6;box-shadow:0 0 18px #27e1d6', st: { x: 56 },
+      { name: 'Dot 3', type: 'Shape', lc: '#6fb3a8', css: 'width:26px;height:26px;border-radius:50%;background:#6fb3a8;box-shadow:0 0 18px #6fb3a8', st: { x: 56 },
         p: { y: [[0.3, 0, 'out'], [0.6, -46, 'in'], [0.9, 0]], sy: [[0.9, 100, 'out'], [0.98, 70, 'out'], [1.1, 100]] } },
-      { name: 'Dot 2', type: 'Shape', lc: '#8b6cff', css: 'width:26px;height:26px;border-radius:50%;background:#8b6cff;box-shadow:0 0 18px #8b6cff',
+      { name: 'Dot 2', type: 'Shape', lc: '#9483c2', css: 'width:26px;height:26px;border-radius:50%;background:#9483c2;box-shadow:0 0 18px #9483c2',
         p: { y: [[0.15, 0, 'out'], [0.45, -46, 'in'], [0.75, 0]], sy: [[0.75, 100, 'out'], [0.83, 70, 'out'], [0.95, 100]] } },
-      { name: 'Dot 1', type: 'Shape', lc: '#ff2e4d', css: 'width:26px;height:26px;border-radius:50%;background:#ff2e4d;box-shadow:0 0 18px #ff2e4d', st: { x: -56 },
+      { name: 'Dot 1', type: 'Shape', lc: '#e0442e', css: 'width:26px;height:26px;border-radius:50%;background:#e0442e;box-shadow:0 0 18px #e0442e', st: { x: -56 },
         p: { y: [[0, 0, 'out'], [0.3, -46, 'in'], [0.6, 0]], sy: [[0.6, 100, 'out'], [0.68, 70, 'out'], [0.8, 100]] } },
-      { name: 'Ring', type: 'Shape', lc: '#ffc24b', css: 'width:190px;height:190px;border-radius:50%;border:6px solid rgba(255,255,255,.08);border-top-color:#ffc24b',
+      { name: 'Ring', type: 'Shape', lc: '#d9a441', css: 'width:190px;height:190px;border-radius:50%;border:6px solid rgba(255,255,255,.08);border-top-color:#d9a441',
         p: { r: [[0, 0, 'lin'], [2, 360]] } },
-      { name: 'Background', type: 'Solid', lc: '#7f7b93', css: 'width:960px;height:540px;background:#0b0b12', p: {} }
+      { name: 'Background', type: 'Solid', lc: '#857a68', css: 'width:960px;height:540px;background:#15120f', p: {} }
     ], notes: [
       [0, 'A seamless loop: every property ends exactly where it started, and the ring uses Linear so there is no pause at the seam.'],
       [0, 'Dots rise with Ease Out and fall with Ease In — that is gravity. Their 150ms offsets create the wave.'],
@@ -550,7 +550,7 @@
   });
 
   /* easing lab */
-  var EL = [['Linear', 'lin', '#7f7b93', 'Robotic. Use for loops, rotation and progress bars.'], ['Ease Out', 'out', '#27e1d6', 'Things entering the screen. Fast in, gentle stop.'], ['Ease In', 'in', '#ff5fb6', 'Things leaving the screen. Slow start, fast exit.'], ['Easy Ease', 'io', '#8b6cff', 'Objects moving on screen, like a camera or a cursor.'], ['Expo Out', 'expo', '#ff2e4d', 'Premium, snappy UI. The site’s signature curve.'], ['Back Out', 'back', '#ffc24b', 'Playful overshoot for buttons, badges and pop-ins.']];
+  var EL = [['Linear', 'lin', '#857a68', 'Robotic. Use for loops, rotation and progress bars.'], ['Ease Out', 'out', '#6fb3a8', 'Things entering the screen. Fast in, gentle stop.'], ['Ease In', 'in', '#df7f73', 'Things leaving the screen. Slow start, fast exit.'], ['Easy Ease', 'io', '#9483c2', 'Objects moving on screen, like a camera or a cursor.'], ['Expo Out', 'expo', '#e0442e', 'Premium, snappy UI. The site’s signature curve.'], ['Back Out', 'back', '#d9a441', 'Playful overshoot for buttons, badges and pop-ins.']];
   $('.ease-list').innerHTML = EL.map(function (e) {
     return '<button type="button" class="ease" data-copy="' + BEZ[e[1]] + '"><span><b>' + e[0] + '</b><small>' + e[3] + '</small></span><span class="ease-track"><i style="--c:' + e[2] + ';--e:' + BEZ[e[1]] + '"></i></span><em>' + BEZ[e[1]] + '</em></button>';
   }).join('');

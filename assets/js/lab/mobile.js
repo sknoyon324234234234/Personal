@@ -5,10 +5,10 @@
   var I = function (n, c) { return XR.icon(n, c); };
 
   var WORKOUTS = [
-    { n: 'Morning Run', d: '5 km · 32 min', ic: 'activity', c: '#ff2e4d', cat: 'Cardio' },
+    { n: 'Morning Run', d: '5 km · 32 min', ic: 'activity', c: '#e0442e', cat: 'Cardio' },
     { n: 'Core Blast', d: '15 min · 12 moves', ic: 'flame', c: '#ff8a3d', cat: 'Strength' },
     { n: 'Yoga Stretch', d: '20 min · calm', ic: 'sun', c: '#27b5d6', cat: 'Yoga' },
-    { n: 'HIIT Sprint', d: '18 min · intense', ic: 'zap', c: '#8b6cff', cat: 'Cardio' },
+    { n: 'HIIT Sprint', d: '18 min · intense', ic: 'zap', c: '#9483c2', cat: 'Cardio' },
     { n: 'Upper Body', d: '35 min · dumbbells', ic: 'trophy', c: '#22a35a', cat: 'Strength' }
   ];
 
@@ -23,7 +23,7 @@
   var SCREENS = {
     home: '<div class="app-h"><div><small>Good morning</small><b>Rafi</b></div><span class="app-ava">R</span></div>' +
       '<div class="app-rings"><svg viewBox="0 0 120 120" aria-hidden="true">' + ring(52, 'r1', .72) + ring(40, 'r2', .54) + ring(28, 'r3', .88) + '</svg>' +
-      '<ul><li><i style="background:#ff2e4d"></i><span>Move <b>432</b>/600 kcal</span></li><li><i style="background:#a4ff6b"></i><span>Exercise <b>27</b>/50 min</span></li><li><i style="background:#27e1d6"></i><span>Stand <b>11</b>/12 h</span></li></ul></div>' +
+      '<ul><li><i style="background:#e0442e"></i><span>Move <b>432</b>/600 kcal</span></li><li><i style="background:#a9c46a"></i><span>Exercise <b>27</b>/50 min</span></li><li><i style="background:#6fb3a8"></i><span>Stand <b>11</b>/12 h</span></li></ul></div>' +
       '<div class="app-cards"><div class="app-card"><small>' + I('activity') + 'Steps</small><b>8,432</b><em>+12% vs yesterday</em></div><div class="app-card"><small>' + I('heart') + 'Heart</small><b>72 bpm</b><em>resting</em></div>' +
       '<div class="app-card"><small>' + I('flame') + 'Calories</small><b>1,240</b><em>on track</em></div><div class="app-card"><small>' + I('moon') + 'Sleep</small><b>7h 20m</b><em>deep 1h 50m</em></div></div>' +
       '<p class="app-sec">Today’s plan</p><div class="app-list">' + WORKOUTS.slice(0, 3).map(item).join('') + '</div>',
@@ -38,7 +38,7 @@
       '<label class="app-set"><span>Dark mode</span><input type="checkbox" class="sr-only" data-set="dark"><span class="switch" aria-hidden="true"></span></label>' +
       '<label class="app-set"><span>Workout reminders</span><input type="checkbox" class="sr-only" checked data-set="notif"><span class="switch" aria-hidden="true"></span></label>' +
       '<label class="app-set"><span>Sync with smartwatch</span><input type="checkbox" class="sr-only" checked data-set="sync"><span class="switch" aria-hidden="true"></span></label>' +
-      '<div class="app-set"><span>Language</span><span style="color:#8a8a99">English / বাংলা</span></div><div class="app-set"><span>Subscription</span><span style="color:#ff2e4d;font-weight:700">Pro</span></div>'
+      '<div class="app-set"><span>Language</span><span style="color:#8a8a99">English / বাংলা</span></div><div class="app-set"><span>Subscription</span><span style="color:#e0442e;font-weight:700">Pro</span></div>'
   };
 
   LAB.register('mobile', function (stage) {

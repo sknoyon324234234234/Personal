@@ -9,7 +9,7 @@
 <meta name="author" content="Xiraiya">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://sknoyon324234234234.github.io/Personal/">
-<meta name="theme-color" content="#07070b">
+<meta name="theme-color" content="#0f0d0b">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Xiraiya">
 <meta property="og:title" content="Xiraiya — Websites, Bots, Apps &amp; AI Agents that work while you sleep">
@@ -30,7 +30,7 @@
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+JP:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Serif+JP:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@400;600;700;800;900&display=swap"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"></noscript>
 <link rel="stylesheet" href="assets/css/core.css">
 <link rel="stylesheet" href="assets/css/home.css">
 <link rel="stylesheet" href="assets/css/phone.css">
@@ -94,13 +94,10 @@
 
 <!-- intro loader (first visit per session) -->
 <div class="loader" id="loader" aria-hidden="true">
-  <div class="loader-grid"></div>
-  <div class="loader-ring">
-    <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54"/><circle class="sweep" cx="60" cy="60" r="54"/><path d="M60 0v120M0 60h120"/></svg>
-    <span class="loader-num">3</span>
-  </div>
+  <svg class="loader-enso" viewBox="0 0 200 200"><path d="M112 20C160 26 186 64 182 106 178 150 142 182 98 180 54 178 20 144 22 100 24 62 52 30 92 22"/><path class="thin" d="M120 30C158 40 176 72 172 108"/></svg>
+  <span class="loader-num">三</span>
   <div class="loader-name"><span>XIRAIYA</span></div>
-  <div class="loader-meta">Rajshahi · Bangladesh <i></i> 開発者 <i></i> Click to skip</div>
+  <div class="loader-meta">Rajshahi · Bangladesh <i></i> 児雷也 <i></i> Click to skip</div>
   <div class="loader-wipe"></div>
 </div>
 
@@ -110,20 +107,26 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero" aria-labelledby="hero-title">
-    <canvas class="hero-canvas" data-petals="21000" aria-hidden="true"></canvas>
+    <canvas class="hero-canvas" data-petals="34000" aria-hidden="true"></canvas>
     <div class="hero-sun" aria-hidden="true"></div>
-    <div class="hero-lines speedlines" aria-hidden="true"></div>
-    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="hero-peaks" aria-hidden="true">
+      <svg class="pk-far" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" data-speed=".06"><defs><linearGradient id="pkf" x1="0" y1="0" x2="0" y2="1"><stop offset=".2" stop-color="#3b3129" stop-opacity=".75"/><stop offset=".85" stop-color="#3b3129" stop-opacity="0"/></linearGradient></defs><path d="M0 600V352C58 342 86 262 136 250 188 238 204 334 256 324 306 312 324 190 384 176 446 164 456 300 524 292 594 284 604 226 662 214 724 202 742 318 804 310 872 302 884 152 954 142 1024 134 1032 290 1102 282 1162 274 1182 232 1244 222 1306 212 1322 330 1384 322 1444 314 1472 252 1522 246 1562 242 1582 296 1600 298V600Z" fill="url(#pkf)"/></svg>
+      <svg class="pk-mid" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" data-speed=".12"><defs><linearGradient id="pkm" x1="0" y1="0" x2="0" y2="1"><stop offset=".45" stop-color="#231c16"/><stop offset="1" stop-color="#231c16" stop-opacity=".1"/></linearGradient></defs><path d="M0 600V438C70 430 98 336 168 326 232 318 250 424 318 414 380 404 404 300 474 296 546 292 566 432 640 424 716 416 744 356 806 352 874 348 890 452 962 444 1034 436 1054 330 1126 324 1196 318 1214 440 1282 434 1346 428 1372 380 1432 376 1500 372 1530 440 1600 436V600Z" fill="url(#pkm)"/></svg>
+      <svg class="pk-near" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><path d="M0 600V520C96 506 150 470 230 478 312 486 340 530 430 522 520 514 560 470 650 474 744 478 770 528 870 522 966 516 1010 482 1100 486 1196 490 1224 532 1320 526 1410 520 1452 492 1530 494 1566 495 1590 504 1600 506V600Z" fill="#0f0d0b"/></svg>
+    </div>
+    <div class="hero-mist m1" aria-hidden="true"></div>
+    <div class="hero-mist m2" aria-hidden="true"></div>
     <div class="letterbox lb-top" aria-hidden="true"></div>
     <div class="letterbox lb-bot" aria-hidden="true"></div>
-    <div class="hero-vjp vertical-jp jp" aria-hidden="true">コード忍者</div>
+    <div class="hero-vjp vertical-jp jp" aria-hidden="true">児雷也・開発の仙人</div>
 
     <div class="container container-wide hero-inner">
       <div class="hero-copy">
-        <p class="hero-kicker"><span class="hanko sm">忍</span><span>Code Shinobi <em>·</em> Since <span data-cfg="startedYear">2021</span></span></p>
+        <p class="hero-kicker"><span class="hanko sm">忍</span><span>The toad sage of code <em>·</em> Since <span data-cfg="startedYear">2021</span></span></p>
         <h1 class="hero-title" id="hero-title">
-          <span class="hero-ghost" aria-hidden="true">XIRAIYA</span>
+          <svg class="hero-brush" viewBox="0 0 1000 160" preserveAspectRatio="none" aria-hidden="true"><path d="M14 92C120 58 330 40 560 44 720 46 880 58 988 70 996 72 996 90 984 92 860 110 690 124 520 126 330 128 150 124 24 118 6 116 2 98 14 92Z" fill="#e0442e"/><path d="M40 84C260 64 520 60 760 66M60 110C300 116 560 114 820 100M120 96C380 90 620 88 900 84" stroke="#b8321f" stroke-width="5" fill="none" stroke-linecap="round" opacity=".8"/><path d="M880 64C930 66 970 70 998 76M900 104 990 94" stroke="#e0442e" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/></svg>
           <span class="hero-name" data-split="ready">XIRAIYA</span>
+          <span class="hero-seal" aria-hidden="true"><span>児</span><span>雷</span><span>也</span></span>
           <span class="sr-only"> — full-stack developer, automation engineer and AI agent builder from Rajshahi, Bangladesh</span>
         </h1>
         <p class="hero-role">I build <span class="rotator"><span class="rot-word">websites</span></span><br>that work while you sleep.</p>
@@ -135,21 +138,8 @@
       </div>
 
       <div class="hero-visual">
-        <div class="orbit" aria-hidden="true">
-          <span class="orb" style="--i:0"><i><svg class="ic"><use href="#i-globe"/></svg></i></span>
-          <span class="orb" style="--i:1"><i><svg class="ic"><use href="#i-flow"/></svg></i></span>
-          <span class="orb" style="--i:2"><i><svg class="ic"><use href="#i-send"/></svg></i></span>
-          <span class="orb" style="--i:3"><i><svg class="ic"><use href="#i-puzzle"/></svg></i></span>
-          <span class="orb" style="--i:4"><i><svg class="ic"><use href="#i-cube"/></svg></i></span>
-          <span class="orb" style="--i:5"><i><svg class="ic"><use href="#i-window"/></svg></i></span>
-          <span class="orb" style="--i:6"><i><svg class="ic"><use href="#i-phone"/></svg></i></span>
-          <span class="orb" style="--i:7"><i><svg class="ic"><use href="#i-chip"/></svg></i></span>
-          <span class="orb" style="--i:8"><i><svg class="ic"><use href="#i-chat"/></svg></i></span>
-          <span class="orb" style="--i:9"><i><svg class="ic"><use href="#i-bag"/></svg></i></span>
-          <span class="orb" style="--i:10"><i><svg class="ic"><use href="#i-btc"/></svg></i></span>
-        </div>
         <div class="hero-mascot" data-mascot></div>
-        <p class="hero-bubble bubble"><span class="typer" data-lines="Yo! Tell me your idea.|I will ship it. Fast.|Bots? Apps? AI? Easy.">Yo! Tell me your idea.</span></p>
+        <p class="hero-bubble bubble"><span class="typer" data-lines="Tell me your idea.|I will ship it before the toad blinks.|Bots, apps, AI? Summoned.">Tell me your idea.</span></p>
       </div>
     </div>
 
@@ -183,7 +173,7 @@
     <div class="kanji-bg about-kanji" aria-hidden="true">壱</div>
     <div class="container container-wide">
       <div class="section-head">
-        <span class="num"><span class="hanko sm">壱</span> 01 — The character</span>
+        <span class="num"><span class="hanko sm">壱</span> The character · 人物</span>
         <h2 class="h2" id="about-title" data-split>Meet the dev behind the <span class="grad-text">magic.</span></h2>
       </div>
 
@@ -259,7 +249,7 @@
   <section class="section services" id="services" aria-labelledby="svc-title">
     <div class="container container-wide">
       <div class="section-head">
-        <span class="num"><span class="hanko sm">弐</span> 02 — Arsenal</span>
+        <span class="num"><span class="hanko sm">弐</span> The arsenal · 武器</span>
         <h2 class="h2" id="svc-title" data-split>Eleven ways I can <span class="grad-text">level up</span> your business.</h2>
         <p class="lead" data-reveal>Every card opens a live, clickable preview in the Lab. No screenshots — the real thing, running in your browser.</p>
       </div>
@@ -356,7 +346,7 @@
   <section class="explore" id="explore" aria-labelledby="explore-title">
     <div class="container container-wide explore-head">
       <div class="section-head">
-        <span class="num"><span class="hanko sm">参</span> 03 — Explore everything</span>
+        <span class="num"><span class="hanko sm">参</span> Explore everything · 巻物</span>
         <h2 class="h2" id="explore-title" data-split>Don’t take my word. <span class="grad-text">Try it.</span></h2>
         <p class="lead" data-reveal>This whole site is a playground. Click through real, working previews of every service before you hire.</p>
       </div>
@@ -404,7 +394,7 @@
   <section class="section process" id="process" aria-labelledby="process-title">
     <div class="container container-wide process-grid">
       <div class="section-head process-head">
-        <span class="num"><span class="hanko sm">肆</span> 04 — The process</span>
+        <span class="num"><span class="hanko sm">肆</span> The way · 道</span>
         <h2 class="h2" id="process-title" data-split>From idea to <span class="grad-text">launch</span> in five moves.</h2>
         <p class="lead" data-reveal>Clear steps, daily progress updates, and you see the work running before you pay the final part.</p>
         <a class="btn btn-ghost" href="hire.html" data-reveal>Start step one <svg class="ic"><use href="#i-arrow-right"/></svg></a>
@@ -441,16 +431,16 @@
   <section class="section why" aria-labelledby="why-title">
     <div class="container container-wide">
       <div class="section-head center">
-        <span class="num"><span class="hanko sm">伍</span> 05 — The code of honor</span>
+        <span class="num"><span class="hanko sm">伍</span> Code of honor · 誓い</span>
         <h2 class="h2" id="why-title" data-split>Why clients <span class="grad-text">stay.</span></h2>
       </div>
       <div class="why-grid">
-        <div class="why card" data-reveal><span class="why-ic"><svg class="ic"><use href="#i-zap"/></svg></span><h3 class="h4">Fast delivery</h3><p>Small builds in days, not months. Daily progress so you’re never guessing.</p></div>
-        <div class="why card" data-reveal style="--d:.06s"><span class="why-ic"><svg class="ic"><use href="#i-user"/></svg></span><h3 class="h4">Direct line to the dev</h3><p>No agency middlemen. You talk to the person writing the code.</p></div>
-        <div class="why card" data-reveal style="--d:.12s"><span class="why-ic"><svg class="ic"><use href="#i-code"/></svg></span><h3 class="h4">Clean, owned code</h3><p>Documented source code handed over. It’s yours — no lock-in.</p></div>
-        <div class="why card" data-reveal style="--d:.18s"><span class="why-ic"><svg class="ic"><use href="#i-shield"/></svg></span><h3 class="h4">Secure by default</h3><p>Verified webhooks, safe key storage, and sensible security on every build.</p></div>
-        <div class="why card" data-reveal style="--d:.24s"><span class="why-ic"><svg class="ic"><use href="#i-wallet"/></svg></span><h3 class="h4">Flexible payments</h3><p>Crypto, Binance Pay, bKash, Nagad, Payoneer or bank — milestone based.</p></div>
-        <div class="why card" data-reveal style="--d:.3s"><span class="why-ic"><svg class="ic"><use href="#i-refresh"/></svg></span><h3 class="h4">Support after launch</h3><p>Free bug fixes in the support window, then optional maintenance plans.</p></div>
+        <div class="why card" data-reveal><span class="why-ic" aria-hidden="true">速</span><h3 class="h4">Fast delivery</h3><p>Small builds in days, not months. Daily progress so you’re never guessing.</p></div>
+        <div class="why card" data-reveal style="--d:.06s"><span class="why-ic" aria-hidden="true">直</span><h3 class="h4">Direct line to the dev</h3><p>No agency middlemen. You talk to the person writing the code.</p></div>
+        <div class="why card" data-reveal style="--d:.12s"><span class="why-ic" aria-hidden="true">潔</span><h3 class="h4">Clean, owned code</h3><p>Documented source code handed over. It’s yours — no lock-in.</p></div>
+        <div class="why card" data-reveal style="--d:.18s"><span class="why-ic" aria-hidden="true">守</span><h3 class="h4">Secure by default</h3><p>Verified webhooks, safe key storage, and sensible security on every build.</p></div>
+        <div class="why card" data-reveal style="--d:.24s"><span class="why-ic" aria-hidden="true">払</span><h3 class="h4">Flexible payments</h3><p>Crypto, Binance Pay, bKash, Nagad, Payoneer or bank — milestone based.</p></div>
+        <div class="why card" data-reveal style="--d:.3s"><span class="why-ic" aria-hidden="true">支</span><h3 class="h4">Support after launch</h3><p>Free bug fixes in the support window, then optional maintenance plans.</p></div>
       </div>
     </div>
   </section>

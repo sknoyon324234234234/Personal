@@ -176,7 +176,7 @@
           var draw = function () {
             cpu.push(XR.clamp(cpu[cpu.length - 1] + (Math.random() - .5) * 22, 4, 96)); cpu.shift();
             ram.push(XR.clamp(ram[ram.length - 1] + (Math.random() - .5) * 3, 40, 70)); ram.shift();
-            graph(gc, cpu, '#27e1d6'); graph(gr, ram, '#ff5fb6');
+            graph(gc, cpu, '#6fb3a8'); graph(gr, ram, '#df7f73');
             vc.textContent = Math.round(cpu[cpu.length - 1]) + '%'; vr.textContent = Math.round(ram[ram.length - 1]) + '%';
           };
           draw(); loop = setInterval(draw, 600);

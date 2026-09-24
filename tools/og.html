@@ -4,52 +4,46 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex">
 <title>OG cover render</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Noto+Serif+JP:wght@900&family=Plus+Jakarta+Sans:wght@500;600&family=Unbounded:wght@800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="../assets/css/core.css">
 <style>
-html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #07070b; }
-.grain, .curtain, .progress, .toasts, .cursor-dot, .cursor-ring { display: none !important; }
-.og { position: relative; width: 1200px; height: 630px; overflow: hidden; isolation: isolate; }
-.sun { position: absolute; right: 0px; top: 50%; width: 560px; height: 560px; transform: translateY(-50%); border-radius: 50%; z-index: -1;
-  background: radial-gradient(circle at 50% 35%, #ff5570, #e3183a 42%, #7c0a1e 72%, #2a0510);
-  -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 58% 61%, #000 61% 69%, transparent 69% 73%, #000 73% 79%, transparent 79% 85%, #000 85% 89%, transparent 89%);
-  box-shadow: 0 0 160px 20px rgba(255,46,77,.25); }
-.lines { position: absolute; inset: -40%; z-index: -2; opacity: .5; background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.06) 0 1.2deg, transparent 1.2deg 7deg); }
-.floor { position: absolute; left: -20%; right: -20%; bottom: -10%; height: 40%; z-index: -1; transform: perspective(420px) rotateX(62deg); transform-origin: 50% 0;
-  background: linear-gradient(rgba(255,46,77,.3) 1px, transparent 1px) 0 0/100% 46px, linear-gradient(90deg, rgba(255,46,77,.22) 1px, transparent 1px) 0 0/60px 100%;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 60%); }
-.left { position: absolute; left: 64px; top: 64px; bottom: 60px; width: 620px; display: flex; flex-direction: column; }
-.brand { display: flex; align-items: center; gap: 14px; }
-.brand .brand-mark { width: 48px; height: 48px; }
-.brand b { font: 900 26px/1 Unbounded, sans-serif; letter-spacing: .06em; color: #f4f0e8; }
-.brand span { font: 900 14px/1 'Noto Serif JP', serif; color: #ff2e4d; padding: 6px 8px; border: 1px solid rgba(255,46,77,.5); border-radius: 6px; letter-spacing: .15em; }
-h1 { margin: 40px 0 0; font: 900 54px/1.04 Unbounded, sans-serif; letter-spacing: -.035em; color: #f4f0e8; }
-h1 em { font-style: normal; background: linear-gradient(115deg, #ff2e4d, #ff5fb6 40%, #8b6cff 75%, #27e1d6); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.tags { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 8px; max-width: 600px; }
-.tags span { padding: 8px 12px; border-radius: 999px; font: 500 14px/1 'JetBrains Mono', monospace; color: #bdb8cc; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); }
-.meta { margin-top: auto; display: flex; gap: 22px; font: 600 17px/1 'Plus Jakarta Sans', sans-serif; color: #bdb8cc; }
-.meta b { color: #a4ff6b; }
-.mascot { position: absolute; right: 24px; bottom: -4px; width: 430px; }
-.band { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; background: linear-gradient(90deg, #ff2e4d, #ff5fb6, #8b6cff, #27e1d6); }
+html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #0f0d0b; }
+.grain, .curtain, .progress, .toasts, .tabbar { display: none !important; }
+.og { position: relative; width: 1200px; height: 630px; overflow: hidden; isolation: isolate; background: linear-gradient(180deg, #0c0a08, #17120e 60%, #1f1812); }
+.sun { position: absolute; right: 90px; top: 60px; width: 430px; height: 430px; border-radius: 50%; z-index: -2; background: radial-gradient(circle at 42% 38%, #ef6a4c, #e0442e 46%, #b8321f); }
+.sun::before { content: ''; position: absolute; left: -18%; width: 78%; top: 60%; height: 6%; border-radius: 99px; background: #17120e; }
+.peaks { position: absolute; left: 0; right: 0; bottom: 0; height: 330px; z-index: -1; }
+.peaks svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.left { position: absolute; left: 64px; top: 58px; bottom: 54px; width: 640px; display: flex; flex-direction: column; }
+.kick { display: flex; align-items: center; gap: 14px; font: 500 14px/1 'JetBrains Mono', monospace; letter-spacing: .22em; text-transform: uppercase; color: #bfb29a; }
+.title { position: relative; margin-top: 42px; display: flex; align-items: flex-start; gap: 18px; }
+.title svg { position: absolute; left: -20px; bottom: -14px; width: 560px; height: 70px; }
+.title b { position: relative; font: 800 112px/.9 'Shippori Mincho B1', serif; letter-spacing: .03em; color: #efe4cc; }
+.seal { display: grid; gap: 2px; padding: 9px 6px; font: 800 24px/1 'Shippori Mincho B1', serif; color: #fbf1dc; background: #e0442e; box-shadow: inset 0 0 0 2px #e0442e, inset 0 0 0 4px rgba(251,241,220,.8); transform: rotate(4deg); margin-top: 6px; }
+h1 { margin: 34px 0 0; font: 700 38px/1.18 'Shippori Mincho B1', serif; color: #efe4cc; }
+h1 em { font-style: normal; color: #e0442e; }
+.meta { margin-top: auto; display: flex; gap: 22px; padding-top: 14px; border-top: 1px solid rgba(239,228,204,.2); font: 700 18px/1 'Shippori Mincho B1', serif; color: #efe4cc; }
+.meta span + span { padding-left: 22px; border-left: 1px solid rgba(239,228,204,.18); }
+.mascot { position: absolute; right: 40px; bottom: -6px; width: 400px; }
 </style>
 </head>
 <body>
 <div class="og">
-  <div class="lines"></div><div class="sun"></div><div class="floor"></div>
+  <div class="sun"></div>
+  <div class="peaks"><svg viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><path d="M0 600V352C58 342 86 262 136 250 188 238 204 334 256 324 306 312 324 190 384 176 446 164 456 300 524 292 594 284 604 226 662 214 724 202 742 318 804 310 872 302 884 152 954 142 1024 134 1032 290 1102 282 1162 274 1182 232 1244 222 1306 212 1322 330 1384 322 1444 314 1472 252 1522 246 1562 242 1582 296 1600 298V600Z" fill="#3b3129" opacity=".55"/><path d="M0 600V438C70 430 98 336 168 326 232 318 250 424 318 414 380 404 404 300 474 296 546 292 566 432 640 424 716 416 744 356 806 352 874 348 890 452 962 444 1034 436 1054 330 1126 324 1196 318 1214 440 1282 434 1346 428 1372 380 1432 376 1500 372 1530 440 1600 436V600Z" fill="#231c16"/><path d="M0 600V520C96 506 150 470 230 478 312 486 340 530 430 522 520 514 560 470 650 474 744 478 770 528 870 522 966 516 1010 482 1100 486 1196 490 1224 532 1320 526 1410 520 1452 492 1530 494 1566 495 1590 504 1600 506V600Z" fill="#0f0d0b"/></svg></div>
   <div class="left">
-    <div class="brand" id="brand"><b>XIRAIYA</b><span>開発者</span></div>
+    <div class="kick"><span class="hanko sm">忍</span>The toad sage of code · Rajshahi, Bangladesh</div>
+    <div class="title">
+      <svg viewBox="0 0 1000 160" preserveAspectRatio="none"><path d="M14 92C120 58 330 40 560 44 720 46 880 58 988 70 996 72 996 90 984 92 860 110 690 124 520 126 330 128 150 124 24 118 6 116 2 98 14 92Z" fill="#e0442e"/></svg>
+      <b>XIRAIYA</b><span class="seal"><span>児</span><span>雷</span><span>也</span></span>
+    </div>
     <h1>Websites, bots, apps &amp; <em>AI agents</em> that work while you sleep.</h1>
-    <div class="tags"><span>Telegram bots</span><span>Chrome extensions</span><span>Minecraft plugins</span><span>EXE &amp; APK apps</span><span>Crypto payments</span><span>E-commerce</span></div>
-    <div class="meta"><span>Rajshahi, Bangladesh</span><span>5+ years</span><span><b style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#a4ff6b;margin-right:8px"></b>Available for work</span></div>
+    <div class="meta"><span>5+ years</span><span>11 services</span><span>Live demos of everything</span></div>
   </div>
   <div class="mascot" data-mascot></div>
-  <div class="band"></div>
 </div>
 <script src="../assets/js/icons.js"></script>
 <script src="../assets/js/config.js"></script>
 <script src="../assets/js/core.js"></script>
-<script>
-document.getElementById('brand').insertAdjacentHTML('afterbegin', XR.brandMark());
-</script>
 </body>
 </html>
