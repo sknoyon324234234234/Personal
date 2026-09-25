@@ -402,22 +402,29 @@
       });
     } });
 
-  var ORDER = ['ink','scramble','magnet','particles','coverflow','goo','glass','dock','flap','warp','swipe','spot','radial','story','daynight','panels','string'];
+  var ORDER = ['coverflow','ink','glass','magnet','particles','flap','goo','scramble','warp','dock','swipe','spot','radial','story','daynight','panels','string'];
   EX.sort(function (a, b) { return ORDER.indexOf(a.id) - ORDER.indexOf(b.id); });
 
-  /* ---------- build the wing ---------- */
+  /* other files add more exhibits through this API before the page is ready */
+  window.XRWING = { add: add, ctx: ctx, pointer: pointer, canvas: canvas, css: css, ink: ink, IMG: IMG, DPR: DPR };
+
+  document.addEventListener('DOMContentLoaded', build);
+
+  function build() {
   var root = document.getElementById('wing');
   if (!root) return;
-  var grid = $('.wg-grid', root);
-  var TAGS = { motion: 'Motion', '3d': '3D', type: 'Type', interaction: 'Interaction' };
+  var grid = $('.wg-grid', root), more = $('.wg-more', root), qIn = $('.wg-q', root), count = $('.wg-count', root);
+  var TAGS = { motion: 'Motion', '3d': '3D', type: 'Type', interaction: 'Interaction', particles: 'Particles', ui: 'UI' };
+  var PAGE = 24, shown = PAGE, filter = 'all', query = '';
   grid.innerHTML = EX.map(function (x, i) {
-    return '<article class="wx wx-' + x.size + '" data-tag="' + x.tag + '" data-x="' + x.id + '" style="--i:' + (i % 6) + '" data-reveal>' +
-      '<header class="wx-h"><span class="wx-n">' + (i + 12) + '</span><div class="wx-tt"><b>' + esc(x.t) + '</b><small><span class="jp">' + x.jp + '</span> · ' + TAGS[x.tag] + '</small></div>' +
+    return '<article class="wx wx-' + (x.size === 'l' ? 'l' : 's') + '" data-tag="' + x.tag + '" data-x="' + x.id + '" data-q="' + esc((x.t + ' ' + x.tag + ' ' + TAGS[x.tag] + ' ' + (x.kw || '')).toLowerCase()) + '">' +
+      '<header class="wx-h"><span class="wx-n">' + ('00' + (i + 1)).slice(EX.length > 99 ? -3 : -2) + '</span><div class="wx-tt"><b>' + esc(x.t) + '</b><small><span class="jp">' + x.jp + '</span> · ' + TAGS[x.tag] + '</small></div>' +
       '<button type="button" class="wx-max" aria-label="Expand ' + esc(x.t) + '">' + icon('fullscreen') + '</button></header>' +
       '<div class="wx-stage wx-' + x.id + '"></div><p class="wx-hint">' + icon('hand') + esc(x.hint) + '</p></article>';
   }).join('');
   $$('[data-wing-count]').forEach(function (e) { e.textContent = EX.length; });
-  if (XR.reveals) XR.reveals();
+  var cnt = {}; EX.forEach(function (x) { cnt[x.tag] = (cnt[x.tag] || 0) + 1; });
+  $$('.wg-f button', root).forEach(function (b) { var t = b.getAttribute('data-f'); b.insertAdjacentHTML('beforeend', '<em>' + (t === 'all' ? EX.length : cnt[t] || 0) + '</em>'); });
 
   var live = {};
   function mount(card) {
@@ -425,32 +432,42 @@
     if (live[id]) live[id].stop();
     st.innerHTML = '';
     var k = ctx(st); live[id] = k;
-    try { x.run(k, st); } catch (e) { if (window.console) console.error('[wing] ' + id, e); }
+    try { x.run(k, st, x.cfg || {}); } catch (e) { if (window.console) console.error('[wing] ' + id, e); }
   }
-  function unmount(card) { var id = card.getAttribute('data-x'); if (live[id]) { live[id].stop(); live[id] = null; } }
+  function unmount(card) { var id = card.getAttribute('data-x'); if (live[id]) { live[id].stop(); live[id] = null; $('.wx-stage', card).innerHTML = ''; } }
 
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (en) {
-      en.forEach(function (e) {
-        var c = e.target;
-        if (e.isIntersecting && !live[c.getAttribute('data-x')]) mount(c);
-        else if (!e.isIntersecting && !c.classList.contains('max')) unmount(c);
-      });
-    }, { rootMargin: '120px 0px' });
-    $$('.wx', grid).forEach(function (c) { io.observe(c); });
-  } else $$('.wx', grid).forEach(mount);
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (en) {
+    en.forEach(function (e) {
+      var c = e.target;
+      if (e.isIntersecting && !c.hidden && !live[c.getAttribute('data-x')]) mount(c);
+      else if (!e.isIntersecting && !c.classList.contains('max')) unmount(c);
+    });
+  }, { rootMargin: '150px 0px' }) : null;
+  $$('.wx', grid).forEach(function (c) { if (io) io.observe(c); });
 
-  /* filters */
+  function apply() {
+    var n = 0, total = 0;
+    $$('.wx', grid).forEach(function (c) {
+      var ok = (filter === 'all' || c.getAttribute('data-tag') === filter) && (!query || c.getAttribute('data-q').indexOf(query) > -1);
+      if (ok) total++;
+      var show = ok && n < shown; if (show) n++;
+      if (c.hidden !== !show) { c.hidden = !show; if (!show) unmount(c); else if (!io) mount(c); }
+    });
+    more.hidden = n >= total;
+    more.querySelector('span').textContent = 'Show ' + Math.min(PAGE, total - n) + ' more';
+    count.textContent = 'Showing ' + n + ' of ' + total;
+    if (!total) count.textContent = 'Nothing matches “' + query + '”';
+  }
   $$('.wg-f button', root).forEach(function (b) {
     b.addEventListener('click', function () {
-      var t = b.getAttribute('data-f');
+      filter = b.getAttribute('data-f'); shown = PAGE;
       $$('.wg-f button', root).forEach(function (x) { x.classList.toggle('on', x === b); });
-      $$('.wx', grid).forEach(function (c) {
-        var show = t === 'all' || c.getAttribute('data-tag') === t;
-        c.classList.toggle('wx-hide', !show);
-      });
+      apply();
     });
   });
+  if (qIn) qIn.addEventListener('input', function () { query = qIn.value.trim().toLowerCase(); shown = PAGE; apply(); });
+  more.addEventListener('click', function () { shown += PAGE; apply(); });
+  apply();
 
   /* expand one exhibit to fill the screen */
   var back = document.createElement('div'); back.className = 'wx-back'; document.body.appendChild(back);
@@ -470,4 +487,5 @@
   });
   back.addEventListener('click', shrink);
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') shrink(); });
+  }
 })();
