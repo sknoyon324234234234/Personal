@@ -321,12 +321,12 @@
           o.innerHTML = [['Unix seconds', Math.floor(d / 1000)], ['Milliseconds', d.getTime()], ['ISO 8601 (UTC)', d.toISOString()], ['Your time', d.toLocaleString()], ['Dhaka', d.toLocaleString('en-GB', { timeZone: 'Asia/Dhaka' })], ['Relative', rel >= 0 ? 'in ' + rs : rs + ' ago']].map(function (x) { return '<div class="tl-kv"><small>' + x[0] + '</small><b>' + esc(x[1]) + '</b><button type="button" data-cp="' + esc(x[1]) + '">Copy</button></div>'; }).join(''); };
         $('#ti', p).addEventListener('input', go); p.addEventListener('click', function (e) { if (e.target.getAttribute('data-a') === 'n') { $('#ti', p).value = Math.floor(Date.now() / 1000); go(); } var c = e.target.getAttribute('data-cp'); if (c) { XR.copy(c); XR.toast('Copied'); } }); $('#ti', p).value = Math.floor(Date.now() / 1000); go();
       } },
-    { id: 'gradient', name: 'Gradient generator', ic: 'layers', ui: '<h3 class="h4">CSS gradient generator</h3><p>Linear, radial or conic, three colour stops and a live preview.</p><div class="tl-row"><div class="ar-seg" id="gt" style="background:var(--bg-2)"></div><button type="button" class="tl-btn" data-a="r">Random</button><button type="button" class="tl-btn pri" data-a="c">Copy CSS</button></div><div class="tl-prev" id="gp"></div><div class="tl-sl" id="gs"></div><pre class="tl-out" id="go"></pre>',
+    { id: 'gradient', name: 'Gradient generator', ic: 'layers', ui: '<h3 class="h4">CSS gradient generator</h3><p>Linear, radial or conic, three colour stops and a live preview.</p><div class="tl-row"><div class="ar-seg tl-seg" id="gt"></div><button type="button" class="tl-btn" data-a="r">Random</button><button type="button" class="tl-btn pri" data-a="c">Copy CSS</button></div><div class="tl-prev" id="gp"></div><div class="tl-sl" id="gs"></div><pre class="tl-out" id="go"></pre>',
       init: function (p) {
         var st = { type: 'linear', ang: 135, c: [['#c4321d', 0], ['#e2703a', 50], ['#2c6f65', 100]] };
         var css = function () { var stops = st.c.map(function (x) { return x[0] + ' ' + x[1] + '%'; }).join(', '); return st.type === 'linear' ? 'linear-gradient(' + st.ang + 'deg, ' + stops + ')' : st.type === 'radial' ? 'radial-gradient(circle at 50% 50%, ' + stops + ')' : 'conic-gradient(from ' + st.ang + 'deg, ' + stops + ')'; };
         var ui = function () {
-          $('#gt', p).innerHTML = ['linear', 'radial', 'conic'].map(function (t) { return '<button type="button" data-gt="' + t + '" aria-pressed="' + (st.type === t) + '" style="color:inherit">' + t + '</button>'; }).join('');
+          $('#gt', p).innerHTML = ['linear', 'radial', 'conic'].map(function (t) { return '<button type="button" data-gt="' + t + '" aria-pressed="' + (st.type === t) + '">' + t + '</button>'; }).join('');
           $('#gs', p).innerHTML = (st.type !== 'radial' ? '<label>Angle <input type="range" data-g="ang" min="0" max="360" value="' + st.ang + '"><output>' + st.ang + '°</output></label>' : '') + st.c.map(function (x, i) { return '<label><input type="color" data-gc="' + i + '" value="' + x[0] + '" style="width:34px;height:30px;border:0;background:none;padding:0"> Stop ' + (i + 1) + ' <input type="range" data-gp="' + i + '" min="0" max="100" value="' + x[1] + '"><output>' + x[1] + '%</output></label>'; }).join('');
           draw();
         };
@@ -392,7 +392,9 @@
     };
     tNav.addEventListener('click', function (e) { var b = e.target.closest('[data-tool]'); if (b) { openTool(b.getAttribute('data-tool')); quest('world-tool'); stamp('toolbox'); } });
     tPanel.addEventListener('input', function () { quest('world-tool'); stamp('toolbox'); });
-    $('#tbxQ').addEventListener('input', function () { var q = this.value.trim().toLowerCase(); $$('button', tNav).forEach(function (b) { b.hidden = q && b.textContent.toLowerCase().indexOf(q) < 0 && b.getAttribute('data-tool').indexOf(q) < 0; }); });
+    tNav.insertAdjacentHTML('beforeend', '<p class="tbx-none" hidden>No tool by that name.</p>');
+    $('#tbxQ').addEventListener('input', function () { var q = this.value.trim().toLowerCase(), n = 0; $$('button', tNav).forEach(function (b) { b.hidden = !!q && b.textContent.toLowerCase().indexOf(q) < 0 && b.getAttribute('data-tool').indexOf(q) < 0; if (!b.hidden) n++; }); $('.tbx-none', tNav).hidden = n > 0; });
+    $('#tbxQ').addEventListener('keydown', function (e) { if (e.key !== 'Enter') return; var b = $$('button', tNav).filter(function (x) { return !x.hidden; })[0]; if (b) { e.preventDefault(); b.click(); b.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } });
     openTool('json');
   }
 
@@ -426,13 +428,15 @@
   if (apiF) {
     var BASE = 'https://api.village.dev', last = null, rt = 'body', ct = 'fetch';
     var apiHist = [];
-    $('#apiHist').addEventListener('click', function (e) { var b = e.target.closest('[data-h]'); if (!b) return; var x = apiHist[+b.getAttribute('data-h')]; $('#apiM').value = x.m; $('#apiU').value = x.u; bodyOn(); genCode(); apiF.requestSubmit ? apiF.requestSubmit() : apiF.dispatchEvent(new Event('submit')); });
+    $('#apiHist').addEventListener('click', function (e) { var b = e.target.closest('[data-h]'); if (!b || busy) return; var x = apiHist[+b.getAttribute('data-h')]; $('#apiM').value = x.m; $('#apiU').value = x.u; bodyOn(); genCode(); apiF.requestSubmit ? apiF.requestSubmit() : apiF.dispatchEvent(new Event('submit')); });
     var STXT = { 401: 'Unauthorized', 200: 'OK', 201: 'Created', 204: 'No Content', 400: 'Bad Request', 404: 'Not Found', 405: 'Method Not Allowed', 418: 'I am a teapot', 422: 'Unprocessable Entity' };
     var QUICK = [['GET', '/v1/users'], ['GET', '/v1/users/2'], ['POST', '/v1/orders'], ['PATCH', '/v1/users/3'], ['DELETE', '/v1/users/4'], ['GET', '/v1/users/99'], ['GET', '/v1/teapot'], ['GET', '/v1/slow']];
     $('#apiQuick').innerHTML = QUICK.map(function (q) { return '<button type="button" data-m="' + q[0] + '" data-u="' + q[1] + '"><b class="m-' + q[0] + '">' + q[0] + '</b>' + q[1] + '</button>'; }).join('');
     var bodyOn = function () { var m = $('#apiM').value, on = m === 'POST' || m === 'PATCH'; $('#apiB').disabled = !on; $('#apiM').className = 'm-' + m; };
+    var apiPath = function () { var v = $('#apiU').value.trim().replace(/^https?:\/\/[^/]+/i, ''); return v ? (v[0] === '/' ? v : '/' + v) : '/'; };
+    var busy = false;
     var genCode = function () {
-      var m = $('#apiM').value, u = BASE + $('#apiU').value.trim(), b = $('#apiB').value.trim(), hasB = (m === 'POST' || m === 'PATCH') && b, s;
+      var m = $('#apiM').value, u = BASE + apiPath(), b = $('#apiB').value.trim(), hasB = (m === 'POST' || m === 'PATCH') && b, s;
       var bodyOne = hasB ? JSON.stringify((function () { try { return JSON.parse(b); } catch (e) { return b; } })()) : '';
       if (ct === 'curl') s = 'curl -X ' + m + " '" + u + "' \\\n  -H 'Authorization: Bearer $VILLAGE_KEY'" + (hasB ? " \\\n  -H 'Content-Type: application/json' \\\n  -d '" + bodyOne + "'" : '');
       else if (ct === 'py') s = 'import requests\n\nres = requests.' + m.toLowerCase() + '(\n    "' + u + '",\n    headers={"Authorization": "Bearer VILLAGE_KEY"},' + (hasB ? '\n    json=' + bodyOne.replace(/true/g, 'True').replace(/false/g, 'False').replace(/null/g, 'None') + ',' : '') + '\n)\nprint(res.status_code, res.json())';
@@ -446,10 +450,11 @@
     };
     apiF.addEventListener('submit', function (e) {
       e.preventDefault();
-      var m = $('#apiM').value, u = $('#apiU').value.trim() || '/', r = $('#apiAuth').checked || /^\/v1\/(health|teapot)/.test(u) ? api(m, u, $('#apiB').value) : { status: 401, body: { error: 'unauthorized', message: 'Missing API key. Tick "Send API key" and try again.', docs: 'https://api.village.dev/docs#auth' }, extra: {} }, ms = (r.extra.delay || 0) + 60 + Math.round(Math.random() * 140), b = $('#apiSend');
-      b.disabled = true; $('#apiSt').innerHTML = '<span class="spin"></span><span>' + m + ' ' + esc(u) + '</span>';
+      if (busy) return;
+      var m = $('#apiM').value, u = apiPath(), r = $('#apiAuth').checked || /^\/v1\/(health|teapot)/.test(u) ? api(m, u, $('#apiB').value) : { status: 401, body: { error: 'unauthorized', message: 'Missing API key. Tick "Send API key" and try again.', docs: 'https://api.village.dev/docs#auth' }, extra: {} }, ms = (r.extra.delay || 0) + 60 + Math.round(Math.random() * 140), b = $('#apiSend');
+      busy = true; b.disabled = true; $('#apiSt').innerHTML = '<span class="spin"></span><span>' + m + ' ' + esc(u) + '</span>';
       setTimeout(function () {
-        b.disabled = false;
+        busy = false; b.disabled = false;
         var bodyStr = r.body == null ? '' : JSON.stringify(r.body), size = bodyStr.length;
         var h = { 'content-type': 'application/json; charset=utf-8', 'content-length': String(size), 'x-request-id': 'req_' + Math.random().toString(36).slice(2, 12), 'x-ratelimit-remaining': String(99 - Math.floor(Math.random() * 20)), 'cache-control': m === 'GET' ? 'max-age=30' : 'no-store', server: 'toad-edge/5.0' };
         if (r.extra.location) h.location = r.extra.location;
@@ -460,7 +465,7 @@
         $('#apiHist').innerHTML = apiHist.map(function (x, i) { return '<button type="button" data-h="' + i + '"><b class="m-' + x.m + '">' + x.m + '</b> ' + esc(x.u) + '<i class="st-' + String(x.s)[0] + '">' + x.s + '</i></button>'; }).join('');
       }, ms);
     });
-    $('#apiQuick').addEventListener('click', function (e) { var q = e.target.closest('[data-m]'); if (!q) return; $('#apiM').value = q.getAttribute('data-m'); $('#apiU').value = q.getAttribute('data-u'); if (q.getAttribute('data-m') === 'PATCH') $('#apiB').value = '{\n  "role": "admin"\n}'; else if (q.getAttribute('data-m') === 'POST') $('#apiB').value = '{\n  "userId": 1,\n  "items": [{ "productId": 2, "qty": 1 }],\n  "pay": "USDT"\n}'; bodyOn(); genCode(); apiF.requestSubmit ? apiF.requestSubmit() : apiF.dispatchEvent(new Event('submit')); });
+    $('#apiQuick').addEventListener('click', function (e) { var q = e.target.closest('[data-m]'); if (!q || busy) return; $('#apiM').value = q.getAttribute('data-m'); $('#apiU').value = q.getAttribute('data-u'); if (q.getAttribute('data-m') === 'PATCH') $('#apiB').value = '{\n  "role": "admin"\n}'; else if (q.getAttribute('data-m') === 'POST') $('#apiB').value = '{\n  "userId": 1,\n  "items": [{ "productId": 2, "qty": 1 }],\n  "pay": "USDT"\n}'; bodyOn(); genCode(); apiF.requestSubmit ? apiF.requestSubmit() : apiF.dispatchEvent(new Event('submit')); });
     ['#apiM', '#apiU', '#apiB'].forEach(function (s) { $(s).addEventListener('input', function () { bodyOn(); genCode(); }); });
     $('#apiCT').addEventListener('click', function (e) { var b = e.target.closest('[data-ct]'); if (!b) return; ct = b.getAttribute('data-ct'); $$('#apiCT button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); genCode(); });
     $('#apiRT').addEventListener('click', function (e) { var b = e.target.closest('[data-rt]'); if (!b) return; rt = b.getAttribute('data-rt'); $$('#apiRT button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); showRes(); });
@@ -519,7 +524,10 @@
       gitLog.insertAdjacentHTML('afterbegin', svg + '</svg>');
     };
     draw();
-    window.addEventListener('resize', function () { clearTimeout(draw._t); draw._t = setTimeout(draw, 150); });
+    var redraw = function () { clearTimeout(draw._t); draw._t = setTimeout(draw, 120); };
+    if ('ResizeObserver' in window) new ResizeObserver(redraw).observe(gitLog);
+    else window.addEventListener('resize', redraw);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
     XR.whenVisible(gitLog, function () { stamp('git'); $$('.gc', gitLog).forEach(function (el, i) { setTimeout(function () { el.classList.add('in'); }, i * 70); }); });
   }
 
@@ -614,6 +622,8 @@
       draw(); tmr = setTimeout(step, speed);
     };
     var key = function (e) {
+      var ae = document.activeElement;
+      if (ae && ae !== document.body && !(ae.closest && ae.closest('.term'))) return;
       var k = e.key.toLowerCase(), m = { arrowup: [0, -1], w: [0, -1], arrowdown: [0, 1], s: [0, 1], arrowleft: [-1, 0], a: [-1, 0], arrowright: [1, 0], d: [1, 0] }[k];
       if (k === 'q' || k === 'escape') { e.preventDefault(); end('Snake quit.'); return; }
       if (m) { e.preventDefault(); e.stopPropagation(); if (m[0] !== -dir[0] || m[1] !== -dir[1]) next = m; }
@@ -633,7 +643,7 @@
     return e.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`)|\b(const|let|var|function|return|if|else|for|while|of|in|new|class|import|from|export|await|async|true|false|null|undefined|this|document|window|console)\b|(\b\d+\.?\d*\b)|([A-Za-z_$][\w$]*)(?=\s*\()/g, function (m, com, str, kw, num, fn) { if (com) return '<span class="c">' + com + '</span>'; if (str) return '<span class="s">' + str + '</span>'; if (kw) return '<span class="k">' + kw + '</span>'; if (num) return '<span class="n">' + num + '</span>'; return '<span class="f">' + fn + '</span>'; });
   }
   function md(src) {
-    var inl = function (t) { return t.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\*([^*]+)\*/g, '<em>$1</em>').replace(/\[([^\]]+)\]\(((?:https?:\/\/|[\w./#-])[^)\s]*)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>'); };
+    var inl = function (t) { return t.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\*([^*]+)\*/g, '<em>$1</em>').replace(/\[([^\]]+)\]\(((?:https?:\/\/[^)\s]*)|[\w./#-][^):\s]*)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>'); };
     var lines = esc(src).split('\n'), out = [], list = null, code = false, buf = [];
     var flush = function () { if (list) { out.push('</' + list + '>'); list = null; } };
     lines.forEach(function (l) {
@@ -659,9 +669,9 @@
         fld.split(',').forEach(function (part) {
           var m = part.match(/^(\*|\d+)(?:-(\d+))?(?:\/(\d+))?$/); if (!m) throw 0;
           var a = m[1] === '*' ? lo : +m[1], b = m[2] ? +m[2] : m[1] === '*' || m[3] ? hi : a, st = m[3] ? +m[3] : 1;
-          if (i === 4) { a = a % 7; b = b === 7 ? 6 : b; }
-          if (a < lo || b > hi || a > b || st < 1) throw 0;
-          for (var v = a; v <= b; v += st) set[v] = 1;
+          if (i === 4 && m[1] === '*') b = m[2] ? b : 6;
+          if (a < lo || b > (i === 4 ? 7 : hi) || a > b || st < 1) throw 0;
+          for (var v = a; v <= b; v += st) set[i === 4 ? v % 7 : v] = 1;
         });
         sets.push(set);
       });

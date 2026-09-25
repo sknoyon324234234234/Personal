@@ -484,3 +484,18 @@
   .gl-ready .gl-rv { opacity: 1; transform: none; transition: none; }
   .gl-card { transform: none; }
 }
+
+/* touch sizing: 44 px minimum targets on phones and coarse pointers */
+@media (max-width: 700px), (pointer: coarse) {
+  .gl-sk { height: 44px; }
+  .lay-glow .gl-mini, .gl-seg button, .lay-glow .gl-card-wish, .lay-glow .gl-card-add, .lay-glow .gl-sum-x, .gl-fchip button, .gl-rt-cols button { min-height: 44px; min-width: 44px; }
+  .gl-rt-cols button { border: 11px solid transparent; background-clip: padding-box; box-shadow: none; }
+  .gl-rt-cols button[aria-checked="true"] { box-shadow: inset 0 0 0 2px var(--s-ink); border-radius: 50%; }
+  .gl-rt-cols { gap: 0; margin-left: -11px; }
+  .lay-glow .gl-rt-more, .lay-glow .gl-sum-clear, .lay-glow .gl-link, .gl-word, .gl-card-name button, .gl-foot-cols > div > button, .gl-foot-cols > div > a, .gl-foot-cols > div > span { display: inline-flex; align-items: center; min-height: 44px; }
+  .gl-card-name button { width: 100%; }
+  .gl-foot-cols > div { gap: 0; }
+  .lay-glow .gl-sum-clear, .gl-foot-cols > div > button { min-width: 44px; justify-content: center; }
+  /* shade dots are a hover preview; on touch the card opens quick view with the shades instead */
+  .gl-card-sw { display: none; }
+}

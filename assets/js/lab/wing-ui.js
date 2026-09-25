@@ -9,7 +9,7 @@
 
   /* ================= type ================= */
   var TY = [
-    { id: 't-marquee', t: 'Kinetic marquee', jp: '流字', size: 'l', hint: 'Stacked rows of type sliding in opposite directions. Hover to slow down.', run: function (k, el) { var R = ['WEBSITES · SHOPS · BOTS ·', 'AUTOMATION · AI AGENTS ·', 'MOTION · UI · UX · 3D ·']; el.innerHTML = '<div class="ty-mq">' + R.map(function (r, i) { var t = (' ' + r).repeat(4); return '<div class="ty-mq-r r' + i + '"><span>' + t + '</span><span>' + t + '</span></div>'; }).join('') + '</div>'; } }
+    { id: 't-marquee', t: 'Kinetic marquee', jp: '流字', size: 'l', hint: 'Rows of type sliding in opposite directions. Hover to pause them.', run: function (k, el) { var R = ['WEBSITES · SHOPS · BOTS ·', 'AUTOMATION · AI AGENTS ·', 'MOTION · UI · UX · 3D ·']; el.innerHTML = '<div class="ty-mq">' + R.map(function (r, i) { var t = (' ' + r).repeat(4); return '<div class="ty-mq-r r' + i + '"><span>' + t + '</span><span>' + t + '</span></div>'; }).join('') + '</div>'; } }
   ];
   TY.forEach(function (o) { add({ id: o.id, t: o.t, jp: o.jp, tag: 'type', size: o.size || 's', kw: 'typography text', hint: o.hint, run: o.run }); });
 

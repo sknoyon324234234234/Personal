@@ -196,12 +196,12 @@
       <div class="section-head">
         <span class="num"><span class="hanko sm">端</span> 01 · Terminal Dojo</span>
         <h2 class="h2" data-split>Talk to the village <span class="grad-text">like a developer.</span></h2>
-        <p class="lead" data-reveal>A real shell feel: history with the arrow keys, Tab to autocomplete, pipes of jokes. Start with <code>help</code>, or try <code>neofetch</code> and <code>sudo hire-me</code>.</p>
+        <p class="lead" data-reveal>It behaves like a real shell: arrow keys walk your history, Tab autocompletes, and any output pipes through grep. Start with <code>help</code>, or try <code>neofetch</code> and <code>sudo hire-me</code>.</p>
       </div>
       <div class="term dark-scope" data-reveal>
         <div class="term-bar"><i></i><i></i><i></i><span>guest@xiraiya-village: ~</span><button type="button" class="term-x" data-cmd="clear" aria-label="Clear terminal"><svg class="ic"><use href="#i-refresh"/></svg></button></div>
         <div class="term-body" id="termOut" aria-live="polite"></div>
-        <form class="term-in" id="termF" autocomplete="off"><label for="termI" class="term-ps"><b>guest</b>@village <em>~</em> $</label><span class="term-field"><span class="term-ghost" id="termG" aria-hidden="true"></span><input id="termI" spellcheck="false" autocapitalize="off" aria-label="Terminal command"></span></form>
+        <form class="term-in" id="termF" autocomplete="off"><label for="termI" class="term-ps"><b>guest</b><span class="term-host">@village</span> <em>~</em> $</label><span class="term-field"><span class="term-ghost" id="termG" aria-hidden="true"></span><input id="termI" spellcheck="false" autocapitalize="off" aria-label="Terminal command"></span></form>
         <div class="term-chips" id="termChips"></div>
       </div>
     </div>
@@ -228,7 +228,7 @@
         <div class="pg-main">
           <div class="pg-ed"><div class="pg-gut" id="pgGut" aria-hidden="true"></div><div class="pg-box"><pre class="pg-hl" id="pgHl" aria-hidden="true"></pre><textarea id="pgCode" spellcheck="false" aria-label="Code editor" wrap="off"></textarea></div></div>
           <div class="pg-out">
-            <div class="pg-view"><iframe id="pgFrame" title="Playground result" sandbox="allow-scripts allow-modals"></iframe></div>
+            <div class="pg-view"><iframe id="pgFrame" title="Playground result" sandbox="allow-scripts allow-modals allow-forms"></iframe></div>
             <div class="pg-con"><div class="pg-con-h"><span>Console</span><button type="button" id="pgClr">Clear</button></div><div class="pg-log" id="pgLog"></div></div>
           </div>
         </div>
@@ -288,6 +288,38 @@
     </div>
   </section>
 
+  <!-- 05 GIT -->
+  <section class="section wd-sec" id="git">
+    <div class="container container-wide">
+      <div class="section-head">
+        <span class="num"><span class="hanko sm">塔</span> 05 · Git Tower</span>
+        <h2 class="h2" data-split>Five years, <span class="grad-text">one commit at a time.</span></h2>
+        <p class="lead" data-reveal>My career as a git history: every branch a skill, every merge the moment it started paying the bills.</p>
+      </div>
+      <div class="git-wrap">
+        <div class="git card" data-reveal>
+          <div class="git-h"><span class="git-br"><svg class="ic"><use href="#i-git"/></svg>main</span><span class="muted">git log --graph --oneline</span></div>
+          <div class="git-log" id="gitLog"></div>
+        </div>
+        <div class="git-side">
+          <div class="card heat" data-reveal>
+            <div class="heat-h"><b id="heatTot">0</b><span>contributions in the last year</span></div>
+            <div class="heat-scroll"><div class="heat-grid" id="heat" role="img" aria-label="Contribution heatmap for the last 52 weeks"></div></div>
+            <div class="heat-f"><span id="heatTip">Hover a day</span><span class="heat-leg">Less<i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i>More</span></div>
+          </div>
+          <div class="card langs" data-reveal style="--d:.08s">
+            <h3 class="h4">Languages</h3>
+            <div class="lang-bar" id="langBar"></div>
+            <ul class="lang-list" id="langList"></ul>
+          </div>
+          <div class="card wd-cta" data-reveal style="--d:.16s">
+            <div data-mascot="slug" class="wd-slug"></div>
+            <div><h3 class="h4">Next commit: your project.</h3><p>A bot, a web app, an AI agent or a script that does your Monday chores. Tell me which branch to cut.</p><a class="btn btn-primary btn-sm" href="hire.html">Start a project <svg class="ic"><use href="#i-arrow-right"/></svg></a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
   <!-- 06 ARENA -->
   <section class="section wd-sec" id="arena">
     <div class="container container-wide">
@@ -350,38 +382,6 @@
     </div>
   </section>
 
-  <!-- 05 GIT -->
-  <section class="section wd-sec" id="git">
-    <div class="container container-wide">
-      <div class="section-head">
-        <span class="num"><span class="hanko sm">塔</span> 05 · Git Tower</span>
-        <h2 class="h2" data-split>Five years, <span class="grad-text">one commit at a time.</span></h2>
-        <p class="lead" data-reveal>My career as a git history: every branch a skill, every merge the moment it started paying the bills.</p>
-      </div>
-      <div class="git-wrap">
-        <div class="git card" data-reveal>
-          <div class="git-h"><span class="git-br"><svg class="ic"><use href="#i-git"/></svg>main</span><span class="muted">git log --graph --oneline</span></div>
-          <div class="git-log" id="gitLog"></div>
-        </div>
-        <div class="git-side">
-          <div class="card heat" data-reveal>
-            <div class="heat-h"><b id="heatTot">0</b><span>contributions in the last year</span></div>
-            <div class="heat-scroll"><div class="heat-grid" id="heat" role="img" aria-label="Contribution heatmap for the last 52 weeks"></div></div>
-            <div class="heat-f"><span id="heatTip">Hover a day</span><span class="heat-leg">Less<i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i>More</span></div>
-          </div>
-          <div class="card langs" data-reveal style="--d:.08s">
-            <h3 class="h4">Languages</h3>
-            <div class="lang-bar" id="langBar"></div>
-            <ul class="lang-list" id="langList"></ul>
-          </div>
-          <div class="card wd-cta" data-reveal style="--d:.16s">
-            <div data-mascot="slug" class="wd-slug"></div>
-            <div><h3 class="h4">Next commit: your project.</h3><p>A bot, a web app, an AI agent or a script that does your Monday chores. Tell me which branch to cut.</p><a class="btn btn-primary btn-sm" href="hire.html">Start a project <svg class="ic"><use href="#i-arrow-right"/></svg></a></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 </main>
 
 <aside class="passport" id="passport" aria-label="Village passport">

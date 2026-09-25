@@ -417,3 +417,14 @@
 @media (prefers-reduced-motion: reduce) {
   .pb-blob, .pb-hero-blob, .pb-ring, .pb-ticker-track, .pb-hot i::after { animation: none; }
 }
+
+/* touch sizing: 44 px minimum targets on phones and coarse pointers */
+@media (max-width: 700px), (pointer: coarse) {
+  .pb .pb-heart, .pb .pb-add, .pb-fitchip, .pb-foot-cols > div > button, .pb-name-ideas button, .pb-fitoff, .pb-bill-lines button, .pb-look-pills button { min-height: 44px; min-width: 44px; }
+  .pb-hot { min-width: 46px; min-height: 46px; justify-content: center; }
+  .pb-hot i { width: 30px; height: 30px; }
+  .pb .pb-link, .pb-logo, .pb-card-name button, .pb-foot-cols > div > button, .pb-foot-cols > div > a, .pb-foot-cols > div > span { display: inline-flex; align-items: center; min-height: 44px; }
+  .pb-card-name button { width: 100%; }
+  .pb-foot-cols > div { gap: 0; }
+  .pb-fitchip { min-height: 46px; }
+}

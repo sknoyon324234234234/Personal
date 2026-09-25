@@ -66,9 +66,9 @@
 
 
 /* ---------- type ---------- */
-.wx-t-marquee { display: grid; align-content: center; background: var(--red); overflow: hidden; }
-.ty-mq { display: grid; gap: 6px; transform: rotate(-4deg) scale(1.1); }
-.ty-mq-r { display: flex; white-space: nowrap; font: 900 clamp(32px, 4.4vw, 56px)/1.05 var(--font-display); color: #fff8ee; }
+.wx-t-marquee { display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; background: var(--red); overflow: hidden; }
+.ty-mq { display: grid; gap: 6px; min-width: 0; transform: rotate(-4deg) scale(1.1); }
+.ty-mq-r { display: flex; min-width: 0; white-space: nowrap; font: 900 clamp(32px, 4.4vw, 56px)/1.05 var(--font-display); color: #fff8ee; }
 .ty-mq-r span { flex: none; padding-right: 20px; animation: tyMq 16s linear infinite; }
 .ty-mq-r.r1 span { animation-direction: reverse; animation-duration: 12s; color: transparent; -webkit-text-stroke: 1.5px #fff8ee; }
 .ty-mq-r.r2 span { animation-duration: 20s; color: #1d1208; }

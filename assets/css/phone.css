@@ -161,7 +161,7 @@ main, .site-footer, footer { overflow-x: clip; }
   .tpl-groups button { height: 40px; }
   .tpl-shuffle { height: 40px; }
   .s-cats button { height: 40px; }
-  .p-wish, .p-quick { min-width: 40px; min-height: 40px; }
+  .p-wish, .p-quick { min-width: 44px; min-height: 44px; }
   .tpl-cur, .tpl-no { font-size: 12px; }
 
   /* UI Kit */

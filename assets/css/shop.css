@@ -82,7 +82,7 @@
 .sf-site .ic { font-size: 1.05em; }
 .s-eyebrow { display: block; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--s-muted); }
 .s-h2 { font-family: var(--s-fh); font-weight: 600; font-size: clamp(26px, 3vw, 38px); line-height: 1.1; letter-spacing: -.01em; }
-.s-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 22px; border-radius: var(--s-rs); background: var(--s-accent); color: var(--s-on); font-weight: 600; font-size: 14.5px; border: 1px solid var(--s-accent); transition: filter .2s, transform .2s; }
+.s-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: clamp(44px, 1vw + 36px, 48px); padding: 0 clamp(16px, 1.4vw + 10px, 22px); border-radius: var(--s-rs); background: var(--s-accent); color: var(--s-on); font-weight: 600; font-size: 14.5px; border: 1px solid var(--s-accent); transition: filter .2s, transform .2s; }
 .s-btn:hover { filter: brightness(1.07); }
 .s-btn:active { transform: translateY(1px); }
 .s-btn-ghost { background: transparent; color: var(--s-ink); border-color: var(--s-line); }
@@ -475,7 +475,7 @@ body[data-page="shop"]:has(.site-header.is-hidden) { --sf-top: var(--shopnav-h, 
 /* five cards on a three-column grid: the activity feed takes the last row whole */
 .adm-feed { grid-column: 1 / -1; }
 .adm-feed .feed { grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); align-content: start; }
-.adm-h { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.adm-h { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 10px; }
 .adm-h .chip { height: 26px; font-size: 11px; }
 .chart { width: 100%; height: 220px; overflow: visible; }
 .chart .grid-l { stroke: rgba(var(--fx),.06); }
@@ -493,7 +493,7 @@ body[data-page="shop"]:has(.site-header.is-hidden) { --sf-top: var(--shopnav-h, 
 .tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 620px; }
 .tbl th { text-align: left; padding: 10px 12px; font: 500 10.5px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--line); }
 .tbl td { padding: 12px; border-bottom: 1px solid var(--line); color: var(--ink-2); }
-.tbl td:first-child { font-family: var(--font-mono); color: var(--ink); }
+.tbl td:first-child { font-family: var(--font-mono); color: var(--ink); white-space: nowrap; }
 .tbl tr.is-new td { animation: rowFlash 2.4s ease; }
 @keyframes rowFlash { 0%, 30% { background: rgba(169,196,106,.1); } }
 .st { display: inline-flex; gap: 6px; align-items: center; padding: 4px 9px; border-radius: 7px; font: 600 11px/1 var(--font-mono); }
@@ -524,7 +524,8 @@ body[data-page="shop"]:has(.site-header.is-hidden) { --sf-top: var(--shopnav-h, 
 .inv li { display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: center; }
 .inv-img { width: 40px; height: 40px; border-radius: 6px; }
 .inv-t { display: grid; gap: 6px; min-width: 0; }
-.inv-t > div:first-child { display: flex; justify-content: space-between; gap: 8px; }
+.inv-t > div:first-child { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 8px; }
+.inv-t > div:first-child em { white-space: nowrap; }
 .inv-t b { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pay-note { display: flex; gap: 8px; align-items: center; font-size: 12.5px; color: var(--ink-3); }
 .adm-chart .chart { flex: 1; min-height: 220px; }
@@ -903,4 +904,32 @@ body:has(.site-header.is-hidden) .shop-nav { top: 0; }
   .demo-note kbd, .demo-note .kbd-tip { display: none; }
   .shop-stats { gap: 10px 20px; }
   .shop-stats b { font-size: 24px; }
+}
+
+/* =====================================================================
+   Touch sizing. On phones and any coarse pointer every control in the
+   shop is at least 44 x 44 px; text links grow a taller hit row instead
+   of looking bigger. Desktop sizes stay as designed.
+   ===================================================================== */
+@media (max-width: 700px), (pointer: coarse) {
+  .tpl-groups button, .tpl-shuffle, .sn-in button, .s-cats button, .s-sort select, .s-ic,
+  .p-wish, .p-quick, .sfs-go, .cr-coins button, .cr-copy, .ag-tasks button, .ap-seg button,
+  .ai-sugg button, .ai-x, .ai-input button, .ai-input input, .modal-close, .pm-nav button, .pm-share,
+  .opt-size, .opt-color, .qty button, .ci .qty button, .ap-li-acts .qty button, .ci-rm, .promo .input, .promo .btn,
+  .sf-app .s-btn, .sf-app .s-btn.sm, .ap-side nav button, .ap-out, .ap-promo input, .ap-addr-new input, .ap-grid2 input,
+  .s-news input, .s-news .s-btn, .pay-methods button, .co-actions .btn, .ag-in input, .ag-in button {
+    min-height: 44px;
+  }
+  .s-ic, .p-wish, .p-quick, .cr-copy, .ai-x, .ai-input button, .modal-close, .pm-nav button, .pm-share,
+  .qty button, .ci .qty button, .ap-li-acts .qty button, .ci-rm, .opt-color { min-width: 44px; }
+  .ci-rm { display: inline-grid; place-items: center; }
+  .ap-seg button, .sf-cols > div > button { min-width: 44px; }
+  .ap-seg button { justify-content: center; }
+  .qty, .s-search { min-height: 44px; }
+  .ai-sugg button { display: inline-flex; align-items: center; }
+  /* text-style buttons and links: a full-height hit row, same look */
+  .ap-link, .s-word, .pc-name button, .sf-cols > div > button, .sf-cols > div > span { display: inline-flex; align-items: center; min-height: 44px; }
+  .pc-name button { width: 100%; }
+  .sf-cols > div { gap: 0; }
+  .ap-li-acts, .ao-foot > div, .ap-addr-acts { column-gap: 14px; }
 }

@@ -503,3 +503,91 @@ html[data-mode="ink"] .w-wall { fill: #2a241e; }
   .ty-card h3 { font-size: 48px; }
   .tl-sl { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* =====================================================================
+   Polish pass: fluid type, consistent control sizes, hover/press states,
+   phone tap targets. Selectors are prefixed with `main` where they need to
+   win over the shared phone.css (which loads after this file).
+   ===================================================================== */
+.wd-head .lead { max-width: 52ch; }
+.wd-sec .h2 { font-size: clamp(30px, 4.3vw, 62px); }
+.wd-sec .section-head .lead { max-width: 60ch; font-size: clamp(16px, 1.25vw + 10px, 19px); }
+.tbx-panel h3 { font-size: clamp(18px, 1.2vw + 12px, 22px); }
+.tbx-panel > .tl-p > p { color: var(--ink-3); font-size: clamp(13.5px, .3vw + 12.5px, 15px); line-height: 1.55; max-width: 64ch; margin-bottom: 14px; }
+
+/* one control height for the dark consoles, scaled a touch with the viewport */
+.wd-sec { --ctl: clamp(34px, 1.2vw + 26px, 38px); }
+.ar-b, .ar-ctl select, .pg-preset select, .ar-tabs button { height: var(--ctl); }
+.pg-ib { width: var(--ctl); height: var(--ctl); }
+.tl-btn { height: var(--ctl); display: inline-flex; align-items: center; gap: 6px; }
+
+/* smooth, quiet interaction states */
+.term-chips button, .pg-tabs button, .pg-ib, .api-quick button, .api-tabs button, .api-hist button, .api-copy,
+.ar-tabs button, .ar-seg button, .ar-b, .ty-langs button, .tl-btn, .tl-kv button, .tbx-nav button, #pgClr, .term-x, .wd-dock a, .pp-pill {
+  transition: color .2s, background-color .2s, border-color .2s, box-shadow .2s, transform .18s var(--ease-out);
+}
+.term-chips button:active, .pg-tabs button:active, .pg-ib:active, .api-quick button:active, .api-tabs button:active, .api-hist button:active,
+.ar-tabs button:active, .ar-seg button:active, .ar-b:active, .ty-langs button:active, .tl-btn:active, .tl-kv button:active, .tbx-nav button:active, .term-x:active { transform: scale(.96); }
+.wd-dock a:active { transform: translateY(-1px) scale(.99); }
+.pg-tabs button:hover, .ar-tabs button:hover, .ar-seg button:hover, .ty-langs button:hover, .api-tabs button:hover { color: #efe4cc; }
+.pg-tabs button[aria-selected="true"]:hover, .ar-tabs button[aria-selected="true"]:hover { color: #fff; }
+.term-chips button:hover, .api-quick button:hover { background: rgba(255, 255, 255, .04); }
+.api-hist button:hover { color: #fff; }
+.tl-kv button:hover { text-decoration: underline; text-underline-offset: 3px; }
+#pgClr:hover { color: #fff; }
+.wd-dock a { box-shadow: var(--shadow-sm); }
+.wd-dock a:hover { box-shadow: var(--shadow); }
+.wd-dock a:focus-visible, .tbx-nav button:focus-visible, .tl-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.dark-scope button:focus-visible, .dark-scope select:focus-visible { outline: 2px solid #f06a52; outline-offset: 2px; }
+
+/* gradient type toggle inside the (light) toolbox */
+.tl-seg { background: var(--bg-2); border: 1px solid var(--line); }
+.tl-seg button { color: var(--ink-3); text-transform: capitalize; }
+.tl-seg button:hover { color: var(--ink); }
+.tl-seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+
+/* toolbox search: empty state */
+.tbx-none { padding: 10px 12px; font-size: 13px; color: var(--ink-3); }
+.tbx-none[hidden] { display: none; }
+.api-hist .c { color: #8b8070; }
+
+/* git graph labels stay readable where they cross a lane */
+.gg text { paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+
+/* pathfinding canvas sits centred in its stage */
+.ar-stage canvas { margin-inline: auto; }
+.term-body canvas { touch-action: none; }
+
+/* typing dojo: the "click here" veil goes as soon as the field has focus */
+.ty-code.focus .hint { opacity: 0; pointer-events: none; }
+.ty-res { inset: 0; z-index: 2; }
+
+/* heat map tooltip line never jumps the layout */
+#heatTip { min-height: 1.4em; }
+
+@media (max-width: 680px) {
+  .term-ps b, .term-ps .term-host { display: none; }
+  .term-ps em { display: inline; }
+  .wd-sec .section-head .lead { font-size: 16px; }
+  .api-status { font-size: 12px; gap: 6px 12px; }
+  .ar-stats { gap: 6px 16px; }
+  .ty-stats { gap: 6px 16px; padding: 12px 16px; }
+  .ty-stats b { font-size: 18px; }
+  .tl-range { min-width: 0; flex-basis: 100%; }
+  .git-log .gc { gap: 10px; }
+}
+
+/* phones and other touch screens: 44px targets, 16px inputs (no iOS zoom) */
+@media (max-width: 760px), (pointer: coarse) {
+  main .term-chips button, main .pg-tabs button, main .api-quick button, main .api-tabs button, main .ar-tabs button,
+  main .ar-b, main .ar-seg button, main .ty-langs button, main .tl-btn, main .tl-chk, main .api-auth, main .api-hist button,
+  main .tbx-nav button, main .pg-preset select, main .ar-ctl select, main .api-req select, main .wd-sec .btn-sm { min-height: 44px; }
+  main .pg-ib, main .term-x { width: 44px; height: 44px; }
+  main .tl-kv button { min-height: 44px; margin: -10px 0 -12px; padding: 0 2px; }
+  main .ar-rng input { height: 44px; }
+  main .term-in input, main .api-url input, main .tl-in, main .tl-area, main .tbx-search input, main .api textarea { font-size: 16px; }
+  main .tl-in { height: 46px; }
+  main .tbx-search { height: 46px; }
+  main .api-url, main .api-req select, main .api-req .btn { height: 48px; }
+  .pp-pill { min-height: 44px; }
+}
