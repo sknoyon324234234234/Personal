@@ -143,24 +143,29 @@
       });
     } });
 
-  /* 15 — Coverflow: a 3D ring of product photos, drag with inertia */
-  add({ id: 'coverflow', t: '3D coverflow', jp: '環', tag: '3d', size: 'l', hint: 'Drag or swipe to spin. It keeps going with momentum.',
+  /* Coverflow: a 3D ring of product photos with momentum, snapping and a caption HUD */
+  add({ id: 'coverflow', t: '3D coverflow', jp: '環', tag: '3d', size: 'l', hint: 'Drag, swipe or use the arrows. It snaps to each product.',
     run: function (k, el) {
-      var P = ['halide/tlr.jpg', 'aurelia/watch.jpg', 'carry/backpack.jpg', 'glow/perfume.jpg', 'deshi/saree.jpg', 'fieldday/cruiser.jpg', 'halide/x100.jpg', 'aurelia/locket.jpg', 'carry/duffel.jpg', 'glow/palette.jpg'];
-      var N = ['Twin lens', 'Field watch', 'Canvas pack', 'Eau de nuit', 'Jamdani', 'Cruiser', 'X100', 'Locket', 'Weekender', 'Palette'];
-      el.innerHTML = '<div class="cf-ring">' + P.map(function (s, i) { return '<figure class="cf-it" style="--i:' + i + '"><img src="' + IMG + s + '" alt="' + N[i] + '" draggable="false" loading="lazy"><figcaption>' + N[i] + '</figcaption></figure>'; }).join('') + '</div><div class="cf-floor"></div>';
-      var ring = $('.cf-ring', el), items = $$('.cf-it', el), n = items.length, rot = 0, vel = 18, drag = null, R = 0;
-      function place() { R = Math.max(220, el.clientWidth * .36); items.forEach(function (it, i) { it.style.transform = 'rotateY(' + (i * 360 / n) + 'deg) translateZ(' + R + 'px)'; }); }
+      var P = [['halide/tlr.jpg', 'Twin lens reflex', 'Halide · $420'], ['aurelia/watch.jpg', 'Field watch', 'Aurèle · $890'], ['carry/backpack.jpg', 'Canvas pack', 'Carry · $140'], ['glow/perfume.jpg', 'Eau de nuit', 'Glow Theory · $78'], ['deshi/saree.jpg', 'Jamdani saree', 'Deshi · $210'], ['fieldday/cruiser.jpg', 'City cruiser', 'Field Day · $540'], ['halide/x100.jpg', 'X100 compact', 'Halide · $1,190'], ['aurelia/locket.jpg', 'Gold locket', 'Aurèle · $360'], ['carry/duffel.jpg', 'Weekender', 'Carry · $260'], ['glow/palette.jpg', 'Eye palette', 'Glow Theory · $42']];
+      el.innerHTML = '<div class="cf-ring">' + P.map(function (p, i) { return '<figure class="cf-it" style="--i:' + i + '"><img src="' + IMG + p[0] + '" alt="' + esc(p[1]) + '" draggable="false" loading="lazy"></figure>'; }).join('') + '</div><div class="cf-floor"></div>' +
+        '<div class="cf-hud"><button type="button" class="cf-b" data-d="-1" aria-label="Previous">' + icon('arrow-left') + '</button><div class="cf-cap"><b></b><span></span></div><button type="button" class="cf-b" data-d="1" aria-label="Next">' + icon('arrow-right') + '</button></div><div class="cf-dots">' + P.map(function () { return '<i></i>'; }).join('') + '</div>';
+      var ring = $('.cf-ring', el), items = $$('.cf-it', el), dots = $$('.cf-dots i', el), n = items.length, step = 360 / n, rot = 0, vel = 0, drag = null, R = 0, target = 0, last = 0, cur = -1;
+      function place() { R = Math.max(200, Math.min(420, el.clientWidth * .34)); items.forEach(function (it, i) { it.style.transform = 'rotateY(' + (i * step) + 'deg) translateZ(' + R + 'px)'; }); }
       place(); k.on(window, 'resize', place);
-      k.on(el, 'pointerdown', function (e) { drag = { x: e.clientX, r: rot, t: performance.now() }; el.setPointerCapture(e.pointerId); vel = 0; });
-      k.on(el, 'pointermove', function (e) { if (!drag) return; var nr = drag.r + (e.clientX - drag.x) * .3, now = performance.now(); vel = (nr - rot) / Math.max(.016, (now - drag.t) / 1000); drag.t = now; rot = nr; });
-      k.on(el, 'pointerup', function () { drag = null; });
-      var idle = 0;
+      function go(d) { target = Math.round(rot / step) * step - d * step; vel = 0; last = Date.now(); }
+      k.on(el, 'pointerdown', function (e) { if (e.target.closest('.cf-b')) return; drag = { x: e.clientX, r: rot, t: performance.now() }; vel = 0; target = null; last = Date.now(); });
+      k.on(el, 'pointermove', function (e) { if (!drag) return; var nr = drag.r + (e.clientX - drag.x) * .28, now = performance.now(); vel = (nr - rot) / Math.max(.016, (now - drag.t) / 1000); drag.t = now; rot = nr; });
+      k.on(window, 'pointerup', function () { if (!drag) return; drag = null; last = Date.now(); target = Math.round((rot + vel * .35) / step) * step; });
+      $$('.cf-b', el).forEach(function (b) { k.on(b, 'click', function () { go(+b.getAttribute('data-d')); }); });
+      k.on(el, 'keydown', function (e) { if (e.key === 'ArrowRight') go(1); if (e.key === 'ArrowLeft') go(-1); });
+      el.tabIndex = 0;
+      k.every(function () { if (!drag && Date.now() - last > 3500) go(1); }, 3500);
       k.loop(function (dt) {
-        if (!drag) { rot += vel * dt; vel *= Math.pow(.25, dt); if (Math.abs(vel) < 6) { idle += dt; if (idle > 1.5) vel = 12; } else idle = 0; }
+        if (!drag && target != null) rot += (target - rot) * Math.min(1, dt * 5.5);
         ring.style.transform = 'translateZ(' + (-R) + 'px) rotateY(' + rot + 'deg)';
-        var front = ((-rot % 360) + 360) % 360;
-        items.forEach(function (it, i) { var a = Math.abs(((i * 360 / n - front) + 540) % 360 - 180); it.style.opacity = (1 - a / 240).toFixed(3); it.classList.toggle('front', a < 360 / n / 2); });
+        var front = ((-rot % 360) + 360) % 360, fi = Math.round(front / step) % n;
+        items.forEach(function (it, i) { var a = Math.abs(((i * step - front) + 540) % 360 - 180); it.style.opacity = Math.max(.08, 1 - a / 200).toFixed(3); it.style.filter = 'brightness(' + (1 - Math.min(a, 120) / 240).toFixed(3) + ')'; it.classList.toggle('front', a < step / 2); });
+        if (fi !== cur) { cur = fi; $('.cf-cap b', el).textContent = P[fi][1]; $('.cf-cap span', el).textContent = P[fi][2]; dots.forEach(function (d, j) { d.classList.toggle('on', j === fi); }); var c = $('.cf-cap', el); c.classList.remove('in'); void c.offsetWidth; c.classList.add('in'); }
       });
     } });
 
@@ -249,32 +254,10 @@
       var n = 0; k.every(function () { run($$('.sc-l', el)[n++ % L.length]); }, 2600);
     } });
 
-  /* 20 — Warp field: stars that stretch into hyperspace */
-  add({ id: 'warp', t: 'Warp field', jp: '星', tag: 'motion', size: 's', hint: 'Press and hold to jump to warp speed.',
-    run: function (k, el) {
-      var cv = canvas(k, el), g = cv.g, p = pointer(k, el), S = [], speed = 1, T = 0;
-      for (var i = 0; i < 420; i++) S.push({ x: (Math.random() - .5) * 2, y: (Math.random() - .5) * 2, z: Math.random() });
-      k.loop(function (dt) {
-        T += dt;
-        var target = p.down || (!p.in && Math.sin(T * .6) > .75) ? 14 : 1;
-        speed += (target - speed) * Math.min(1, dt * 2.5);
-        g.fillStyle = 'rgba(8,6,14,' + (speed > 3 ? .25 : .9) + ')'; g.fillRect(0, 0, cv.w, cv.h);
-        var cx = cv.w / 2 + (p.in ? p.nx * 60 : 0), cy = cv.h / 2 + (p.in ? p.ny * 40 : 0), f = Math.max(cv.w, cv.h) * .5;
-        S.forEach(function (s) {
-          var pz = s.z; s.z -= dt * .12 * speed;
-          if (s.z <= .02) { s.z = 1; s.x = (Math.random() - .5) * 2; s.y = (Math.random() - .5) * 2; pz = 1; }
-          var x = cx + s.x / s.z * f * .5, y = cy + s.y / s.z * f * .5, px = cx + s.x / pz * f * .5, py = cy + s.y / pz * f * .5;
-          var b = 1 - s.z;
-          g.strokeStyle = speed > 3 ? 'hsla(' + (200 + b * 80) + ',90%,75%,' + b + ')' : 'rgba(255,248,238,' + b + ')';
-          g.lineWidth = b * 2.2; g.beginPath(); g.moveTo(px, py); g.lineTo(x + .1, y + .1); g.stroke();
-        });
-      });
-    } });
-
   /* 21 — Magnifying dock */
-  add({ id: 'dock', t: 'Magnify dock', jp: '港', tag: 'interaction', size: 'm', hint: 'Sweep across the dock. Click an app to launch it.',
+  add({ id: 'dock', t: 'Magnify dock', jp: '港', tag: 'ui', size: 'm', hint: 'Sweep across the dock. Click an app to launch it.',
     run: function (k, el) {
-      var A = [['home', '#c4321d'], ['chat', '#2f6fe0'], ['cart', '#1f8a5b'], ['bot', '#7c5cff'], ['film', '#d9a441'], ['terminal', '#17130f'], ['palette', '#e2703a'], ['mail', '#0f8a9c'], ['calendar', '#a4473a']];
+      var A = [['home', '#c4321d'], ['chat', '#2f6fe0'], ['cart', '#1f8a5b'], ['bot', '#7c5cff'], ['film', '#d9a441'], ['terminal', '#17130f'], ['palette', '#e2703a']];
       el.innerHTML = '<div class="dk-desk"><b class="dk-open"></b></div><div class="dk-bar">' + A.map(function (a) { return '<button type="button" class="dk-i" style="--c:' + a[1] + '" aria-label="' + a[0] + '">' + icon(a[0]) + '<em></em></button>'; }).join('') + '</div>';
       var bar = $('.dk-bar', el), it = $$('.dk-i', bar), p = pointer(k, bar), T = 0;
       k.on(bar, 'click', function (e) { var b = e.target.closest('.dk-i'); if (!b) return; b.classList.remove('bounce'); void b.offsetWidth; b.classList.add('bounce', 'run'); var o = $('.dk-open', el); o.textContent = b.getAttribute('aria-label') + ' opened'; o.classList.remove('in'); void o.offsetWidth; o.classList.add('in'); });
@@ -282,14 +265,14 @@
         T += dt;
         var br = bar.getBoundingClientRect(), mx = p.in ? p.x : (Math.sin(T * .8) * .5 + .5) * br.width;
         it.forEach(function (b) {
-          var c = b.offsetLeft + b.offsetWidth / 2, d = Math.abs(mx - c), s = 1 + Math.max(0, 1 - d / 150) * .9;
+          var c = b.offsetLeft + b.offsetWidth / 2, d = Math.abs(mx - c), s = 1 + Math.max(0, 1 - d / 150) * (br.width < 420 ? .45 : .9);
           b.style.setProperty('--s', s.toFixed(3));
         });
       });
     } });
 
   /* 22 — Swipe deck with physics */
-  add({ id: 'swipe', t: 'Swipe deck', jp: '束', tag: 'interaction', size: 's', hint: 'Drag a card left or right and let go.',
+  add({ id: 'swipe', t: 'Swipe deck', jp: '束', tag: 'ui', size: 's', hint: 'Drag a card left or right and let go.',
     run: function (k, el) {
       var D = [['halide/f2.jpg', 'Film SLR', '$240'], ['glow/serum.jpg', 'Night serum', '$38'], ['carry/satchel.jpg', 'Satchel', '$120'], ['aurelia/solitaire.jpg', 'Solitaire', '$890'], ['fieldday/tent.jpg', 'Trail tent', '$310'], ['deshi/panjabi.jpg', 'Panjabi', '$64']], n = 0;
       el.innerHTML = '<div class="sw-deck"></div><div class="sw-btns"><button type="button" class="sw-no" aria-label="Skip">' + icon('close') + '</button><button type="button" class="sw-yes" aria-label="Like">' + icon('heart') + '</button></div>';
@@ -327,21 +310,8 @@
       k.loop(function (dt) { if (Date.now() - user > 3000) { sc.scrollTop += dir * dt * 180; if (sc.scrollTop >= sc.scrollHeight - sc.clientHeight - 1) dir = -1; else if (sc.scrollTop <= 0) dir = 1; } });
     } });
 
-  /* 24 — Spotlight reveal */
-  add({ id: 'spot', t: 'Spotlight reveal', jp: '灯', tag: 'interaction', size: 's', hint: 'A lantern in the dark. Move it to find the hidden message.',
-    run: function (k, el) {
-      el.innerHTML = '<div class="sp-dark"><div class="sp-hidden"><span class="jp">秘密</span><b>You found the secret.</b><small>Every lab chapter hides a detail like this.</small></div><div class="sp-grid">' + '<i></i>'.repeat(40) + '</div></div>';
-      var d = $('.sp-dark', el), p = pointer(k, el), x = 0, y = 0, T = 0;
-      k.loop(function (dt) {
-        T += dt; var w = el.clientWidth, h = el.clientHeight;
-        var tx = p.in ? p.x : w / 2 + Math.cos(T * .7) * w * .3, ty = p.in ? p.y : h / 2 + Math.sin(T * 1.1) * h * .25;
-        x += (tx - x) * Math.min(1, dt * 8); y += (ty - y) * Math.min(1, dt * 8);
-        d.style.setProperty('--x', x.toFixed(1) + 'px'); d.style.setProperty('--y', y.toFixed(1) + 'px');
-      });
-    } });
-
   /* 25 — Expanding panels */
-  add({ id: 'panels', t: 'Accordion gallery', jp: '帳', tag: 'interaction', size: 'l', hint: 'Hover or tap a panel to open it.',
+  add({ id: 'panels', t: 'Accordion gallery', jp: '帳', tag: 'ui', size: 'l', hint: 'Hover or tap a panel to open it.',
     run: function (k, el) {
       var P = [['aurelia/hero.jpg', 'Aurèle', 'Fine jewellery', '01'], ['carry/hero.jpg', 'Carry', 'Leather goods', '02'], ['deshi/hero.jpg', 'Deshi', 'Handwoven wear', '03'], ['glow/hero.jpg', 'Glow Theory', 'Beauty', '04'], ['halide/x100-xl.jpg', 'Halide', 'Film cameras', '05'], ['fieldday/road-xl.jpg', 'Field Day', 'Outdoor', '06']];
       el.innerHTML = '<div class="pn-row">' + P.map(function (p, i) { return '<button type="button" class="pn" style="--i:' + i + '"><img src="' + IMG + p[0] + '" alt="" loading="lazy"><span class="pn-n">' + p[3] + '</span><span class="pn-t"><b>' + p[1] + '</b><small>' + p[2] + '</small></span></button>'; }).join('') + '</div>';
@@ -363,59 +333,24 @@
       k.every(function () { if (Date.now() - hold > 6000) d.classList.toggle('night'); }, 3200);
     } });
 
-  /* 27 — Radial menu */
-  add({ id: 'radial', t: 'Radial menu', jp: '輪', tag: 'interaction', size: 's', hint: 'Tap the centre. Items spring out on a curve.',
-    run: function (k, el) {
-      var A = ['home', 'search', 'heart', 'cart', 'user', 'bell'];
-      el.innerHTML = '<div class="rm">' + A.map(function (a, i) { return '<button type="button" class="rm-i" style="--a:' + (i * 60 - 90) + 'deg;--i:' + i + '" aria-label="' + a + '">' + icon(a) + '</button>'; }).join('') + '<button type="button" class="rm-c" aria-label="Open menu">' + icon('plus') + '</button><span class="rm-l"></span></div>';
-      var m = $('.rm', el), hold = 0;
-      k.on($('.rm-c', el), 'click', function () { hold = Date.now(); m.classList.toggle('open'); });
-      $$('.rm-i', el).forEach(function (b) { k.on(b, 'pointerenter', function () { $('.rm-l', el).textContent = b.getAttribute('aria-label'); }); k.on(b, 'click', function () { hold = Date.now(); $('.rm-l', el).textContent = b.getAttribute('aria-label') + ' ✓'; m.classList.remove('open'); }); });
-      k.every(function () { if (Date.now() - hold > 5000) m.classList.toggle('open'); }, 1800);
-    } });
-
-  /* 28 — Elastic string: pluck it */
-  add({ id: 'string', t: 'Elastic string', jp: '弦', tag: 'motion', size: 's', hint: 'Grab the string and pull. Let go to hear it wobble.',
-    run: function (k, el) {
-      el.innerHTML = '<svg class="es-svg"><path class="es-p"/><circle class="es-a" r="6"/><circle class="es-b" r="6"/></svg><div class="es-notes"></div>';
-      var svg = $('.es-svg', el), path = $('.es-p', el), p = pointer(k, el), y = 0, v = 0, cx = 0, held = false, T = 0, ac = null;
-      function note(amp) {
-        try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); var o = ac.createOscillator(), g = ac.createGain(); o.type = 'triangle'; o.frequency.value = 196 + Math.min(220, amp); g.gain.setValueAtTime(.08, ac.currentTime); g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + 1.2); o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + 1.2); } catch (e) {}
-        var n = document.createElement('i'); n.textContent = ['♪', '♫'][Math.random() * 2 | 0]; n.style.left = (40 + Math.random() * 20) + '%'; $('.es-notes', el).appendChild(n); k.later(function () { n.remove(); }, 1400);
-      }
-      k.on(el, 'pointerdown', function (e) { var h = el.clientHeight; if (Math.abs(p.y - h / 2 - y) < 60) { held = true; el.setPointerCapture(e.pointerId); } });
-      k.on(el, 'pointerup', function () { if (held) { held = false; if (Math.abs(y) > 20) note(Math.abs(y)); } });
-      k.onStop(function () { if (ac) ac.close(); });
-      var auto = 0;
-      k.loop(function (dt) {
-        T += dt; var w = el.clientWidth, h = el.clientHeight, m = h / 2;
-        if (held) { y = Math.max(-m + 20, Math.min(m - 20, p.y - m)); cx = p.x; v = 0; }
-        else {
-          v += (-y * 260 - v * 2.2) * dt; y += v * dt;
-          if (p.idle(3500)) { auto += dt; if (auto > 3) { auto = 0; y = (Math.random() > .5 ? 1 : -1) * h * .3; cx = w * (.3 + Math.random() * .4); } }
-        }
-        svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-        var x0 = w * .08, x1 = w * .92, qx = Math.max(x0 + 10, Math.min(x1 - 10, cx || w / 2));
-        path.setAttribute('d', 'M' + x0 + ' ' + m + ' Q' + qx + ' ' + (m + y * 2) + ' ' + x1 + ' ' + m);
-        $('.es-a', el).setAttribute('cx', x0); $('.es-a', el).setAttribute('cy', m); $('.es-b', el).setAttribute('cx', x1); $('.es-b', el).setAttribute('cy', m);
-        path.style.strokeWidth = (3 + Math.min(3, Math.abs(v) / 300)).toFixed(2);
-      });
-    } });
-
-  var ORDER = ['coverflow','ink','glass','magnet','particles','flap','goo','scramble','warp','dock','swipe','spot','radial','story','daynight','panels','string'];
-  EX.sort(function (a, b) { return ORDER.indexOf(a.id) - ORDER.indexOf(b.id); });
 
   /* other files add more exhibits through this API before the page is ready */
   window.XRWING = { add: add, ctx: ctx, pointer: pointer, canvas: canvas, css: css, ink: ink, IMG: IMG, DPR: DPR };
 
   document.addEventListener('DOMContentLoaded', build);
 
+  /* the curated set, in display order */
+  var ORDER = ['coverflow', 'glass', 'u-cmdk', 'c-globe', 'u-dash', 'particles', 'o-phone', 'magnet', 'swipe', 'u-kanban', 'c-galaxy', 'dock', 'flap', 'u-bento', 'o-pricing', 'ink', 'scramble', 'u-notif', 'u-compare', 'goo', 'o-laptop', 'story', 'u-lens', 't-marquee', 'u-sheet', 'p-flow', 'u-stepper', 'daynight', 'panels', 'u-magnetic'];
+
   function build() {
+  var LARGE = ['coverflow', 'c-globe', 'u-dash', 'u-kanban', 'flap', 'u-bento', 'u-compare', 't-marquee', 'panels'];
+  EX.forEach(function (x) { x.size = LARGE.indexOf(x.id) > -1 ? 'l' : 's'; });
+  EX = EX.filter(function (x) { return ORDER.indexOf(x.id) > -1; }).sort(function (a, b) { return ORDER.indexOf(a.id) - ORDER.indexOf(b.id); });
   var root = document.getElementById('wing');
   if (!root) return;
   var grid = $('.wg-grid', root), more = $('.wg-more', root), qIn = $('.wg-q', root), count = $('.wg-count', root);
-  var TAGS = { motion: 'Motion', '3d': '3D', type: 'Type', interaction: 'Interaction', particles: 'Particles', ui: 'UI' };
-  var PAGE = 24, shown = PAGE, filter = 'all', query = '';
+  var TAGS = { motion: 'Motion', '3d': '3D', type: 'Type', ui: 'Interface' };
+  var PAGE = 30, shown = PAGE, filter = 'all', query = '';
   grid.innerHTML = EX.map(function (x, i) {
     return '<article class="wx wx-' + (x.size === 'l' ? 'l' : 's') + '" data-tag="' + x.tag + '" data-x="' + x.id + '" data-q="' + esc((x.t + ' ' + x.tag + ' ' + TAGS[x.tag] + ' ' + (x.kw || '')).toLowerCase()) + '">' +
       '<header class="wx-h"><span class="wx-n">' + ('00' + (i + 1)).slice(EX.length > 99 ? -3 : -2) + '</span><div class="wx-tt"><b>' + esc(x.t) + '</b><small><span class="jp">' + x.jp + '</span> · ' + TAGS[x.tag] + '</small></div>' +

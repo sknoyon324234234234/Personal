@@ -1,173 +1,89 @@
-/* XIRAIYA — Motion Wing, part A: 3D photo galleries and 3D point clouds. */
+/* XIRAIYA — Motion Wing: 3D point-cloud engine, the live connections globe and the spiral galaxy. */
 (function () {
   'use strict';
   var W = window.XRWING, XR = window.XR;
   if (!W || !XR) return;
-  var $ = XR.$, $$ = XR.$$, add = W.add, pointer = W.pointer, canvas = W.canvas, IMG = W.IMG;
+  var add = W.add, pointer = W.pointer, canvas = W.canvas;
   var RAD = Math.PI / 180;
 
-  var SETS = {
-    cam: ['halide/tlr.jpg', 'halide/f2.jpg', 'halide/x100.jpg', 'halide/instamatic.jpg', 'halide/onestep.jpg', 'halide/press.jpg', 'halide/rx.jpg', 'halide/tabletop.jpg', 'halide/tele.jpg'],
-    jewel: ['aurelia/agate.jpg', 'aurelia/bangle.jpg', 'aurelia/coil.jpg', 'aurelia/cuff.jpg', 'aurelia/locket.jpg', 'aurelia/rosegold.jpg', 'aurelia/solitaire.jpg', 'aurelia/tennis.jpg', 'aurelia/watch.jpg', 'aurelia/hero.jpg'],
-    carry: ['carry/backpack.jpg', 'carry/billfold.jpg', 'carry/bluewatch.jpg', 'carry/duffel.jpg', 'carry/field.jpg', 'carry/messenger.jpg', 'carry/satchel.jpg', 'carry/scarf.jpg', 'carry/shades.jpg', 'carry/wallet.jpg', 'carry/watch.jpg'],
-    deshi: ['deshi/bandhani.jpg', 'deshi/glass.jpg', 'deshi/gold.jpg', 'deshi/jutti.jpg', 'deshi/look.jpg', 'deshi/paisley.jpg', 'deshi/panjabi.jpg', 'deshi/runner.jpg', 'deshi/saree.jpg', 'deshi/silkprint.jpg'],
-    field: ['fieldday/basketball.jpg', 'fieldday/cruiser.jpg', 'fieldday/football.jpg', 'fieldday/gloves.jpg', 'fieldday/road.jpg', 'fieldday/rope.jpg', 'fieldday/tennis.jpg', 'fieldday/tent.jpg'],
-    glow: ['glow/base.jpg', 'glow/blush.jpg', 'glow/brushroll.jpg', 'glow/kabuki.jpg', 'glow/lipstick.jpg', 'glow/look.jpg', 'glow/palette.jpg', 'glow/perfume.jpg', 'glow/serum.jpg', 'glow/trio.jpg'],
-    tech: ['kage/cat6.jpg', 'kage/hdd.jpg', 'kage/keyboard.jpg', 'kage/laptop.jpg', 'kage/monitor.jpg', 'kage/mouse.jpg', 'kage/ram.jpg', 'kage/tablet.jpg', 'kage/tower.jpg', 'kage/ultrawide.jpg', 'kage/usbc.jpg'],
-    home: ['nordhem/armchair.jpg', 'nordhem/balloon.jpg', 'nordhem/bedside.jpg', 'nordhem/cafe.jpg', 'nordhem/desk.jpg', 'nordhem/leather.jpg', 'nordhem/lion.jpg', 'nordhem/pendant.jpg', 'nordhem/shell.jpg', 'nordhem/sofa.jpg', 'nordhem/stool.jpg'],
-    kids: ['pebble/dress.jpg', 'pebble/letters.jpg', 'pebble/lilac.jpg', 'pebble/look.jpg', 'pebble/mint.jpg', 'pebble/mittens.jpg', 'pebble/romper.jpg', 'pebble/shoes.jpg', 'pebble/sleepsuit.jpg'],
-    plant: ['sobuj/aloe.jpg', 'sobuj/bonsai.jpg', 'sobuj/cactus.jpg', 'sobuj/fern.jpg', 'sobuj/hanging.jpg', 'sobuj/orchid.jpg', 'sobuj/succulents.jpg', 'sobuj/trowel.jpg', 'sobuj/tulips.jpg'],
-    shoe: ['stride/canvas.jpg', 'stride/court.jpg', 'stride/eqt.jpg', 'stride/knit.jpg', 'stride/prism.jpg', 'stride/shadow.jpg'],
-    wear: ['thread/belt.jpg', 'thread/blazer.jpg', 'thread/brogue.jpg', 'thread/cardigan.jpg', 'thread/chinos.jpg', 'thread/coat.jpg', 'thread/denim.jpg', 'thread/dress.jpg', 'thread/fairisle.jpg', 'thread/navyknit.jpg', 'thread/oxford.jpg'],
-    sites: ['../demos/aurele.jpg', '../demos/blockrealm.jpg', '../demos/devdocs.jpg', '../demos/halide.jpg', '../demos/haven.jpg', '../demos/kage.jpg', '../demos/ledger.jpg', '../demos/mori-tea.jpg', '../demos/nomad.jpg', '../demos/nordhem.jpg', '../demos/nova-saas.jpg', '../demos/pulse-app.jpg', '../demos/sakura-bistro.jpg', '../demos/stride.jpg', '../demos/vault-dashboard.jpg']
-  };
-  function pick(set, n) { var s = SETS[set], out = []; for (var i = 0; i < n; i++) out.push(IMG + s[i % s.length]); return out; }
-  function wrap(x, n) { return ((x % n) + n * 1.5) % n - n / 2; }
-  W.SETS = SETS; W.pick = pick;
-
-  /* ================= ENGINE: 3D photo gallery =================
-     lay(i, n, t, s) returns { tf, o, z, f } for each photo; t is a continuous position
-     driven by drag with momentum, falling back to a slow automatic drift. */
-  function gallery(o) {
-    return function (k, el) {
-      var imgs = pick(o.set, o.n || 10);
-      el.classList.add('g3');
-      if (o.bg) el.style.background = o.bg;
-      el.innerHTML = '<div class="g3-scene" style="perspective:' + (o.persp || 1000) + 'px"><div class="g3-world">' +
-        imgs.map(function (s) { return '<figure class="g3-it ' + (o.cls || '') + '"><img src="' + s + '" alt="" draggable="false" loading="lazy"></figure>'; }).join('') + '</div></div>' + (o.floor === false ? '' : '<i class="g3-floor"></i>');
-      var world = $('.g3-world', el), items = $$('.g3-it', el), n = items.length, t = 0, auto = o.speed == null ? .35 : o.speed, v = auto, drag = null, p = pointer(k, el), last = 0, T = 0, s = { n: n };
-      function size() { s.W = el.clientWidth; s.H = el.clientHeight; var f = Math.min(1, s.W / 620, s.H / 380); el.style.setProperty('--w', Math.round((o.w || 150) * f) + 'px'); el.style.setProperty('--h', Math.round((o.h || 200) * f) + 'px'); s.f = f; }
-      size(); k.on(window, 'resize', size);
-      if ('ResizeObserver' in window) { var ro = new ResizeObserver(size); ro.observe(el); k.onStop(function () { ro.disconnect(); }); }
-      k.on(el, 'pointerdown', function (e) { drag = { x: e.clientX, t: t, time: performance.now() }; v = 0; last = Date.now(); if (o.click) o.click(s); });
-      k.on(el, 'pointermove', function (e) { if (!drag) return; var nt = drag.t - (e.clientX - drag.x) / (o.dragScale || 110), now = performance.now(); v = (nt - t) / Math.max(.016, (now - drag.time) / 1000); drag.time = now; t = nt; });
-      k.on(window, 'pointerup', function () { if (drag) { drag = null; last = Date.now(); } });
-      k.loop(function (dt) {
-        T += dt;
-        if (!drag) { t += v * dt; var back = Date.now() - last > 1400; v += (auto - v) * Math.min(1, dt * (back ? 1 : .35)); }
-        s.T = T; s.p = p; s.t = t;
-        if (o.world) world.style.transform = o.world(t, s);
-        for (var i = 0; i < n; i++) {
-          var r = o.lay(i, n, t, s), st = items[i].style;
-          st.transform = r.tf;
-          st.opacity = r.o == null ? '' : Math.max(0, Math.min(1, r.o)).toFixed(3);
-          st.zIndex = r.z == null ? '' : Math.round(r.z);
-          st.filter = r.f || '';
-          if (r.front != null) items[i].classList.toggle('front', r.front);
-        }
-      });
-    };
-  }
-  function R(s, k) { return Math.max(160, Math.min(s.W * (k || .36), 520)); }
-
-  var G = [
-    { id: 'g-ring', t: 'Photo ring', jp: '環', set: 'cam', size: 'l', hint: 'Drag to spin the ring of cameras.', lay: function (i, n, t, s) { var a = (i - t) * 360 / n, r = R(s); var d = Math.abs(wrap(i - t, n)); return { tf: 'translateZ(' + -r + 'px) rotateY(' + a + 'deg) translateZ(' + r + 'px)', o: 1 - d / n * 1.2, front: d < .5 }; } },
-    { id: 'g-vring', t: 'Vertical wheel', jp: '輪', set: 'jewel', hint: 'Drag sideways to roll the wheel upward.', w: 170, h: 120, lay: function (i, n, t, s) { var a = (i - t) * 360 / n, r = Math.max(150, s.H * .45); var d = Math.abs(wrap(i - t, n)); return { tf: 'translateZ(' + -r + 'px) rotateX(' + -a + 'deg) translateZ(' + r + 'px)', o: 1 - d / n * 1.3, front: d < .5 }; } },
-    { id: 'g-helix', t: 'Helix tower', jp: '螺', set: 'wear', n: 14, hint: 'A spiral staircase of looks. Drag to climb it.', w: 110, h: 140, lay: function (i, n, t, s) { var a = (i - t) * 40, r = R(s, .28), y = wrap(i - t, n) * 26 * s.f; return { tf: 'translateY(' + y + 'px) translateZ(' + -r + 'px) rotateY(' + a + 'deg) translateZ(' + r + 'px)', o: 1 - Math.abs(y) / (s.H * .55) }; } },
-    { id: 'g-orbit', t: 'Tilted orbit', jp: '軌', set: 'glow', hint: 'Photos orbit on a tilted plane and always face you.', w: 120, h: 150, world: function () { return 'rotateX(-18deg) rotateZ(6deg)'; }, lay: function (i, n, t, s) { var a = (i - t) * 360 / n, r = R(s, .38), z = Math.cos(a * RAD); return { tf: 'rotateY(' + a + 'deg) translateZ(' + r + 'px) rotateY(' + -a + 'deg) rotateX(18deg) scale(' + (.75 + z * .25) + ')', z: z * 100, o: .5 + z * .5 }; } },
-    { id: 'g-double', t: 'Twin rings', jp: '双', set: 'tech', n: 16, hint: 'Two rings spin against each other.', w: 100, h: 120, lay: function (i, n, t, s) { var half = n / 2, up = i < half, j = up ? i : i - half, dir = up ? 1 : -1, a = (j * 360 / half) + t * 20 * dir, r = R(s, up ? .34 : .26); return { tf: 'translateY(' + (up ? -1 : 1) * 72 * s.f + 'px) translateZ(' + -r + 'px) rotateY(' + a + 'deg) translateZ(' + r + 'px)' }; } },
-    { id: 'g-cover', t: 'Classic coverflow', jp: '頁', set: 'sites', size: 'l', hint: 'The iTunes classic: the centre card faces you, the rest tilt away.', w: 240, h: 150, speed: .45, lay: function (i, n, t, s) { var r = wrap(i - t, n), c = Math.max(-1, Math.min(1, r)); return { tf: 'translateX(' + (r * s.W * .09 + c * s.W * .12) + 'px) translateZ(' + (-Math.abs(c) * 160 + (1 - Math.abs(c)) * 60) + 'px) rotateY(' + -c * 62 + 'deg)', z: 100 - Math.abs(r) * 10, o: 1 - Math.abs(r) / 6, front: Math.abs(r) < .5 }; } },
-    { id: 'g-fan', t: 'Hand of cards', jp: '扇', set: 'kids', hint: 'Photos fan out like a hand of playing cards.', cls: 'o-bottom', w: 120, h: 170, speed: .3, lay: function (i, n, t, s) { var r = wrap(i - t, n); return { tf: 'translateY(' + (s.H * .18) + 'px) rotateZ(' + r * 11 + 'deg) translateY(' + -Math.abs(r) * 4 + 'px) translateZ(' + -Math.abs(r) * 10 + 'px)', z: 100 - Math.abs(r) * 10, o: 1 - Math.abs(r) / (n / 2 + .5), front: Math.abs(r) < .5 }; } },
-    { id: 'g-zstack', t: 'Depth stack', jp: '重', set: 'home', hint: 'Cards fly toward you out of the depth.', w: 190, h: 140, speed: .4, lay: function (i, n, t, s) { var d = ((i - t) % n + n) % n; return { tf: 'translate3d(' + d * 18 * s.f + 'px,' + -d * 14 * s.f + 'px,' + (-d * 150 + 120) + 'px)', o: d < .6 ? d / .6 : 1 - (d - n + 3) / 3, z: 100 - d * 10 }; } },
-    { id: 'g-sphere', t: 'Photo sphere', jp: '球', set: 'sites', n: 30, size: 'l', hint: 'Thirty thumbnails on a globe. Drag to spin it.', w: 64, h: 44, lay: function (i, n, t, s) { var y = 1 - (i + .5) / n * 2, rr = Math.sqrt(1 - y * y), a = i * 2.39996 + t * .5, x = Math.cos(a) * rr, z = Math.sin(a) * rr, r = Math.min(s.W, s.H) * .38; return { tf: 'translate3d(' + x * r + 'px,' + y * r + 'px,' + z * r + 'px) scale(' + (.7 + z * .35) + ')', z: z * 100, o: .35 + (z + 1) * .33 }; } },
-    { id: 'g-cube', t: 'Photo cube', jp: '箱', set: 'deshi', n: 6, hint: 'Six photos on the faces of a cube.', w: 170, h: 170, speed: .6, world: function (t, s) { return 'rotateX(' + (-22 + Math.sin(s.T * .6) * 14) + 'deg) rotateY(' + t * 45 + 'deg)'; }, lay: function (i, n, t, s) { var h = 170 * s.f / 2, f = ['rotateY(0)', 'rotateY(90deg)', 'rotateY(180deg)', 'rotateY(-90deg)', 'rotateX(90deg)', 'rotateX(-90deg)']; return { tf: f[i] + ' translateZ(' + h + 'px)' }; } },
-    { id: 'g-prism', t: 'Triangular prism', jp: '柱', set: 'shoe', n: 3, hint: 'A three-sided billboard, like a roadside sign.', w: 200, h: 150, speed: .5, cls: 'nogap', world: function (t) { var st = Math.floor(t), fr = t - st, e = fr < .75 ? 0 : (fr - .75) / .25; e = e * e * (3 - 2 * e); return 'rotateX(-8deg) rotateY(' + -(st + e) * 120 + 'deg)'; }, lay: function (i, n, t, s) { return { tf: 'rotateY(' + i * 120 + 'deg) translateZ(' + 200 * s.f * .289 + 'px)' }; } },
-    { id: 'g-tunnel', t: 'Warp tunnel', jp: '洞', set: 'sites', n: 18, hint: 'Screenshots of real demo sites rush past you.', w: 150, h: 96, bg: '#07050d', speed: .9, floor: false, lay: function (i, n, t, s) { var d = ((i * 1.0 - t * 1.4) % n + n) % n, a = i * 137.5 * RAD, rr = Math.min(s.W, s.H) * .42; return { tf: 'translate3d(' + Math.cos(a) * rr + 'px,' + Math.sin(a) * rr * .7 + 'px,' + (300 - d * 90) + 'px)', o: d > n - 3 ? (n - d) / 3 : Math.min(1, d / 2), z: -d } } },
-    { id: 'g-fold', t: 'Folding screen', jp: '屏', set: 'plant', n: 6, hint: 'A paper screen that folds and unfolds in 3D.', w: 110, h: 180, cls: 'nogap', speed: .25, floor: false, lay: function (i, n, t, s) { var a = (Math.sin(t * 1.2) * .5 + .5) * 70, w = 110 * s.f, cw = w * Math.cos(a * RAD), x = (i - (n - 1) / 2) * cw, sg = i % 2 ? -1 : 1; return { tf: 'translateX(' + x + 'px) translateZ(' + (i % 2 ? 0 : -w * Math.sin(a * RAD) / 2) + 'px) rotateY(' + sg * a + 'deg)', f: 'brightness(' + (i % 2 ? .75 : 1) + ')' }; } },
-    { id: 'g-tilt', t: 'Tilt grid', jp: '傾', set: 'field', n: 12, hint: 'Move your cursor. The whole grid tilts and each photo floats at its own depth.', w: 96, h: 76, speed: 0, floor: false, world: function (t, s) { var p = s.p, nx = p.in ? p.nx : Math.sin(s.T * .6) * .4, ny = p.in ? p.ny : Math.cos(s.T * .5) * .3; return 'rotateX(' + -ny * 40 + 'deg) rotateY(' + nx * 40 + 'deg)'; }, lay: function (i, n, t, s) { var c = i % 4, r = i / 4 | 0, gw = 104 * s.f, gh = 84 * s.f; return { tf: 'translate3d(' + (c - 1.5) * gw + 'px,' + (r - 1) * gh + 'px,' + (Math.sin(s.T * 1.5 + i) * 30 + 20) + 'px)' }; } },
-    { id: 'g-scatter', t: 'Polaroid table', jp: '散', set: 'kids', n: 9, cls: 'polaroid', hint: 'Photos scattered on a table. The next one lifts up to you.', w: 120, h: 140, speed: .28, floor: false, lay: function (i, n, t, s) { var cur = ((Math.round(t) % n) + n) % n, sd = Math.sin(i * 91.7) * 43758.5, rx = (sd - Math.floor(sd)) - .5, sd2 = Math.sin(i * 12.3) * 9973.1, ry = (sd2 - Math.floor(sd2)) - .5; if (i === cur) return { tf: 'translate3d(0,0,160px) rotateZ(' + Math.sin(s.T) * 2 + 'deg)', z: 200 }; return { tf: 'translate3d(' + rx * s.W * .7 + 'px,' + ry * s.H * .6 + 'px,0) rotateZ(' + rx * 60 + 'deg)', z: i, f: 'brightness(.85)' }; } },
-    { id: 'g-swing', t: 'Hanging frames', jp: '吊', set: 'home', n: 5, cls: 'o-top frame', hint: 'Frames on strings. Move across them to make them swing.', w: 96, h: 120, speed: 0, floor: false, lay: function (i, n, t, s) { var p = s.p, x = (i - (n - 1) / 2) * 120 * s.f, near = p.in ? Math.max(0, 1 - Math.abs(p.x - s.W / 2 - x) / 140) : .3; var sw = Math.sin(s.T * 2.4 + i * 1.3) * (6 + near * 18); return { tf: 'translate3d(' + x + 'px,' + -s.H * .12 + 'px,0) rotateZ(' + sw + 'deg) rotateY(' + sw * 1.5 + 'deg)' }; } },
-    { id: 'g-book', t: 'Flip book', jp: '本', set: 'wear', n: 8, cls: 'o-left page', hint: 'A photo book that turns its own pages.', w: 150, h: 200, speed: .5, floor: false, world: function () { return 'rotateX(22deg)'; }, lay: function (i, n, t, s) { var c = ((t % (n + 2)) + (n + 2)) % (n + 2) - 1, a = -Math.max(0, Math.min(1, c - i)) * 178; var mid = a < -89; return { tf: 'translateX(0) rotateY(' + a + 'deg) translateZ(' + (mid ? i : -i) * .5 + 'px)', z: mid ? i : n - i, f: 'brightness(' + (1 - Math.abs(Math.sin(a * RAD)) * .35) + ')' }; } },
-    { id: 'g-spread', t: 'Deck spread', jp: '展', set: 'carry', n: 8, hint: 'A stacked deck that breathes out into 3D and back.', w: 140, h: 180, speed: .2, lay: function (i, n, t, s) { var e = s.p.in ? .5 - s.p.nx : Math.sin(s.T * .9) * .5 + .5, r = i - (n - 1) / 2; return { tf: 'translate3d(' + r * e * 44 * s.f + 'px,' + -r * e * 6 + 'px,' + -Math.abs(r) * e * 60 + 'px) rotateY(' + -e * 38 + 'deg) rotateZ(' + r * e * 3 + 'deg)', z: n - Math.abs(r) }; } },
-    { id: 'g-planet', t: 'Planet orbit', jp: '惑', set: 'jewel', n: 9, hint: 'Rings orbit a centre stone, closer ones bigger.', w: 90, h: 90, cls: 'round', bg: 'radial-gradient(circle,#2a1d12,#0c0907)', lay: function (i, n, t, s) { if (i === 0) return { tf: 'scale(1.9)', z: 50 }; var a = (i / (n - 1)) * 360 + t * 30, x = Math.cos(a * RAD), z = Math.sin(a * RAD), r = R(s, .4); return { tf: 'translate3d(' + x * r + 'px,' + z * r * .22 + 'px,' + z * r * .6 + 'px) scale(' + (.7 + z * .25) + ')', z: 50 + z * 60, o: .55 + z * .45 }; } },
-    { id: 'g-wave', t: 'Wave wall', jp: '波', set: 'plant', n: 15, hint: 'A wall of tiles rolling like the sea.', w: 80, h: 80, speed: 0, floor: false, world: function () { return 'rotateX(28deg) rotateY(-16deg)'; }, lay: function (i, n, t, s) { var c = i % 5, r = i / 5 | 0, g = 88 * s.f; return { tf: 'translate3d(' + (c - 2) * g + 'px,' + (r - 1) * g + 'px,' + Math.sin(s.T * 2 - c * .7 - r * .9) * 46 + 'px)' }; } },
-    { id: 'g-stairs', t: 'Staircase', jp: '段', set: 'shoe', n: 8, hint: 'Sneakers walk down a staircase in depth.', w: 130, h: 100, speed: .45, lay: function (i, n, t, s) { var r = wrap(i - t, n); return { tf: 'translate3d(' + r * 70 * s.f + 'px,' + r * 36 * s.f + 'px,' + -r * 90 + 'px) rotateY(-24deg)', z: 100 - r * 10, o: 1 - Math.abs(r) / (n / 2) }; } },
-    { id: 'g-focus', t: 'Focus carousel', jp: '焦', set: 'glow', size: 'l', hint: 'The centre card is sharp; the sides blur like a camera lens.', w: 170, h: 220, speed: .4, lay: function (i, n, t, s) { var r = wrap(i - t, n), a = Math.abs(r); return { tf: 'translateX(' + r * s.W * .23 + 'px) translateZ(' + -a * 180 + 'px) rotateY(' + -r * 18 + 'deg) scale(' + (1 - Math.min(a, 2) * .08) + ')', f: 'blur(' + Math.min(6, a * 2.6).toFixed(1) + 'px) brightness(' + (1 - a * .12) + ')', z: 100 - a * 10, o: 1.6 - a * .45, front: a < .5 }; } },
-    { id: 'g-plane', t: 'Isometric marquee', jp: '面', set: 'sites', n: 15, hint: 'Rows of screenshots slide across a tilted plane.', w: 150, h: 96, speed: .5, floor: false, world: function () { return 'rotateX(52deg) rotateZ(-32deg)'; }, lay: function (i, n, t, s) { var row = i % 3, col = i / 3 | 0, span = 5 * 170 * s.f, x = ((col * 170 * s.f + t * 60 * (row % 2 ? -1 : 1) * s.f) % span + span) % span - span / 2; return { tf: 'translate3d(' + x + 'px,' + (row - 1) * 112 * s.f + 'px,0)' }; } },
-    { id: 'g-panorama', t: 'Panorama room', jp: '景', set: 'home', n: 12, hint: 'You stand inside a round gallery. Drag to look around.', w: 150, h: 190, persp: 520, speed: .25, floor: false, lay: function (i, n, t, s) { var a = (i - t) * 360 / n, r = Math.max(260, s.W * .55); return { tf: 'rotateY(' + a + 'deg) translateZ(' + -r + 'px)', f: 'brightness(' + (.55 + Math.max(0, Math.cos(a * RAD)) * .5) + ')' }; } }
-  ];
-  G.forEach(function (g) {
-    add({ id: g.id, t: g.t, jp: g.jp, tag: '3d', size: g.size || 's', kw: 'gallery carousel photo', hint: g.hint, run: gallery(g) });
-  });
-
-  /* ================= ENGINE: 3D point cloud on canvas =================
-     points are [x, y, z, hue, size] in -1..1; drag rotates with inertia. */
+  /* points are [x, y, z, hue, size] in -1..1; drag rotates with inertia.
+     o.after(g, project, T, S) draws on top with the same camera. */
   function cloud(o) {
     return function (k, el) {
-      var cv = canvas(k, el), g = cv.g, p = pointer(k, el), P = o.gen(), ay = o.ay || 0, ax = o.tilt == null ? -.35 : o.tilt, vy = o.spin == null ? .35 : o.spin, vx = 0, drag = null, T = 0, bg = o.bg || '#0b0912';
+      var cv = canvas(k, el), g = cv.g, p = pointer(k, el), P = o.gen(), ay = o.ay || 0, ax = o.tilt == null ? -.35 : o.tilt, spin = o.spin == null ? .35 : o.spin, vy = spin, vx = 0, drag = null, T = 0, bg = o.bg || '#0b0912';
       el.style.background = bg; el.style.cursor = 'grab';
-      k.on(el, 'pointerdown', function (e) { drag = { x: e.clientX, y: e.clientY }; vy = vx = 0; if (o.click) o.click(P, p, cv); });
-      k.on(el, 'pointermove', function (e) { if (!drag) return; var dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY; ay += dx * .01; ax += dy * .01; vy = dx * .7; vx = dy * .7; });
+      k.on(el, 'pointerdown', function (e) { drag = { x: e.clientX, y: e.clientY }; vy = vx = 0; });
+      k.on(el, 'pointermove', function (e) { if (!drag) return; var dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY; ay += dx * .01; ax = Math.max(-1.2, Math.min(1.2, ax + dy * .01)); vy = dx * .7; vx = dy * .7; });
       k.on(window, 'pointerup', function () { drag = null; });
       k.loop(function (dt) {
         T += dt;
-        if (!drag) { ay += vy * dt; ax += vx * dt; vy += ((o.spin == null ? .35 : o.spin) - vy) * dt * .8; vx *= .94; }
-        if (o.anim) { var np = o.anim(P, T, dt, p, cv); if (np) P = np; }
+        if (!drag) { ay += vy * dt; ax += vx * dt; vy += (spin - vy) * dt * .8; vx *= .94; ax += ((o.tilt == null ? -.35 : o.tilt) - ax) * dt * .5; }
+        if (o.anim) o.anim(P, T, dt);
         var Wd = cv.w, H = cv.h, S = Math.min(Wd, H) * (o.scale || .36), cy = Math.cos(ay), sy = Math.sin(ay), cx = Math.cos(ax), sx = Math.sin(ax);
-        g.globalAlpha = o.trail || 1; g.fillStyle = bg; g.fillRect(0, 0, Wd, H); g.globalAlpha = 1;
-        var pr = new Array(P.length);
-        for (var i = 0; i < P.length; i++) {
-          var q = P[i], x = q[0] * cy - q[2] * sy, z = q[0] * sy + q[2] * cy, y = q[1] * cx - z * sx; z = q[1] * sx + z * cx;
-          var f = 3 / (3 + z); pr[i] = [Wd / 2 + x * S * f, H / 2 + y * S * f, z, f, q];
+        function project(x0, y0, z0) { var x = x0 * cy - z0 * sy, z = x0 * sy + z0 * cy, y = y0 * cx - z * sx; z = y0 * sx + z * cx; var f = 3 / (3 + z); return [Wd / 2 + x * S * f, H / 2 + y * S * f, z, f]; }
+        g.fillStyle = bg; g.fillRect(0, 0, Wd, H);
+        if (o.before) o.before(g, Wd, H, S);
+        var pr = P.map(function (q) { var r = project(q[0], q[1], q[2]); r.push(q); return r; });
+        if (!o.noSort) pr.sort(function (a, b) { return b[2] - a[2]; });
+        for (var m = 0; m < pr.length; m++) {
+          var d = pr[m], q2 = d[4], r = (o.dot || 1.6) * d[3] * (q2[4] || 1);
+          g.globalAlpha = Math.max(.1, Math.min(1, 1.05 - d[2] * .55));
+          g.fillStyle = o.color ? o.color(q2, d[2], T) : 'hsl(' + q2[3] + ',85%,65%)';
+          if (r < 1.4) g.fillRect(d[0] - r, d[1] - r, r * 2, r * 2); else { g.beginPath(); g.arc(d[0], d[1], r, 0, 6.3); g.fill(); }
         }
-        if (o.lines) {
-          g.lineWidth = o.lw || 1;
-          var L = typeof o.lines === 'function' ? o.lines(P) : o.lines;
-          for (var j = 0; j < L.length; j++) { var a = pr[L[j][0]], b = pr[L[j][1]]; if (!a || !b) continue; g.strokeStyle = o.lineColor ? o.lineColor(a, b, T) : 'rgba(255,255,255,' + (.12 + .35 * (1 - (a[2] + b[2]) / 3)).toFixed(3) + ')'; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
-        }
-        if (!o.noDots) {
-          if (!o.noSort) pr.sort(function (a, b) { return b[2] - a[2]; });
-          for (var m = 0; m < pr.length; m++) {
-            var d = pr[m], q2 = d[4], r = (o.dot || 1.6) * d[3] * (q2[4] || 1);
-            g.globalAlpha = Math.max(.12, Math.min(1, 1.05 - d[2] * .45));
-            g.fillStyle = o.color ? o.color(q2, d[2], T) : 'hsl(' + (q2[3] == null ? 20 : q2[3]) + ',85%,65%)';
-            if (r < 1.4) g.fillRect(d[0] - r, d[1] - r, r * 2, r * 2); else { g.beginPath(); g.arc(d[0], d[1], r, 0, 6.3); g.fill(); }
-          }
-          g.globalAlpha = 1;
-        }
-        if (o.label) { g.fillStyle = 'rgba(255,255,255,.5)'; g.font = '600 11px "JetBrains Mono", monospace'; g.fillText(o.label(T), 14, H - 14); }
+        g.globalAlpha = 1;
+        if (o.after) o.after(g, project, T, S, Wd, H);
       });
     };
   }
-  function fib(N, r) { var out = []; for (var i = 0; i < N; i++) { var y = 1 - (i + .5) / N * 2, rr = Math.sqrt(1 - y * y), a = i * 2.39996; out.push([Math.cos(a) * rr * (r || 1), y * (r || 1), Math.sin(a) * rr * (r || 1)]); } return out; }
+  function fib(N) { var out = []; for (var i = 0; i < N; i++) { var y = 1 - (i + .5) / N * 2, rr = Math.sqrt(1 - y * y), a = i * 2.39996; out.push([Math.cos(a) * rr, y, Math.sin(a) * rr]); } return out; }
   function noise(x, y) { return Math.sin(x * 1.7 + Math.sin(y * 1.3)) * .5 + Math.sin(y * 2.3 + x * .7) * .3 + Math.sin((x + y) * 3.1) * .2; }
-  function gridLines(cols, rows) { var L = []; for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) { var i = r * cols + c; if (c < cols - 1) L.push([i, i + 1]); if (r < rows - 1) L.push([i, i + cols]); } return L; }
+  function ll(lat, lon) { var la = lat * RAD, lo = -lon * RAD; return [Math.cos(la) * Math.cos(lo), -Math.sin(la), Math.cos(la) * Math.sin(lo)]; }
 
-  var C = [
-    { id: 'c-globe', t: 'Dot globe', jp: '地', hint: 'A planet made of 2,400 dots. Drag to spin it.', size: 'l', gen: function () { return fib(2400).map(function (q) { var lat = Math.asin(q[1]), lon = Math.atan2(q[2], q[0]), land = noise(lon * 1.6, lat * 2.2) > .15; return [q[0], q[1], q[2], land ? 150 : 205, land ? 1.25 : .7]; }); }, color: function (q, z) { return q[3] === 150 ? 'hsl(28,90%,' + (70 - z * 12) + '%)' : 'hsl(210,60%,45%)'; }, bg: '#06080f', scale: .4 },
-    { id: 'c-torus', t: 'Torus', jp: '輪', hint: 'A doughnut of light, rotating in 3D.', gen: function () { var o = []; for (var i = 0; i < 60; i++) for (var j = 0; j < 24; j++) { var u = i / 60 * 6.283, v = j / 24 * 6.283; o.push([(0.7 + .3 * Math.cos(v)) * Math.cos(u), .3 * Math.sin(v), (0.7 + .3 * Math.cos(v)) * Math.sin(u), i * 6]); } return o; }, color: function (q, z) { return 'hsl(' + (q[3] + 300) % 360 + ',80%,65%)'; } },
-    { id: 'c-knot', t: 'Torus knot', jp: '結', hint: 'A (2,3) knot drawn with thousands of points.', gen: function () { var o = []; for (var i = 0; i < 1800; i++) { var tt = i / 1800 * 6.283, p = 2, q = 3, r = .5 + .22 * Math.cos(q * tt), a = (i % 12) / 12 * 6.283; var x = r * Math.cos(p * tt), y = .22 * Math.sin(q * tt), z = r * Math.sin(p * tt); o.push([x + Math.cos(a) * .06 * Math.cos(p * tt), y + Math.sin(a) * .06, z + Math.cos(a) * .06 * Math.sin(p * tt), 330 + tt * 20]); } return o; }, scale: .55, dot: 1.2 },
-    { id: 'c-dna', t: 'DNA helix', jp: '螺', hint: 'Two strands and their base pairs, turning slowly.', gen: function () { var o = []; for (var i = 0; i < 40; i++) { var y = i / 39 * 2 - 1, a = i * .45; o.push([Math.cos(a) * .35, y, Math.sin(a) * .35, 10, 2.4]); o.push([Math.cos(a + Math.PI) * .35, y, Math.sin(a + Math.PI) * .35, 200, 2.4]); } return o; }, lines: function (P) { var L = []; for (var i = 0; i < P.length; i += 2) { L.push([i, i + 1]); if (i + 2 < P.length) { L.push([i, i + 2]); L.push([i + 1, i + 3]); } } return L; }, tilt: .2, spin: .8, scale: .5 },
-    { id: 'c-waves', t: 'Wave field', jp: '波', hint: 'A sheet of points rippling like water.', gen: function () { var o = []; for (var i = 0; i < 40; i++) for (var j = 0; j < 40; j++) o.push([i / 19.5 - 1, 0, j / 19.5 - 1, 190]); return o; }, anim: function (P, T) { P.forEach(function (q) { var d = Math.hypot(q[0], q[2]); q[1] = Math.sin(d * 7 - T * 3) * .12 * (1.3 - d * .6); q[3] = 190 + q[1] * 500; }); }, tilt: -.6, spin: .15 },
-    { id: 'c-galaxy', t: 'Spiral galaxy', jp: '銀', hint: 'Stars on four arms. Inner stars orbit faster.', size: 'l', gen: function () { var o = []; for (var i = 0; i < 3000; i++) { var arm = i % 4, r = Math.pow(Math.random(), .6), a = arm * 1.5708 + r * 5 + (Math.random() - .5) * .5; o.push([Math.cos(a) * r, (Math.random() - .5) * .08 * (1 - r), Math.sin(a) * r, r < .15 ? 40 : 200 + r * 80, r < .15 ? 1.4 : .8, r, a]); } return o; }, anim: function (P, T, dt) { P.forEach(function (q) { q[6] += dt * (.5 / (q[5] + .2)) * .3; q[0] = Math.cos(q[6]) * q[5]; q[2] = Math.sin(q[6]) * q[5]; }); }, color: function (q) { return q[3] === 40 ? '#ffe2a8' : 'hsl(' + q[3] + ',70%,72%)'; }, bg: '#04030a', tilt: -.9, spin: .05, scale: .44, noSort: true },
-    { id: 'c-lorenz', t: 'Lorenz attractor', jp: '蝶', hint: 'The butterfly of chaos theory, drawing itself.', gen: function () { var o = [], x = .1, y = 0, z = 0; for (var i = 0; i < 2600; i++) { var dx = 10 * (y - x), dy = x * (28 - z) - y, dz = x * y - 8 / 3 * z; x += dx * .006; y += dy * .006; z += dz * .006; o.push([x / 25, -(z - 25) / 25, y / 25, 180 + i / 14]); } return o; }, lines: function (P) { var L = []; for (var i = 1; i < P.length; i++) L.push([i - 1, i]); return L; }, lineColor: function (a, b) { return 'hsla(' + (a[4][3] % 360) + ',80%,65%,.6)'; }, noDots: true, scale: .5, spin: .25 },
-    { id: 'c-lattice', t: 'Pulse lattice', jp: '格', hint: 'A cube of points with a pulse travelling through it.', gen: function () { var o = []; for (var x = 0; x < 8; x++) for (var y = 0; y < 8; y++) for (var z = 0; z < 8; z++) o.push([x / 3.5 - 1, y / 3.5 - 1, z / 3.5 - 1, 20, 1]); return o; }, anim: function (P, T) { P.forEach(function (q) { var d = Math.hypot(q[0], q[1], q[2]), w = Math.max(0, 1 - Math.abs(d - (T * .8 % 2.2)) * 4); q[4] = 1 + w * 2.2; q[3] = 20 + w * 180; }); }, scale: .4 },
-    { id: 'c-vortex', t: 'Vortex', jp: '渦', hint: 'A tornado of particles, faster at the core.', gen: function () { var o = []; for (var i = 0; i < 1600; i++) { var y = Math.random() * 2 - 1, r = .1 + (y + 1) * .35 * Math.random(), a = Math.random() * 6.3; o.push([0, y, 0, 190, .9, r, a]); } return o; }, anim: function (P, T, dt) { P.forEach(function (q) { q[6] += dt * (.6 / (q[5] + .1)); q[0] = Math.cos(q[6]) * q[5]; q[2] = Math.sin(q[6]) * q[5]; q[3] = 180 + q[5] * 120; }); }, tilt: -.25, spin: 0, scale: .45, noSort: true },
-    { id: 'c-mobius', t: 'Möbius strip', jp: '帯', hint: 'A surface with only one side.', gen: function () { var o = []; for (var i = 0; i < 90; i++) for (var j = 0; j < 12; j++) { var u = i / 90 * 6.283, v = (j / 11 - .5) * .5; o.push([(1 + v / 2 * Math.cos(u / 2)) * Math.cos(u) * .7, v / 2 * Math.sin(u / 2) * .7 * 2, (1 + v / 2 * Math.cos(u / 2)) * Math.sin(u) * .7, i * 4]); } return o; }, color: function (q) { return 'hsl(' + (q[3] + 10) + ',80%,62%)'; }, dot: 1.5 },
-    { id: 'c-heart', t: '3D heart', jp: '心', hint: 'A beating heart, made of points.', gen: function () { var o = []; for (var i = 0; i < 1800; i++) { var t = Math.random() * 6.283, s = Math.random() * 3.14, x = 16 * Math.pow(Math.sin(t), 3), y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t); var rr = Math.sin(s); o.push([x / 18 * rr, -y / 18 * rr, Math.cos(s) * .35, 350, 1, x / 18 * rr, -y / 18 * rr, Math.cos(s) * .35]); } return o; }, anim: function (P, T) { var b = 1 + Math.pow(Math.max(0, Math.sin(T * 5)), 8) * .12; P.forEach(function (q) { q[0] = q[5] * b; q[1] = q[6] * b; q[2] = q[7] * b; }); }, color: function (q, z) { return 'hsl(352,85%,' + (62 - z * 10) + '%)'; }, spin: .6, tilt: 0, scale: .52 },
-    { id: 'c-terrain', t: 'Wireframe terrain', jp: '山', hint: 'Mountains generated by maths, flying beneath you.', size: 'l', gen: function () { var o = []; for (var r = 0; r < 26; r++) for (var c = 0; c < 26; c++) o.push([c / 12.5 - 1, 0, r / 12.5 - 1, 20]); return o; }, anim: function (P, T) { P.forEach(function (q, i) { var c = i % 26, r = i / 26 | 0, h = noise(c * .28, r * .28 + T * .6); q[1] = -Math.max(-.05, h) * .35; q[3] = 20 + h * 200; }); }, lines: gridLines(26, 26), lineColor: function (a, b) { return 'hsla(' + (300 - a[4][3] * .4) + ',80%,62%,' + (.2 + a[3] * .25) + ')'; }, noDots: true, tilt: -.5, spin: 0, ay: .6, scale: .6, bg: '#07040f' },
-    { id: 'c-morph', t: 'Shape morph', jp: '変', hint: 'The same 1,200 points flow between a sphere, a cube and a ring.', gen: function () { return fib(1200).map(function (q) { return [q[0], q[1], q[2], 20, 1]; }); }, anim: (function () { var S = null, stage = 0, lastT = 0; return function (P, T) { if (!S) { var sph = fib(1200); var cube = P.map(function () { var f = Math.random() * 6 | 0, a = Math.random() * 2 - 1, b = Math.random() * 2 - 1, v = [[1, a, b], [-1, a, b], [a, 1, b], [a, -1, b], [a, b, 1], [a, b, -1]][f]; return v.map(function (x) { return x * .7; }); }); var ring = P.map(function (q, i) { var u = i / P.length * 6.283 * 7, v = i * .37; return [(0.7 + .25 * Math.cos(v)) * Math.cos(u), .25 * Math.sin(v), (0.7 + .25 * Math.cos(v)) * Math.sin(u)]; }); S = [sph, cube, ring]; } if (T < lastT) lastT = 0; if (T - lastT > 3.5) { stage = (stage + 1) % 3; lastT = T; } var tg = S[stage]; P.forEach(function (q, i) { q[0] += (tg[i][0] - q[0]) * .05; q[1] += (tg[i][1] - q[1]) * .05; q[2] += (tg[i][2] - q[2]) * .05; q[3] = 20 + stage * 120; }); }; })(), color: function (q) { return 'hsl(' + q[3] + ',85%,65%)'; } },
-    { id: 'c-ripple', t: 'Ripple pool', jp: '滴', hint: 'Click to drop a stone into a pool of points.', gen: function () { var o = []; for (var i = 0; i < 36; i++) for (var j = 0; j < 36; j++) o.push([i / 17.5 - 1, 0, j / 17.5 - 1, 200]); o.drops = [[0, 0, 0]]; return o; }, click: function (P, p, cv) { P.drops.push([(Math.random() - .5) * 1.4, (Math.random() - .5) * 1.4, P.T || 0]); if (P.drops.length > 5) P.drops.shift(); }, anim: function (P, T) { P.T = T; if (T - P.drops[P.drops.length - 1][2] > 2.5) { P.drops.push([(Math.random() - .5) * 1.4, (Math.random() - .5) * 1.4, T]); if (P.drops.length > 5) P.drops.shift(); } P.forEach(function (q) { if (q.length < 4) return; var y = 0; P.drops.forEach(function (d) { var age = T - d[2], dist = Math.hypot(q[0] - d[0], q[2] - d[1]), w = dist - age * .7; if (w < 0 && w > -.6) y += Math.sin(w * 18) * .08 * (1 - age / 4) * (1 + w); }); q[1] = y; q[3] = 200 + y * 900; }); }, tilt: -.7, spin: .1 },
-    { id: 'c-shell', t: 'Seashell', jp: '貝', hint: 'A logarithmic spiral, like a nautilus.', gen: function () { var o = []; for (var i = 0; i < 160; i++) for (var j = 0; j < 14; j++) { var u = i / 160 * 6.283 * 2.2, v = j / 14 * 6.283, e = Math.exp(u * .14) * .08; o.push([e * Math.cos(u) * (1 + Math.cos(v)), e * Math.sin(v) * 1.2 - .4, e * Math.sin(u) * (1 + Math.cos(v)), 20 + i]); } return o; }, color: function (q) { return 'hsl(' + (25 + q[3] * .15) + ',70%,' + (55 + q[3] * .12) + '%)'; }, dot: 1.3, scale: .45 },
-    { id: 'c-atom', t: 'Atom', jp: '原', hint: 'Electrons race around a nucleus on three orbits.', gen: function () { var o = []; for (var i = 0; i < 40; i++) { var s = fib(40)[i]; o.push([s[0] * .12, s[1] * .12, s[2] * .12, i % 2 ? 10 : 200, 2.4]); } for (var r = 0; r < 3; r++) for (var j = 0; j < 120; j++) o.push([0, 0, 0, 200, .6, r, j / 120 * 6.283, 0]); for (var e = 0; e < 6; e++) o.push([0, 0, 0, 50, 3.4, e % 3, e * 1.1, 1]); return o; }, anim: function (P, T, dt) { P.forEach(function (q) { if (q[5] == null) return; if (q[7]) q[6] += dt * 2.4; var a = q[6], rr = .8, x = Math.cos(a) * rr, z = Math.sin(a) * rr, t = q[5] * 1.047; q[0] = x; q[1] = z * Math.sin(t); q[2] = z * Math.cos(t); if (q[5] === 1) { q[1] = x * Math.sin(t); q[0] = x * Math.cos(t); } }); }, color: function (q) { return q[3] === 50 ? '#ffe28a' : 'hsl(' + q[3] + ',80%,65%)'; }, scale: .42, spin: .3 },
-    { id: 'c-solar', t: 'Solar system', jp: '日', hint: 'Planets on their orbits, each at its own speed.', size: 'l', gen: function () { var o = [[0, 0, 0, 40, 9]], PL = [[.18, 20, 1.6, 1.8], [.28, 35, 2.2, 1.2], [.4, 200, 2.4, .9], [.52, 10, 2, .7], [.7, 30, 4.5, .45], [.86, 45, 3.8, .32]]; PL.forEach(function (p, k) { for (var j = 0; j < 90; j++) { var a = j / 90 * 6.283; o.push([Math.cos(a) * p[0], 0, Math.sin(a) * p[0], 0, .5]); } o.push([p[0], 0, 0, p[1], p[2], p[0], Math.random() * 6, p[3]]); }); return o; }, anim: function (P, T, dt) { P.forEach(function (q) { if (q[7] == null) return; q[6] += dt * q[7]; q[0] = Math.cos(q[6]) * q[5]; q[2] = Math.sin(q[6]) * q[5]; }); }, color: function (q) { return q[3] === 0 ? 'rgba(255,255,255,.35)' : q[3] === 40 ? '#ffc94a' : 'hsl(' + q[3] + ',70%,62%)'; }, tilt: -.45, spin: .05, scale: .5, bg: '#05040a' },
-    { id: 'c-eq', t: 'Radial equalizer', jp: '音', hint: 'A ring of bars dancing to an imaginary beat.', gen: function () { var o = []; for (var i = 0; i < 48; i++) for (var j = 0; j < 12; j++) { var a = i / 48 * 6.283; o.push([Math.cos(a) * .7, 0, Math.sin(a) * .7, 300 + i * 3, 1.3, i, j]); } return o; }, anim: function (P, T) { P.forEach(function (q) { var h = (Math.sin(T * 4 + q[5] * .5) * .5 + .5) * (Math.sin(T * 1.7 + q[5] * 1.3) * .5 + .5); q[1] = -q[6] / 11 * h * .8; q[4] = q[6] / 11 <= h ? 1.4 : .3; }); }, tilt: -.5, spin: .2 },
-    { id: 'c-word', t: 'Word in space', jp: '字', hint: 'Your name written in floating 3D points.', gen: function () { var c = document.createElement('canvas'); c.width = 300; c.height = 80; var x = c.getContext('2d'); x.font = '900 64px serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('XIRAIYA', 150, 42); var d = x.getImageData(0, 0, 300, 80).data, o = []; for (var yy = 0; yy < 80; yy += 3) for (var xx = 0; xx < 300; xx += 3) if (d[(yy * 300 + xx) * 4 + 3] > 120) o.push([xx / 150 - 1, (yy / 40 - 1) * .27, (Math.random() - .5) * .1, 10, 1, xx]); return o; }, anim: function (P, T) { P.forEach(function (q) { q[2] = Math.sin(T * 2 + q[5] * .05) * .12; q[3] = 350 + q[2] * 200; }); }, spin: 0, ay: .2, tilt: -.1, scale: .58, color: function (q) { return 'hsl(' + q[3] % 360 + ',85%,62%)'; } },
-    { id: 'c-ribbon', t: 'Twisting ribbon', jp: '絹', hint: 'A silk ribbon twisting through space.', gen: function () { var o = []; for (var i = 0; i < 200; i++) for (var j = 0; j < 8; j++) o.push([0, 0, 0, i * 1.5, 1, i, j]); return o; }, anim: function (P, T) { P.forEach(function (q) { var u = q[5] / 200, x = (u - .5) * 2, tw = u * 6 + T, w = (q[6] / 7 - .5) * .3; q[0] = x; q[1] = Math.sin(u * 6.28 + T) * .3 + Math.cos(tw) * w; q[2] = Math.sin(tw) * w + Math.cos(u * 4 + T * .7) * .2; }); }, color: function (q) { return 'hsl(' + (q[3] + 330) % 360 + ',85%,66%)'; }, spin: .1, tilt: -.2, scale: .5 }
-  ];
-  /* wireframe solids: vertices + edges */
-  function solid(V, E, hue) { return { gen: function () { return V.map(function (v) { return [v[0], v[1], v[2], hue, 2.6]; }); }, lines: E, lineColor: function (a, b, T) { return 'hsla(' + (hue + (a[2] + b[2]) * 30) + ',90%,65%,' + (.35 + .5 * (1 - (a[2] + b[2]) / 3)) + ')'; }, lw: 1.6, color: function () { return 'hsl(' + hue + ',90%,75%)'; } }; }
-  function edgesByDist(V, d) { var E = []; for (var i = 0; i < V.length; i++) for (var j = i + 1; j < V.length; j++) if (Math.abs(Math.hypot(V[i][0] - V[j][0], V[i][1] - V[j][1], V[i][2] - V[j][2]) - d) < .01) E.push([i, j]); return E; }
-  var phi = (1 + Math.sqrt(5)) / 2;
-  var ICO = [[-1, phi, 0], [1, phi, 0], [-1, -phi, 0], [1, -phi, 0], [0, -1, phi], [0, 1, phi], [0, -1, -phi], [0, 1, -phi], [phi, 0, -1], [phi, 0, 1], [-phi, 0, -1], [-phi, 0, 1]].map(function (v) { return v.map(function (x) { return x / 1.9; }); });
-  var DOD = []; [-1, 1].forEach(function (a) { [-1, 1].forEach(function (b) { [-1, 1].forEach(function (c) { DOD.push([a, b, c]); }); }); }); [-1, 1].forEach(function (a) { [-1, 1].forEach(function (b) { DOD.push([0, a / phi, b * phi]); DOD.push([a / phi, b * phi, 0]); DOD.push([a * phi, 0, b / phi]); }); }); DOD = DOD.map(function (v) { return v.map(function (x) { return x / 1.8; }); });
-  var OCT = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
-  C.push(Object.assign({ id: 'w-ico', t: 'Icosahedron', jp: '二十', hint: 'Twenty triangles, drawn in glowing lines.', scale: .55 }, solid(ICO, edgesByDist(ICO, 2 / 1.9), 190)));
-  C.push(Object.assign({ id: 'w-dod', t: 'Dodecahedron', jp: '十二', hint: 'Twelve pentagons. Plato thought it shaped the heavens.', scale: .55 }, solid(DOD, edgesByDist(DOD, 2 / phi / 1.8), 40)));
-  C.push(Object.assign({ id: 'w-oct', t: 'Star octahedron', jp: '星', hint: 'An octahedron inside a cube, turning together.', scale: .5 }, (function () { var V = OCT.map(function (v) { return v.map(function (x) { return x * .9; }); }), cube = []; [-1, 1].forEach(function (a) { [-1, 1].forEach(function (b) { [-1, 1].forEach(function (c) { cube.push([a * .52, b * .52, c * .52]); }); }); }); var all = V.concat(cube), E = edgesByDist(V, Math.SQRT2 * .9).concat(edgesByDist(cube, 1.04).map(function (e) { return [e[0] + 6, e[1] + 6]; })); return solid(all, E, 320); })()));
-  C.push({ id: 'w-tess', t: 'Tesseract (4D)', jp: '四次', hint: 'A cube rotating through the fourth dimension.', scale: .48, lw: 1.6, spin: .15, gen: function () { var o = []; for (var i = 0; i < 16; i++) o.push([0, 0, 0, 270, 2.4, [(i & 1) ? 1 : -1, (i & 2) ? 1 : -1, (i & 4) ? 1 : -1, (i & 8) ? 1 : -1]]); return o; }, anim: function (P, T) { var a = T * .7, c = Math.cos(a), s = Math.sin(a); P.forEach(function (q) { var v = q[5], x = v[0] * c - v[3] * s, w = v[0] * s + v[3] * c, y = v[1] * Math.cos(a * .6) - w * Math.sin(a * .6); w = v[1] * Math.sin(a * .6) + w * Math.cos(a * .6); var f = 1.6 / (2.6 - w); q[0] = x * f * .5; q[1] = y * f * .5; q[2] = v[2] * f * .5; q[3] = 250 + w * 40; }); }, lines: (function () { var E = []; for (var i = 0; i < 16; i++) for (var b = 0; b < 4; b++) { var j = i ^ (1 << b); if (j > i) E.push([i, j]); } return E; })(), lineColor: function (a, b) { return 'hsla(' + a[4][3] + ',85%,68%,.8)'; } });
+  /* Live connections globe: land dots, city markers and arcs that fly between customers */
+  var CITY = [['Dhaka', 23.8, 90.4], ['Rajshahi', 24.4, 88.6], ['London', 51.5, -.1], ['New York', 40.7, -74], ['Dubai', 25.2, 55.3], ['Tokyo', 35.7, 139.7], ['Singapore', 1.35, 103.8], ['Toronto', 43.7, -79.4], ['Berlin', 52.5, 13.4], ['Sydney', -33.9, 151.2], ['São Paulo', -23.5, -46.6], ['Lagos', 6.5, 3.4]];
+  var ARCS = [], feed = [];
+  add({ id: 'c-globe', t: 'Live customers globe', jp: '地', tag: '3d', size: 'l', kw: 'globe map world arcs orders', hint: 'Orders fly in from around the world. Drag to spin the planet.',
+    run: cloud({
+      bg: '#070a14', scale: .42, tilt: -.3, spin: .18, dot: 1.25,
+      gen: function () {
+        ARCS = []; feed = [];
+        return fib(2600).map(function (q) { var lat = Math.asin(-q[1]), lon = Math.atan2(q[2], q[0]), land = noise(lon * 1.6, lat * 2.2) > .12; return [q[0], q[1], q[2], land ? 1 : 0, land ? 1 : .55]; });
+      },
+      color: function (q, z) { return q[3] ? 'rgba(160,190,255,' + (0.95 - z * .3) + ')' : 'rgba(70,90,140,.55)'; },
+      before: function (g, w, h, S) { var r = g.createRadialGradient(w / 2, h / 2, S * .6, w / 2, h / 2, S * 1.25); r.addColorStop(0, 'rgba(90,120,255,.16)'); r.addColorStop(1, 'rgba(90,120,255,0)'); g.fillStyle = r; g.fillRect(0, 0, w, h); },
+      after: function (g, project, T, S, w, h) {
+        if (!ARCS.length || T - ARCS[ARCS.length - 1].t0 > .9) {
+          var a = CITY[Math.random() * CITY.length | 0], b = CITY[0];
+          if (a === b) a = CITY[2];
+          if (Math.random() < .4) { var tmp = a; a = b; b = CITY[1 + Math.random() * (CITY.length - 1) | 0]; if (a === b) b = CITY[3]; a = tmp; }
+          ARCS.push({ a: a, b: b, t0: T, amt: [49, 89, 129, 214, 420, 890][Math.random() * 6 | 0] });
+          feed.unshift(a[0] + ' → ' + b[0]); feed.length = Math.min(feed.length, 3);
+          if (ARCS.length > 7) ARCS.shift();
+        }
+        ARCS.forEach(function (arc) {
+          var A = ll(arc.a[1], arc.a[2]), B = ll(arc.b[1], arc.b[2]), age = T - arc.t0, head = Math.min(1, age / 1.6), tail = Math.max(0, (age - 1.4) / 1.6);
+          if (tail >= 1) return;
+          var dot = A[0] * B[0] + A[1] * B[1] + A[2] * B[2], om = Math.acos(Math.max(-1, Math.min(1, dot))), so = Math.sin(om) || 1, N = 40, pts = [];
+          for (var i = 0; i <= N; i++) { var t = i / N; if (t < tail || t > head) continue; var s1 = Math.sin((1 - t) * om) / so, s2 = Math.sin(t * om) / so, lift = 1 + Math.sin(t * Math.PI) * (.12 + om * .1); pts.push(project((A[0] * s1 + B[0] * s2) * lift, (A[1] * s1 + B[1] * s2) * lift, (A[2] * s1 + B[2] * s2) * lift)); }
+          if (pts.length < 2) return;
+          g.lineWidth = 2; g.lineCap = 'round';
+          for (var j = 1; j < pts.length; j++) { var hidden = pts[j][2] > .15; g.strokeStyle = hidden ? 'rgba(255,140,90,.12)' : 'rgba(255,' + (120 + j * 3) + ',80,' + (.35 + j / pts.length * .6) + ')'; g.beginPath(); g.moveTo(pts[j - 1][0], pts[j - 1][1]); g.lineTo(pts[j][0], pts[j][1]); g.stroke(); }
+          var hp = pts[pts.length - 1]; if (head < 1 && hp[2] < .15) { g.fillStyle = '#fff3e0'; g.beginPath(); g.arc(hp[0], hp[1], 3, 0, 6.3); g.fill(); }
+          if (head >= 1 && age < 2.6) { var e = project(B[0], B[1], B[2]); if (e[2] < .1) { var rr = (age - 1.6) * 26; g.strokeStyle = 'rgba(255,160,90,' + Math.max(0, 1 - rr / 26) + ')'; g.lineWidth = 1.5; g.beginPath(); g.arc(e[0], e[1], rr, 0, 6.3); g.stroke(); } }
+        });
+        CITY.forEach(function (c) { var q = ll(c[1], c[2]), pp = project(q[0], q[1], q[2]); if (pp[2] > .05) return; g.fillStyle = '#ff9a5a'; g.beginPath(); g.arc(pp[0], pp[1], 3, 0, 6.3); g.fill(); g.fillStyle = 'rgba(255,255,255,.75)'; g.font = '600 10px "JetBrains Mono", monospace'; g.fillText(c[0], pp[0] + 6, pp[1] + 3); });
+        g.fillStyle = 'rgba(255,255,255,.9)'; g.font = '700 12px "JetBrains Mono", monospace'; g.fillText('● LIVE ORDERS', 16, 24);
+        g.font = '500 11px "JetBrains Mono", monospace'; feed.forEach(function (f, i) { g.fillStyle = 'rgba(200,215,255,' + (.8 - i * .22) + ')'; g.fillText(f, 16, 44 + i * 16); });
+      }
+    }) });
 
-  C.forEach(function (c) {
-    add({ id: c.id, t: c.t, jp: c.jp, tag: '3d', size: c.size || 's', kw: 'canvas points 3d math', hint: c.hint, run: cloud(c) });
-  });
+  /* Spiral galaxy: stars on four arms; inner stars orbit faster */
+  add({ id: 'c-galaxy', t: 'Spiral galaxy', jp: '銀', tag: '3d', size: 's', kw: 'space stars galaxy', hint: 'Three thousand stars on four arms. Drag to tilt the galaxy.',
+    run: cloud({
+      bg: '#04030a', tilt: -.9, spin: .05, scale: .46, noSort: true,
+      gen: function () { var o = []; for (var i = 0; i < 3000; i++) { var arm = i % 4, r = Math.pow(Math.random(), .6), a = arm * 1.5708 + r * 5 + (Math.random() - .5) * .5; o.push([Math.cos(a) * r, (Math.random() - .5) * .08 * (1 - r), Math.sin(a) * r, r < .15 ? 40 : 200 + r * 80, r < .15 ? 1.4 : .8, r, a]); } return o; },
+      anim: function (P, T, dt) { P.forEach(function (q) { q[6] += dt * (.5 / (q[5] + .2)) * .3; q[0] = Math.cos(q[6]) * q[5]; q[2] = Math.sin(q[6]) * q[5]; }); },
+      color: function (q) { return q[3] === 40 ? '#ffe2a8' : 'hsl(' + q[3] + ',70%,72%)'; }
+    }) });
 })();
