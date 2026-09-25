@@ -141,20 +141,20 @@ main, .site-footer, footer { overflow-x: clip; }
   /* tab bar labels: 12px is the smallest comfortable size */
   .tabbar a, .tabbar button { font-size: 12px; letter-spacing: 0; }
 
-  /* ---- 40px+ tap targets on shared chrome ---- */
-  .brand { min-height: 40px; }
+  /* ---- 44px+ tap targets on shared chrome ---- */
+  .brand { min-height: 44px; }
   .breadcrumb a { display: inline-block; padding: 14px 4px; margin: -14px -4px; }
-  .ftr-grid a { min-height: 40px; }
+  .ftr-grid a { min-height: 44px; }
   .ftr-grid li + li { margin-top: 0; }
-  .to-top { min-height: 40px; }
+  .to-top { min-height: 44px; }
   .ftr-tg small { font-size: 11px; }
 
   /* The Lab / Motion Wing */
-  .wg-f button { min-height: 40px; }
-  .wx-max { width: 40px; height: 40px; }
-  .lab-nav-inner a { min-height: 40px; display: inline-flex; align-items: center; }
-  .lw-btn { height: 40px; }
-  .br-tabs button { height: 40px; }
+  .wg-f button { min-height: 44px; }
+  .wx-max { width: 44px; height: 44px; }
+  .lab-nav-inner a { min-height: 44px; display: inline-flex; align-items: center; }
+  .lw-btn { height: 44px; }
+  .br-tabs button { height: 44px; }
   .wx-tt small { font-size: 12px; }
 
   /* Shop */
