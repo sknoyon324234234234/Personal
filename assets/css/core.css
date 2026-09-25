@@ -851,3 +851,16 @@ html[data-mode="ink"] .mode-btn .mb-moon { transform: translateY(-120%) rotate(9
 .ftr-tg > .ic:last-child { opacity: .8; transition: transform .3s; }
 .ftr-tg:hover > .ic:last-child { transform: translate(2px, -2px); }
 .site-footer a.ftr-tg, .site-footer a.ftr-tg:hover, .site-footer a.ftr-tg b, .site-footer a.ftr-tg small, .site-footer a.ftr-tg > .ic { color: #fff; }
+
+/* ---------- sumi ink: small vermilion text on dark cards ----------
+   #d23c26 on the ink surfaces measures ~3.7:1, below AA for body-size text.
+   Small red text switches to the lighter vermilion (--red-2, ~5.8:1);
+   buttons and fills keep the deeper red. */
+html[data-mode="ink"] :is(
+  .svc-meta span:first-child b, .bento .svc-more, .crew-role, .dm-type,
+  .wx-tt .jp, .grp > h4 button, .wd-dock b, .gc p code, .pl h3 small, .pl h3 .ic,
+  .pn-body .link, .pg-vars button[aria-selected=true] small
+) { color: var(--red-2); }
+html[data-mode="ink"] :is(.kc-no, .kc-go, .kn-live-dot, .lv-live) { color: color-mix(in srgb, var(--cc) 70%, #fff); }
+/* 404: the page's `.nf p` colour leaked into the paper speech bubble */
+.nf p.bubble { color: #1d1208; }

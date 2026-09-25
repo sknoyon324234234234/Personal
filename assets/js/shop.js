@@ -236,20 +236,30 @@
   /* ------------------------------------------------------------------
      Layout loading
      ------------------------------------------------------------------ */
+  /* Which stores actually ship a layout module / stylesheet. Anything not listed
+     uses the built-in layout straight away instead of requesting files that
+     would 404 (each one a wasted request + console error on the live server).
+     Add the store id here when you add assets/js/shop/<id>.js or assets/css/shop/<id>.css. */
+  var MOD_JS = { glow: 1, pebble: 1 }, MOD_CSS = {};
   function loadLayout(id) {
     if (LAYOUTS[id]) return Promise.resolve(LAYOUTS[id]);
     if (loading[id]) return loading[id];
     loading[id] = new Promise(function (resolve) {
-      var done = false, cssOk = false, jsOk = false;
+      var done = false, cssOk = !MOD_CSS[id], jsOk = !MOD_JS[id];
       function finish() { if (done || !(cssOk && jsOk)) return; done = true; resolve(LAYOUTS[id] || null); }
-      var l = document.createElement('link');
-      l.rel = 'stylesheet'; l.href = 'assets/css/shop/' + id + '.css';
-      l.onload = l.onerror = function () { cssOk = true; finish(); };
-      document.head.appendChild(l);
-      var s = document.createElement('script');
-      s.src = 'assets/js/shop/' + id + '.js';
-      s.onload = s.onerror = function () { jsOk = true; finish(); };
-      document.body.appendChild(s);
+      if (!cssOk) {
+        var l = document.createElement('link');
+        l.rel = 'stylesheet'; l.href = 'assets/css/shop/' + id + '.css';
+        l.onload = l.onerror = function () { cssOk = true; finish(); };
+        document.head.appendChild(l);
+      }
+      if (!jsOk) {
+        var s = document.createElement('script');
+        s.src = 'assets/js/shop/' + id + '.js';
+        s.onload = s.onerror = function () { jsOk = true; finish(); };
+        document.body.appendChild(s);
+      }
+      finish();
       setTimeout(function () { cssOk = jsOk = true; finish(); }, 6000);
     });
     return loading[id];

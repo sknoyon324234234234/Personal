@@ -125,3 +125,7 @@ html[data-mode="ink"] .rq { border-color: #efe4cc; box-shadow: 6px 6px 0 #efe4cc
 .rq-list { align-items: start; }
 .bt-arena { align-items: end; }
 .bt-side { align-self: stretch; grid-template-rows: auto 1fr; align-items: end; }
+
+/* sumi ink: captions and the phone prop stay paper-coloured, so their text
+   must stay dark (it inherited the light ink colour and vanished) */
+html[data-mode="ink"] .mg-cap, html[data-mode="ink"] .mg-phone { color: #1d1208; }

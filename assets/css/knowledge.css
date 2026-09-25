@@ -96,8 +96,9 @@ body:has(.site-header.is-hidden) .kn-nav { top: 0; }
 .kn-ch-start:hover { transform: translateY(-2px) scale(1.03); background: var(--cc); }
 
 .kn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; perspective: 1400px; }
-.kn-card { --cc2: var(--cc); position: relative; display: grid; align-content: start; gap: 8px; text-align: left; padding: 16px 16px 14px; border-radius: 18px; border: 1.5px solid var(--line-2); background: var(--surface); color: var(--ink); cursor: pointer; overflow: hidden; transform: rotateX(var(--rx, 0)) rotateY(var(--ry, 0)); transition: transform .35s var(--ease-out), border-color .25s, box-shadow .35s; font: inherit; min-width: 0; }
+.kn-card { --cc2: var(--cc); position: relative; display: grid; align-content: start; gap: 8px; text-align: left; padding: 16px 16px 14px; border-radius: 18px; border: 1.5px solid var(--line-2); background: var(--surface); color: var(--ink); cursor: pointer; overflow: hidden; transition: transform .35s var(--ease-out), border-color .25s, box-shadow .35s; font: inherit; min-width: 0; }
 .kn-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--cc) 14%, transparent), transparent 70%); opacity: 0; transition: opacity .3s; pointer-events: none; }
+.kn-card:hover { transform: rotateX(var(--rx, 0)) rotateY(var(--ry, 0)); }
 .kn-card:hover, .kn-card:focus-visible { border-color: var(--cc); box-shadow: 0 22px 40px -22px color-mix(in srgb, var(--cc) 70%, #000); }
 .kn-card:hover::before { opacity: 1; }
 .kn-card[hidden] { display: none; }
@@ -1284,7 +1285,7 @@ html[data-mode=ink] .tk:not(.dark) { color: #1f1813; }
 }
 @media (max-width: 760px) {
   .kn-live { padding: 14px; border-radius: 20px; }
-  .kn-live-stage { min-height: 0; }
+  .kn-live-stage { height: 440px; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
   .kn-stats { gap: 14px 20px; }
   .kn-ring { width: 58px; height: 58px; }
   .kn-ch-h { flex-wrap: wrap; }

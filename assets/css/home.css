@@ -699,3 +699,12 @@ html:not(.js) .loader { display: none; }
   .hero-bubble.over { --bw: 210px; font-size: 13px; }
   .hero-meta dl > div { margin-right: 0; }
 }
+
+/* ---------- responsive QA ---------- */
+/* the wide AI Chat card must span the full row on tablets
+   (.bento .svc outranks the plain .s-chat rule above) */
+@media (max-width: 1100px) { .bento .s-chat { grid-column: span 12; } }
+/* the 5th stat would sit alone in a two-column grid: let it take the row */
+@media (max-width: 760px) {
+  .stats .stat:last-child:nth-child(odd) { grid-column: 1 / -1; border-right: 0; }
+}

@@ -152,7 +152,17 @@
     room.addEventListener('pointermove', function (e) { var r = room.getBoundingClientRect(); idle = false; lx = (e.clientX - r.left) / r.width * 100; ly = (e.clientY - r.top) / r.height * 100; lamp(lx, ly); });
     room.addEventListener('pointerdown', function (e) { var r = room.getBoundingClientRect(); idle = false; lamp((e.clientX - r.left) / r.width * 100, (e.clientY - r.top) / r.height * 100); });
     room.addEventListener('pointerleave', function () { idle = true; });
-    (function wander(t) { if (idle && !XR.reduce) { var a = (t - t0) / 2600; lamp(50 + Math.cos(a) * 30, 50 + Math.sin(a * 1.4) * 26); } requestAnimationFrame(wander); })(t0);
+    /* the idle lamp only wanders while the room is on screen and the tab is visible */
+    var roomOn = true, wandering = false;
+    function wander(t) {
+      if (!roomOn || document.hidden) { wandering = false; return; }
+      if (idle && !XR.reduce) { var a = (t - t0) / 2600; lamp(50 + Math.cos(a) * 30, 50 + Math.sin(a * 1.4) * 26); }
+      requestAnimationFrame(wander);
+    }
+    function wakeLamp() { if (roomOn && !document.hidden && !wandering) { wandering = true; requestAnimationFrame(wander); } }
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { roomOn = en[en.length - 1].isIntersecting; wakeLamp(); }, { rootMargin: '100px 0px' }).observe(room);
+    document.addEventListener('visibilitychange', wakeLamp);
+    wandering = true; wander(t0);
     void dark;
   }
   var door = $('.ms-door');

@@ -78,6 +78,8 @@
   function update() {
     ticking = false;
     var vh = innerHeight;
+    /* layout reads before the style writes below */
+    var s = stepsWrap && stepsLine ? stepsWrap.getBoundingClientRect() : null;
     if (hs && track && desktop.matches) {
       var r = hs.getBoundingClientRect();
       var total = r.height - vh;
@@ -93,8 +95,7 @@
       panels.forEach(function (pn) { pn.style.transform = ''; pn.style.opacity = ''; });
       tilt3d(true);
     }
-    if (stepsWrap && stepsLine) {
-      var s = stepsWrap.getBoundingClientRect();
+    if (s) {
       var sp = XR.clamp((vh * .6 - s.top) / s.height, 0, 1);
       stepsLine.style.setProperty('--p', sp.toFixed(4));
     }
@@ -103,8 +104,10 @@
   var panels = $$('.panel'), hudN = $('.hs-count b'), hudT = $('.hs-title'), dots = $$('.hs-dots button'), active = -1;
   function tilt3d(flat) {
     var mid = innerWidth / 2, best = 0, bestD = Infinity;
+    /* read every panel rect first, then write: one layout per frame instead of one per panel */
+    var rects = panels.map(function (pn) { return pn.getBoundingClientRect(); });
     panels.forEach(function (pn, i) {
-      var r = pn.getBoundingClientRect(), c = r.left + r.width / 2, d = (c - mid) / (r.width + 30);
+      var r = rects[i], c = r.left + r.width / 2, d = (c - mid) / (r.width + 30);
       var a = Math.abs(d);
       if (a < bestD) { bestD = a; best = i; }
       if (XR.reduce || flat) return;

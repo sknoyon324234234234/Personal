@@ -147,3 +147,10 @@
 .pl li i { flex: 1; border-bottom: 1.5px dotted var(--line-2); transform: translateY(-3px); min-width: 12px; }
 .pl li b { color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .hire-bubble.over { --bw: 240px; bottom: calc(98% + 14px); }
+
+/* ---------- responsive QA ---------- */
+@media (max-width: 560px) {
+  /* four configurator steps as a tidy 2 x 2 instead of 3 + an orphan */
+  .cfg-steps { display: grid; grid-template-columns: 1fr 1fr; }
+  .sp small { line-height: 1.45; }
+}

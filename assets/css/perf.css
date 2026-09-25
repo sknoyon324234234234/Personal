@@ -1,0 +1,10 @@
+/* XIRAIYA — performance helpers (no visual rules).
+   core.js marks page blocks that are far off screen with .xr-offscreen;
+   their looping CSS animations are frozen until they come back near the
+   viewport, so the browser does no per-frame style work for them. */
+.xr-offscreen,
+.xr-offscreen *,
+.xr-offscreen *::before,
+.xr-offscreen *::after {
+  animation-play-state: paused !important;
+}
