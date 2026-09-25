@@ -56,7 +56,7 @@
       <div class="shop-hero-row">
         <div class="shop-hero-copy">
           <h1 class="h1" data-split="ready">Shop templates<span class="accent">.</span></h1>
-          <p class="lead" data-reveal>Twelve complete online stores, and no two share a layout. Each one has its own storefront, tools, currency, cart and checkout: a room planner, a shade finder, a desk builder, a size-first sneaker drop and more. Open the <b>Admin</b> view to watch the orders come in.</p>
+          <p class="lead" data-reveal>Twelve complete online stores, and no two share a layout. Each one has its own storefront, tools, currency, cart and checkout: a room planner, a shade finder, a desk builder, a size-first sneaker drop and more. Use the bar below to move through the whole shop: cart, orders, saved items, profile, settings, security, an AI shopping agent and the admin panel.</p>
           <ul class="shop-stats" data-reveal>
             <li><b>12</b><span>unique storefronts</span></li>
             <li><b>5</b><span>payment methods</span></li>
@@ -64,10 +64,7 @@
             <li><b>0</b><span>real charges</span></li>
           </ul>
         </div>
-        <div class="shop-mode" role="tablist" aria-label="Store view" data-reveal>
-          <button type="button" role="tab" aria-selected="true" data-mode="store"><svg class="ic"><use href="#i-store"/></svg>Storefront</button>
-          <button type="button" role="tab" aria-selected="false" data-mode="admin"><svg class="ic"><use href="#i-bot"/></svg>Admin</button>
-        </div>
+
       </div>
       <div class="tpl" data-reveal>
         <div class="tpl-head">
@@ -80,6 +77,21 @@
     </div>
   </section>
 
+  <!-- ================= STORE APP NAV ================= -->
+  <nav class="shop-nav" aria-label="Store sections">
+    <div class="container container-wide"><div class="sn-in" role="tablist">
+      <button type="button" role="tab" aria-selected="true" data-view="home"><svg class="ic"><use href="#i-store"/></svg><span>Home</span></button>
+      <button type="button" role="tab" aria-selected="false" data-view="cart"><svg class="ic"><use href="#i-bag"/></svg><span>Cart</span><b class="sn-badge" data-sn="cart" hidden></b></button>
+      <button type="button" role="tab" aria-selected="false" data-view="orders"><svg class="ic"><use href="#i-box"/></svg><span>Orders</span></button>
+      <button type="button" role="tab" aria-selected="false" data-view="saved"><svg class="ic"><use href="#i-heart"/></svg><span>Saved</span><b class="sn-badge" data-sn="saved" hidden></b></button>
+      <button type="button" role="tab" aria-selected="false" data-view="agent"><svg class="ic"><use href="#i-sparkle"/></svg><span>AI agent</span></button>
+      <button type="button" role="tab" aria-selected="false" data-view="profile"><svg class="ic"><use href="#i-user"/></svg><span>Profile</span></button>
+      <button type="button" role="tab" aria-selected="false" data-view="settings"><svg class="ic"><use href="#i-sliders"/></svg><span>Settings</span></button>
+      <button type="button" role="tab" aria-selected="false" data-view="security"><svg class="ic"><use href="#i-shield"/></svg><span>Security</span></button>
+      <button type="button" role="tab" aria-selected="false" data-view="admin" class="sn-admin"><svg class="ic"><use href="#i-bot"/></svg><span>Admin</span></button>
+    </div></div>
+  </nav>
+
   <!-- ================= STOREFRONT ================= -->
   <section class="store" aria-label="Storefront">
     <div class="container container-wide">
@@ -87,6 +99,7 @@
         <div class="sf-chrome" aria-hidden="true"><span class="sf-dots"><i></i><i></i><i></i></span><span class="sf-url"><svg class="ic"><use href="#i-lock"/></svg><span class="sf-domain"></span></span><span class="sf-tag"></span></div>
         <div class="sf-loader" aria-hidden="true"><i></i></div>
         <div class="sf-site" id="sfSite"></div>
+        <div class="sf-app" id="sfApp" hidden></div>
       </div>
       <p class="demo-note"><svg class="ic"><use href="#i-info"/></svg>Demo stores. The brands are made up, the photos are real (credited in each store’s footer), and no payment is ever taken. Tip: press <kbd>/</kbd> to search any store.</p>
     </div>

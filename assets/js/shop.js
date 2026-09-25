@@ -85,7 +85,7 @@
   function applyTheme() {
     var p = S.pal;
     loadFont(S);
-    themeTag.textContent = '.sf-site,.pmodal .pm-box,.drawer .drawer-panel,.ai-shop,.sf-sticky,.s-suggest{' +
+    themeTag.textContent = '.sf-site,.sf-app,.pmodal .pm-box,.drawer .drawer-panel,.ai-shop,.sf-sticky,.s-suggest{' +
       '--s-bg:' + p.bg + ';--s-surface:' + p.surface + ';--s-ink:' + p.ink + ';--s-muted:' + p.muted + ';--s-accent:' + p.accent + ';--s-on:' + p.on + ';--s-line:' + p.line + ';' +
       '--s-r:' + S.radius + 'px;--s-rs:' + Math.min(S.radius, 10) + 'px;--s-fh:' + fontStack(S.font.h) + ';--s-fb:' + S.font.b + ',system-ui,sans-serif;' +
       '--s-ratio:' + ({ square: '1 / 1', tall: '4 / 5', wide: '4 / 3' }[S.card] || '1 / 1') + ';color-scheme:' + (S.dark ? 'dark' : 'light') + '}';
@@ -393,6 +393,7 @@
     save(); render();
     var pw = $('.pm-wish'); if (pw && pm.id === id) { pw.classList.toggle('is-on', wish.indexOf(id) >= 0); pw.setAttribute('aria-pressed', wish.indexOf(id) >= 0); }
     emit('wish', wish);
+    navBadges();
   }
 
   document.addEventListener('click', function (e) {
@@ -589,6 +590,7 @@
   var sticky = $('.sf-sticky');
   function renderCart() {
     var t = totals();
+    navBadges();
     $$('.cart-count', site).forEach(function (cc) { cc.textContent = t.count; cc.hidden = !t.count; });
     $('.cart-store', drawer).textContent = S.name;
     drawer.classList.toggle('is-empty', !cart.length);
@@ -614,7 +616,7 @@
       return '<div class="up"><span class="up-img">' + pic(p) + '</span><span><b>' + esc(p.name) + '</b><em>' + money(p.price) + '</em></span><button type="button" data-add="' + p.id + '" aria-label="Add ' + esc(p.name) + '">' + I('plus') + '</button></div>';
     }).join('') : '';
     if (sticky) {
-      sticky.classList.toggle('is-on', t.count > 0 && !$('.store').hidden);
+      sticky.classList.toggle('is-on', t.count > 0 && !$('.store').hidden && view === 'home');
       $('.sfs-t', sticky).innerHTML = '<b>' + t.count + ' item' + (t.count === 1 ? '' : 's') + '</b> · ' + money2(t.total);
     }
   }
@@ -744,7 +746,7 @@
   function placeOrder() {
     var t = totals(), id = orderPrefix() + '-' + (48000 + ((Math.random() * 1999) | 0));
     var names = { crypto: coin, bkash: 'bKash', nagad: 'Nagad', card: 'Card', cod: 'COD' };
-    var order = { store: S.id, id: id, name: customer.name, items: cart.map(function (l) { return l.qty + '× ' + byId[l.id].name; }).join(', '), pay: names[method], total: t.total, status: method === 'cod' ? 'cod' : 'paid', time: Date.now() };
+    var order = { store: S.id, id: id, name: customer.name, lines: cart.map(function (l) { return { id: l.id, qty: l.qty, color: l.color, size: l.size }; }), items: cart.map(function (l) { return l.qty + '× ' + byId[l.id].name; }).join(', '), pay: names[method], total: t.total, status: method === 'cod' ? 'cod' : 'paid', time: Date.now() };
     cart.forEach(function (l) { byId[l.id].stock = Math.max(0, byId[l.id].stock - l.qty); });
     orders.unshift(order);
     cart = []; promo = null;
@@ -964,19 +966,326 @@
   }, 3600);
 
   /* ------------------------------------------------------------------
+     Store app: full pages for cart, orders, saved items, profile,
+     settings, security and an AI shopping agent. Each one wears the
+     current store's colours, fonts and currency.
+     ------------------------------------------------------------------ */
+  var appEl = $('#sfApp'), view = 'home';
+  var VIEWS = {
+    home: ['', 'Home'], cart: ['cart', 'Your bag'], orders: ['account/orders', 'Orders'], saved: ['account/saved', 'Saved'],
+    agent: ['agent', 'AI shopping agent'], profile: ['account', 'Profile'], settings: ['account/settings', 'Settings'], security: ['account/security', 'Security']
+  };
+  var ME = XR.store('shop-me') || { name: 'Nusrat Jahan', email: 'nusrat@example.com', phone: '+880 1712 345 678', since: 2023,
+    addrs: [{ label: 'Home', line: 'House 12, Road 5, Uposhohor, Rajshahi 6202' }, { label: 'Office', line: 'Level 4, 22 Kemal Ataturk Ave, Banani, Dhaka 1213' }], def: 0 };
+  var PREF = XR.store('shop-prefs') || { lang: 'en', email: true, sms: true, tg: false, push: true, deals: true, reco: true, size: 'M', units: 'cm' };
+  var SEC = XR.store('shop-sec') || { twofa: false, passkey: false, pwAge: 94, alerts: true,
+    sessions: [{ dev: 'Chrome on Windows', where: 'Rajshahi, BD', when: 'Active now', ic: 'laptop', me: true }, { dev: 'Store app on Pixel 8', where: 'Rajshahi, BD', when: '2 hours ago', ic: 'phone' }, { dev: 'Safari on iPad', where: 'Dhaka, BD', when: '3 days ago', ic: 'tablet' }],
+    log: [['Signed in', 'Chrome on Windows · Rajshahi', 'Today 09:12', 'ok'], ['Password reset email sent', 'you asked for it', '12 Jul', 'ok'], ['Blocked sign-in attempt', 'Unknown device · Lagos, NG', '2 Jul', 'bad'], ['Signed in', 'Store app on Pixel 8', '28 Jun', 'ok']] };
+  function keep() { XR.store('shop-me', ME); XR.store('shop-prefs', PREF); XR.store('shop-sec', SEC); }
+  function initials(n) { return String(n || '?').trim().split(/\s+/).map(function (w) { return w[0]; }).slice(0, 2).join('').toUpperCase(); }
+  function tog(key, on, label, sub, grp) { return '<label class="ap-tog"><span><b>' + esc(label) + '</b>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</span><input type="checkbox" data-' + (grp || 'pref') + '="' + key + '"' + (on ? ' checked' : '') + '><i aria-hidden="true"></i></label>'; }
+  function head(title, sub, extra) { return '<div class="ap-head"><div><small class="ap-crumb">' + esc(S.name) + ' / ' + esc(VIEWS[view][1]) + '</small><h2>' + title + '</h2>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + (extra || '') + '</div>'; }
+  function empty(ic, t, sub, btn) { return '<div class="ap-empty"><span>' + I(ic) + '</span><b>' + esc(t) + '</b><p>' + esc(sub) + '</p>' + (btn || '<button type="button" class="s-btn" data-go="home">Browse ' + esc(S.name) + '</button>') + '</div>'; }
+  function allOrders() {
+    var mine = orders.filter(function (o) { return o.store === S.id; });
+    /* two older demo orders so the page never starts empty */
+    var a = P[1] || P[0], b = P[3] || P[0], c = P[0];
+    var past = [
+      { store: S.id, id: orderPrefix() + '-40721', name: ME.name, lines: [{ id: a.id, qty: 1 }, { id: c.id, qty: 1 }], items: '1× ' + a.name + ', 1× ' + c.name, pay: S.cur === '৳' ? 'bKash' : 'Card', total: a.price + c.price, status: 'paid', time: Date.now() - 12 * 864e5, past: true },
+      { store: S.id, id: orderPrefix() + '-39110', name: ME.name, lines: [{ id: b.id, qty: 2 }], items: '2× ' + b.name, pay: 'COD', total: b.price * 2 + S.ship, status: 'cod', time: Date.now() - 41 * 864e5, past: true }
+    ];
+    return mine.concat(past);
+  }
+  var STAGES = [['check', 'Confirmed'], ['box', 'Packed'], ['truck', 'On the way'], ['store', 'Delivered']];
+  function stage(o) { return o.past ? 3 : Math.min(3, Math.floor((Date.now() - o.time) / 75000)); }
+  function spentUSD() { return orders.reduce(function (s, o) { var st = STORES.find(function (x) { return x.id === o.store; }); return s + (st ? o.total / st.fx : 0); }, 0) + 180; }
+  function tier() {
+    var u = spentUSD(), T = [['Bronze', 0, '#b07a4a'], ['Silver', 250, '#9aa3ad'], ['Gold', 600, '#d9a441'], ['Kage', 1500, '#1f1813']];
+    var i = 0; T.forEach(function (t, k) { if (u >= t[1]) i = k; });
+    var next = T[i + 1];
+    return { name: T[i][0], col: T[i][2], pts: Math.round(u * 10), next: next && next[0], pct: next ? Math.round((u - T[i][1]) / (next[1] - T[i][1]) * 100) : 100, need: next ? Math.ceil(next[1] - u) : 0 };
+  }
+  function acctShell(inner) {
+    var t = tier();
+    var links = [['profile', 'user', 'Profile'], ['orders', 'box', 'Orders'], ['saved', 'heart', 'Saved'], ['settings', 'sliders', 'Settings'], ['security', 'shield', 'Security']];
+    return '<div class="ap-acct"><aside class="ap-side">' +
+      '<div class="ap-me"><span class="ap-ava">' + esc(initials(ME.name)) + '</span><div><b>' + esc(ME.name) + '</b><small><i style="background:' + t.col + '"></i>' + t.name + ' member · ' + t.pts.toLocaleString('en-US') + ' pts</small></div></div>' +
+      '<nav>' + links.map(function (l) { return '<button type="button" data-go="' + l[0] + '" class="' + (view === l[0] ? 'on' : '') + '">' + I(l[1]) + l[2] + '</button>'; }).join('') + '</nav>' +
+      '<button type="button" class="ap-out" data-signout>' + I('arrow-left') + 'Sign out</button></aside><div class="ap-main">' + inner + '</div></div>';
+  }
+
+  var R = {};
+  R.cart = function () {
+    var t = totals(), need = Math.max(0, S.free - (t.sub - t.disc));
+    if (!cart.length) return head('Your bag', 'Nothing here yet.') + empty('bag', 'Your bag is empty', 'Add something you like, or ask the AI agent to pick for you.') + suggest('Popular right now');
+    var lines = cart.map(function (l, i) {
+      var p = byId[l.id];
+      return '<li class="ap-line"><button type="button" class="ap-li-img" data-view-p="' + p.id + '">' + pic(p) + '</button><div class="ap-li-mid"><b>' + esc(p.name) + '</b><small>' + [l.color, l.size && (p.sizeLabel ? p.sizeLabel + ' ' : '') + l.size, money(p.price) + ' each'].filter(Boolean).map(esc).join(' · ') + '</small>' +
+        '<div class="ap-li-acts"><div class="qty" role="group" aria-label="Quantity"><button type="button" data-q="' + i + '" data-d="-1" aria-label="Decrease">' + I('minus') + '</button><span>' + l.qty + '</span><button type="button" data-q="' + i + '" data-d="1" aria-label="Increase">' + I('plus') + '</button></div>' +
+        '<button type="button" class="ap-link" data-later="' + i + '">Save for later</button><button type="button" class="ap-link" data-rm="' + i + '">Remove</button></div>' +
+        (p.stock <= 5 ? '<em class="ap-warn">Only ' + p.stock + ' left</em>' : '') + '</div><b class="ap-li-price">' + money2(p.price * l.qty) + '</b></li>';
+    }).join('');
+    var eta = S.eta.split('·')[0].trim();
+    return head('Your bag', t.count + ' item' + (t.count === 1 ? '' : 's') + ' · ' + esc(eta)) +
+      '<div class="ap-cart"><ul class="ap-lines">' + lines + '</ul><aside class="ap-sum">' +
+        '<div class="ap-ship"><p>' + (need > 0 && promo !== 'FREESHIP' ? 'Add <b>' + money2(need) + '</b> for free delivery' : '<b>Free delivery unlocked</b>') + '</p><i><em style="width:' + (S.free ? Math.min(100, (t.sub - t.disc) / S.free * 100) : 100) + '%"></em></i></div>' +
+        '<form class="ap-promo" autocomplete="off"><input placeholder="Promo code" aria-label="Promo code" value="' + esc(promo || '') + '"><button class="s-btn ghost">Apply</button></form><p class="ap-hint">Try <button type="button" class="ap-link" data-code="XIRAIYA10">XIRAIYA10</button> or <button type="button" class="ap-link" data-code="FREESHIP">FREESHIP</button></p>' +
+        '<dl class="ap-tot"><div><dt>Subtotal</dt><dd>' + money2(t.sub) + '</dd></div>' + (t.disc ? '<div class="g"><dt>Discount</dt><dd>−' + money2(t.disc) + '</dd></div>' : '') + '<div><dt>Delivery</dt><dd>' + (t.ship ? money2(t.ship) : 'Free') + '</dd></div><div class="big"><dt>Total</dt><dd>' + money2(t.total) + '</dd></div></dl>' +
+        '<button type="button" class="s-btn wide" data-checkout>Checkout ' + I('arrow-right') + '</button>' +
+        '<p class="ap-safe">' + I('lock') + 'Secure checkout · bKash · Nagad · Card · USDT · Cash on delivery</p></aside></div>' + suggest('Goes well with this');
+  };
+  function suggest(title) {
+    var inBag = cart.map(function (l) { return l.id; });
+    var ps = P.filter(function (p) { return inBag.indexOf(p.id) < 0; }).sort(function (a, b) { return b.rating * b.reviews - a.rating * a.reviews; }).slice(0, 4);
+    return '<section class="ap-sug"><h3>' + esc(title) + '</h3><div class="ap-cards">' + ps.map(card).join('') + '</div></section>';
+  }
+  function card(p) {
+    return '<article class="ap-card"><button type="button" class="ap-card-img" data-view-p="' + p.id + '">' + pic(p) + '</button><b>' + esc(p.name) + '</b><span>' + money(p.price) + ' · ★ ' + p.rating.toFixed(1) + '</span>' +
+      '<button type="button" class="s-btn sm" data-add-p="' + p.id + '">' + (p.sizes ? 'Choose size' : 'Add to bag') + '</button></article>';
+  }
+  R.orders = function () {
+    var list = allOrders();
+    return acctShell(head('Orders', 'Track, reorder or download an invoice.') + '<div class="ap-orders">' + list.map(function (o, k) {
+      var st = stage(o), d = new Date(o.time);
+      return '<article class="ap-order' + (st < 3 ? ' live' : '') + '"><div class="ao-top"><div><b>' + esc(o.id) + '</b><small>' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + ' · ' + esc(o.pay) + '</small></div><span class="ao-st s' + st + '">' + STAGES[st][1] + '</span></div>' +
+        '<p class="ao-items">' + esc(o.items) + '</p>' +
+        '<ol class="ao-track">' + STAGES.map(function (s, i) { return '<li class="' + (i < st ? 'done' : i === st ? 'now' : '') + '"><i>' + I(s[0]) + '</i><span>' + s[1] + '</span></li>'; }).join('') + '</ol>' +
+        '<div class="ao-foot"><b>' + money2(o.total) + '</b><div><button type="button" class="ap-link" data-invoice="' + k + '">' + I('download') + 'Invoice</button>' + (o.lines ? '<button type="button" class="s-btn sm" data-reorder="' + k + '">Buy again</button>' : '') + '</div></div></article>';
+    }).join('') + '</div>');
+  };
+  R.saved = function () {
+    var ws = wish.map(function (id) { return byId[id]; }).filter(Boolean);
+    return acctShell(head('Saved', ws.length ? ws.length + ' item' + (ws.length === 1 ? '' : 's') + ' you liked' : 'Tap the heart on anything to keep it here.') +
+      (ws.length ? '<div class="ap-cards">' + ws.map(function (p) { return card(p).replace('</article>', '<button type="button" class="ap-link" data-unsave="' + p.id + '">Remove</button></article>'); }).join('') + '</div>' : empty('heart', 'Nothing saved yet', 'Saved items stay here, even after you close the page.')));
+  };
+  R.profile = function () {
+    var t = tier(), mine = orders.filter(function (o) { return o.store === S.id; }).length + 2;
+    return acctShell(head('Profile', 'Member since ' + ME.since + '.') +
+      '<div class="ap-tier" style="--tc:' + t.col + '"><div><small>Membership</small><b>' + t.name + '</b><span>' + t.pts.toLocaleString('en-US') + ' points</span></div><div class="ap-tbar"><i style="width:' + t.pct + '%"></i></div><p>' + (t.next ? 'Spend about $' + t.need + ' more to reach <b>' + t.next + '</b>: free express delivery and early access to drops.' : 'Top tier. Thank you for sticking around.') + '</p></div>' +
+      '<div class="ap-stats"><div><b>' + mine + '</b><small>Orders here</small></div><div><b>' + wish.length + '</b><small>Saved</small></div><div><b>' + ME.addrs.length + '</b><small>Addresses</small></div></div>' +
+      '<form class="ap-card-f" data-form="me"><h3>Personal details</h3><div class="ap-grid2">' +
+        '<label>Full name<input name="name" value="' + esc(ME.name) + '" required autocomplete="name"></label><label>Email<input name="email" type="email" value="' + esc(ME.email) + '" required autocomplete="email"></label>' +
+        '<label>Phone<input name="phone" type="tel" value="' + esc(ME.phone) + '" autocomplete="tel"></label><label>Birthday<input name="bday" type="date" value="' + esc(ME.bday || '') + '"></label></div><button class="s-btn">Save changes</button></form>' +
+      '<div class="ap-card-f"><h3>Addresses</h3><ul class="ap-addrs">' + ME.addrs.map(function (a, i) {
+        return '<li class="' + (i === ME.def ? 'def' : '') + '"><span>' + I('pin') + '</span><div><b>' + esc(a.label) + (i === ME.def ? ' <em>Default</em>' : '') + '</b><small>' + esc(a.line) + '</small></div><div class="ap-addr-acts">' + (i === ME.def ? '' : '<button type="button" class="ap-link" data-def="' + i + '">Make default</button>') + (ME.addrs.length > 1 ? '<button type="button" class="ap-link" data-deladdr="' + i + '">Delete</button>' : '') + '</div></li>';
+      }).join('') + '</ul><form class="ap-addr-new" data-form="addr"><input name="label" placeholder="Label, e.g. Parents" required><input name="line" placeholder="Full address" required><button class="s-btn ghost">Add address</button></form></div>');
+  };
+  R.settings = function () {
+    return acctShell(head('Settings', 'Choose how ' + esc(S.name) + ' talks to you.') +
+      '<div class="ap-card-f"><h3>Notifications</h3>' + tog('email', PREF.email, 'Email receipts and updates', ME.email) + tog('sms', PREF.sms, 'SMS delivery updates', ME.phone) + tog('tg', PREF.tg, 'Telegram alerts', 'Order status in a chat with the store bot') + tog('push', PREF.push, 'Push notifications', 'Back in stock and price drops') + tog('deals', PREF.deals, 'Deals and new drops', 'At most one message a week') + '</div>' +
+      '<div class="ap-card-f"><h3>Shopping</h3><div class="ap-row"><span><b>Language</b><small>Used by the AI agent and emails</small></span><div class="ap-seg" data-seg="lang"><button type="button" data-v="en" aria-pressed="' + (PREF.lang === 'en') + '">English</button><button type="button" data-v="bn" aria-pressed="' + (PREF.lang === 'bn') + '">বাংলা</button></div></div>' +
+        '<div class="ap-row"><span><b>Your usual size</b><small>Pre-selected when you open a product</small></span><div class="ap-seg" data-seg="size">' + ['XS', 'S', 'M', 'L', 'XL'].map(function (z) { return '<button type="button" data-v="' + z + '" aria-pressed="' + (PREF.size === z) + '">' + z + '</button>'; }).join('') + '</div></div>' +
+        '<div class="ap-row"><span><b>Measurements</b></span><div class="ap-seg" data-seg="units"><button type="button" data-v="cm" aria-pressed="' + (PREF.units === 'cm') + '">cm</button><button type="button" data-v="in" aria-pressed="' + (PREF.units === 'in') + '">inches</button></div></div>' +
+        tog('reco', PREF.reco, 'Personal recommendations', 'Uses what you view and save. Nothing leaves this browser.') + '</div>' +
+      '<div class="ap-card-f"><h3>Your data</h3><div class="ap-btns"><button type="button" class="s-btn ghost" data-export>' + I('download') + 'Download my data</button><button type="button" class="s-btn danger" data-wipe>Delete saved data</button></div></div>');
+  };
+  function pwScore(v) { var s = 0; if (v.length >= 8) s++; if (v.length >= 12) s++; if (/[A-Z]/.test(v) && /[a-z]/.test(v)) s++; if (/\d/.test(v)) s++; if (/[^\w\s]/.test(v)) s++; return Math.min(4, s); }
+  function secScore() { return (SEC.twofa ? 35 : 0) + (SEC.passkey ? 20 : 0) + (SEC.pwAge < 90 ? 25 : 5) + (SEC.alerts ? 10 : 0) + (SEC.sessions.length <= 2 ? 10 : 0); }
+  function code6() { var n = Math.floor(Date.now() / 30000) * 7919 % 1000000; return ('00000' + n).slice(-6); }
+  R.security = function () {
+    var sc = secScore(), col = sc >= 80 ? '#1f8a5b' : sc >= 50 ? '#d9a441' : '#c4321d';
+    return acctShell(head('Security', 'Keep your account and saved payment details safe.') +
+      '<div class="ap-score" style="--sc:' + sc + ';--scc:' + col + '"><div class="ap-ring"><b>' + sc + '</b><small>/100</small></div><div><b>' + (sc >= 80 ? 'Well protected' : sc >= 50 ? 'Good, could be better' : 'At risk') + '</b><ul>' +
+        (SEC.twofa ? '' : '<li>Turn on two-step verification <em>+35</em></li>') + (SEC.passkey ? '' : '<li>Add a passkey <em>+20</em></li>') + (SEC.pwAge < 90 ? '' : '<li>Change a password that is ' + SEC.pwAge + ' days old <em>+20</em></li>') + (SEC.sessions.length <= 2 ? '' : '<li>Sign out devices you do not use <em>+10</em></li>') + (sc >= 100 ? '<li>Nothing left to do.</li>' : '') + '</ul></div></div>' +
+      '<form class="ap-card-f" data-form="pw"><h3>Password <small class="' + (SEC.pwAge >= 90 ? 'bad' : '') + '">Changed ' + (SEC.pwAge ? SEC.pwAge + ' days ago' : 'just now') + '</small></h3><div class="ap-grid2"><label>Current password<input type="password" name="cur" required autocomplete="current-password"></label><label>New password<input type="password" name="nw" required autocomplete="new-password" data-pw></label></div><div class="ap-meter" data-meter="0"><i></i><i></i><i></i><i></i><span>Type a new password</span></div><button class="s-btn">Update password</button></form>' +
+      '<div class="ap-card-f"><h3>Sign-in</h3>' + tog('twofa', SEC.twofa, 'Two-step verification', SEC.twofa ? 'On · authenticator app' : 'A 6-digit code from an app, every new device', 'sec') +
+        '<div class="ap-2fa" hidden><div class="ap-qr"></div><div><b>1. Scan with Google Authenticator or Authy</b><p>2. Enter the 6-digit code it shows</p><form data-form="otp" class="ap-otp"><input inputmode="numeric" maxlength="6" placeholder="000000" aria-label="6-digit code" required><button class="s-btn">Verify</button></form><small class="ap-demo">Demo code right now: <b data-code6>' + code6() + '</b></small></div></div>' +
+        tog('passkey', SEC.passkey, 'Passkey', 'Sign in with your fingerprint or face, no password', 'sec') + tog('alerts', SEC.alerts, 'Sign-in alerts', 'Email me when a new device signs in', 'sec') +
+        (SEC.twofa ? '<div class="ap-codes"><b>Backup codes</b><p>Keep these somewhere safe. Each works once.</p><code>' + ['7F3K-92LD', 'Q8WN-41PA', 'M2ZT-60RE', 'H5CX-18VB', 'J9UG-73KS', 'D4YQ-25NF'].join('</code><code>') + '</code></div>' : '') + '</div>' +
+      '<div class="ap-card-f"><h3>Devices <button type="button" class="ap-link" data-outall>Sign out all others</button></h3><ul class="ap-dev">' + SEC.sessions.map(function (d, i) {
+        return '<li><span>' + I(d.ic) + '</span><div><b>' + esc(d.dev) + (d.me ? ' <em>This device</em>' : '') + '</b><small>' + esc(d.where) + ' · ' + esc(d.when) + '</small></div>' + (d.me ? '' : '<button type="button" class="ap-link" data-kill="' + i + '">Sign out</button>') + '</li>';
+      }).join('') + '</ul></div>' +
+      '<div class="ap-card-f"><h3>Recent activity</h3><ul class="ap-log">' + SEC.log.map(function (l) { return '<li class="' + l[3] + '"><i></i><div><b>' + esc(l[0]) + '</b><small>' + esc(l[1]) + '</small></div><time>' + esc(l[2]) + '</time></li>'; }).join('') + '</ul></div>');
+  };
+
+  /* the AI agent: reads the request, plans, uses tools (catalogue, bag, promo, orders) and shows every step */
+  var AG = { tools: { search: true, cart: true, promo: true, track: true }, auto: false, busy: false, log: [] };
+  R.agent = function () {
+    var tl = [['search', 'Catalogue search', 'Reads all ' + P.length + ' products'], ['cart', 'Bag', 'Can add and remove items'], ['promo', 'Promo codes', 'Finds the best saving'], ['track', 'Order tracking', 'Reads your orders']];
+    var tasks = [S.aiSugg[0], 'Put together a set under ' + money(Math.round(S.free * 1.5)), 'Find me the best deal', 'Where is my last order?', 'Buy my last order again'];
+    return head(esc(S.aiName) + ' <em class="ap-beta">agent</em>', 'Give it a job, not just a question. It plans, uses the shop\'s tools and shows you every step.') +
+      '<div class="ap-agent"><div class="ag-chat"><div class="ag-msgs" aria-live="polite">' + (AG.log.length ? AG.log.join('') : '<div class="ag-hi">' + I('sparkle') + '<b>What should I do for you?</b><p>Try one of these, or type your own. I will only spend within the budget you give me.</p></div>') + '</div>' +
+        '<div class="ag-tasks">' + tasks.map(function (t) { return '<button type="button" data-task>' + esc(t) + '</button>'; }).join('') + '</div>' +
+        '<form class="ag-in" autocomplete="off"><input placeholder="e.g. ' + esc(S.aiSugg[1].toLowerCase()) + '" aria-label="Task for the agent"><button aria-label="Send">' + I('send') + '</button></form></div>' +
+      '<aside class="ag-side"><h3>Tools</h3>' + tl.map(function (t) { return tog(t[0], AG.tools[t[0]], t[1], t[2], 'tool'); }).join('') +
+        '<h3>Autonomy</h3><div class="ap-seg full" data-seg="auto"><button type="button" data-v="0" aria-pressed="' + !AG.auto + '">Ask me first</button><button type="button" data-v="1" aria-pressed="' + AG.auto + '">Just do it</button></div>' +
+        '<h3>Plan</h3><ol class="ag-plan"><li class="idle">Waiting for a task</li></ol></aside></div>';
+  };
+  function agMsg(html, who) { var m = '<div class="ag-m ' + (who || 'bot') + '">' + html + '</div>'; AG.log.push(m); var box = $('.ag-msgs', appEl); if (box) { var h = $('.ag-hi', box); if (h) h.remove(); box.insertAdjacentHTML('beforeend', m); box.scrollTop = box.scrollHeight; } }
+  function agPlan(steps) { var ol = $('.ag-plan', appEl); if (ol) ol.innerHTML = steps.map(function (s) { return '<li class="' + s[2] + '"><b>' + esc(s[0]) + '</b><small>' + esc(s[1]) + '</small></li>'; }).join(''); }
+  function agRun(text) {
+    if (AG.busy) return; AG.busy = true;
+    agMsg(esc(text), 'me');
+    var q = text.toLowerCase(), budget = (q.match(/(\d[\d,.]*)/) || [])[1];
+    budget = budget ? parseFloat(budget.replace(/,/g, '')) : null;
+    var intent = /where|track|status|arriv/.test(q) ? 'track' : /again|reorder|repeat/.test(q) ? 'reorder' : /deal|discount|promo|coupon|cheap|save/.test(q) ? 'promo' : 'shop';
+    var bundle = /set|kit|outfit|bundle|together|look|routine|setup/.test(q);
+    var need = { track: 'track', reorder: 'cart', promo: 'promo', shop: 'search' }[intent];
+    var steps = [['Read the request', intent === 'shop' ? (budget ? 'Budget ' + money(budget) : 'No budget given') : 'Intent: ' + intent, 'done'], ['Pick tools', need, 'now']];
+    agPlan(steps);
+    var t0 = performance.now();
+    function next(fn, ms) { setTimeout(fn, XR.reduce ? 0 : ms); }
+    if (!AG.tools[need]) {
+      next(function () { steps[1][2] = 'bad'; agPlan(steps); agMsg('I need the <b>' + need + '</b> tool for that, and it is switched off. Turn it on at the right and ask again.'); AG.busy = false; }, 500);
+      return;
+    }
+    if (intent === 'track') return next(function () {
+      var o = allOrders()[0], st = stage(o);
+      steps[1][2] = 'done'; steps.push(['Read orders', allOrders().length + ' found', 'done'], ['Answer', 'order ' + o.id, 'done']); agPlan(steps);
+      agMsg('Your latest order <b>' + esc(o.id) + '</b> is <b>' + STAGES[st][1].toLowerCase() + '</b>. ' + (st < 3 ? 'It left the ' + esc(S.city) + ' warehouse and should arrive ' + esc(S.eta.split('·')[0].trim().toLowerCase()) + '.' : 'It was delivered on ' + new Date(o.time + 2 * 864e5).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + '.') + ' <button type="button" class="ap-link" data-go="orders">Open orders</button>');
+      AG.busy = false;
+    }, 700);
+    if (intent === 'reorder') return next(function () {
+      var o = allOrders().filter(function (x) { return x.lines; })[0];
+      steps[1][2] = 'done'; steps.push(['Find last order', o.id, 'done'], ['Add to bag', o.lines.length + ' line(s)', AG.auto ? 'done' : 'wait']); agPlan(steps);
+      var go = function () { o.lines.forEach(function (l) { var p = byId[l.id]; if (p) addToCart(p.id, l.color || defaultColor(p), l.size || defaultSize(p), l.qty); }); agMsg('Done. ' + esc(o.items) + ' is back in your bag. <button type="button" class="ap-link" data-go="cart">Open bag</button>'); };
+      if (AG.auto) go(); else { AG.pending = go; agMsg('Your last order was <b>' + esc(o.items) + '</b>. Add it to your bag again? <button type="button" class="s-btn sm" data-approve>Yes, add it</button>'); }
+      AG.busy = false;
+    }, 700);
+    if (intent === 'promo') return next(function () {
+      var t = totals(), a = t.sub * .1, b = t.sub - t.disc >= S.free ? 0 : S.ship, best = a >= b ? 'XIRAIYA10' : 'FREESHIP';
+      steps[1][2] = 'done'; steps.push(['Test codes', 'XIRAIYA10 saves ' + money2(a) + ' · FREESHIP saves ' + money2(b), 'done'], ['Apply best', best, 'done']); agPlan(steps);
+      if (!cart.length) agMsg('Your bag is empty, so there is nothing to save on yet. When it has something in it, <b>XIRAIYA10</b> takes 10% off and <b>FREESHIP</b> removes delivery. I will pick whichever saves more.');
+      else { promo = best; save(); renderCart(); agMsg('Applied <b>' + best + '</b>. It saves you <b>' + money2(Math.max(a, b)) + '</b>, more than the other code. New total: <b>' + money2(totals().total) + '</b>.'); }
+      AG.busy = false;
+    }, 800);
+    next(function () {
+      var words = q.replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(function (w) { return w.length > 2 && !/under|below|less|than|with|for|the|and|find|show|want|need|some|something|put|together|set|kit|outfit|bundle|best|good|please|budget|about|around/.test(w); });
+      var scored = P.map(function (p) {
+        var hay = (p.name + ' ' + p.cat + ' ' + (p.tags || '') + ' ' + p.desc).toLowerCase(), m = 0;
+        words.forEach(function (w) { if (hay.indexOf(w) >= 0) m += 2; if (hay.indexOf(w.replace(/s$/, '')) >= 0) m += 1; });
+        return { p: p, s: m * 3 + p.rating + Math.log10(p.reviews + 1) };
+      }).filter(function (x) { return x.p.stock > 0 && (!budget || x.p.price <= budget); }).sort(function (a, b) { return b.s - a.s; });
+      steps[1][2] = 'done'; steps.push(['Search catalogue', P.length + ' products · ' + scored.length + ' fit', 'done']); agPlan(steps);
+      next(function () {
+        var pick = [];
+        if (bundle && budget) {
+          /* try every set of up to 3 items: most items within budget wins, then variety, then ratings */
+          var cand = scored.slice(0, 14), best = null, sc = function (set) { var cats = {}; set.forEach(function (x) { cats[x.p.cat] = 1; }); return set.length * 1000 + Object.keys(cats).length * 100 + set.reduce(function (t, x) { return t + x.s; }, 0); };
+          for (var i1 = 0; i1 < cand.length; i1++) for (var i2 = i1; i2 < cand.length; i2++) for (var i3 = i2; i3 < cand.length; i3++) {
+            var set = [cand[i1]]; if (i2 > i1) set.push(cand[i2]); if (i3 > i2) set.push(cand[i3]);
+            if (set.reduce(function (t, x) { return t + x.p.price; }, 0) > budget) continue;
+            if (!best || sc(set) > sc(best)) best = set;
+          }
+          pick = best ? best.map(function (x) { return x.p; }) : [];
+        }
+        else pick = scored.slice(0, 3).map(function (x) { return x.p; });
+        steps.push(['Check stock and ratings', pick.length + ' picked', 'done'], ['Add to bag', AG.tools.cart ? (AG.auto ? 'automatic' : 'waiting for you') : 'bag tool off', AG.auto && AG.tools.cart ? 'done' : 'wait']); agPlan(steps);
+        if (!pick.length) { agMsg('Nothing in ' + esc(S.name) + ' fits that' + (budget ? ' under ' + money(budget) : '') + '. Try a higher budget or other words.'); AG.busy = false; return; }
+        var sum = pick.reduce(function (s, p) { return s + p.price; }, 0);
+        var html = (bundle ? 'Here is a set for <b>' + money(sum) + '</b>' + (budget ? ', ' + money(budget - sum) + ' under budget' : '') : 'Top ' + pick.length + ' matches') + ' (' + Math.round(performance.now() - t0) + ' ms):' +
+          '<div class="ag-picks">' + pick.map(function (p) { return '<div class="ag-pick"><button type="button" data-view-p="' + p.id + '">' + pic(p) + '</button><b>' + esc(p.name) + '</b><span>' + money(p.price) + ' · ★ ' + p.rating.toFixed(1) + '</span></div>'; }).join('') + '</div>';
+        var ids = pick.map(function (p) { return p.id; }).join(',');
+        var go = function () { pick.forEach(function (p) { addToCart(p.id, defaultColor(p), defaultSize(p), 1); }); agMsg('Added ' + pick.length + ' item' + (pick.length === 1 ? '' : 's') + ' to your bag. <button type="button" class="ap-link" data-go="cart">Review bag</button>'); };
+        if (AG.tools.cart && AG.auto) { agMsg(html); go(); }
+        else if (AG.tools.cart) { AG.pending = go; agMsg(html + '<button type="button" class="s-btn sm" data-approve>Add all to bag</button>'); }
+        else agMsg(html + '<small>The bag tool is off, so I only looked.</small>');
+        void ids; AG.busy = false;
+      }, 650);
+    }, 550);
+  }
+
+  function renderView() {
+    if (view === 'home' || view === 'admin' || !R[view]) return;
+    appEl.className = 'sf-app v-' + view;
+    appEl.innerHTML = '<div class="ap-wrap">' + R[view]() + '</div>';
+    if (view === 'security' && SEC.twofa === 'setup') { $('.ap-2fa', appEl).hidden = false; XR.qr($('.ap-qr', appEl), ME.email + S.id); }
+  }
+  function navBadges() {
+    var n = cart ? cart.reduce(function (s, l) { return s + l.qty; }, 0) : 0, w = wish ? wish.length : 0;
+    $$('[data-sn="cart"]').forEach(function (b) { b.textContent = n; b.hidden = !n; });
+    $$('[data-sn="saved"]').forEach(function (b) { b.textContent = w; b.hidden = !w; });
+    if (view !== 'home' && view !== 'admin' && !appEl.hidden && (view === 'cart' || view === 'saved')) renderView();
+  }
+  function setView(v, noScroll) {
+    view = v;
+    $$('.sn-in [data-view]').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-view') === v); });
+    if (v === 'admin') { setMode('admin'); return; }
+    setMode('store', true);
+    var app = v !== 'home';
+    site.hidden = app; appEl.hidden = !app;
+    $('.sf-domain').textContent = S.domain + (VIEWS[v][0] ? '/' + VIEWS[v][0] : '');
+    if (app) renderView();
+    ai.classList.toggle('is-away', v === 'agent');
+    renderCart();
+    var sel = $('.sn-in [aria-selected="true"]'); if (sel) sel.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    if (!noScroll) { var y = sfEl.getBoundingClientRect().top + scrollY - (XR.phone ? 120 : 150); if (Math.abs(scrollY - y) > 30) window.scrollTo({ top: y, behavior: XR.reduce ? 'auto' : 'smooth' }); }
+  }
+  $('.sn-in').addEventListener('click', function (e) { var b = e.target.closest('[data-view]'); if (b) setView(b.getAttribute('data-view')); });
+
+  appEl.addEventListener('click', function (e) {
+    var t = e.target, g;
+    if ((g = t.closest('[data-go]'))) { setView(g.getAttribute('data-go')); return; }
+    if ((g = t.closest('[data-view-p]'))) { openProduct(g.getAttribute('data-view-p')); return; }
+    if ((g = t.closest('[data-add-p]'))) { var p = byId[g.getAttribute('data-add-p')]; if (p.sizes) openProduct(p.id); else { addToCart(p.id, defaultColor(p), null, 1); renderView(); } return; }
+    if ((g = t.closest('[data-q]'))) { var l = cart[+g.getAttribute('data-q')]; l.qty = Math.min(9, l.qty + +g.getAttribute('data-d')); if (l.qty < 1) cart.splice(+g.getAttribute('data-q'), 1); save(); renderCart(); emit('cart', cart); renderView(); return; }
+    if ((g = t.closest('[data-rm]'))) { cart.splice(+g.getAttribute('data-rm'), 1); save(); renderCart(); emit('cart', cart); renderView(); return; }
+    if ((g = t.closest('[data-later]'))) { var ln = cart.splice(+g.getAttribute('data-later'), 1)[0]; if (wish.indexOf(ln.id) < 0) wish.push(ln.id); save(); renderCart(); render(); XR.toast('Moved to Saved'); renderView(); return; }
+    if ((g = t.closest('[data-code]'))) { promo = g.getAttribute('data-code'); save(); renderCart(); XR.toast(promo + ' applied'); renderView(); return; }
+    if (t.closest('[data-checkout]')) { startCheckout(); return; }
+    if ((g = t.closest('[data-unsave]'))) { toggleWish(g.getAttribute('data-unsave')); renderView(); return; }
+    if ((g = t.closest('[data-reorder]'))) { var o = allOrders()[+g.getAttribute('data-reorder')]; o.lines.forEach(function (x) { var pp = byId[x.id]; if (pp) addToCart(pp.id, x.color || defaultColor(pp), x.size || defaultSize(pp), x.qty); }); XR.toast('Added to your bag'); return; }
+    if ((g = t.closest('[data-invoice]'))) {
+      var od = allOrders()[+g.getAttribute('data-invoice')];
+      var txt = S.name + '\n' + S.domain + '\n\nINVOICE ' + od.id + '\nDate: ' + new Date(od.time).toLocaleString('en-GB') + '\nBilled to: ' + ME.name + ', ' + ME.addrs[ME.def].line + '\n\nItems: ' + od.items + '\nPaid with: ' + od.pay + '\nTotal: ' + money2(od.total) + '\n\nThank you. (Demo invoice by Xiraiya)\n';
+      var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' })); a.download = od.id + '.txt'; a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000); return;
+    }
+    if ((g = t.closest('[data-def]'))) { ME.def = +g.getAttribute('data-def'); keep(); renderView(); XR.toast('Default address updated'); return; }
+    if ((g = t.closest('[data-deladdr]'))) { var di = +g.getAttribute('data-deladdr'); ME.addrs.splice(di, 1); if (ME.def >= ME.addrs.length || ME.def === di) ME.def = 0; keep(); renderView(); return; }
+    if ((g = t.closest('[data-seg] button'))) {
+      var box = g.parentElement, k = box.getAttribute('data-seg'), v = g.getAttribute('data-v');
+      if (k === 'auto') AG.auto = v === '1'; else { PREF[k] = v; keep(); if (k === 'lang') XR.toast(v === 'bn' ? 'ভাষা: বাংলা' : 'Language: English'); }
+      $$('button', box).forEach(function (x) { x.setAttribute('aria-pressed', x === g); }); return;
+    }
+    if (t.closest('[data-export]')) { var b2 = new Blob([JSON.stringify({ profile: ME, settings: PREF, orders: orders.filter(function (x) { return x.store === S.id; }), saved: wish }, null, 2)], { type: 'application/json' }); var a2 = document.createElement('a'); a2.href = URL.createObjectURL(b2); a2.download = S.id + '-my-data.json'; a2.click(); return; }
+    if (t.closest('[data-wipe]')) { if (!confirm('Delete your saved profile, settings and wishlist in this browser?')) return; ['shop-me', 'shop-prefs', 'shop-sec'].forEach(function (k2) { try { localStorage.removeItem(k2); } catch (er) { /* ignore */ } }); wish = []; save(); XR.toast('Saved data deleted. Reloading…'); setTimeout(function () { location.reload(); }, 900); return; }
+    if ((g = t.closest('[data-kill]'))) { var d = SEC.sessions.splice(+g.getAttribute('data-kill'), 1)[0]; SEC.log.unshift(['Signed out remotely', d.dev, 'Just now', 'ok']); keep(); renderView(); XR.toast(d.dev + ' signed out'); return; }
+    if (t.closest('[data-outall]')) { SEC.sessions = SEC.sessions.filter(function (x) { return x.me; }); SEC.log.unshift(['Signed out all other devices', 'from this device', 'Just now', 'ok']); keep(); renderView(); return; }
+    if (t.closest('[data-signout]')) { XR.toast('Signed out (demo). Your bag is kept for 30 days.'); return; }
+    if ((g = t.closest('[data-task]'))) { agRun(g.textContent); return; }
+    if (t.closest('[data-approve]')) { t.closest('[data-approve]').remove(); if (AG.pending) { AG.pending(); AG.pending = null; } $$('.ag-plan .wait', appEl).forEach(function (li) { li.className = 'done'; }); }
+  });
+  appEl.addEventListener('change', function (e) {
+    var t = e.target, k;
+    if ((k = t.getAttribute('data-pref'))) { PREF[k] = t.checked; keep(); XR.toast((t.checked ? 'On: ' : 'Off: ') + t.closest('.ap-tog').querySelector('b').textContent); }
+    if ((k = t.getAttribute('data-tool'))) { AG.tools[k] = t.checked; }
+    if ((k = t.getAttribute('data-sec'))) {
+      if (k === 'twofa') { if (t.checked) { SEC.twofa = 'setup'; renderView(); } else { SEC.twofa = false; SEC.log.unshift(['Two-step verification turned off', 'this device', 'Just now', 'bad']); keep(); renderView(); } return; }
+      SEC[k] = t.checked; if (k === 'passkey' && t.checked) SEC.log.unshift(['Passkey added', 'Chrome on Windows', 'Just now', 'ok']); keep(); renderView();
+    }
+  });
+  appEl.addEventListener('input', function (e) {
+    if (!e.target.hasAttribute('data-pw')) return;
+    var sc = pwScore(e.target.value), m = $('.ap-meter', appEl);
+    m.setAttribute('data-meter', e.target.value ? sc : 0);
+    $('span', m).textContent = e.target.value ? ['Too weak', 'Weak', 'Okay', 'Strong', 'Very strong'][sc] : 'Type a new password';
+  });
+  appEl.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var f = e.target, k = f.getAttribute('data-form'), fd = new FormData(f);
+    if (f.classList.contains('ap-promo')) { var v = $('input', f).value.trim().toUpperCase(); if (v === 'XIRAIYA10' || v === 'FREESHIP') { promo = v; XR.toast(v + ' applied'); } else { promo = null; XR.toast('Code not recognised', 'warn'); } save(); renderCart(); renderView(); return; }
+    if (f.classList.contains('ag-in')) { var inp = $('input', f), q = inp.value.trim(); if (q) { inp.value = ''; agRun(q); } return; }
+    if (k === 'me') { ME.name = fd.get('name'); ME.email = fd.get('email'); ME.phone = fd.get('phone'); ME.bday = fd.get('bday'); keep(); renderView(); XR.toast('Profile saved'); }
+    if (k === 'addr') { ME.addrs.push({ label: fd.get('label'), line: fd.get('line') }); keep(); renderView(); XR.toast('Address added'); }
+    if (k === 'pw') { if (pwScore(fd.get('nw')) < 2) { XR.toast('Choose a stronger password', 'warn'); return; } SEC.pwAge = 0; SEC.log.unshift(['Password changed', 'Chrome on Windows', 'Just now', 'ok']); keep(); renderView(); XR.toast('Password updated'); }
+    if (k === 'otp') { if ($('input', f).value.trim() === code6()) { SEC.twofa = true; SEC.log.unshift(['Two-step verification turned on', 'authenticator app', 'Just now', 'ok']); keep(); renderView(); XR.toast('Two-step verification is on'); } else XR.toast('That code does not match. Use the demo code shown.', 'warn'); }
+  });
+  setInterval(function () { var c6 = $('[data-code6]', appEl); if (c6) c6.textContent = code6(); if (view === 'orders' && !appEl.hidden && !document.hidden && $('.ap-order.live', appEl)) renderView(); }, 15000);
+
+  /* ------------------------------------------------------------------
      Mode + store switching
      ------------------------------------------------------------------ */
-  function setMode(m) {
-    $$('.shop-mode button').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-mode') === m); });
+  function setMode(m, fromView) {
+    if (!fromView) view = m === 'admin' ? 'admin' : 'home';
+    $$('.sn-in [data-view]').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-view') === view); });
     $('.store').hidden = m !== 'store';
     $('.admin').hidden = m !== 'admin';
     ai.hidden = m !== 'store';
+    if (m === 'admin' || view === 'home') { site.hidden = false; appEl.hidden = true; if (S) $('.sf-domain').textContent = S.domain; }
     renderCart();
     if (m === 'admin') { renderAdmin(true); if (!feedEl.children.length) { feed('bot', '#6fb3a8', 'Automations running for ' + S.name, 'system'); feed('wallet', '#a9c46a', 'Payment watcher connected', 'bKash · Nagad · USDT'); } }
-    var top = $('.shop-mode').getBoundingClientRect().top + scrollY - 120;
-    if (scrollY > top) window.scrollTo({ top: top, behavior: XR.reduce ? 'auto' : 'smooth' });
+    if (!fromView) { var top = $('.shop-nav').getBoundingClientRect().top + scrollY - 60; if (scrollY > top + 200) window.scrollTo({ top: top, behavior: XR.reduce ? 'auto' : 'smooth' }); }
   }
-  $$('.shop-mode button').forEach(function (b) { b.addEventListener('click', function () { setMode(b.getAttribute('data-mode')); }); });
 
   function makeApi() {
     var a = {
@@ -1033,6 +1342,7 @@
       wireStore();
       if (mod.wire) { try { mod.wire(api, site); } catch (e) { console.error(e); } }
       render(); renderCart(); setupAI();
+      AG.log = []; if (view !== 'home' && view !== 'admin') setView(view, true);
       if (!$('.admin').hidden) renderAdmin(false);
       if (XR.reveals) XR.reveals(site);
       try { history.replaceState(null, '', '#' + s.id); } catch (e) { /* file:// */ }
