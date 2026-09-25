@@ -32,9 +32,9 @@
   var lite = phone || mq('(pointer: coarse)') || (window.innerWidth || 1024) < 900;
   var still = !!XR.reduce || mq('(prefers-reduced-motion: reduce)'); /* static scenery, minimal motion */
   var KEY = 'xr-ants', TRAIL_KEY = 'xr-ants-trails';
-  var DPR = Math.min(window.devicePixelRatio || 1, lite ? 1.75 : 2);
-  var PER_NEST = lite ? 3 : 7, MAX_POP = lite ? 20 : 72, MAX_STOLEN = lite ? 0 : 24, MAX_BITTEN = lite ? 0 : 30; /* in the light version text stays readable: ants walk, fight and swim but do not eat words */
-  var MAX_PATCH = lite ? 5 : 9, MAX_ITEMS = lite ? 8 : 16, MAX_PLANTED = lite ? 3 : 6, MAX_FLIES = lite ? 6 : 11;
+  var DPR = Math.min(window.devicePixelRatio || 1, lite ? 1.25 : 2); /* light version: a quarter of the pixels to fill each frame */
+  var PER_NEST = lite ? 2 : 7, MAX_POP = lite ? 14 : 72, MAX_STOLEN = lite ? 0 : 24, MAX_BITTEN = lite ? 0 : 30; /* in the light version text stays readable: ants walk, fight and swim but do not eat words */
+  var MAX_PATCH = lite ? 5 : 9, MAX_ITEMS = lite ? 6 : 16, MAX_PLANTED = lite ? 3 : 6, MAX_FLIES = lite ? 4 : 11;
   var PAD = 100; /* a bite mask reaches this far past the element, so its shadow survives */
   var SKIP = '.ant-ui, .mmenu, .palette, .modal, .drawer, dialog, [hidden], [inert], template, noscript';
   var SURF_SEL = '.site-header, .site-footer, .tabbar, .btn, .card, .chip, .stat, .hanko, img, h1, h2, h3, .mode-btn, .hdr-nav a, input:not([type="hidden"]), textarea, select, [data-ant-surface]';
@@ -71,7 +71,7 @@
   var stats = { letters: 0, bites: 0, duels: 0, swims: 0, captures: 0, flicks: 0, leaves: 0, finds: 0, trees: 0 };
   var rain = null, aim = null, next = {}, ticks = {}, quiet = {}, PAL = {};
   var patches = [], trees = [], planted = [], items = [], flyers = [], flies = [], obsCache = [];
-  var night = false, SPD = 1, showTrails = true, asleep = false, idleT = 0, hiddenTab = false, sleepT = 0, cost = { n: 0, ms: 0, worst: 0 };
+  var scrolledAt = -9, night = false, SPD = 1, showTrails = true, asleep = false, idleT = 0, hiddenTab = false, sleepT = 0, cost = { n: 0, ms: 0, worst: 0 };
   var range = doc.createRange();
   var COL = [
     { id: 0, name: 'Aka', jp: '赤', food: 12, spawn: 1, pop: 0, sold: 0, nests: 0, queen: null },
@@ -1539,7 +1539,7 @@
     if (now > next.rain) { next.rain = now + rand(75, 130); startRain(); }
     if (now > next.queen) { next.queen = now + rand(60, 110); queenWalk(Math.random() < .5 ? 0 : 1); }
     if (now > next.fly) { next.fly = now + rand(lite ? 35 : 22, lite ? 70 : 45); if (!flyers.some(function (f) { return f.k === 'fly'; })) spawnFlyer('fly'); }
-    if (now > next.drag) { next.drag = now + rand(55, 100); if (!night && !flyers.some(function (f) { return f.k === 'drag'; })) spawnFlyer('drag'); }
+    if (now > next.drag) { next.drag = now + rand(55, 100); if (!night && !lite && !flyers.some(function (f) { return f.k === 'drag'; })) spawnFlyer('drag'); }
     if (now > next.lady) { next.lady = now + rand(30, 60); if (!flyers.some(function (f) { return f.k === 'lady'; })) spawnFlyer('lady'); }
   }
 
@@ -2531,7 +2531,7 @@
     now += dt; frameNo++;
     sx = window.scrollX || window.pageXOffset || 0; sy = window.scrollY || window.pageYOffset || 0;
     /* layout reads are spread out: surfaces one second, text and anchors the next */
-    if (every('surf', 2, dt)) { measure(); refreshSurfaces(); anchorNests(); anchorPatches(); phReset(); }
+    if (every('surf', lite ? 4 : 2, dt)) { measure(); refreshSurfaces(); anchorNests(); anchorPatches(); phReset(); }
     if (every('text', 4, dt) && frameNo > 2) refreshTexts();
     if (every('slow', .5, dt)) { tendTrails(.5); phFade(.5); watchNests(.5); colonies(.5); cv.classList.toggle('is-covered', !!doc.querySelector('.pst.full, .present, .studio')); }
     if (every('heal', .25, dt)) heal(.25);
@@ -2545,8 +2545,15 @@
     buildGrid();
     contacts(dt);
     for (var i = 0; i < ants.length; i++) {
+      /* ants far off screen live at a slower tick: fewer, bigger steps */
+      var an = ants[i], st = dt;
+      if (!an.foe && !an.dead && an.fl <= 0 && !onScreen(an.x, an.y, 220)) {
+        an.acc = (an.acc || 0) + dt;
+        if (an.acc < (lite ? .2 : .1)) continue;
+        st = Math.min(an.acc, .2); an.acc = 0;
+      } else an.acc = 0;
       /* a decorative layer must never stall the page: an ant that trips gets a fresh start */
-      try { stepAnt(ants[i], dt); } catch (err) { var a = ants[i]; a.job = null; a.surf = null; a.foe = null; a.tree = null; if (!quiet.err) { quiet.err = 1; console.error(err); } }
+      try { stepAnt(an, st); } catch (err) { var a = ants[i]; a.job = null; a.surf = null; a.foe = null; a.tree = null; if (!quiet.err) { quiet.err = 1; console.error(err); } }
     }
     stepParts(dt);
     stepFlyers(dt);
@@ -2557,8 +2564,10 @@
     raf = 0;
     if (!on || hiddenTab) return;
     raf = requestAnimationFrame(frame);
+    /* light version: 30 frames a second, except while the page scrolls (the canvas must keep up with it) */
+    if (lite && t - last < 30 && now - scrolledAt > .2) return;
     var t0 = performance.now();
-    var dt = Math.min(.05, Math.max(0, (t - last) / 1000)) || .016;
+    var dt = Math.min(lite ? .07 : .05, Math.max(0, (t - last) / 1000)) || .016;
     last = t;
     simulate(dt);
     /* nothing of the world on screen for a second: stop drawing and slow the clock down */
@@ -2566,7 +2575,7 @@
     else if ((idleT += dt) > 1 && !panelOpen) { sleep(); return; }
     render();
     if (panelOpen && every('panel', .25, dt)) renderPanel();
-    else if (every('badge', 1, dt)) badge.textContent = COL[0].pop + COL[1].pop;
+    else if (every('badge', 1, dt)) setBadge();
     var ms = performance.now() - t0;
     cost.n++; cost.ms += ms; if (ms > cost.worst) cost.worst = ms;
   }
@@ -2647,6 +2656,32 @@
     '</div>';
   var fab = ui.querySelector('.ant-fab'), badge = ui.querySelector('.ant-fab-n'), panel = ui.querySelector('.ant-panel'), panelOpen = false, lastLog = -1;
 
+  function setBadge() { var t = String(COL[0].pop + COL[1].pop); if (badge.textContent !== t) badge.textContent = t; }
+  /* the ant button steps up out of the way when it would sit on top of page content */
+  var CONTENT = 'a, button, input, select, textarea, label, summary, [role="button"], [tabindex], h1, h2, h3, h4, p, li, dt, dd, img, svg, canvas, video, figure, .card, .chip, .btn, .stat';
+  var fabT = 0, fabLift = 0;
+  function schedFab() { clearTimeout(fabT); fabT = setTimeout(placeFab, 180); }
+  function covers(r, lift) {
+    var pts = [[.5, .5], [.15, .15], [.85, .15], [.15, .85], [.85, .85]];
+    for (var i = 0; i < pts.length; i++) {
+      var x = r.left + r.width * pts[i][0], y = r.top - lift + r.height * pts[i][1], list = doc.elementsFromPoint(x, y);
+      for (var k = 0; k < list.length; k++) {
+        var e = list[k];
+        if (ui.contains(e) || e === root || e === body) continue;
+        if (e.matches && e.matches(CONTENT)) return true;
+      }
+    }
+    return false;
+  }
+  function placeFab() {
+    if (panelOpen || !doc.elementsFromPoint) return;
+    var r = fab.getBoundingClientRect(), base = { left: r.left, top: r.top + fabLift, width: r.width, height: r.height }, pick2 = -1;
+    for (var lift = 0; lift <= 240; lift += 60) { if (!covers(base, lift)) { pick2 = lift; break; } }
+    var shy = pick2 < 0;
+    if (shy) pick2 = 0;
+    if (pick2 !== fabLift) { fabLift = pick2; ui.style.setProperty('--ant-lift', -pick2 + 'px'); }
+    ui.classList.toggle('is-shy', shy);
+  }
   function renderPanel() {
     var total = nests.length || 1, aka = nests.filter(function (n) { return n.owner === 0; }).length;
     ui.querySelector('.ant-bar i').style.width = (aka / total * 100).toFixed(1) + '%';
@@ -2665,7 +2700,7 @@
     });
     stats.trees = trees.length;
     Object.keys(stats).forEach(function (k) { var el = ui.querySelector('[data-stat="' + k + '"]'); if (el) el.textContent = stats[k]; });
-    badge.textContent = COL[0].pop + COL[1].pop;
+    setBadge();
     if (lastLog !== logs.length + ':' + (logs[0] && logs[0].t)) {
       lastLog = logs.length + ':' + (logs[0] && logs[0].t);
       ui.querySelector('.ant-log').innerHTML = logs.length ? logs.map(function (l) { return '<li data-c="' + l.c + '">' + XR.esc(l.m) + '</li>'; }).join('') : '<li class="is-empty">Quiet for now. Watch the buttons.</li>';
@@ -2690,7 +2725,9 @@
     panel.hidden = !open;
     fab.setAttribute('aria-expanded', open ? 'true' : 'false');
     fab.classList.remove('is-hint');
-    if (open) { lastLog = -1; renderPanel(); }
+    /* the open panel needs the whole height: the button comes back down while it is open */
+    if (open) { fabLift = 0; ui.style.setProperty('--ant-lift', '0px'); ui.classList.remove('is-shy'); lastLog = -1; renderPanel(); }
+    else schedFab();
   }
   var AIMS = ['sugar', 'water', 'plant', 'leaf'];
   var AIM_TIP = { sugar: 'Click anywhere to drop sugar.', water: 'Click anywhere to spill water.', plant: 'Click an empty spot to plant a little tree.', leaf: 'Click anywhere to drop a leaf.' };
@@ -2814,6 +2851,7 @@
       ants.forEach(bound);
       planted.forEach(function (t) { t.x = clamp(t.x, t.h * .6, VW - t.h * .6); });
       items.forEach(function (it) { it.x = clamp(it.x, 6, VW - 6); });
+      placeFab();
       wake();
     }, 300);
   });
@@ -2824,7 +2862,7 @@
     if (hiddenTab) { halt(); asleep = false; }
     else if (on) { idleT = 0; wake(); }
   });
-  window.addEventListener('scroll', function () { if (asleep) wake(); }, { passive: true });
+  window.addEventListener('scroll', function () { scrolledAt = now; if (asleep) wake(); schedFab(); }, { passive: true });
   new MutationObserver(readColors).observe(root, { attributes: true, attributeFilter: ['data-mode'] });
 
   /* ------------------------------------------------------------------
@@ -2853,14 +2891,12 @@
     body.appendChild(ui);
     var pref = XR.store(KEY), tp = XR.store(TRAIL_KEY);
     hiddenTab = !!doc.hidden;
-    setTrails(tp ? tp === 'on' : true, false);
+    setTimeout(placeFab, 600);
+    setTrails(tp ? tp === 'on' : !lite, false); /* the light version skips drawing scent unless asked */
     setOn(pref ? pref === 'on' : !still, false);
     if (on && !XR.store('xr-ants-hi')) {
       XR.store('xr-ants-hi', 1);
-      setTimeout(function () {
-        fab.classList.add('is-hint');
-        XR.toast('Ants moved in. Tap the ant button to watch the colony war.');
-      }, 5000);
+      setTimeout(function () { fab.classList.add('is-hint'); }, 5000); /* a quiet pulse, no toast over the page */
     }
   }
   /* a small read-only window for testing and the curious: counts and the loop's cost */

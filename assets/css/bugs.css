@@ -90,7 +90,11 @@ html[data-mode="ink"] {
 html.ant-aiming, html.ant-aiming * { cursor: crosshair !important; }
 
 /* ---------- control button + panel ---------- */
-.ant-ui { position: fixed; left: 18px; bottom: 18px; z-index: 99; font-family: var(--font-body); }
+.ant-ui { position: fixed; left: 18px; bottom: 18px; z-index: 99; font-family: var(--font-body); transform: translateY(var(--ant-lift, 0px)); transition: transform .45s var(--ease-out); }
+/* nowhere free to stand: the button fades back until it is wanted */
+.ant-ui.is-shy .ant-fab { opacity: .5; transition: opacity .3s, transform .4s var(--ease-spring), border-color .3s, color .3s; }
+.ant-ui.is-shy .ant-fab:hover, .ant-ui.is-shy .ant-fab:focus-visible { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .ant-ui { transition: none; } }
 .ant-fab {
   position: relative; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%;
   color: var(--ink); background: rgba(var(--bg-rgb), .92); border: 1px solid var(--line-2);
