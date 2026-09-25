@@ -135,3 +135,7 @@ node tools/render-assets.js
 - Motion: pill buttons with a fill that grows from the pointer and an arrow swap, lifting cards, inertia smooth scrolling for mouse wheels, and ink-bleed reveals.
 - Fonts: Shippori Mincho B1, Zen Kaku Gothic New and JetBrains Mono from Google Fonts, loaded without blocking rendering.
 - "Minecraft" is a trademark of Mojang/Microsoft and "Telegram" of Telegram FZ-LLC. The demos only use generic, original artwork.
+
+### Character artwork
+
+Xiraiya and Tsunade use the cut-out images in `assets/img/characters/` (paths in `assets/js/config.js` under `characters`). They are rendered as 3D standees: stacked copies give the cutout thickness, it tilts toward the pointer with a moving sheen, sways when idle and casts a floor shadow. Clear a path to go back to the drawn-in-code character. The current images are official Naruto artwork, which is copyrighted by Masashi Kishimoto / Shueisha / Studio Pierrot.

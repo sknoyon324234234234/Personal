@@ -10,7 +10,7 @@
 .hire-meta .status { display: inline-flex; }
 .hire-quick { display: flex; flex-wrap: wrap; gap: 10px; }
 .hire-mascot { position: relative; max-width: 420px; justify-self: center; width: 100%; }
-.hire-bubble { position: absolute; left: -6%; top: 6%; transform: rotate(-4deg); }
+.hire-bubble { position: absolute; left: -22%; top: 2%; max-width: 230px; transform: rotate(-4deg); z-index: 2; }
 
 /* packages */
 .packs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: start; }

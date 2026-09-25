@@ -159,6 +159,17 @@
       .replace('<g class="m-look">', '<ellipse cx="200" cy="356" rx="58" ry="10" fill="url(#' + p + 'ao)"/><g class="m-look">');
   }
 
+  /* Artwork shown as a 3D standee: a few darkened copies stacked behind the art give it
+     real thickness when it tilts, a sheen masked to the character follows the pointer,
+     and a contact shadow keeps it on the floor. The tilt reads --hx / --hy from watchMascots. */
+  function standee(src, label, cls) {
+    var u = esc(src), back = '';
+    for (var i = 1; i <= 5; i++) back += '<img class="a3-back" src="' + u + '" alt="" aria-hidden="true" style="--z:' + i + '" decoding="async">';
+    return '<div class="mascot mascot-art ' + cls + '" role="img" aria-label="' + esc(label) + '">' +
+      '<i class="a3-shadow" aria-hidden="true"></i><div class="a3-sway"><div class="a3-body">' + back +
+      '<img class="a3-front" src="' + u + '" alt="" decoding="async">' +
+      '<i class="a3-sheen" aria-hidden="true" style="-webkit-mask-image:url(' + u + ');mask-image:url(' + u + ')"></i></div></div></div>';
+  }
   function mascot(opts) {
     opts = opts || {};
     var p = 'mx' + (++uid), R = rng(7);
@@ -1287,7 +1298,7 @@
     var k = el.getAttribute('data-mascot');
     var art = C.characters || {}, who = /^tsunade/.test(k) ? 'tsunade' : k === 'toad' || k === 'slug' ? '' : 'xiraiya';
     if (who && art[who]) {
-      el.innerHTML = '<img class="mascot mascot-art ' + (k || '') + (who === 'tsunade' ? ' tsunade' : ' sage') + '" src="' + esc(art[who]) + '" alt="' + esc(who === 'tsunade' ? 'Tsunade, head of QA' : (C.name || 'Xiraiya')) + '" decoding="async">';
+      el.innerHTML = standee(art[who], who === 'tsunade' ? 'Tsunade, head of QA' : (C.name || 'Xiraiya'), (k || '') + (who === 'tsunade' ? ' tsunade' : ' sage'));
       return;
     }
     el.innerHTML = k === 'tsunade' ? tsunade() : k === 'tsunade-portrait' ? tsunade({ cls: 'portrait' }) : k === 'toad' ? miniToad() : k === 'slug' ? miniSlug() : mascot({ cls: k });
