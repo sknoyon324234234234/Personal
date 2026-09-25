@@ -75,9 +75,12 @@
   var desktop = window.matchMedia('(min-width: 761px)');
   var ticking = false;
 
+  var lastHsP = -1, lastW = 0, lastDist = -1;
   function update() {
     ticking = false;
     var vh = innerHeight;
+    /* layout reads before the style writes below */
+    var s = stepsWrap && stepsLine ? stepsWrap.getBoundingClientRect() : null;
     if (hs && track && desktop.matches) {
       var r = hs.getBoundingClientRect();
       var total = r.height - vh;
@@ -85,16 +88,21 @@
       var lastP = panels[panels.length - 1], firstP = panels[0];
       /* travel from the first panel centred to the last panel centred */
       var dist = lastP && firstP ? (lastP.offsetLeft + lastP.offsetWidth / 2) - (firstP.offsetLeft + firstP.offsetWidth / 2) : track.scrollWidth - innerWidth;
+      /* parked before or after the gallery with nothing changed: the panels are already in place */
+      var same = (p === 0 || p === 1) && p === lastHsP && innerWidth === lastW && dist === lastDist;
+      lastHsP = p; lastW = innerWidth; lastDist = dist;
+      if (!same) {
       track.style.transform = 'translate3d(' + (-p * Math.max(0, dist)).toFixed(1) + 'px,0,0)';
       if (prog) prog.style.setProperty('--p', p.toFixed(4));
       tilt3d();
+      }
     } else if (track) {
+      lastHsP = -1;
       track.style.transform = '';
       panels.forEach(function (pn) { pn.style.transform = ''; pn.style.opacity = ''; });
       tilt3d(true);
     }
-    if (stepsWrap && stepsLine) {
-      var s = stepsWrap.getBoundingClientRect();
+    if (s) {
       var sp = XR.clamp((vh * .6 - s.top) / s.height, 0, 1);
       stepsLine.style.setProperty('--p', sp.toFixed(4));
     }
@@ -103,8 +111,10 @@
   var panels = $$('.panel'), hudN = $('.hs-count b'), hudT = $('.hs-title'), dots = $$('.hs-dots button'), active = -1;
   function tilt3d(flat) {
     var mid = innerWidth / 2, best = 0, bestD = Infinity;
+    /* read every panel rect first, then write: one layout per frame instead of one per panel */
+    var rects = panels.map(function (pn) { return pn.getBoundingClientRect(); });
     panels.forEach(function (pn, i) {
-      var r = pn.getBoundingClientRect(), c = r.left + r.width / 2, d = (c - mid) / (r.width + 30);
+      var r = rects[i], c = r.left + r.width / 2, d = (c - mid) / (r.width + 30);
       var a = Math.abs(d);
       if (a < bestD) { bestD = a; best = i; }
       if (XR.reduce || flat) return;

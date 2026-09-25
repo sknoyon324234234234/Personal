@@ -122,3 +122,104 @@
 .lab-pager .lp-next { background: var(--red); border-color: var(--red); color: #fff; }
 .lab-pager span { font: 500 12px/1.3 var(--font-mono); color: var(--ink-3); text-align: center; }
 .lab-pager span b { display: block; color: var(--ink); font: 600 13px/1.3 var(--font-body); }
+
+/* =====================================================================
+   Responsive QA pass: phone comfort (tap targets, readable micro text,
+   tighter vertical rhythm) and small-screen header fit.
+   ===================================================================== */
+
+/* never let a stray decoration (spinning rings, rotated rays, shadows at
+   the screen edge) widen the page on a phone: clip sideways only */
+main, .site-footer, footer { overflow-x: clip; }
+
+@media (max-width: 760px) {
+  /* calmer vertical rhythm: the desktop 84px floor leaves 170px gaps on a phone */
+  .section { padding-block: clamp(60px, 16vw, 84px); }
+  .section-sm { padding-block: clamp(44px, 12vw, 56px); }
+  .section-head { margin-bottom: 32px; }
+
+  /* tab bar labels: 12px is the smallest comfortable size */
+  .tabbar a, .tabbar button { font-size: 12px; letter-spacing: 0; }
+
+  /* ---- 40px+ tap targets on shared chrome ---- */
+  .brand { min-height: 40px; }
+  .breadcrumb a { display: inline-block; padding: 14px 4px; margin: -14px -4px; }
+  .ftr-grid a { min-height: 40px; }
+  .ftr-grid li + li { margin-top: 0; }
+  .to-top { min-height: 40px; }
+  .ftr-tg small { font-size: 11px; }
+
+  /* The Lab / Motion Wing */
+  .wg-f button { min-height: 40px; }
+  .wx-max { width: 40px; height: 40px; }
+  .lab-nav-inner a { min-height: 40px; display: inline-flex; align-items: center; }
+  .lw-btn { height: 40px; }
+  .br-tabs button { height: 40px; }
+  .wx-tt small { font-size: 12px; }
+
+  /* Shop */
+  .tpl-groups button { height: 40px; }
+  .tpl-shuffle { height: 40px; }
+  .s-cats button { height: 40px; }
+  .p-wish, .p-quick { min-width: 40px; min-height: 40px; }
+  .tpl-cur, .tpl-no { font-size: 12px; }
+
+  /* UI Kit */
+  .kb-nav-chips a { min-height: 40px; }
+  .kx-seg button, .kx-presets button { height: 40px; }
+  .ki-copy { height: 36px; padding: 0 12px; font-size: 12.5px; }
+  .kx-acc button { width: 40px; height: 40px; }
+  .pg-langs button { min-height: 36px; font-size: 12px; }
+  .pg-code, .kx-out pre.code { font-size: 12px; }
+
+  /* Pages Studio */
+  .seg button { height: 40px; }
+  .tb { height: 40px; min-width: 40px; }
+  .pst-tabs button { min-height: 40px; }
+  .chips2 button { min-height: 40px; }
+  button.site small, .gh-n { font-size: 12px; }
+
+  /* Dev World */
+  .term-x { width: 40px; height: 40px; }
+  .term-chips button, .pg-tabs button, .api-quick button { height: 40px; }
+  .api-tabs button { height: 36px; font-size: 12px; }
+  .pg-ib { width: 40px; height: 40px; }
+  .tl-btn { height: 40px; }
+  .ar-tabs button, .ar-b, .ty-langs button { min-height: 40px; }
+  #apiBodyHint { font-size: 11.5px; }
+
+  /* Basic Knowledge */
+  .kn-tags button { min-height: 40px; }
+  .pv-btn, .pv-btn.sm { min-height: 40px; }
+  .kn-ch-start { min-height: 40px; }
+  .kc-kind, .kc-go { font-size: 12px; }
+
+  /* Home: the 11th service card would be alone in the 2-col grid */
+  .bento .s-chat { grid-column: 1 / -1; }
+  .bento .svc-meta { flex-wrap: wrap; gap: 8px 16px; }
+  .bento .svc-meta b { white-space: nowrap; }
+  .bento .svc-more { white-space: nowrap; }
+
+  /* Demos / Home / Hire micro labels */
+  .dm-type, .crew-role, .pack-rib, .dm-new { font-size: 12px; }
+  .hero-meta dt, .cc-stats dt, .crew-info dt, .cc-rank, .cc-xp-top, .rq-who { font-size: 11.5px; letter-spacing: .12em; }
+  .stat span, .svc-meta small { font-size: 11.5px; letter-spacing: .1em; }
+  .p-badge { font-size: 11.5px; }
+
+  /* more small controls */
+  .pst-acts .tb, .pst-ver .tb { min-width: 40px; }
+  .seg button { min-width: 44px; justify-content: center; }
+  .grp > h4 button, #pgClr, .api-copy { padding: 13px 6px; margin: -13px -6px; font-size: 12.5px; }
+  .kn-live-f button { min-height: 40px; }
+  #pgPreset, #srtA { min-height: 40px; }
+}
+
+/* very narrow phones (iPhone SE 1st gen, small Androids): the header
+   brand + three round buttons need ~300px; make them fit in 288 */
+@media (max-width: 360px) {
+  .hdr-actions { gap: 6px; }
+  .hdr-search { width: 40px; height: 40px; }
+  .mode-btn { width: 40px; height: 40px; }
+  .brand { gap: 8px; }
+  .brand-word { font-size: 17px; }
+}

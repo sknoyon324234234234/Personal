@@ -245,7 +245,7 @@ body:has(.site-header.is-hidden) .s-nav { top: 0; }
 .s-news div { display: flex; gap: 8px; }
 .s-news input { flex: 1; min-width: 0; height: 44px; padding: 0 12px; border-radius: var(--s-rs); border: 1px solid var(--s-line); background: var(--s-surface); outline: none; font-size: 14px; }
 .s-news input:focus { border-color: var(--s-ink); }
-.s-news .s-btn { height: 44px; padding: 0 18px; }
+.s-news .s-btn { height: 44px; padding: 0 18px; color: var(--s-on); }
 .s-credit { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--s-line); font-size: 12px; line-height: 1.6; color: var(--s-muted); }
 
 /* ---------- product modal (store themed) ---------- */

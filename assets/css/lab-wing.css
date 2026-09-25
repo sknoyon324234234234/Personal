@@ -230,3 +230,9 @@ html[data-mode=ink] .wx-dock { background: linear-gradient(160deg, #3a2a4f, #1a1
 @media (prefers-reduced-motion: reduce) {
   .wg-sky i, .au-bg i { animation: none; }
 }
+
+/* full-screen coverflow on large screens: the 160px cards looked lost in a
+   1300px stage, so scale the whole ring up (JS owns its transform) */
+@media (min-width: 900px) and (min-height: 640px) {
+  .wx.max .cf-ring { zoom: 1.6; }
+}

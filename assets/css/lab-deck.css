@@ -235,3 +235,7 @@
 .lab-tiers li { display: flex; align-items: baseline; gap: 8px; font-size: 13.5px; color: var(--ink-2); }
 .lab-tiers li i { flex: 1; border-bottom: 1.5px dotted var(--line-2); transform: translateY(-3px); min-width: 10px; }
 .lab-tiers li b { color: var(--ac); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* gold chapters (extension, e-commerce, crypto): white on gold is ~3:1,
+   so their CTA label switches to sumi ink (~5.5:1) */
+:is(#extension, #ecommerce, #crypto).lab-sec :is(.lab-ctas, .lab-row) .btn-primary { color: #1d1208; }

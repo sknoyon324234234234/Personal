@@ -164,10 +164,10 @@
      and a contact shadow keeps it on the floor. The tilt reads --hx / --hy from watchMascots. */
   function standee(src, label, cls) {
     var u = esc(src), back = '';
-    for (var i = 1; i <= 5; i++) back += '<img class="a3-back" src="' + u + '" alt="" aria-hidden="true" style="--z:' + i + '" decoding="async">';
+    for (var i = 1; i <= 5; i++) back += '<img class="a3-back" src="' + u + '" alt="" aria-hidden="true" style="--z:' + i + '" decoding="async" crossorigin="anonymous">';
     return '<div class="mascot mascot-art ' + cls + '" role="img" aria-label="' + esc(label) + '">' +
       '<i class="a3-shadow" aria-hidden="true"></i><div class="a3-sway"><div class="a3-body">' + back +
-      '<img class="a3-front" src="' + u + '" alt="" decoding="async">' +
+      '<img class="a3-front" src="' + u + '" alt="" decoding="async" crossorigin="anonymous">' +
       '<i class="a3-sheen" aria-hidden="true" style="-webkit-mask-image:url(' + u + ');mask-image:url(' + u + ')"></i></div></div></div>';
   }
   function mascot(opts) {
@@ -731,7 +731,9 @@
     var lastY = scrollY, ticking = false;
     function update() {
       ticking = false;
-      var y = scrollY, max = document.documentElement.scrollHeight - innerHeight;
+      var y = scrollY, max = document.documentElement.scrollHeight - innerHeight, vh = innerHeight;
+      /* read every parallax rect before any style write below, so one layout serves them all */
+      var rects = reduce ? null : par.map(function (el) { return (el.parentElement || el).getBoundingClientRect(); });
       if (bar) bar.style.transform = 'scaleX(' + (max > 0 ? y / max : 0).toFixed(4) + ')';
       if (hdr) {
         hdr.classList.toggle('is-scrolled', y > 24);
@@ -739,10 +741,10 @@
         if (y < lastY - 2) hdr.classList.remove('is-hidden');
       }
       lastY = y;
-      if (!reduce) par.forEach(function (el) {
-        var r = (el.parentElement || el).getBoundingClientRect();
-        if (r.bottom < -200 || r.top > innerHeight + 200) return;
-        var d = (r.top + r.height / 2 - innerHeight / 2) * parseFloat(el.getAttribute('data-speed'));
+      if (!reduce) par.forEach(function (el, i) {
+        var r = rects[i];
+        if (r.bottom < -200 || r.top > vh + 200) return;
+        var d = (r.top + r.height / 2 - vh / 2) * parseFloat(el.getAttribute('data-speed'));
         el.style.transform = 'translate3d(0,' + d.toFixed(1) + 'px,0)';
       });
     }
@@ -883,7 +885,7 @@
     if (!canvas || !canvas.getContext) return;
     opts = opts || {};
     var ctx = canvas.getContext('2d'), dpr = Math.min(2, window.devicePixelRatio || 1);
-    var W, H, parts = [], running = true, visible = true;
+    var W, H, parts = [], running = true, visible = true, onScreen = true, looping = false;
     var colors = opts.colors || ['#e0442e', '#f2a7a0', '#f6c9c1', '#eab3a8', '#d9a441'];
     function resize() {
       var r = canvas.getBoundingClientRect();
@@ -907,8 +909,9 @@
     }
     function draw() {
       if (!running) return;
+      /* off-screen or hidden tab: stop the loop entirely, wake() restarts it */
+      if (!visible) { looping = false; return; }
       requestAnimationFrame(draw);
-      if (!visible) return;
       ctx.clearRect(0, 0, W, H);
       for (var i = 0; i < parts.length; i++) {
         var p = parts[i];
@@ -928,9 +931,14 @@
     }
     resize();
     window.addEventListener('resize', resize);
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(canvas);
-    document.addEventListener('visibilitychange', function () { visible = !document.hidden; });
+    function wake() {
+      visible = onScreen && !document.hidden;
+      if (visible && running && !looping) { looping = true; requestAnimationFrame(draw); }
+    }
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { onScreen = en[en.length - 1].isIntersecting; wake(); }).observe(canvas);
+    document.addEventListener('visibilitychange', wake);
     if (reduce) { visible = true; draw(); running = false; return; }
+    looping = true;
     draw();
   }
 
@@ -991,6 +999,30 @@
       b.style.setProperty('--btn-grow', Math.ceil(Math.hypot(r.width, r.height) / 4.4));
     }, { passive: true });
   }
+  /* Performance: freeze CSS animations in page blocks that are far off screen.
+     A block gets .xr-offscreen (see assets/css/perf.css: animation-play-state: paused)
+     while it is more than ~one screen away, so the browser stops recalculating
+     styles every frame for loops nobody can see. Blocks that hold overlays which
+     can go position:fixed are left alone. Tall blocks are split into their children. */
+  function pauseOffscreen() {
+    if (!('IntersectionObserver' in window)) return;
+    var SKIP = '.wx, [class*="lw-"], .pst, .modal, .drawer, .lv, .palette, .studio, .present, dialog, [aria-modal]';
+    var io = new IntersectionObserver(function (en) {
+      en.forEach(function (e) { e.target.classList.toggle('xr-offscreen', !e.isIntersecting); });
+    }, { rootMargin: '100% 0px' });
+    var vh = innerHeight;
+    function add(el, depth) {
+      if (el.offsetHeight < 2 || el.querySelector(SKIP)) {
+        /* too small to observe, or holds an overlay: split it further when we can */
+        if (el.offsetHeight >= 2 && depth < 3) $$(':scope > *', el).forEach(function (c) { if (!c.matches(SKIP)) add(c, depth + 1); });
+        return;
+      }
+      if (depth < 3 && el.offsetHeight > vh * 2.5 && el.children.length > 1) { $$(':scope > *', el).forEach(function (c) { add(c, depth + 1); }); return; }
+      io.observe(el);
+    }
+    $$('main > *').forEach(function (el) { add(el, 0); });
+  }
+
   // Inertia scrolling for mouse wheels (trackpads, touch, keyboard and scrollbars stay native)
   function smoothScroll() {
     if (reduce || !fine || !window.requestAnimationFrame) return;
@@ -1367,4 +1399,5 @@
   watchMascots();
   $$('canvas[data-petals]').forEach(function (c) { petals(c, { density: parseFloat(c.getAttribute('data-petals')) || 26000 }); });
   loader();
+  onReady(function () { setTimeout(pauseOffscreen, 1200); });
 })();

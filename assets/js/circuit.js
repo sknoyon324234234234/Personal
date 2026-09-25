@@ -97,6 +97,13 @@
   var trunk = [], total = 0, endY = 0, wires = [], hits = [], wireIdx = 0, hitIdx = 0, terminal = null;
   var headY = 0, target = 0, started = false, done = false, hotPc = null;
   var hitSeen = typeof WeakSet === 'function' ? new WeakSet() : null;
+  /* scroll position + viewport height, cached from scroll/resize events so the
+     per-frame loop never reads window.scrollY/innerHeight (each read can force a
+     synchronous style + layout pass inside requestAnimationFrame) */
+  var vY = window.scrollY, vH = window.innerHeight;
+  function view() { vY = window.scrollY; vH = window.innerHeight; }
+  window.addEventListener('scroll', view, { passive: true });
+  window.addEventListener('resize', view);
 
   function rectOf(e) {
     var r = e.getBoundingClientRect();
@@ -332,7 +339,7 @@
     layer.style.height = '0px';
     W = root.clientWidth;
     H = Math.max(root.scrollHeight, body.scrollHeight);
-    sx = scrollX; sy = scrollY;
+    sx = scrollX; sy = scrollY; view();
     layer.style.width = W + 'px';
     layer.style.height = H + 'px';
     svg.setAttribute('width', W);
@@ -451,7 +458,7 @@
      ------------------------------------------------------------------ */
   var hdr = doc.getElementById('site-header'), hs = null;
   function laneNow() {
-    var p = trunk.length ? pointAtY(scrollY + headerH) : null;
+    var p = trunk.length ? pointAtY(vY + headerH) : null;
     return p ? p.x : 20;
   }
   function spineD() {
@@ -574,7 +581,7 @@
   }
 
   function drawPackets(dt, now) {
-    var top = scrollY - 80, bot = Math.min(headY, scrollY + innerHeight + 80);
+    var top = vY - 80, bot = Math.min(headY, vY + vH + 80);
     var l0 = globalLenAtY(top), l1 = globalLenAtY(bot);
     pkt.forEach(function (k) {
       if (!started || l1 - l0 < 50) { k.el.style.display = 'none'; k.l = -1; return; }
@@ -591,7 +598,7 @@
     if (now > busT) {
       busT = now + 700 + rnd() * 1300;
       var free = busPk.filter(function (b) { return !b.w; })[0];
-      var vis = wires.filter(function (w) { return w.kind === 'bus' && w.lit && w.y > scrollY && w.y < scrollY + innerHeight; });
+      var vis = wires.filter(function (w) { return w.kind === 'bus' && w.lit && w.y > vY && w.y < vY + vH; });
       if (free && vis.length) { free.w = vis[Math.floor(rnd() * vis.length)]; free.l = 0; }
     }
     busPk.forEach(function (b) {
@@ -630,8 +637,9 @@
   function kick() { if (!raf && !reduce) raf = requestAnimationFrame(frame); }
 
   function onScroll() {
-    var t = scrollY + innerHeight * 0.62;
-    if (scrollY + innerHeight >= H - 4) t = H;
+    view();
+    var t = vY + vH * 0.62;
+    if (vY + vH >= H - 4) t = H;
     if (t > target) target = t;
   }
 
