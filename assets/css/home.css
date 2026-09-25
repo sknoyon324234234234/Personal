@@ -686,3 +686,14 @@ html:not(.js) .loader { display: none; }
 .crew-art.has-art [data-mascot] { max-width: 250px; }
 .crew-bubble.over { --bw: 210px; bottom: 344px; }
 @media (max-width: 760px) { .hero-bubble.over { --bw: 200px; } }
+
+/* phone: room for the bubble above the character, nothing on top of the buttons */
+@media (max-width: 900px) {
+  .hero-visual.has-art { --size: min(72vw, 380px); margin-top: 92px; }
+  .hero-ctas { z-index: 4; }
+}
+@media (max-width: 560px) {
+  .hero-visual.has-art { --size: min(76vw, 320px); margin-top: 84px; }
+  .hero-bubble.over { --bw: 210px; font-size: 13px; }
+  .hero-meta dl > div { margin-right: 0; }
+}

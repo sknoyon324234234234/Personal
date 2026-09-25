@@ -7,7 +7,7 @@
 
 .shop-hero { padding-bottom: clamp(24px, 3vw, 40px); }
 .shop-hero-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 32px; }
-.shop-hero-copy { display: grid; gap: 16px; max-width: 700px; }
+.shop-hero-copy { display: grid; gap: 16px; max-width: 700px; min-width: 0; flex: 1 1 300px; }
 .shop-hero .lead b { color: var(--ink); }
 .demo-note { display: flex; gap: 10px; align-items: flex-start; margin-top: 16px; font-size: 13px; line-height: 1.5; color: var(--ink-3); }
 .demo-note .ic { flex: none; margin-top: 2px; }
@@ -889,3 +889,9 @@ body:has(.site-header.is-hidden) .shop-nav { top: 0; }
 @media (prefers-reduced-motion: reduce) { .sf-app, .ag-m, .ag-plan li { animation: none; } .ao-track li.now i { animation: none; } }
 
 .ai-shop.is-away { display: none; }
+
+@media (max-width: 640px) {
+  .demo-note kbd, .demo-note .kbd-tip { display: none; }
+  .shop-stats { gap: 10px 20px; }
+  .shop-stats b { font-size: 24px; }
+}

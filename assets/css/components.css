@@ -288,3 +288,11 @@ body:has(.site-header.is-hidden) .kb-nav { top: 0; }
   .pg-stage.tall { height: 400px; }
   .pg-vars button { flex-basis: 50%; }
 }
+
+@media (max-width: 960px) { .kit-cta-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) {
+  .kx-menu-wrap { height: auto; }
+  .kx-menu { flex-wrap: wrap; }
+  .kx-lane { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .kx-log ul li { flex-wrap: wrap; }
+}

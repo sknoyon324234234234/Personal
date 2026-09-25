@@ -22,7 +22,7 @@
   var phone = XR.phone;
   var KEY = 'xr-ants';
   var DPR = Math.min(window.devicePixelRatio || 1, phone ? 1.75 : 2);
-  var PER_NEST = phone ? 4 : 7, MAX_POP = phone ? 26 : 72, MAX_STOLEN = phone ? 10 : 24, MAX_BITTEN = phone ? 14 : 30;
+  var PER_NEST = phone ? 4 : 7, MAX_POP = phone ? 26 : 72, MAX_STOLEN = phone ? 0 : 24, MAX_BITTEN = phone ? 0 : 30; /* on phones text stays readable: ants walk, fight and swim but do not eat words */
   var PAD = 100; /* a bite mask reaches this far past the element, so its shadow survives */
   var SKIP = '.ant-ui, .mmenu, .palette, .modal, .drawer, dialog, [hidden], [inert], template, noscript';
   var SURF_SEL = '.site-header, .site-footer, .tabbar, .btn, .card, .chip, .stat, .hanko, img, h1, h2, h3, .mode-btn, .hdr-nav a, input:not([type="hidden"]), textarea, select, [data-ant-surface]';
