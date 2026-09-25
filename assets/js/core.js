@@ -895,7 +895,7 @@
   };
   function pokeMascots() {
     document.addEventListener('click', function (e) {
-      var m = e.target.closest && e.target.closest('svg.mascot');
+      var m = e.target.closest && e.target.closest('.mascot');
       if (!m || m.classList.contains('mini-crew')) return;
       m.classList.remove('hop'); void m.getBoundingClientRect(); m.classList.add('hop');
       var box = m.closest('.hero-visual, .nf-mascot, .hire-mascot, .crew-card') || m.parentElement;
@@ -1285,6 +1285,11 @@
   overlays();
   $$('[data-mascot]').forEach(function (el) {
     var k = el.getAttribute('data-mascot');
+    var art = C.characters || {}, who = /^tsunade/.test(k) ? 'tsunade' : k === 'toad' || k === 'slug' ? '' : 'xiraiya';
+    if (who && art[who]) {
+      el.innerHTML = '<img class="mascot mascot-art ' + (k || '') + (who === 'tsunade' ? ' tsunade' : ' sage') + '" src="' + esc(art[who]) + '" alt="' + esc(who === 'tsunade' ? 'Tsunade, head of QA' : (C.name || 'Xiraiya')) + '" decoding="async">';
+      return;
+    }
     el.innerHTML = k === 'tsunade' ? tsunade() : k === 'tsunade-portrait' ? tsunade({ cls: 'portrait' }) : k === 'toad' ? miniToad() : k === 'slug' ? miniSlug() : mascot({ cls: k });
   });
   fillConfig();

@@ -551,6 +551,8 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-100%); 
 
 /* ---------- mascot (anime character, inline SVG) ---------- */
 .mascot { overflow: visible; width: 100%; height: auto; }
+img.mascot-art { display: block; object-fit: contain; object-position: bottom center; aspect-ratio: 400 / 540; }
+.mascot-art.hop { animation: hop .7s var(--ease-spring); }
 .mascot .m-body { animation: mFloat 6.4s cubic-bezier(.45,0,.55,1) infinite; }
 .mascot .m-tail { transform-origin: 200px 130px; animation: mSway 5.6s cubic-bezier(.45,0,.55,1) infinite; }
 .mascot .m-crown { transform-origin: 200px 110px; animation: mSway 5.6s cubic-bezier(.45,0,.55,1) infinite -.6s; }

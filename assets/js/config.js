@@ -48,6 +48,16 @@ window.XIRAIYA_CONFIG = {
 
   currency: '$',
 
+  /* Character artwork. Leave these empty to use the drawn-in-code characters.
+     To use real artwork instead, put a transparent PNG or WebP (about 800 × 1080,
+     full body, feet at the bottom) in assets/img/characters/ and set the path here,
+     e.g. xiraiya: 'assets/img/characters/xiraiya.png'. Only use art you have the
+     rights to (your own, commissioned, or licensed). */
+  characters: {
+    xiraiya: '',
+    tsunade: ''
+  },
+
   // ---- PACKAGES shown on the Hire page (edit names, prices and features) -----
   packages: [
     { name: 'Spark', jp: '火', price: 149, per: 'project', tagline: 'Launch something small, fast.',
