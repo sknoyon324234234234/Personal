@@ -1043,6 +1043,7 @@
     { id: 'stage-ecommerce', label: 'Watch the store autopilot', xp: 20 },
     { id: 'stage-crypto', label: 'Pay the crypto invoice', xp: 20 },
     { id: 'learn', label: 'Open a Basic Knowledge lesson', xp: 20 },
+    { id: 'wing', label: 'Open a Motion Wing exhibit full screen', xp: 20 },
     { id: 'palette', label: 'Open the Command Center', xp: 10 },
     { id: 'konami', label: 'Find the secret code', xp: 50, secret: 1 }
   ];
