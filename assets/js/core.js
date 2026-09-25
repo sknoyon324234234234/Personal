@@ -1296,9 +1296,11 @@
   overlays();
   $$('[data-mascot]').forEach(function (el) {
     var k = el.getAttribute('data-mascot');
-    var art = C.characters || {}, who = /^tsunade/.test(k) ? 'tsunade' : k === 'toad' || k === 'slug' ? '' : 'xiraiya';
-    if (who && art[who]) {
-      el.innerHTML = standee(art[who], who === 'tsunade' ? 'Tsunade, head of QA' : (C.name || 'Xiraiya'), (k || '') + (who === 'tsunade' ? ' tsunade' : ' sage'));
+    var art = C.characters || {}, who = /^tsunade/.test(k) ? 'tsunade' : k === 'toad' || k === 'slug' ? k : 'xiraiya';
+    var pose = el.getAttribute('data-pose') || k, src = who === 'xiraiya' && art.poses && art.poses[pose] || art[who];
+    var LABEL = { tsunade: 'Tsunade, head of QA', toad: 'Gama the toad', slug: 'Namekuji the slug', xiraiya: C.name || 'Xiraiya' };
+    if (src) {
+      el.innerHTML = standee(src, LABEL[who], (k || '') + ' pose-' + (pose || 'default') + (who === 'tsunade' ? ' tsunade' : who === 'xiraiya' ? ' sage' : ' crew-pet'));
       var bub = el.parentElement && el.parentElement.querySelector(':scope > .bubble');
       if (bub) { bub.classList.add('over'); el.parentElement.classList.add('has-art'); }
       return;

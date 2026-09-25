@@ -53,7 +53,15 @@ window.XIRAIYA_CONFIG = {
      feet at the bottom, in assets/img/characters/. */
   characters: {
     xiraiya: 'assets/img/characters/xiraiya.webp',
-    tsunade: 'assets/img/characters/tsunade.webp'
+    tsunade: 'assets/img/characters/tsunade.webp',
+    toad: 'assets/img/characters/gama.webp',
+    slug: 'assets/img/characters/katsuyu.webp',
+    // a different Xiraiya pose per spot (data-pose or data-mascot on the page); anything unlisted uses xiraiya above
+    poses: {
+      hero: 'assets/img/characters/xiraiya-arms.webp',
+      crew: 'assets/img/characters/xiraiya-writing.webp',
+      lost: 'assets/img/characters/xiraiya-stop.webp'
+    }
   },
 
   // ---- PACKAGES shown on the Hire page (edit names, prices and features) -----
