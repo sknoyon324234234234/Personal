@@ -302,10 +302,7 @@
     /* ---------- in-page jumps (offset for the fixed + sticky headers) ---------- */
     function goTo(sel) {
       var t = $(sel); if (!t) return;
-      var hh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 76;
-      var nh = $('.gl-nav').offsetHeight;
-      var y = t.getBoundingClientRect().top + scrollY - hh - nh - 12;
-      window.scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' });
+      api.jump(t);   /* the engine knows every sticky bar above the store */
     }
     listen(root, 'click', function (e) {
       var j = e.target.closest('[data-gljump]');

@@ -455,7 +455,7 @@ mark.hl { padding: 0 2px; border-radius: 3px; background: #ffe14d; color: #111; 
 .desk-tray { display: flex; align-items: center; gap: 10px; font: 400 12px/1 var(--font-mono); color: var(--ink-2); }
 
 /* ---------- mobile app (Pulse) ---------- */
-.stage-mob { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 34px; align-items: center; justify-items: center; padding: 12px; }
+.stage-mob { display: flex; flex-wrap: wrap; gap: 34px; align-items: center; justify-content: center; padding: 12px; }
 .app-phone { background: #f3f3f7; color: #14141c; }
 .app-status { position: absolute; top: 0; left: 0; right: 0; z-index: 12; height: 46px; display: flex; justify-content: space-between; align-items: center; padding: 6px 28px 0; font: 700 13px/1 var(--font-body); color: #14141c; }
 .app-status span:last-child { display: inline-flex; gap: 5px; align-items: center; font-size: 11.5px; }
@@ -530,7 +530,7 @@ mark.hl { padding: 0 2px; border-radius: 3px; background: #ffe14d; color: #111; 
 .app-phone.dark-app .app-sheet { background: #1b1b25; }
 .app-sheet.is-open { transform: none; }
 .app-sheet .grip { width: 40px; height: 5px; border-radius: 3px; background: #d5d5e0; margin: -6px auto 12px; }
-.apk-card { width: 100%; max-width: 290px; padding: 18px; border-radius: 18px; display: grid; gap: 14px; }
+.apk-card { flex: 1 1 250px; max-width: 290px; padding: 18px; border-radius: 18px; display: grid; gap: 14px; }
 .apk-h { display: flex; gap: 8px; align-items: center; font: 600 14px/1.2 var(--font-mono); }
 .apk-h .ic { color: var(--lime); }
 .apk-card dl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
@@ -695,7 +695,7 @@ mark.hl { padding: 0 2px; border-radius: 3px; background: #ffe14d; color: #111; 
   .agent-cfg .ag-h { grid-column: 1 / -1; }
 }
 @media (max-width: 860px) {
-  .stage-tg, .stage-mob { grid-template-columns: 1fr; }
+  .stage-tg { grid-template-columns: 1fr; }
   .tg-admin, .apk-card { max-width: 360px; }
   .stage-chat, .stage-ec, .pay { grid-template-columns: minmax(0, 1fr); }
   .pay-out { max-height: 320px; }

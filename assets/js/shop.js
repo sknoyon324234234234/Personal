@@ -240,7 +240,7 @@
      uses the built-in layout straight away instead of requesting files that
      would 404 (each one a wasted request + console error on the live server).
      Add the store id here when you add assets/js/shop/<id>.js or assets/css/shop/<id>.css. */
-  var MOD_JS = { glow: 1, pebble: 1 }, MOD_CSS = {};
+  var MOD_JS = { glow: 1, pebble: 1 }, MOD_CSS = { glow: 1, pebble: 1 };
   function loadLayout(id) {
     if (LAYOUTS[id]) return Promise.resolve(LAYOUTS[id]);
     if (loading[id]) return loading[id];
@@ -308,9 +308,18 @@
     $$('.s-cats [data-cat]', site).forEach(function (x) { x.setAttribute('aria-checked', x.getAttribute('data-cat') === c); });
     render();
   }
+  /* how much of the top of the viewport the sticky bars cover once we land at y:
+     the site header (hidden when scrolling down), the store-section bar and the store's own nav */
+  var shopNav = $('.shop-nav');
+  function stickyOffset(y) {
+    var hh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 76;
+    var sn = $('.s-nav, .gl-nav, .pb-nav', site);
+    return (y > scrollY ? 0 : hh) + (shopNav ? shopNav.offsetHeight : 0) + (sn ? sn.offsetHeight : 0) + 12;
+  }
+  if (shopNav && window.ResizeObserver) new ResizeObserver(function () { document.body.style.setProperty('--shopnav-h', shopNav.offsetHeight + 'px'); }).observe(shopNav);
   function jump(sel) {
     var t = typeof sel === 'string' ? $(sel, site) : sel; if (!t) return;
-    var y = t.getBoundingClientRect().top + scrollY - (XR.phone ? 70 : 90);
+    var top = t.getBoundingClientRect().top + scrollY, y = top - stickyOffset(top);
     window.scrollTo({ top: y, behavior: XR.reduce ? 'auto' : 'smooth' });
   }
   function clearFilters() {

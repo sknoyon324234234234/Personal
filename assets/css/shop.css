@@ -97,8 +97,11 @@
 .s-promo:hover .s-promo-track { animation-play-state: paused; }
 
 /* store nav */
-.s-nav { position: sticky; top: var(--header-h); z-index: 20; display: flex; align-items: center; gap: 24px; min-height: 64px; padding: 0 var(--s-pad); background: var(--s-bg); border-bottom: 1px solid var(--s-line); transition: top .6s var(--ease-out); }
-body:has(.site-header.is-hidden) .s-nav { top: 0; }
+/* Store navs stick under the site header AND the store-section bar (.shop-nav),
+   which is itself sticky. --shopnav-h is measured by shop.js. */
+body[data-page="shop"] { --sf-top: calc(var(--header-h) + var(--shopnav-h, 64px)); }
+body[data-page="shop"]:has(.site-header.is-hidden) { --sf-top: var(--shopnav-h, 64px); }
+.s-nav { position: sticky; top: var(--sf-top, var(--header-h)); z-index: 20; display: flex; align-items: center; gap: 24px; min-height: 64px; padding: 0 var(--s-pad); background: var(--s-bg); border-bottom: 1px solid var(--s-line); transition: top .6s var(--ease-out); }
 .s-word { font-family: var(--s-fh); font-size: 24px; font-weight: 600; line-height: 1; letter-spacing: -.01em; white-space: nowrap; }
 .s-word i { font-style: normal; color: var(--s-accent); }
 [data-store="stride"] .s-word, [data-store="stride"] .s-word i { color: var(--s-ink); letter-spacing: .02em; }
@@ -562,6 +565,7 @@ body:has(.site-header.is-hidden) .s-nav { top: 0; }
   .s-word { font-size: 20px; }
   .s-search { width: 42px; padding: 0; justify-content: center; border-color: transparent; background: none; }
   .s-search input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .s-search .s-kbd { display: none; }
   .s-search:focus-within { position: absolute; left: 12px; right: 12px; width: auto; padding: 0 12px; background: var(--s-surface); border-color: var(--s-ink); z-index: 2; }
   .s-search:focus-within input { position: static; width: auto; height: 100%; opacity: 1; }
   .sh-title { font-size: clamp(30px, 8.6vw, 42px); }
@@ -610,6 +614,8 @@ body:has(.site-header.is-hidden) .s-nav { top: 0; }
 .s-kbd { flex: none; min-width: 20px; height: 20px; display: grid; place-items: center; border-radius: 4px; font: 600 11px/1 var(--font-mono); color: var(--s-muted); border: 1px solid var(--s-line); }
 .s-search:focus-within .s-kbd { opacity: 0; }
 .s-ic-t { font-size: 13.5px; font-weight: 600; margin-left: 6px; }
+/* an icon button that also carries a text label (e.g. "Bag") lays out in a row, not a grid stack */
+.s-ic:has(.s-ic-t) { display: inline-flex; align-items: center; width: auto; padding: 0 14px 0 12px; }
 .s-empty { display: grid; justify-items: center; gap: 10px; }
 .s-empty[hidden] { display: none; }
 .s-empty > .ic { font-size: 26px; opacity: .5; }
@@ -732,7 +738,7 @@ body:has(.site-header.is-hidden) .shop-nav { top: 0; }
 .ap-li-acts .qty span { min-width: 22px; text-align: center; font-weight: 600; }
 .ap-warn { display: inline-block; margin-top: 8px; font-style: normal; font-size: 12.5px; font-weight: 600; color: #c4321d; }
 .ap-li-price { font-size: 16px; white-space: nowrap; }
-.ap-sum { position: sticky; top: calc(var(--header-h) + 90px); display: grid; gap: 14px; padding: 22px; border-radius: var(--s-r); background: var(--s-surface); border: 1px solid var(--s-line); }
+.ap-sum { position: sticky; top: calc(var(--sf-top, var(--header-h)) + 16px); display: grid; gap: 14px; padding: 22px; border-radius: var(--s-r); background: var(--s-surface); border: 1px solid var(--s-line); }
 .ap-ship p { font-size: 14px; margin-bottom: 8px; } .ap-ship i { display: block; height: 6px; border-radius: 3px; background: var(--s-line); overflow: hidden; } .ap-ship em { display: block; height: 100%; background: var(--s-accent); transition: width .6s; }
 .ap-promo { display: flex; gap: 8px; } .ap-promo input { flex: 1; min-width: 0; height: 44px; padding: 0 12px; border-radius: var(--s-rs); border: 1px solid var(--s-line); background: var(--s-bg); color: var(--s-ink); text-transform: uppercase; }
 .ap-promo .s-btn { height: 44px; }
@@ -750,7 +756,7 @@ body:has(.site-header.is-hidden) .shop-nav { top: 0; }
 
 /* account shell */
 .ap-acct { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 28px; align-items: start; }
-.ap-side { position: sticky; top: calc(var(--header-h) + 90px); display: grid; gap: 14px; padding: 18px; border-radius: var(--s-r); background: var(--s-surface); border: 1px solid var(--s-line); }
+.ap-side { position: sticky; top: calc(var(--sf-top, var(--header-h)) + 16px); display: grid; gap: 14px; padding: 18px; border-radius: var(--s-r); background: var(--s-surface); border: 1px solid var(--s-line); }
 .ap-me { display: flex; gap: 12px; align-items: center; } .ap-me b { display: block; } .ap-me small { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--s-muted); } .ap-me small i { width: 8px; height: 8px; border-radius: 50%; }
 .ap-ava { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--s-accent); color: var(--s-on); font-weight: 700; font-size: 17px; }
 .ap-side nav { display: grid; gap: 2px; }
@@ -855,7 +861,7 @@ body:has(.site-header.is-hidden) .shop-nav { top: 0; }
 .ag-in { display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid var(--s-line); }
 .ag-in input { flex: 1; min-width: 0; }
 .ag-in button { width: 46px; height: 46px; border-radius: var(--s-rs); background: var(--s-accent); color: var(--s-on); display: grid; place-items: center; }
-.ag-side { position: sticky; top: calc(var(--header-h) + 90px); display: grid; gap: 4px; padding: 18px; border-radius: var(--s-r); background: var(--s-surface); border: 1px solid var(--s-line); }
+.ag-side { position: sticky; top: calc(var(--sf-top, var(--header-h)) + 16px); display: grid; gap: 4px; padding: 18px; border-radius: var(--s-r); background: var(--s-surface); border: 1px solid var(--s-line); }
 .ag-side h3 { font: 700 12px/1 var(--s-fb); letter-spacing: .12em; text-transform: uppercase; color: var(--s-muted); margin: 12px 0 4px; } .ag-side h3:first-child { margin-top: 0; }
 .ag-plan { counter-reset: st; display: grid; gap: 8px; }
 .ag-plan li { counter-increment: st; position: relative; padding: 8px 10px 8px 34px; border-radius: 8px; background: var(--s-bg); font-size: 13px; animation: apIn .3s var(--ease-out); }
