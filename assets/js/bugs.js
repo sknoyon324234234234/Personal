@@ -31,8 +31,9 @@
   /* light version: phones, touch-first screens and narrow windows */
   var lite = phone || mq('(pointer: coarse)') || (window.innerWidth || 1024) < 900;
   var still = !!XR.reduce || mq('(prefers-reduced-motion: reduce)'); /* static scenery, minimal motion */
+  var LITE_MS = 45, LITE_DPR = 1.25; /* light version: about 22 drawn frames a second, fewer pixels */
   var KEY = 'xr-ants', TRAIL_KEY = 'xr-ants-trails';
-  var DPR = Math.min(window.devicePixelRatio || 1, lite ? 1.25 : 2); /* light version: a quarter of the pixels to fill each frame */
+  var DPR = Math.min(window.devicePixelRatio || 1, lite ? LITE_DPR : 2); /* light version: a quarter of the pixels to fill each frame */
   var PER_NEST = lite ? 2 : 7, MAX_POP = lite ? 14 : 72, MAX_STOLEN = lite ? 0 : 24, MAX_BITTEN = lite ? 0 : 30; /* in the light version text stays readable: ants walk, fight and swim but do not eat words */
   var MAX_PATCH = lite ? 5 : 9, MAX_ITEMS = lite ? 6 : 16, MAX_PLANTED = lite ? 3 : 6, MAX_FLIES = lite ? 4 : 11;
   var PAD = 100; /* a bite mask reaches this far past the element, so its shadow survives */
@@ -1883,7 +1884,7 @@
     for (var i = 0; i < trees.length; i++) {
       var tr = trees[i];
       if (tr.grow < 1) tr.grow = Math.min(1, tr.grow + dt / (still ? .01 : 3.2));
-      tr.sway = still ? 0 : (Math.sin(now * .9 + tr.ph) * .016 + Math.sin(now * 2.2 + tr.ph * 1.7) * .005) * tr.grow;
+      tr.sway = still || lite ? 0 : (Math.sin(now * .9 + tr.ph) * .016 + Math.sin(now * 2.2 + tr.ph * 1.7) * .005) * tr.grow;
       if (tr.grow < 1 || !onScreen(tr.x, tr.y - tr.h / 2, 60)) continue;
       tr.drop -= dt;
       if (tr.drop > 0 || items.length >= MAX_ITEMS) continue;
@@ -2480,6 +2481,18 @@
       ctx.stroke();
     }
   }
+  var drawnAt = { x: -1, y: -1, ok: false };
+  function moving() {
+    var m = 40, i;
+    if (drops.length || flyers.length || flies.length || parts.length || rain) return true;
+    for (i = 0; i < ants.length; i++) { var a = ants[i]; if (!a.hidden && onScreen(a.x, a.y, m)) return true; }
+    for (i = 0; i < items.length; i++) if (items[i].state !== 'ground' && onScreen(items[i].x, items[i].y, m)) return true;
+    for (i = 0; i < puddles.length; i++) if (onScreen(puddles[i].x, puddles[i].y, puddles[i].r + m)) return true;
+    for (i = 0; i < nests.length; i++) if ((nests[i].alarm > 0 || nests[i].cap > 0 || nests[i].flash > 0) && onScreen(nests[i].x, nests[i].y, m)) return true;
+    for (i = 0; i < foods.length; i++) if (onScreen(foods[i].x, foods[i].y, m)) return true;
+    for (i = 0; i < trees.length; i++) if (trees[i].grow < 1) return true;
+    return false;
+  }
   /* is anything of the world on screen right now? if not, the loop can rest */
   function anyVisible() {
     var m = 60, i;
@@ -2565,7 +2578,7 @@
     if (!on || hiddenTab) return;
     raf = requestAnimationFrame(frame);
     /* light version: 30 frames a second, except while the page scrolls (the canvas must keep up with it) */
-    if (lite && t - last < 30 && now - scrolledAt > .2) return;
+    if (lite && t - last < LITE_MS && now - scrolledAt > .2) return;
     var t0 = performance.now();
     var dt = Math.min(lite ? .07 : .05, Math.max(0, (t - last) / 1000)) || .016;
     last = t;
@@ -2573,7 +2586,8 @@
     /* nothing of the world on screen for a second: stop drawing and slow the clock down */
     if (anyVisible()) idleT = 0;
     else if ((idleT += dt) > 1 && !panelOpen) { sleep(); return; }
-    render();
+    /* light version: a still scene (only scenery on screen, no scroll) is not redrawn at all */
+    if (!lite || moving() || sx !== drawnAt.x || sy !== drawnAt.y || !drawnAt.ok) { render(); drawnAt.x = sx; drawnAt.y = sy; drawnAt.ok = !moving(); }
     if (panelOpen && every('panel', .25, dt)) renderPanel();
     else if (every('badge', 1, dt)) setBadge();
     var ms = performance.now() - t0;
