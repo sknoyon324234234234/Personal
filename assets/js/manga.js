@@ -62,7 +62,7 @@
     act('me'); await wait(220);
     if (m === 'code') { var d = rnd(18, 26); boss.hp -= d; pop('カタカタ', 'boss'); pop('−' + d, 'boss', 'dmg'); hit('boss'); log.textContent = 'Code sprint! ' + d + ' damage.'; charge = Math.min(3, charge + 1); }
     if (m === 'toad') { var t = rnd(34, 44); boss.hp -= t; pop('ドン!', 'boss', '', -12); pop('−' + t, 'boss', 'dmg'); hit('boss', true); log.textContent = 'Summoning jutsu! The toad lands for ' + t + ' damage.'; cd.toad = 3; charge = Math.min(3, charge + 1); }
-    if (m === 'heal') { var h = Math.min(30, me.max - me.hp); me.hp += h; pop('+' + h, 'hero', 'heal'); pop('癒', 'hero'); log.textContent = 'Tsunade patches you up. +' + h + ' HP.'; cd.heal = 3; }
+    if (m === 'heal') { var h = Math.min(30, me.max - me.hp); me.hp += h; pop('+' + h, 'hero', 'heal'); pop('癒', 'hero'); log.textContent = 'Xiri patches you up. +' + h + ' HP.'; cd.heal = 3; }
     if (m === 'ship') { var u = rnd(55, 70); boss.hp -= u; pop('螺旋!', 'boss', '', 8); pop('−' + u, 'boss', 'dmg'); hit('boss', true); log.textContent = 'RASEN-DEPLOY! Straight to production. ' + u + ' damage.'; charge = 0; }
     paint();
     if (boss.hp <= 0) { await wait(500); end(true); return; }

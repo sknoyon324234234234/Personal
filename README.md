@@ -131,7 +131,7 @@ node tools/render-assets.js  # favicons and demo thumbnails
 - Themes: **paper** (light, default) and **ink** (dark). The moon/sun button in the header switches between them and remembers the choice. Colours live as tokens at the top of `assets/css/core.css`.
 - Characters (original designs, not copies of any anime character, drawn in the kabuki / folklore tradition of the 1839 tale of Jiraiya 児雷也):
   - **Xiraiya**, the toad sage developer. He winks and waggles his eyebrows, and his toad Gama snaps flies out of the air.
-  - **Tsunade**, head of QA. She has a clipboard, tea and a stamp that slams "OK".
+  - **Xiri**, head of QA. She has a clipboard, tea and a stamp that slams "OK".
   - **Namekuji**, a leopard slug who works customer support in a tiny headset.
   - Click any character and they tell a joke. Meet them all in "The crew" section on the home page.
 - Motion: pill buttons with a fill that grows from the pointer and an arrow swap, lifting cards, inertia smooth scrolling for mouse wheels, and ink-bleed reveals.
@@ -140,7 +140,7 @@ node tools/render-assets.js  # favicons and demo thumbnails
 
 ### Character artwork
 
-Xiraiya, Tsunade, Gama the toad and Namekuji the slug use the cut-out images in `assets/img/characters/` (paths in `assets/js/config.js` under `characters`). Xiraiya has a different pose per spot (`characters.poses`: arms crossed in the hero, writing in his notebook in the crew card, arms out on the 404 page), picked with `data-pose` on the page. They are rendered as 3D standees: stacked copies give the cutout thickness, it tilts toward the pointer with a moving sheen, sways when idle and casts a floor shadow. Clear a path to go back to the drawn-in-code character. The current images are official Naruto artwork, which is copyrighted by Masashi Kishimoto / Shueisha / Studio Pierrot.
+Xiraiya, Xiri, Gama the toad and Namekuji the slug use the cut-out images in `assets/img/characters/` (paths in `assets/js/config.js` under `characters`). Xiraiya has a different pose per spot (`characters.poses`: arms crossed in the hero, writing in his notebook in the crew card, arms out on the 404 page), picked with `data-pose` on the page. They are rendered as 3D standees: stacked copies give the cutout thickness, it tilts toward the pointer with a moving sheen, sways when idle and casts a floor shadow. Clear a path to go back to the drawn-in-code character. The current images are official Naruto artwork, which is copyrighted by Masashi Kishimoto / Shueisha / Studio Pierrot.
 
 ### The Lost Scroll (site-wide mystery)
 

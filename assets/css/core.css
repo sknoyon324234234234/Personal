@@ -843,9 +843,11 @@ html[data-mode="ink"] .mode-btn .mb-moon { transform: translateY(-120%) rotate(9
 /* footer Telegram button */
 .ftr-tg { display: flex; width: fit-content; align-items: center; gap: 12px; margin-top: 18px; padding: 10px 16px 10px 10px; border-radius: 16px; background: linear-gradient(135deg, #2aabee, #229ed9); color: #fff; box-shadow: 0 14px 28px -14px rgba(34, 158, 217, .8); transition: transform .35s var(--ease-spring), box-shadow .3s; max-width: 100%; }
 .ftr-tg:hover { transform: translateY(-3px); box-shadow: 0 20px 34px -14px rgba(34, 158, 217, .9); color: #fff; }
-.ftr-tg-ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: rgba(255, 255, 255, .18); font-size: 26px; flex: none; }
+.ftr-tg-ic { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #fff; box-shadow: 0 4px 10px rgba(0, 40, 70, .25); flex: none; }
+.ftr-tg-ic .tg-logo { width: 38px; height: 38px; display: block; }
 .ftr-tg > span:nth-child(2) { display: grid; line-height: 1.2; min-width: 0; }
 .ftr-tg small { font: 600 10.5px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
 .ftr-tg b { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ftr-tg > .ic:last-child { opacity: .8; transition: transform .3s; }
 .ftr-tg:hover > .ic:last-child { transform: translate(2px, -2px); }
+.site-footer a.ftr-tg, .site-footer a.ftr-tg:hover, .site-footer a.ftr-tg b, .site-footer a.ftr-tg small, .site-footer a.ftr-tg > .ic { color: #fff; }

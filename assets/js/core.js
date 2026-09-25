@@ -435,6 +435,13 @@
   /* ------------------------------------------------------------------
      Contact helpers
      ------------------------------------------------------------------ */
+  /* Official Telegram logo (blue circle, white plane) */
+  function tgLogo() {
+    var id = 'tg' + (++uid);
+    return '<svg class="tg-logo" viewBox="0 0 240 240" aria-hidden="true"><defs><linearGradient id="' + id + 'a" x1=".667" x2=".417" y1=".167" y2=".75"><stop offset="0" stop-color="#37aee2"/><stop offset="1" stop-color="#1e96c8"/></linearGradient><linearGradient id="' + id + 'b" x1=".66" x2=".851" y1=".437" y2=".802"><stop offset="0" stop-color="#eff7fc"/><stop offset="1" stop-color="#fff"/></linearGradient></defs>' +
+      '<circle cx="120" cy="120" r="120" fill="url(#' + id + 'a)"/><path fill="#c8daea" d="M98 175c-3.888 0-3.227-1.468-4.568-5.17L82 132.207 170 80"/><path fill="#a9c9dd" d="M98 175c3 0 4.325-1.372 6-3l16-15.558-19.958-12.035"/>' +
+      '<path fill="url(#' + id + 'b)" d="M100.04 144.41l48.36 35.729c5.519 3.045 9.501 1.468 10.876-5.123l19.685-92.763c2.015-8.08-3.08-11.746-8.36-9.349l-115.59 44.571c-7.89 3.165-7.843 7.567-1.438 9.528l29.663 9.259 68.673-43.325c3.242-1.966 6.218-.91 3.776 1.258"/></svg>';
+  }
   function real(v) { return !!v && !/example\.com|your[-_]/i.test(v); }
   function contacts() {
     var c = C.contact || {}, out = [];
@@ -573,15 +580,15 @@
       '<div class="container container-wide">' +
         '<div class="ftr-cta">' +
           '<span class="eyebrow">Next chapter · 次の章</span>' +
-          '<h2 class="h1">Got an idea? Let’s make it <span class="grad-text">legendary.</span></h2>' +
+          '<h2 class="h1">Got an idea? Send it over. <span class="grad-text">I’ll build it.</span></h2>' +
           '<div class="flex wrap"><a class="btn btn-primary btn-lg" href="hire.html" data-magnetic>Start a project ' + icon('arrow-right') + '</a>' +
           '<a class="btn btn-ghost btn-lg" href="showcase.html">Explore the Lab</a></div>' +
         '</div>' +
         '<div class="ftr-grid">' +
           '<div class="ftr-about"><a class="brand" href="index.html">' + brandMark() + '<span class="brand-word">' + esc((C.name || 'Xiraiya').toUpperCase()) + '</span></a>' +
-            '<p>' + esc(C.age) + '-year-old developer from ' + esc(C.city) + ', ' + esc(C.country) + '. ' + esc(C.experienceYears) + '+ years turning ideas into websites, bots, apps and AI agents that run on autopilot.</p>' +
+            '<p>' + esc(C.age) + '-year-old developer from ' + esc(C.city) + ', ' + esc(C.country) + '. ' + esc(C.experienceYears) + '+ years building websites, bots, apps and AI agents that keep working after I log off.</p>' +
             '<div class="ftr-clock">' + icon('clock') + '<span>' + esc(C.city) + ' · <b data-clock>--:--</b> GMT+6</span></div>' +
-            (C.contact && real(C.contact.telegram) ? '<a class="ftr-tg" href="https://t.me/' + esc(C.contact.telegram) + '" target="_blank" rel="noopener" aria-label="Message Xiraiya on Telegram"><span class="ftr-tg-ic">' + icon('telegram') + '</span><span><small>Fastest reply</small><b>@' + esc(C.contact.telegram) + '</b></span>' + icon('arrow-up-right') + '</a>' : '') + '</div>' +
+            (C.contact && real(C.contact.telegram) ? '<a class="ftr-tg" href="https://t.me/' + esc(C.contact.telegram) + '" target="_blank" rel="noopener" aria-label="Message Xiraiya on Telegram"><span class="ftr-tg-ic">' + tgLogo() + '</span><span><small>Fastest reply</small><b>@' + esc(C.contact.telegram) + '</b></span>' + icon('arrow-up-right') + '</a>' : '') + '</div>' +
           '<div><h3>Explore</h3><ul>' + NAV.map(function (n) { return '<li><a href="' + n.href + '">' + esc(n.label) + '</a></li>'; }).join('') + '</ul></div>' +
           '<div><h3>Services</h3><ul>' + svc + '<li><a href="showcase.html">All services</a></li></ul></div>' +
           '<div><h3>Contact</h3><ul>' + ct + '<li><a href="hire.html">' + icon('briefcase') + 'Project brief form</a></li></ul></div>' +
@@ -932,7 +939,7 @@
 
   // Poke a character: it hops and cracks a joke in the nearest speech bubble
   var JOKES = {
-    sage: ['Ouch! That is my coding hand.', 'Stop poking, I am compiling.', 'I do not fix bugs. The toad eats them.', 'Deploy on a Friday? Bold. I like it.', 'My mane is 40% hair, 60% ideas.', 'Tsunade approved this joke. Barely.', 'The toad is my senior DevOps engineer.', 'Ribbit means "ship it" in toad.'],
+    sage: ['Ouch! That is my coding hand.', 'Stop poking, I am compiling.', 'I do not fix bugs. The toad eats them.', 'Deploy on a Friday? Bold. I like it.', 'My mane is 40% hair, 60% ideas.', 'Xiri approved this joke. Barely.', 'The toad is my senior DevOps engineer.', 'Ribbit means "ship it" in toad.'],
     tsunade: ['Tests first. Tea second.', 'I stamp OK only when it is perfect.', 'Your build is broken. I am already healing it.', 'The slug answers tickets faster than it moves.', 'Xiraiya wrote it. I made it work.', 'No console errors on my watch.']
   };
   function pokeMascots() {
@@ -1332,7 +1339,7 @@
     var k = el.getAttribute('data-mascot');
     var art = C.characters || {}, who = /^tsunade/.test(k) ? 'tsunade' : k === 'toad' || k === 'slug' ? k : 'xiraiya';
     var pose = el.getAttribute('data-pose') || k, src = who === 'xiraiya' && art.poses && art.poses[pose] || art[who];
-    var LABEL = { tsunade: 'Tsunade, head of QA', toad: 'Gama the toad', slug: 'Namekuji the slug', xiraiya: C.name || 'Xiraiya' };
+    var LABEL = { tsunade: 'Xiri, head of QA', toad: 'Gama the toad', slug: 'Namekuji the slug', xiraiya: C.name || 'Xiraiya' };
     if (src) {
       el.innerHTML = standee(src, LABEL[who], (k || '') + ' pose-' + (pose || 'default') + (who === 'tsunade' ? ' tsunade' : who === 'xiraiya' ? ' sage' : ' crew-pet'));
       var bub = el.parentElement && el.parentElement.querySelector(':scope > .bubble');
