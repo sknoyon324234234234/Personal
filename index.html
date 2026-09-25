@@ -32,6 +32,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"></noscript>
 <link rel="stylesheet" href="assets/css/core.css">
+<link rel="stylesheet" href="assets/css/mystery.css">
 <link rel="stylesheet" href="assets/css/home.css">
 <link rel="stylesheet" href="assets/css/manga.css">
 <link rel="stylesheet" href="assets/css/circuit.css">
@@ -516,6 +517,41 @@
     </div>
   </section>
 
+  <!-- ============ MYSTERY: THE SEALED DOOR ============ -->
+  <section class="section ms" id="mystery" aria-labelledby="ms-title">
+    <div class="container container-wide">
+      <div class="section-head center">
+        <span class="num"><span class="hanko sm">謎</span> Chapter ? · 謎</span>
+        <h2 class="h2" id="ms-title" data-split>Something is <span class="grad-text">hidden here.</span></h2>
+        <p class="lead" data-reveal>A lantern, a locked door and a scroll torn into eight pieces. The pieces are scattered across this whole site.</p>
+      </div>
+      <div class="ms-grid">
+        <div class="ms-room" style="--lx:50%;--ly:50%" aria-label="A dark room. Move your lantern to read the walls.">
+          <div class="ms-walls">
+            <p class="ms-clue c1"><b>壱</b> The sage’s name holds the storm. <span>雷</span></p>
+            <p class="ms-clue c2"><b>弐</b> What the toad breathes on its enemies. <span>火</span></p>
+            <p class="ms-clue c3"><b>参</b> What rises when the Deadline sleeps. <span>月</span></p>
+            <p class="ms-scrawl s1">turn back</p><p class="ms-scrawl s2">水? no.</p><p class="ms-scrawl s3">three seals · three rings</p>
+            <i class="ms-eyes" aria-hidden="true"></i>
+            <span class="ms-slot" data-frag-slot="home-1"></span>
+          </div>
+          <div class="ms-dark" aria-hidden="true"></div>
+          <span class="ms-hint">Move the lantern. On a phone, tap or drag.</span>
+        </div>
+        <div class="ms-door" aria-label="A door sealed with three rings">
+          <div class="md-inside"><span class="ms-slot in" data-frag-slot="home-2"></span><b>The hunt begins.</b><p>Seven more seals hide on other pages. Follow the compass.</p><button type="button" class="btn btn-primary btn-sm" data-openmap>Open the map</button></div>
+          <div class="md-leaf l"></div><div class="md-leaf r"></div>
+          <div class="md-seal">
+            <div class="md-ring" data-r="0"><button type="button" data-turn="-1" aria-label="Turn ring one back">‹</button><span class="md-dial"><span class="md-wheel"></span><b class="md-sym">火</b></span><button type="button" data-turn="1" aria-label="Turn ring one forward">›</button></div>
+            <div class="md-ring" data-r="1"><button type="button" data-turn="-1" aria-label="Turn ring two back">‹</button><span class="md-dial"><span class="md-wheel"></span><b class="md-sym">火</b></span><button type="button" data-turn="1" aria-label="Turn ring two forward">›</button></div>
+            <div class="md-ring" data-r="2"><button type="button" data-turn="-1" aria-label="Turn ring three back">‹</button><span class="md-dial"><span class="md-wheel"></span><b class="md-sym">火</b></span><button type="button" data-turn="1" aria-label="Turn ring three forward">›</button></div>
+            <small>Set the three seals in order.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ MANGA: BOSS BATTLE ============ -->
   <section class="section mg-bt" id="battle" aria-labelledby="bt-title">
     <div class="container container-wide">
@@ -578,6 +614,7 @@
 
 <script src="assets/js/config.js" defer></script>
 <script src="assets/js/core.js" defer></script>
+<script src="assets/js/mystery.js" defer></script>
 <script src="assets/js/circuit.js" defer></script>
 <script src="assets/js/bugs.js" defer></script>
 <script src="assets/js/impact.js" defer></script>

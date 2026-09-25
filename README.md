@@ -139,3 +139,7 @@ node tools/render-assets.js
 ### Character artwork
 
 Xiraiya, Tsunade, Gama the toad and Namekuji the slug use the cut-out images in `assets/img/characters/` (paths in `assets/js/config.js` under `characters`). Xiraiya has a different pose per spot (`characters.poses`: arms crossed in the hero, writing in his notebook in the crew card, arms out on the 404 page), picked with `data-pose` on the page. They are rendered as 3D standees: stacked copies give the cutout thickness, it tilts toward the pointer with a moving sheen, sways when idle and casts a floor shadow. Clear a path to go back to the drawn-in-code character. The current images are official Naruto artwork, which is copyrighted by Masashi Kishimoto / Shueisha / Studio Pierrot.
+
+### The Lost Scroll (site-wide mystery)
+
+`assets/js/mystery.js` + `assets/css/mystery.css`, loaded on every page. On the homepage, *Chapter ?* has a dark room lit by a lantern that follows the pointer (the walls hide three clues) and a door sealed with three rotating kanji rings (code: 雷 火 月). Opening it starts a treasure hunt for eight seal fragments hidden on the Home, Lab, UI Kit, Shop, Demos, Dev World and Hire pages. A compass button opens a parchment map with a riddle for each missing seal; finding all eight unrolls the Scroll of the Toad Sage and unlocks **Sage Mode**, which turns the whole site gold. Progress is stored in the browser (`xr-hunt`).
