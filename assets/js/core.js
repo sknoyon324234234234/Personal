@@ -458,6 +458,7 @@
     { id: 'demos', href: 'demos.html', label: 'Demo Sites', short: 'Demos', jp: '演' },
     { id: 'pages', href: 'pages.html', label: 'Pages', jp: '頁' },
     { id: 'world', href: 'dev-world.html', label: 'Dev World', jp: '里' },
+    { id: 'learn', href: 'knowledge.html', label: 'Basic Knowledge', short: 'Learn', jp: '学' },
     { id: 'hire', href: 'hire.html', label: 'Hire Me', jp: '雇' }
   ];
 
@@ -1041,6 +1042,7 @@
     { id: 'stage-chat', label: 'Talk to the AI support chat', xp: 20 },
     { id: 'stage-ecommerce', label: 'Watch the store autopilot', xp: 20 },
     { id: 'stage-crypto', label: 'Pay the crypto invoice', xp: 20 },
+    { id: 'learn', label: 'Open a Basic Knowledge lesson', xp: 20 },
     { id: 'palette', label: 'Open the Command Center', xp: 10 },
     { id: 'konami', label: 'Find the secret code', xp: 50, secret: 1 }
   ];
@@ -1072,7 +1074,7 @@
 
   function paletteItems() {
     var items = [];
-    NAV.forEach(function (n) { items.push({ g: 'Pages', t: n.label, s: n.jp, ic: n.id === 'hire' ? 'briefcase' : n.id === 'shop' ? 'cart' : n.id === 'lab' ? 'sparkle' : n.id === 'kit' ? 'layers' : n.id === 'demos' ? 'monitor' : n.id === 'pages' ? 'window' : n.id === 'world' ? 'terminal' : 'home', href: n.href }); });
+    NAV.forEach(function (n) { items.push({ g: 'Pages', t: n.label, s: n.jp, ic: n.id === 'hire' ? 'briefcase' : n.id === 'shop' ? 'cart' : n.id === 'lab' ? 'sparkle' : n.id === 'kit' ? 'layers' : n.id === 'demos' ? 'monitor' : n.id === 'pages' ? 'window' : n.id === 'world' ? 'terminal' : n.id === 'learn' ? 'book' : 'home', href: n.href }); });
     SERVICES.forEach(function (sv) { items.push({ g: 'Live demos in the Lab', t: sv.name, s: 'from ' + fmtPrice(sv.priceFrom), ic: sv.icon, href: 'showcase.html#' + sv.id }); });
     [['Aurèle', 'Fine jewellery atelier', 'aurele'], ['Nordhem', 'Furniture and sofa builder', 'nordhem'], ['Halide', 'Film cameras and lab', 'halide'], ['Kage Build', 'Gaming PC configurator', 'kage'], ['Stride', 'Sneaker drops and raffle', 'stride'], ['Nova AI', 'SaaS landing page', 'nova-saas'], ['Sakura Bistro', 'Restaurant', 'sakura-bistro'], ['Vault', 'Crypto dashboard', 'vault-dashboard'], ['BlockRealm', 'Minecraft server site', 'blockrealm'], ['Pulse', 'App landing page', 'pulse-app'], ['Mori Tea', 'Tea shop', 'mori-tea'], ['Haven', 'Architecture and homes', 'haven'], ['Ledger', 'Banking dashboard', 'ledger'], ['Nomad', 'Travel booking', 'nomad'], ['Kumo Docs', 'Developer docs', 'devdocs']].forEach(function (d) {
       items.push({ g: 'Demo websites', t: d[0], s: d[1], ic: 'window', href: 'demos/' + d[2] + '.html' });

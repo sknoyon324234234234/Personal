@@ -22,6 +22,7 @@ It's a cinematic, ukiyo-e inspired portfolio where visitors can try a live, inte
 | `pages.html` (**Pages Studio**) | **12 complete websites to choose from** (Lumen SaaS, Aurèle jewellery, Nordhem interiors, Thread & Co menswear, Glow Theory beauty, Sobuj plants, Halide film cameras, Kage Tech PCs, Deshi Loom handloom, Field Day sports club, Pebble baby wear, Stride sneakers), each with its own copy, real photos, colours, fonts, buttons and layouts across every page (`assets/js/pages-sites.js`). Thirteen page templates (homepage, log in, sign up, pricing, dashboard, blog post, contact, 404, portfolio, product, checkout, about + team, coming soon) built from 70 section variants. It has 10 one-click theme presets (Aurora, Swiss, Brutalist, Luxe, Playful, Terminal, Paper, Ocean glass, Forest, SaaS Indigo). A toolbar swaps, reorders, hides, duplicates and adds sections. Everything can be restyled live: colours, surface tone, light/dark, 8 font pairs, radius, spacing, shadows, borders, 8 button styles with shapes, sizes and hovers, and motion effects (scroll animations, card hover, background patterns, heading styles, a sticky glass navbar). It also has Select and Text modes (text edits are kept), desktop/tablet/phone/fluid-width previews with a drag handle, undo/redo, saved versions, a Code tab with a quality audit and highlighted source, share links and one-click HTML export |
 | `dev-world.html` (**Dev World**) | A developer village on an illustrated map (it turns into a starry night in ink mode) with seven buildings. It has a terminal with 40+ commands (including `curl` against the mock API, `calc`, `top`, `toadsay`, a playable `snake`, `grep` pipes and ghost autocomplete), a live HTML/CSS/JS playground with syntax highlighting, presets, a console and share links, 17 dev tools with search (JSON, regex, Base64, UUID, passwords, colours, SHA hashes, JWT, timestamps, gradients, box-shadows, Markdown, diff, cron, URL parser, case and unit converters), a mock REST API console with auth, history and fetch/curl/Python snippets, a git-graph career timeline with a heatmap, an **Algorithm Arena** (6 sorting algorithms, a 6-way race, and A*/Dijkstra/BFS/DFS pathfinding with walls, mud and mazes), a **Typing Dojo** code typing test with WPM, accuracy, ranks and best runs, and a village passport that stamps each building you use |
 | `tutorials.html` (**Motion Academy**) | After Effects-style tutorial player with a keyframe engine, timeline, layers, effect controls with an easing graph, motion paths, lesson notes, live CSS export, an easing lab and code guides |
+| `knowledge.html` (**Basic Knowledge**) | 141 short lessons in 13 chapters: how the web works, HTML & CSS, JavaScript, UI, UX, motion UI, backend & APIs, databases and MySQL, website security, what to do when you get hacked, tools & deploy, speed & SEO, and AI basics. Every lesson opens in a full-screen viewer with a live, animated preview (38 kinds): packet flows, a CSS playground with sliders, a real SQL console, attack simulators (SQL injection, XSS, CSRF, brute force, DDoS, phishing), live SHA-256 hashing, a real TOTP 2FA code, a JWT decoder, a git graph, a deploy pipeline, Web Vitals gauges, a tokenizer and more. Search, a random lesson, a learned-progress ring (saved in the browser), chapter chips, arrow-key and swipe navigation, and `#lesson-id` links |
 | `hire.html` | Packages, a 4-step project configurator with an instant estimate, and a brief hand-off by email, Telegram or WhatsApp. Also covers payment methods, next steps and an FAQ with FAQPage schema |
 | `404.html` | Custom "lost shinobi" page |
 
@@ -96,7 +97,7 @@ grep -rl "sknoyon324234234234.github.io/Personal/" --include=*.html --include=*.
 ## Project structure
 
 ```
-index.html  showcase.html  shop.html  components.html  demos.html  pages.html  dev-world.html  tutorials.html  hire.html  404.html
+index.html  showcase.html  shop.html  components.html  demos.html  pages.html  dev-world.html  knowledge.html  tutorials.html  hire.html  404.html
 demos/                 twelve standalone demo websites
 assets/css/            core.css (design system), one stylesheet per page, phone.css (phone layout)
 assets/js/config.js    your details, prices, services, packages
@@ -106,6 +107,8 @@ assets/js/lab/         one script per Lab stage
 assets/js/kit-data.js  UI Kit component library (HTML + CSS for each component)
 assets/js/pages-kit.js Pages Studio template generator (sections, tokens, export)
 assets/js/world.js     Dev World terminal, playground, toolbox, API console and git graph
+assets/js/knowledge-data.js  Basic Knowledge lessons (edit or add lessons here)
+assets/js/knowledge-pv*.js   Basic Knowledge live preview engines
 assets/img/            favicon, app icons, social share image, demo thumbnails
 tools/                 og.html + render-assets.js (regenerate images)
 sitemap.xml  robots.txt  site.webmanifest  .nojekyll
