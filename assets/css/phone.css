@@ -57,7 +57,8 @@
   .ftr-cta { padding-block: 40px 30px; }
   .ftr-grid { gap: 26px; padding-block: 30px; }
   .ftr-grid > div:nth-child(3) { display: none; }
-  .ftr-word { display: none; }
+  .fm-panel { height: 150px; outline-offset: 3px; box-shadow: 6px 6px 0 var(--red); }
+  .fm-jp, .fm-sfx.s2 { display: none; }
 
   /* ---------- HOME ---------- */
   .hero-visual { --size: min(66vw, 280px); }

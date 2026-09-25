@@ -530,6 +530,34 @@
     $('.tb-more', nav).addEventListener('click', function () { var b = $('.menu-btn'); if (b) b.click(); });
   }
 
+  /* The footer wordmark as a manga splash panel: speed lines and halftone behind, each
+     letter slams in with an impact flash, a katana slash cuts across, the panel shakes and
+     SFX pop. Then the letters idle, follow the pointer and jump when hovered. */
+  function mangaWord(name) {
+    var letters = name.split('').map(function (ch, i) { return '<span class="fm-l" style="--i:' + i + '" data-ch="' + esc(ch) + '">' + esc(ch) + '</span>'; }).join('');
+    return '<div class="ftr-manga" aria-hidden="true"><div class="fm-panel">' +
+      '<i class="fm-rays"></i><i class="fm-dots"></i><i class="fm-flash"></i>' +
+      '<span class="fm-jp">自来也</span>' +
+      '<div class="fm-word">' + letters + '</div>' +
+      '<i class="fm-slash"></i>' +
+      '<span class="fm-sfx s1">ドン!</span><span class="fm-sfx s2">ゴゴゴ</span><span class="fm-sfx s3">斬</span>' +
+      '<span class="fm-cap">Chapter ∞ · The toad sage of code</span>' +
+      '</div></div>';
+  }
+  function mangaFooter() {
+    var m = $('.ftr-manga'); if (!m) return;
+    var panel = $('.fm-panel', m);
+    if (reduce) { m.classList.add('go', 'done'); return; }
+    whenVisible(m, function () { m.classList.add('go'); setTimeout(function () { m.classList.add('done'); }, 2600); }, '-15% 0px');
+    if (!fine) return;
+    panel.addEventListener('pointermove', function (e) {
+      var r = panel.getBoundingClientRect();
+      panel.style.setProperty('--px', ((e.clientX - r.left) / r.width - .5).toFixed(3));
+      panel.style.setProperty('--py', ((e.clientY - r.top) / r.height - .5).toFixed(3));
+    });
+    panel.addEventListener('pointerleave', function () { panel.style.setProperty('--px', 0); panel.style.setProperty('--py', 0); });
+    panel.addEventListener('click', function () { m.classList.remove('go', 'done'); void m.offsetWidth; m.classList.add('go'); setTimeout(function () { m.classList.add('done'); }, 2600); });
+  }
   function buildFooter() {
     var f = $('#site-footer');
     if (!f) return;
@@ -556,7 +584,7 @@
           '<div><h3>Contact</h3><ul>' + ct + '<li><a href="hire.html">' + icon('briefcase') + 'Project brief form</a></li></ul></div>' +
         '</div>' +
       '</div>' +
-      '<div class="ftr-word" aria-hidden="true">' + esc((C.name || 'Xiraiya').toUpperCase()) + '</div>' +
+      mangaWord((C.name || 'Xiraiya').toUpperCase()) +
       '<div class="container container-wide ftr-bottom">' +
         '<span>© <span data-year></span> ' + esc(C.name) + ' · Hand-made in ' + esc(C.city) + ', ' + esc(C.country) + ' with ink, tea and one very patient toad.</span>' +
         '<a class="to-top" href="#top" data-no-transition>Back to top ' + icon('arrow-up') + '</a>' +
@@ -1292,6 +1320,7 @@
      ------------------------------------------------------------------ */
   buildHeader();
   buildFooter();
+  mangaFooter();
   buildTabbar();
   overlays();
   $$('[data-mascot]').forEach(function (el) {
