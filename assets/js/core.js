@@ -435,10 +435,11 @@
   /* ------------------------------------------------------------------
      Contact helpers
      ------------------------------------------------------------------ */
+  function real(v) { return !!v && !/example\.com|your[-_]/i.test(v); }
   function contacts() {
     var c = C.contact || {}, out = [];
-    if (c.email) out.push({ id: 'email', icon: 'mail', label: 'Email', text: c.email, href: 'mailto:' + c.email });
-    if (c.telegram) out.push({ id: 'telegram', icon: 'send', label: 'Telegram', text: '@' + c.telegram, href: 'https://t.me/' + c.telegram });
+    if (real(c.email)) out.push({ id: 'email', icon: 'mail', label: 'Email', text: c.email, href: 'mailto:' + c.email });
+    if (real(c.telegram)) out.push({ id: 'telegram', icon: 'telegram', label: 'Telegram', text: '@' + c.telegram, href: 'https://t.me/' + c.telegram });
     if (c.whatsapp) out.push({ id: 'whatsapp', icon: 'phone-call', label: 'WhatsApp', text: '+' + c.whatsapp, href: 'https://wa.me/' + c.whatsapp });
     if (c.github) out.push({ id: 'github', icon: 'git', label: 'GitHub', text: 'GitHub', href: c.github });
     if (c.linkedin) out.push({ id: 'linkedin', icon: 'briefcase', label: 'LinkedIn', text: 'LinkedIn', href: c.linkedin });
@@ -579,7 +580,8 @@
         '<div class="ftr-grid">' +
           '<div class="ftr-about"><a class="brand" href="index.html">' + brandMark() + '<span class="brand-word">' + esc((C.name || 'Xiraiya').toUpperCase()) + '</span></a>' +
             '<p>' + esc(C.age) + '-year-old developer from ' + esc(C.city) + ', ' + esc(C.country) + '. ' + esc(C.experienceYears) + '+ years turning ideas into websites, bots, apps and AI agents that run on autopilot.</p>' +
-            '<div class="ftr-clock">' + icon('clock') + '<span>' + esc(C.city) + ' · <b data-clock>--:--</b> GMT+6</span></div></div>' +
+            '<div class="ftr-clock">' + icon('clock') + '<span>' + esc(C.city) + ' · <b data-clock>--:--</b> GMT+6</span></div>' +
+            (C.contact && real(C.contact.telegram) ? '<a class="ftr-tg" href="https://t.me/' + esc(C.contact.telegram) + '" target="_blank" rel="noopener" aria-label="Message Xiraiya on Telegram"><span class="ftr-tg-ic">' + icon('telegram') + '</span><span><small>Fastest reply</small><b>@' + esc(C.contact.telegram) + '</b></span>' + icon('arrow-up-right') + '</a>' : '') + '</div>' +
           '<div><h3>Explore</h3><ul>' + NAV.map(function (n) { return '<li><a href="' + n.href + '">' + esc(n.label) + '</a></li>'; }).join('') + '</ul></div>' +
           '<div><h3>Services</h3><ul>' + svc + '<li><a href="showcase.html">All services</a></li></ul></div>' +
           '<div><h3>Contact</h3><ul>' + ct + '<li><a href="hire.html">' + icon('briefcase') + 'Project brief form</a></li></ul></div>' +

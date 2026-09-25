@@ -1,5 +1,5 @@
 {
-  "url": "https://sknoyon324234234234.github.io/Personal/",
+  "url": "https://xiraiya.shop/",
   "name": "Xiraiya",
   "alternateName": "Xiraiya — Full-Stack Developer",
   "locale": "en_US",
@@ -18,7 +18,9 @@
     "city": "Rajshahi",
     "country": "BD",
     "image": "assets/img/characters/xiraiya-avatar.webp",
-    "sameAs": [],
+    "sameAs": [
+      "https://t.me/TheMysteriousGhost"
+    ],
     "knowsAbout": [
       "Web development",
       "JavaScript",

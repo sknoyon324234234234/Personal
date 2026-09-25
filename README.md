@@ -82,8 +82,8 @@ Then open `http://localhost:3000` (or `:8080`). Opening `index.html` directly al
 
 1. Merge this branch into `main`.
 2. On GitHub, open **Settings → Pages**, set **Source: Deploy from a branch** and choose **`main` / root**.
-3. The site goes live at `https://sknoyon324234234234.github.io/Personal/`.
-4. Submit `https://sknoyon324234234234.github.io/Personal/sitemap.xml` in [Google Search Console](https://search.google.com/search-console).
+3. The site goes live at `https://xiraiya.shop/`.
+4. Submit `https://xiraiya.shop/sitemap.xml` in [Google Search Console](https://search.google.com/search-console).
 
 ### Using a custom domain or Hostinger
 

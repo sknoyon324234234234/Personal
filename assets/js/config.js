@@ -15,12 +15,12 @@ window.XIRAIYA_CONFIG = {
   available: true,                 // shows the green "Available for work" status
 
   // Public URL of the site (used for share links). Change it if you use a custom domain.
-  siteUrl: 'https://sknoyon324234234234.github.io/Personal/',
+  siteUrl: 'https://xiraiya.shop/',
 
   // ---- CONTACT (replace the placeholders with your real handles) -------------
   contact: {
     email: 'your-email@example.com',       // e.g. 'hello@yourdomain.com'
-    telegram: 'your_telegram_username',   // username without @
+    telegram: 'TheMysteriousGhost',       // username without @
     whatsapp: '',                          // full number with country code, digits only, e.g. '8801XXXXXXXXX'
     github: '',                            // e.g. 'https://github.com/yourname'
     linkedin: '',                          // e.g. 'https://linkedin.com/in/yourname'

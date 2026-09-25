@@ -1,6 +1,6 @@
-# Xiraiya — https://sknoyon324234234234.github.io/Personal/
+# Xiraiya — https://xiraiya.shop/
 User-agent: *
 Allow: /
-Disallow: /Personal/tools/
+Disallow: /tools/
 
-Sitemap: https://sknoyon324234234234.github.io/Personal/sitemap.xml
+Sitemap: https://xiraiya.shop/sitemap.xml
