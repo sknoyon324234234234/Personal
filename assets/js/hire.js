@@ -37,6 +37,9 @@
   S.forEach(function (s) { byId[s.id] = s; });
   var q = new URLSearchParams(location.search).get('service');
   if (q) q.split(',').forEach(function (id) { if (byId[id] && state.svc.indexOf(id) < 0) state.svc.push(id); });
+  /* a wish written on the Lab's wish wall arrives as the project description */
+  var wish = XR.store('xr-wish-brief'), descEl = document.getElementById('h-desc');
+  if (wish) { XR.store('xr-wish-brief', null); if (descEl && !descEl.value) descEl.value = wish; }
 
   $$('[data-pack]').forEach(function (b) {
     b.addEventListener('click', function () {

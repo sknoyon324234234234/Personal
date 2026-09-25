@@ -72,9 +72,9 @@
       "path": "showcase.html",
       "name": "The Lab",
       "title": "The Lab — Live Demos of Websites, Bots & AI Agents | Xiraiya",
-      "description": "Try it live: a Telegram shop bot, automation workflows, a Chrome extension, a Minecraft world, AI agents, crypto checkout and a 30-piece motion gallery.",
+      "description": "Try it live: automation workflows, a Chrome extension, a playable Minecraft world, an AI chat, before-and-after site makeovers and a 28-piece motion gallery.",
       "ogTitle": "The Lab — 11 live, clickable demos | Xiraiya",
-      "ogDescription": "Websites, automation, Telegram bots, Chrome extensions, Minecraft plugins, EXE & APK apps, AI agents, AI chat and crypto payments — all running in your browser.",
+      "ogDescription": "Websites, automation, Chrome extensions, Minecraft plugins, EXE & APK apps, AI chat, site makeovers and a wish wall — all running in your browser.",
       "keywords": "",
       "type": "CollectionPage",
       "priority": "0.9",
@@ -86,7 +86,7 @@
         "color": "#b8321f",
         "kicker": "The Lab · 実験室",
         "title": "Working demos, *not screenshots.*",
-        "subtitle": "Websites, bots, extensions, apps, AI agents and a 30-piece motion gallery.",
+        "subtitle": "Websites, bots, extensions, apps, AI agents and a 28-piece motion gallery.",
         "tags": "3D gallery|Telegram bot|AI agent|Crypto checkout",
         "jp": "技"
       }

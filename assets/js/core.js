@@ -500,7 +500,7 @@
      hover / focus. Facts come from tools/seo.config.json. */
   var MENU_INFO = {
     home: { tags: 'Websites|Telegram bots|AI agents|Shops', ic: 'home', n: 5, post: '+', what: 'years building', d: 'Start here. Who I am, what I build and roughly what it costs.' },
-    lab: { tags: '3D gallery|Telegram bot|AI agent|Crypto checkout', ic: 'sparkle', n: 30, what: 'motion pieces', d: 'Demos you can actually use: a shop bot, AI agents, a Chrome extension, a Minecraft world.' },
+    lab: { tags: '3D gallery|Minecraft|Makeovers|Wish wall', ic: 'sparkle', n: 28, what: 'motion pieces', d: 'Demos you can actually use: a Chrome extension, a Minecraft world, before-and-after site makeovers.' },
     shop: { tags: 'Cart|Admin panel|AI agent|bKash · USDT', ic: 'cart', n: 12, what: 'store templates', d: 'Working stores with cart, admin panel and bKash, card or USDT checkout.' },
     kit: { tags: 'Buttons|Cards|Forms|Motion', ic: 'layers', n: 50, what: 'components', d: 'Headers, buttons, cards, forms and loaders. Restyle them, then copy the HTML and CSS.' },
     demos: { tags: 'SaaS|Restaurant|Fashion|Dashboard', ic: 'monitor', n: 15, what: 'full demo sites', d: 'A SaaS, a restaurant, a jeweller, a crypto dashboard and more, on every screen size.' },
@@ -1169,17 +1169,16 @@
     { id: 'world-terminal', label: 'Run a command in the village terminal', xp: 20 },
     { id: 'world-tool', label: 'Use a tool in the Dev Toolbox', xp: 20 },
     { id: 'world-passport', label: 'Collect all 7 village stamps', xp: 50 },
-    { id: 'stage-web', label: 'Try the live website preview', xp: 20 },
-    { id: 'stage-automation', label: 'Run the automation workflow', xp: 20 },
-    { id: 'stage-telegram', label: 'Chat with the Telegram bot', xp: 20 },
-    { id: 'stage-extension', label: 'Use the Chrome extension', xp: 20 },
-    { id: 'stage-minecraft', label: 'Play BlockRealm survival', xp: 30 },
-    { id: 'stage-desktop', label: 'Install the desktop app', xp: 20 },
-    { id: 'stage-mobile', label: 'Tap around the Android app', xp: 20 },
-    { id: 'stage-agent', label: 'Give the AI agent a goal', xp: 20 },
-    { id: 'stage-chat', label: 'Talk to the AI support chat', xp: 20 },
-    { id: 'stage-ecommerce', label: 'Watch the store autopilot', xp: 20 },
-    { id: 'stage-crypto', label: 'Pay the crypto invoice', xp: 20 },
+    { id: 'stage-web', label: 'Open a site on the folding screen', xp: 20 },
+    { id: 'stage-automation', label: 'Turn the karakuri crank', xp: 20 },
+    { id: 'stage-extension', label: 'Stamp a page with the seal box', xp: 20 },
+    { id: 'stage-minecraft', label: 'Build in the block garden', xp: 30 },
+    { id: 'stage-desktop', label: 'Open the puzzle-box installer', xp: 20 },
+    { id: 'stage-mobile', label: 'Book a class on the paper phone', xp: 20 },
+    { id: 'stage-chat', label: 'Ask the toad sage a question', xp: 20 },
+    { id: 'stage-makeover', label: 'Drag an old site into a fast one', xp: 20 },
+    { id: 'stage-scroll', label: 'Unroll the project scroll', xp: 20 },
+    { id: 'stage-wishes', label: 'Hang a wish on the wish wall', xp: 20 },
     { id: 'learn', label: 'Open a Basic Knowledge lesson', xp: 20 },
     { id: 'wing', label: 'Open a Motion Wing exhibit full screen', xp: 20 },
     { id: 'palette', label: 'Open the Command Center', xp: 10 },
@@ -1214,15 +1213,21 @@
   function paletteItems() {
     var items = [];
     NAV.forEach(function (n) { items.push({ g: 'Pages', t: n.label, s: n.jp, ic: n.id === 'hire' ? 'briefcase' : n.id === 'shop' ? 'cart' : n.id === 'lab' ? 'sparkle' : n.id === 'kit' ? 'layers' : n.id === 'demos' ? 'monitor' : n.id === 'pages' ? 'window' : n.id === 'world' ? 'terminal' : n.id === 'learn' ? 'book' : 'home', href: n.href }); });
-    SERVICES.forEach(function (sv) { items.push({ g: 'Live demos in the Lab', t: sv.name, s: 'from ' + fmtPrice(sv.priceFrom), ic: sv.icon, href: 'showcase.html#' + sv.id }); });
+    /* services without a Lab chapter of their own open the brief form instead */
+    var inLab = ['web', 'automation', 'extension', 'minecraft', 'desktop', 'mobile', 'ai-chat'];
+    SERVICES.forEach(function (sv) {
+      var lab = inLab.indexOf(sv.id) > -1;
+      items.push({ g: lab ? 'Live demos in the Lab' : 'Services', t: sv.name, s: 'from ' + fmtPrice(sv.priceFrom), ic: sv.icon, href: lab ? 'showcase.html#' + sv.id : 'hire.html?service=' + sv.id });
+    });
     [['Aurèle', 'Fine jewellery atelier', 'aurele'], ['Nordhem', 'Furniture and sofa builder', 'nordhem'], ['Halide', 'Film cameras and lab', 'halide'], ['Kage Build', 'Gaming PC configurator', 'kage'], ['Stride', 'Sneaker drops and raffle', 'stride'], ['Nova AI', 'SaaS landing page', 'nova-saas'], ['Sakura Bistro', 'Restaurant', 'sakura-bistro'], ['Vault', 'Crypto dashboard', 'vault-dashboard'], ['BlockRealm', 'Minecraft server site', 'blockrealm'], ['Pulse', 'App landing page', 'pulse-app'], ['Mori Tea', 'Tea shop', 'mori-tea'], ['Haven', 'Architecture and homes', 'haven'], ['Ledger', 'Banking dashboard', 'ledger'], ['Nomad', 'Travel booking', 'nomad'], ['Kumo Docs', 'Developer docs', 'devdocs']].forEach(function (d) {
       items.push({ g: 'Demo websites', t: d[0], s: d[1], ic: 'window', href: 'demos/' + d[2] + '.html' });
     });
     items.push(
-      { g: 'Actions', t: 'Play BlockRealm (Minecraft survival)', s: 'Mine, craft, fight zombies', ic: 'cube', href: 'showcase.html#minecraft' },
+      { g: 'Actions', t: 'Build in the block garden', s: 'Minecraft plugins you can switch on', ic: 'cube', href: 'showcase.html#minecraft' },
       { g: 'Actions', t: 'Get a price estimate', s: '60-second configurator', ic: 'sliders', href: 'hire.html#configure' },
       { g: 'Actions', t: 'Start a project', s: 'Send a brief', ic: 'rocket', href: 'hire.html' },
-      { g: 'Actions', t: 'Pay with crypto (demo)', s: 'Auto-confirming checkout', ic: 'btc', href: 'showcase.html#crypto' },
+      { g: 'Actions', t: 'Before and after: site makeovers', s: 'Drag an old site into a fast one', ic: 'wand', href: 'showcase.html#makeover' },
+      { g: 'Actions', t: 'Hang a wish on the wish wall', s: 'See how I would build it', ic: 'pen', href: 'showcase.html#wishes' },
       { g: 'Actions', t: 'Shop with the AI assistant', s: 'Store demo', ic: 'bag', href: 'shop.html' }
     );
     var c = (C.contact || {});

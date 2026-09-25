@@ -1,5 +1,5 @@
 /* XIRAIYA — The Lab, Part II: the Motion Wing (動の間).
-   Thirty small interactive experiments in motion, 3D, type and feel.
+   Twenty-eight small interactive experiments in motion, 3D, type and feel.
    Each exhibit mounts when its card is on screen and is torn down when it leaves. */
 (function () {
   'use strict';
@@ -208,32 +208,6 @@
       });
     } });
 
-  /* 18 — Split-flap board: an airport departures sign */
-  add({ id: 'flap', t: 'Split-flap board', jp: '札', tag: 'type', size: 'l', hint: 'Every letter flips through the alphabet to reach its message.',
-    run: function (k, el) {
-      var COLS = el.clientWidth < 520 ? 14 : 22, ROWS = 4, CH = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:$-.';
-      var MSG = [['WEBSITE', 'DHAKA', 'ON TIME'], ['TELEGRAM BOT', 'RAJSHAHI', 'BOARDING'], ['AI AGENT', 'TOKYO', 'DEPARTED'], ['ONLINE SHOP', 'LONDON', 'ON TIME'], ['CHROME EXT', 'BERLIN', 'DELAYED'], ['MC PLUGIN', 'TORONTO', 'BOARDING'], ['CRYPTO PAY', 'DUBAI', 'ON TIME'], ['LANDING $50', 'EVERYWHERE', 'NOW']];
-      el.innerHTML = '<div class="fp-board"><div class="fp-head"><span>' + icon('send') + ' DEPARTURES</span><span class="fp-clock"></span></div><div class="fp-rows"></div></div>';
-      var rows = $('.fp-rows', el), cells = [];
-      for (var r = 0; r < ROWS; r++) { var row = document.createElement('div'); row.className = 'fp-row'; for (var c = 0; c < COLS; c++) { var s = document.createElement('span'); s.className = 'fp-c'; s.innerHTML = '<b> </b>'; row.appendChild(s); cells.push({ s: s, b: s.firstChild, cur: 0, to: 0 }); } rows.appendChild(row); }
-      function line(m) { var a = m[0], b = m[1], st = m[2], w = COLS; if (w < 20) return (a.slice(0, 11) + '           ').slice(0, 11) + ' ' + st.slice(0, 2); return (a + '              ').slice(0, 13) + (b + '          ').slice(0, w - 13); }
-      var off = 0;
-      function show() {
-        for (var r = 0; r < ROWS; r++) { var txt = line(MSG[(off + r) % MSG.length]); for (var c = 0; c < COLS; c++) { var ch = (txt[c] || ' ').toUpperCase(), i = CH.indexOf(ch); cells[r * COLS + c].to = i < 0 ? 0 : i; } }
-        off++;
-      }
-      show();
-      k.every(show, 5200);
-      k.every(function () { $('.fp-clock', el).textContent = new Date().toTimeString().slice(0, 5); }, 1000);
-      k.every(function () {
-        cells.forEach(function (c) {
-          if (c.cur === c.to) return;
-          c.cur = (c.cur + 1) % CH.length; c.b.textContent = CH[c.cur];
-          c.s.classList.remove('flip'); void c.s.offsetWidth; c.s.classList.add('flip');
-        });
-      }, 55);
-    } });
-
   /* 19 — Text scramble: headlines decode like a terminal */
   add({ id: 'scramble', t: 'Decode text', jp: '暗', tag: 'type', size: 's', hint: 'Hover a line to scramble it again.',
     run: function (k, el) {
@@ -340,10 +314,10 @@
   document.addEventListener('DOMContentLoaded', build);
 
   /* the curated set, in display order */
-  var ORDER = ['coverflow', 'glass', 'u-cmdk', 'c-globe', 'u-dash', 'particles', 'o-phone', 'magnet', 'swipe', 'u-kanban', 'c-galaxy', 'dock', 'flap', 'u-bento', 'o-pricing', 'ink', 'scramble', 'u-notif', 'u-compare', 'goo', 'o-laptop', 'story', 'u-lens', 't-marquee', 'u-sheet', 'p-flow', 'u-stepper', 'daynight', 'panels', 'u-magnetic'];
+  var ORDER = ['coverflow', 'glass', 'u-cmdk', 'c-globe', 'u-dash', 'particles', 'o-phone', 'magnet', 'swipe', 'u-kanban', 'dock', 'u-bento', 'o-pricing', 'ink', 'scramble', 'u-notif', 'u-compare', 'goo', 'o-laptop', 'story', 'u-lens', 't-marquee', 'u-sheet', 'p-flow', 'u-stepper', 'daynight', 'panels', 'u-magnetic'];
 
   function build() {
-  var LARGE = ['coverflow', 'c-globe', 'u-dash', 'u-kanban', 'flap', 'u-bento', 'u-compare', 't-marquee', 'panels'];
+  var LARGE = ['coverflow', 'c-globe', 'u-dash', 'u-kanban', 'u-bento', 'u-compare', 't-marquee', 'panels'];
   EX.forEach(function (x) { x.size = LARGE.indexOf(x.id) > -1 ? 'l' : 's'; });
   EX = EX.filter(function (x) { return ORDER.indexOf(x.id) > -1; }).sort(function (a, b) { return ORDER.indexOf(a.id) - ORDER.indexOf(b.id); });
   var root = document.getElementById('wing');

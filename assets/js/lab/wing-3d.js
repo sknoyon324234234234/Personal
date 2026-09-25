@@ -1,4 +1,4 @@
-/* XIRAIYA — Motion Wing: 3D point-cloud engine, the live connections globe and the spiral galaxy. */
+/* XIRAIYA — Motion Wing: 3D point-cloud engine and the live connections globe. */
 (function () {
   'use strict';
   var W = window.XRWING, XR = window.XR;
@@ -76,14 +76,5 @@
         g.fillStyle = 'rgba(255,255,255,.9)'; g.font = '700 12px "JetBrains Mono", monospace'; g.fillText('● LIVE ORDERS', 16, 24);
         g.font = '500 11px "JetBrains Mono", monospace'; feed.forEach(function (f, i) { g.fillStyle = 'rgba(200,215,255,' + (.8 - i * .22) + ')'; g.fillText(f, 16, 44 + i * 16); });
       }
-    }) });
-
-  /* Spiral galaxy: stars on four arms; inner stars orbit faster */
-  add({ id: 'c-galaxy', t: 'Spiral galaxy', jp: '銀', tag: '3d', size: 's', kw: 'space stars galaxy', hint: 'Three thousand stars on four arms. Drag to tilt the galaxy.',
-    run: cloud({
-      bg: '#04030a', tilt: -.9, spin: .05, scale: .46, noSort: true,
-      gen: function () { var o = []; for (var i = 0; i < 3000; i++) { var arm = i % 4, r = Math.pow(Math.random(), .6), a = arm * 1.5708 + r * 5 + (Math.random() - .5) * .5; o.push([Math.cos(a) * r, (Math.random() - .5) * .08 * (1 - r), Math.sin(a) * r, r < .15 ? 40 : 200 + r * 80, r < .15 ? 1.4 : .8, r, a]); } return o; },
-      anim: function (P, T, dt) { P.forEach(function (q) { q[6] += dt * (.5 / (q[5] + .2)) * .3; q[0] = Math.cos(q[6]) * q[5]; q[2] = Math.sin(q[6]) * q[5]; }); },
-      color: function (q) { return q[3] === 40 ? '#ffe2a8' : 'hsl(' + q[3] + ',70%,72%)'; }
     }) });
 })();

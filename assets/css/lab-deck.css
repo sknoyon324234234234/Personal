@@ -236,9 +236,9 @@
 .lab-tiers li i { flex: 1; border-bottom: 1.5px dotted var(--line-2); transform: translateY(-3px); min-width: 10px; }
 .lab-tiers li b { color: var(--ac); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-/* gold chapters (extension, e-commerce, crypto): white on gold is ~3:1,
+/* gold chapters (extension, wish wall): white on gold is ~3:1,
    so their CTA label switches to sumi ink (~5.5:1) */
-:is(#extension, #ecommerce, #crypto).lab-sec :is(.lab-ctas, .lab-row) .btn-primary { color: #1d1208; }
+:is(#extension, #wishes).lab-sec :is(.lab-ctas, .lab-row) .btn-primary { color: #1d1208; }
 
 /* phones: keep price, tiers and buttons together, in that order.
    (phone.css orders .lab-price / .lab-row but not the tiers deck.js adds) */
@@ -249,9 +249,7 @@
   body[data-page="lab"] .lab-row > .lab-tiers { flex-basis: 100%; }
   /* 44px tap targets (phone.css stops at 40px) */
   body[data-page="lab"] .wg-f button,
-  body[data-page="lab"] .lab-nav-inner a,
-  body[data-page="lab"] .br-tabs button,
-  body[data-page="lab"] .seg button { min-height: 44px; height: auto; }
+  body[data-page="lab"] .lab-nav-inner a { min-height: 44px; height: auto; }
   body[data-page="lab"] .lw-btn { height: 44px; }
   body[data-page="lab"] .wg-sb { height: 48px; }
   body[data-page="lab"] .lh-ctas .btn { flex: 1 1 100%; justify-content: center; }

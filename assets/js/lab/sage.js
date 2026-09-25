@@ -1,7 +1,8 @@
-/* Lab stage 09 — AI support chat widget with Bangla/English, order tracking, human handoff + live designer */
+/* Lab stage 07 — the toad sage: a support chat whose answers arrive in brush ink, in English or Bangla */
 (function () {
   'use strict';
   var XR = window.XR, LAB = window.LAB;
+
 
   var T = {
     en: {
@@ -51,99 +52,94 @@
     return null;
   }
 
-  LAB.register('chat', function (stage) {
-    var site = XR.$('.cs-site', stage), cw = XR.$('.cw', stage), box = XR.$('.cw-box', stage), launch = XR.$('.cw-launch', stage);
-    var msgs = XR.$('.cw-msgs', stage), sugg = XR.$('.cw-sugg', stage), form = XR.$('.cw-input', stage), input = XR.$('input', form);
-    var badge = XR.$('.cw-badge', stage), langBtn = XR.$('.cw-lang', stage), nameEl = XR.$('.cw-name', stage), nameInput = XR.$('#cw-botname', stage);
-    var lang = 'en', awaitingOrder = false, human = false, greeted = false, queue = Promise.resolve();
+  var NAME = 'Gama, the shop’s toad sage';
+  var STRIP = ['#f2d9c7', '#cfe0d8', '#f3e3b0', '#dcd3ee'];
 
-    function botName() { return nameInput.value.trim() || 'Assistant'; }
-    function add(text, who) {
-      var m = document.createElement('div');
-      m.className = 'cw-m ' + who;
-      m.textContent = text;
-      msgs.appendChild(m); msgs.scrollTop = msgs.scrollHeight;
+  LAB.register('chat', function (stage) {
+    var log = XR.$('.ts-log', stage), sugg = XR.$('.ts-sugg', stage), form = XR.$('.ts-ask', stage), input = XR.$('input', form), strips = XR.$('.ts-strips', stage);
+    var lang = 'en', waiting = false, human = false, queue = Promise.resolve(), n = 0;
+
+    function scroll() { log.scrollTop = log.scrollHeight; }
+    function li(cls, html) {
+      var el = document.createElement('li');
+      el.className = cls;
+      el.innerHTML = html;
+      log.appendChild(el);
+      while (log.children.length > 40) log.removeChild(log.firstChild);
+      scroll();
+      return el;
     }
-    function reply(text, who, delay) {
+    /* each word arrives like a fresh brush stroke */
+    function ink(text) {
+      var i = 0;
+      return XR.esc(text).split(/(\s+)/).map(function (w) {
+        if (!w.trim()) return w;
+        return '<span class="ts-w" style="animation-delay:' + Math.min(i++ * 38, 2200) + 'ms">' + w + '</span>';
+      }).join('');
+    }
+    function answer(text, who) {
       queue = queue.then(function () {
-        var t = document.createElement('div');
-        t.className = 'cw-typing'; t.innerHTML = '<i></i><i></i><i></i>';
-        msgs.appendChild(t); msgs.scrollTop = msgs.scrollHeight;
-        return LAB.sleep(XR.reduce ? 0 : (delay || 700)).then(function () { t.remove(); add(text, who || 'bot'); });
+        stage.classList.add('is-thinking');
+        var dots = li('ts-a', '<span class="cr-mini">' + (who ? '人' : '仙') + '</span><span class="ts-dots"><i></i><i></i><i></i></span>');
+        return LAB.sleep(XR.reduce ? 0 : 650 + Math.min(900, text.length * 6)).then(function () {
+          dots.remove();
+          stage.classList.remove('is-thinking');
+          li('ts-a' + (who ? ' is-human' : ''), '<span class="cr-mini">' + (who ? '人' : '仙') + '</span><p>' + ink(text) + '</p>');
+        });
       });
       return queue;
     }
-    function renderSugg() {
-      sugg.innerHTML = '';
-      T[lang].sugg.forEach(function (s) {
-        var b = document.createElement('button');
-        b.type = 'button'; b.textContent = s[0];
-        b.addEventListener('click', function () { add(s[0], 'me'); answer(s[1]); });
-        sugg.appendChild(b);
-      });
-      input.placeholder = T[lang].placeholder;
-      langBtn.textContent = T[lang].langBtn;
+    function hang(text) {
+      var s = document.createElement('span');
+      s.className = 'ts-strip';
+      s.textContent = text.length > 22 ? text.slice(0, 21) + '…' : text;
+      s.style.setProperty('--c', STRIP[n % STRIP.length]);
+      s.style.setProperty('--r', ((n % 3) - 1) * 3 + 'deg');
+      strips.appendChild(s);
+      while (strips.children.length > 4) strips.removeChild(strips.firstChild);
+      n++;
     }
-    function answer(key, raw) {
+    function ask(text) {
+      text = text.trim();
+      if (!text) return;
+      hang(text);
+      li('ts-q', XR.esc(text)).style.setProperty('--c', STRIP[(n - 1) % STRIP.length]);
       var L = T[lang];
-      if (awaitingOrder && raw && /\d{3,}/.test(raw)) {
-        awaitingOrder = false;
-        return reply(L.tracked.replace(/\{id\}/g, raw.match(/\d{3,}/)[0]));
+      if (waiting) {
+        var m = text.match(/\d{3,6}/);
+        if (m) { waiting = false; answer(L.tracked.replace(/\{id\}/g, m[0])); return; }
       }
-      if (key === 'track') awaitingOrder = true;
-      if (key === 'human') {
-        if (human) return reply(L.humanMsg, 'bot human');
-        human = true;
-        reply(L.human);
-        queue = queue.then(function () { return LAB.sleep(900); }).then(function () { add(L.joined, 'sys'); });
-        return reply(L.humanMsg, 'bot human', 1200);
+      var k = intent(text);
+      if (k === 'track') { waiting = true; answer(L.track); return; }
+      if (k === 'human') {
+        answer(L.human).then(function () {
+          if (human) return;
+          human = true;
+          li('ts-sys', XR.esc(L.joined));
+          return answer(L.humanMsg, true);
+        });
+        return;
       }
-      if (key === 'greet') return reply(L.greet.replace('{name}', botName()));
-      if (key && L[key]) return reply(L[key]);
-      return reply(L.fallback);
+      if (k === 'greet') { answer(L.greet.replace('{name}', NAME)); return; }
+      answer(k ? L[k] : L.fallback);
     }
-    function open(v) {
-      box.hidden = !v;
-      launch.setAttribute('aria-label', v ? 'Close chat' : 'Open chat');
-      if (v) {
-        badge.hidden = true;
-        if (!greeted) { greeted = true; reply(T[lang].greet.replace('{name}', botName()), 'bot', 500); }
-        setTimeout(function () { if (XR.fine) input.focus({ preventScroll: true }); }, 300);
-      }
+    function paintSugg() {
+      sugg.innerHTML = T[lang].sugg.map(function (s) { return '<button type="button">' + XR.esc(s[0]) + '</button>'; }).join('');
+      input.placeholder = lang === 'bn' ? T.bn.placeholder : 'Ask the sage…';
     }
-    launch.addEventListener('click', function () { open(box.hidden); });
-    XR.$('.cw-x', stage).addEventListener('click', function () { open(false); });
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var v = input.value.trim(); if (!v) return;
-      input.value = '';
-      add(v, 'me');
-      answer(intent(v), v);
-    });
-    langBtn.addEventListener('click', function () {
-      lang = lang === 'en' ? 'bn' : 'en';
-      add(T[lang].switched, 'sys');
-      renderSugg();
-      reply(T[lang].greet.replace('{name}', botName()));
-    });
-
-    // designer
-    XR.$$('.swatches button', stage).forEach(function (b) {
+    sugg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) ask(b.textContent); });
+    form.addEventListener('submit', function (e) { e.preventDefault(); var v = input.value; input.value = ''; ask(v); });
+    XR.$$('[data-lang]', stage).forEach(function (b) {
       b.addEventListener('click', function () {
-        XR.$$('.swatches button', stage).forEach(function (x) { x.setAttribute('aria-checked', x === b); });
-        site.style.setProperty('--cw', b.getAttribute('data-color'));
+        if (b.getAttribute('data-lang') === lang) return;
+        lang = b.getAttribute('data-lang');
+        XR.$$('[data-lang]', stage).forEach(function (x) { x.setAttribute('aria-checked', x === b); });
+        li('ts-sys', XR.esc(T[lang].switched));
+        paintSugg();
+        answer(T[lang].greet.replace('{name}', lang === 'bn' ? 'গামা' : NAME));
       });
     });
-    nameInput.addEventListener('input', function () { nameEl.textContent = botName(); });
-    XR.$$('[data-pos]', stage).forEach(function (b) {
-      if (b.classList.contains('cw')) return;
-      b.addEventListener('click', function () {
-        XR.$$('.cs-custom [data-pos]', stage).forEach(function (x) { x.setAttribute('aria-checked', x === b); });
-        cw.setAttribute('data-pos', b.getAttribute('data-pos'));
-      });
-    });
-
-    renderSugg();
-    setTimeout(function () { open(true); }, XR.reduce ? 0 : 1400);
+    paintSugg();
+    li('ts-a', '<span class="cr-mini">仙</span><p>' + ink(T.en.greet.replace('{name}', NAME)) + '</p>');
   });
 })();

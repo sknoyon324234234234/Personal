@@ -12,7 +12,7 @@
   var SEALS = [
     { id: 'home-1', page: 'home', k: '闇', name: 'The dark room', href: 'index.html#mystery', riddle: 'Where the lantern reaches last, something glints.', x: 12, y: 70 },
     { id: 'home-2', page: 'home', k: '扉', name: 'The sealed door', href: 'index.html#mystery', riddle: 'Behind three seals: storm, flame and moon.', x: 25, y: 38 },
-    { id: 'lab', page: 'lab', k: '貨', name: 'The Lab · Crypto', href: 'showcase.html#crypto', sel: '#crypto .lab-info', riddle: 'Eleven systems stand in a row. The last one pays in coins.', x: 40, y: 62 },
+    { id: 'lab', page: 'lab', k: '願', name: 'The Lab · Wish wall', href: 'showcase.html#wishes', sel: '#wishes .lab-info', riddle: 'Ten chapters stand in a row. The last one hangs wishes on wood.', x: 40, y: 62 },
     { id: 'kit', page: 'kit', k: '動', name: 'UI Kit · Motion', href: 'components.html#motion', sel: '#motion .kx-head', riddle: 'Where easing can be felt, look above the curve.', x: 52, y: 26 },
     { id: 'shop', page: 'shop', k: '店', name: 'Shop · the last word', href: 'shop.html', sel: '.shop-cta .section-head', riddle: 'After twelve stores, someone asks: want one like this?', x: 63, y: 70 },
     { id: 'demos', page: 'demos', k: '演', name: 'Demo sites · Built right', href: 'demos.html', sel: '.dm-inc .section-head', riddle: 'Not just pretty. Look where it is built right.', x: 72, y: 40 },

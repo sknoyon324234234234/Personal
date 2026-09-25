@@ -1,6 +1,6 @@
 /* =====================================================================
    XIRAIYA — The Lab: control deck
-   Everything around the eleven live stages: the contents page in the
+   Everything around the ten live stages: the contents page in the
    hero, a chapter sidebar with progress, a window frame on
    every stage with a fullscreen focus mode, J/K/F shortcuts, and the
    "build your combo" price calculator at the end. The stages themselves
@@ -13,11 +13,10 @@
   var $ = XR.$, $$ = XR.$$, doc = document, root = doc.documentElement;
   var CH = [
     ['web', 'web', 'globe', 'Websites'], ['automation', 'automation', 'flow', 'Automation'],
-    ['telegram', 'telegram', 'send', 'Telegram Bots'], ['extension', 'extension', 'puzzle', 'Chrome Extensions'],
-    ['minecraft', 'minecraft', 'cube', 'Minecraft Plugins'], ['desktop', 'desktop', 'window', 'Desktop EXE'],
-    ['mobile', 'mobile', 'phone', 'Mobile APK'], ['ai-agent', 'agent', 'chip', 'AI Agents'],
-    ['ai-chat', 'chat', 'chat', 'AI Chat'], ['ecommerce', 'ecommerce', 'bag', 'E-commerce'],
-    ['crypto', 'crypto', 'btc', 'Crypto Payments']
+    ['extension', 'extension', 'puzzle', 'Chrome Extensions'], ['minecraft', 'minecraft', 'cube', 'Minecraft Plugins'],
+    ['desktop', 'desktop', 'window', 'Desktop EXE'], ['mobile', 'mobile', 'phone', 'Mobile APK'],
+    ['ai-chat', 'chat', 'chat', 'AI Chat'], ['makeover', 'makeover', 'wand', 'Site Makeovers'],
+    ['scroll', 'scroll', 'book', 'The Project Scroll'], ['wishes', 'wishes', 'pen', 'The Wish Wall']
   ].map(function (c, i) { return { id: c[0], stage: c[1], icon: c[2], name: c[3], n: i + 1 }; });
   var wide = window.matchMedia('(min-width: 1180px)');
 
@@ -37,7 +36,7 @@
     if (n === CH.length && !celebrated && XR.store('xr-lab-all') !== 1) {
       celebrated = true;
       XR.store('xr-lab-all', 1);
-      XR.toast('You tried all 11 demos. That is the whole Lab.');
+      XR.toast('You tried all ' + CH.length + ' demos. That is the whole Lab.');
     }
   }
 
@@ -52,7 +51,7 @@
     side.setAttribute('aria-label', 'Lab chapters');
     side.innerHTML =
       '<div class="ls-head"><div class="ls-ring" aria-hidden="true"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19"/><circle class="ls-arc" cx="22" cy="22" r="19" pathLength="100"/></svg><b data-lab-done>0</b></div>' +
-      '<div><b>Demos tried</b><small><span data-lab-done>0</span> of 11 · tap any demo</small></div></div>' +
+      '<div><b>Demos tried</b><small><span data-lab-done>0</span> of ' + CH.length + ' · tap any demo</small></div></div>' +
       '<ol class="ls-list">' + CH.map(function (c) {
         return '<li><a href="#' + c.id + '" data-ch="' + c.id + '"><span class="ls-n">' + String(c.n).padStart(2, '0') + '</span><span class="ls-name">' + c.name + '</span><i class="ls-ok" aria-hidden="true">' + XR.icon('check') + '</i></a></li>';
       }).join('') + '</ol>' +
@@ -189,17 +188,16 @@
 
   /* ---------- chapter dress: accent colour and a margin note under each stage ---------- */
   var DRESS = {
-    web: ['#c4321d', 'switch between the demo sites, try the phone size, then scroll inside the preview.'],
-    automation: ['#2c6f65', 'drag a node somewhere else, press Run and read the log as it fills.'],
-    telegram: ['#2f6fe0', 'type /help, buy something from the catalog and watch the admin panel.'],
-    extension: ['#b7862a', 'flip the popup switches and change the highlight words. The page reacts at once.'],
-    minecraft: ['#4d7424', 'click the world, punch a tree, then type /kit in the chat.'],
-    desktop: ['#5f4f95', 'run the installer, open the app it installs and drag its window around.'],
-    mobile: ['#a4473a', 'tap the bottom tabs, open a product and scroll the feed.'],
-    'ai-agent': ['#5f4f95', 'pick a goal, switch one tool off, then press Run and watch the plan change.'],
-    'ai-chat': ['#c4321d', 'ask about delivery, switch to বাংলা, then change the widget colour.'],
-    ecommerce: ['#b7862a', 'do nothing for a minute. Orders, restocks and price changes arrive on their own.'],
-    crypto: ['#d9a441', 'pick a coin, press Simulate payment and read the webhook log.']
+    web: ['#c4321d', 'pick a panel on the screen, then switch the preview to phone size.'],
+    automation: ['#2c6f65', 'flip the Email lever off, turn the crank and read the paper tape.'],
+    extension: ['#b7862a', 'press 光 and 訳 together, then change the words to highlight.'],
+    minecraft: ['#4d7424', 'raise the 経 and 店 banners, type /kit, then hang a lantern.'],
+    desktop: ['#5f4f95', 'push the glowing panel, install, then take the update the app offers.'],
+    mobile: ['#a4473a', 'book tonight’s class, flip the membership card, then log a training day.'],
+    'ai-chat': ['#c4321d', 'ask to track order 4821, switch to বাংলা, then ask for a human.'],
+    makeover: ['#2c6f65', 'drag the red seal all the way across, then switch to another shop.'],
+    scroll: ['#c4321d', 'drag the paper sideways and watch each seal stamp itself as you pass.'],
+    wishes: ['#b7862a', 'turn a plaque over, then write your own wish and hang it on the rack.']
   };
   var ARROW = '<svg class="arr" viewBox="0 0 44 34" aria-hidden="true"><path d="M4 31c9-2 19-9 25-24"/><path d="M22 10l7-4 3 8"/></svg>';
   function tiers() {

@@ -7,7 +7,7 @@ Services (USD): Websites & Web Apps $50–500; Automation Tools $40–300; Teleg
 ## Pages
 
 - [Home](https://xiraiya.shop/): Full-stack developer from Rajshahi, Bangladesh. Websites, online shops, Telegram bots, automation and AI agents, with live demos and fixed prices from $50.
-- [The Lab](https://xiraiya.shop/showcase.html): Try it live: a Telegram shop bot, automation workflows, a Chrome extension, a Minecraft world, AI agents, crypto checkout and a 30-piece motion gallery.
+- [The Lab](https://xiraiya.shop/showcase.html): Try it live: automation workflows, a Chrome extension, a playable Minecraft world, an AI chat, before-and-after site makeovers and a 28-piece motion gallery.
 - [Shop Templates](https://xiraiya.shop/shop.html): Twelve working online store templates for fashion, beauty, jewellery and tech, with cart, admin panel, AI shopping agent and bKash, card and USDT payments.
 - [UI Kit](https://xiraiya.shop/components.html): Fifty live UI components you can restyle: headers, navigation, heroes, buttons, cards, forms, footers and loaders, with copy-ready HTML and CSS.
 - [Demo Sites](https://xiraiya.shop/demos.html): Fifteen complete demo websites: SaaS, restaurant, jewellery, furniture, film cameras, crypto dashboard, Minecraft server and more, on every device size.
