@@ -1,13 +1,200 @@
-/* XIRAIYA — manga sections: comic page reveal and the boss battle */
+/* XIRAIYA — manga sections: the chapter reader and the boss battle */
 (function () {
   'use strict';
   var XR = window.XR;
   if (!XR) return;
   var $ = XR.$, $$ = XR.$$;
 
-  /* comic page: panels ink in when the page scrolls into view */
-  var page = $('.mg-page');
-  if (page) XR.whenVisible(page, function () { page.classList.add('in'); }, '-20% 0px');
+  /* comic reader: three chapters, panel-by-panel reveal, typed bubbles,
+     scroll-driven camera, chapter tabs with a page turn */
+  var reader = $('.mg-reader');
+  if (reader) initReader(reader);
+
+  function initReader(root) {
+    var RM = XR.reduce;
+    var pages = $$('.mg-page', root), tabs = $$('.mg-tab', root), tabsWrap = $('.mg-tabs', root);
+    var book = $('.mg-book', root), brush = $('.mg-brush', root);
+    var countB = $('.mg-count b', root), countT = $('.mg-count', root), track = $('.mg-track i', root);
+    var prevB = $('[data-go="-1"]', root), nextB = $('[data-go="1"]', root), endP = $('.mg-end', root);
+    var names = tabs.map(function (t) { return $('b', t).textContent; });
+    var cur = 0, turning = false, onScreen = [], ticking = false, lastCount = -1;
+    if (!pages.length || pages.length !== tabs.length) return;
+
+    root.classList.add('mg-live');
+    pages.forEach(function (p, i) { p.hidden = i !== cur; });
+    $$('.mg-dash', root).forEach(function (d) { d.innerHTML = speedSVG(); });
+    $$('.mg-b', root).forEach(prepBubble);
+
+    /* ---- speech bubbles: keep the full text for screen readers, type the
+       visible copy (the untyped rest is reserved but invisible, so the
+       bubble never changes size while it types) ---- */
+    function prepBubble(b) {
+      var text = b.textContent.trim();
+      b.textContent = '';
+      var sr = document.createElement('span'); sr.className = 'sr-only-mg'; sr.textContent = text;
+      var vis = document.createElement('span'); vis.setAttribute('aria-hidden', 'true');
+      vis.innerHTML = '<span class="ty-s"></span><span class="ty-h"></span>';
+      b.appendChild(sr); b.appendChild(vis);
+      b._t = text; b._s = vis.firstChild; b._h = vis.lastChild;
+      b._h.textContent = text;
+    }
+    function typeBubble(b, delay) {
+      if (b._done) return 0;
+      b._done = true;
+      var t = b._t, i = 0;
+      if (RM) { b._s.textContent = t; b._h.textContent = ''; b.classList.add('pop'); return 0; }
+      /* time-based, so a busy main thread skips letters instead of slowing down */
+      var per = t.length > 50 ? 18 : 26, pauses = 0;
+      setTimeout(function () {
+        b.classList.add('pop', 'typing');
+        var t0 = performance.now() + 200;
+        (function step(now) {
+          var n = Math.max(0, Math.min(t.length, Math.floor((now - t0 - pauses) / per)));
+          if (n > i) {
+            var c = t.charAt(n - 1);
+            i = n; b._s.textContent = t.slice(0, i); b._h.textContent = t.slice(i);
+            if (/[.!?…,]/.test(c) && i < t.length && t.charAt(i) === ' ') pauses += c === ',' ? 90 : 170;
+          }
+          if (i >= t.length) { setTimeout(function () { b.classList.remove('typing'); }, 500); return; }
+          requestAnimationFrame(step);
+        })(performance.now());
+      }, delay);
+      return delay + 400 + t.length * per;
+    }
+
+    /* ---- panel reveal ---- */
+    function reveal(list) {
+      list.sort(function (a, b) { return a.compareDocumentPosition(b) & 4 ? -1 : 1; });
+      list.forEach(function (p, i) {
+        var d = RM ? 0 : i * 0.14;
+        p.style.setProperty('--d', d + 's');
+        p.classList.add('in');
+        var at = d * 1000 + 820;
+        $$('.mg-b', p).forEach(function (b) { at = typeBubble(b, at) + 180; });
+      });
+      progress();
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (en) {
+        var list = [];
+        en.forEach(function (e) { if (e.isIntersecting && !e.target.classList.contains('in')) { list.push(e.target); io.unobserve(e.target); } });
+        if (list.length) reveal(list);
+      }, { threshold: 0.3, rootMargin: '0px 0px -8% 0px' });
+      var seen = new IntersectionObserver(function (en) {
+        en.forEach(function (e) {
+          var p = e.target, i = onScreen.indexOf(p);
+          p.classList.toggle('on', e.isIntersecting);
+          if (e.isIntersecting && i < 0) onScreen.push(p);
+          if (!e.isIntersecting && i > -1) onScreen.splice(i, 1);
+        });
+        if (onScreen.length) kick();
+      }, { rootMargin: '60px 0px' });
+      var heads = new IntersectionObserver(function (en) {
+        en.forEach(function (e) { if (e.isIntersecting) { e.target.parentNode.classList.add('head-in'); heads.unobserve(e.target); } });
+      }, { threshold: 0.5 });
+      $$('.mg-p', root).forEach(function (p) { io.observe(p); seen.observe(p); });
+      $$('.mg-head', root).forEach(function (h) { heads.observe(h); });
+    } else {
+      reveal($$('.mg-p', root));
+      pages.forEach(function (p) { p.classList.add('head-in'); });
+    }
+
+    /* ---- camera: each panel pans or zooms with its scroll position.
+       Only panels on screen are measured, and only on frames after a scroll. ---- */
+    var CAM = {
+      push: function (k) { return [0, 2 - k * 4, 1.03 + k * 0.1]; },
+      zoom: function (k) { return [0, 0, 1 + k * 0.12]; },
+      pan: function (k) { return [4 - k * 8, 0, 1.1]; },
+      'pan-r': function (k) { return [-4 + k * 8, 0, 1.1]; }
+    };
+    function camera() {
+      ticking = false;
+      if (RM) return;
+      var vh = window.innerHeight, reads = onScreen.map(function (p) {
+        var r = p.getBoundingClientRect();
+        return [p, Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height)))];
+      });
+      reads.forEach(function (x) {
+        var f = CAM[x[0].getAttribute('data-cam')], art = x[0]._art || (x[0]._art = $('.mg-art', x[0]));
+        if (!f || !art) return;
+        var v = f(x[1]);
+        art.style.transform = 'translate3d(' + v[0].toFixed(2) + '%,' + v[1].toFixed(2) + '%,0) scale(' + v[2].toFixed(4) + ')';
+      });
+    }
+    function kick() { if (!ticking && onScreen.length && !RM) { ticking = true; requestAnimationFrame(camera); } }
+    window.addEventListener('scroll', kick, { passive: true });
+    window.addEventListener('resize', kick, { passive: true });
+
+    /* ---- progress: per chapter on the tabs, current chapter in the meta ---- */
+    function progress() {
+      pages.forEach(function (pg, i) {
+        var all = $$('.mg-p', pg), done = all.filter(function (p) { return p.classList.contains('in'); }).length;
+        tabs[i].style.setProperty('--p', all.length ? done / all.length : 0);
+        tabs[i].classList.toggle('done', done === all.length);
+        if (i === cur) {
+          if (track) track.style.setProperty('--p', all.length ? done / all.length : 0);
+          if (countT) {
+            countB.textContent = (done < 10 ? '0' : '') + done;
+            countT.lastChild.textContent = ' / ' + (all.length < 10 ? '0' : '') + all.length;
+            if (done !== lastCount && lastCount > -1 && !RM) { countB.classList.remove('tick'); void countB.offsetWidth; countB.classList.add('tick'); }
+            lastCount = done;
+          }
+        }
+      });
+    }
+
+    /* ---- chapter switching with a page turn ---- */
+    function setNav() {
+      var last = pages.length - 1;
+      prevB.hidden = cur === 0;
+      nextB.hidden = cur === last;
+      if (cur < last) $('b', nextB).textContent = names[cur + 1];
+      endP.hidden = cur !== last;
+      tabs.forEach(function (t, i) { t.setAttribute('aria-selected', i === cur ? 'true' : 'false'); t.tabIndex = i === cur ? 0 : -1; });
+      tabsWrap.style.setProperty('--i', cur);
+    }
+    function go(n) {
+      if (n < 0 || n >= pages.length || n === cur || turning) return;
+      var dir = n > cur ? 1 : -1, old = pages[cur], nw = pages[n];
+      var top = root.getBoundingClientRect().top;
+      if (top < 0) window.scrollTo({ top: window.pageYOffset + top - 96, behavior: RM ? 'auto' : 'smooth' });
+      lastCount = -1;
+      if (RM) { old.hidden = true; nw.hidden = false; cur = n; setNav(); progress(); return; }
+      turning = true;
+      tabsWrap.style.setProperty('--i', n);
+      book.style.minHeight = book.offsetHeight + 'px';
+      old.style.setProperty('--dir', dir); old.classList.add('turn-out');
+      brush.classList.remove('go', 'back'); void brush.offsetWidth;
+      brush.classList.toggle('back', dir < 0); brush.classList.add('go');
+      setTimeout(function () {
+        old.hidden = true; old.classList.remove('turn-out');
+        nw.style.setProperty('--dir', dir); nw.hidden = false; nw.classList.add('turn-in');
+        cur = n; setNav(); progress(); kick();
+        setTimeout(function () { nw.classList.remove('turn-in'); book.style.minHeight = ''; turning = false; }, 720);
+      }, 420);
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { go(i); });
+      t.addEventListener('keydown', function (e) {
+        var k = e.key, n = k === 'ArrowRight' ? cur + 1 : k === 'ArrowLeft' ? cur - 1 : k === 'Home' ? 0 : k === 'End' ? pages.length - 1 : null;
+        if (n === null) return;
+        e.preventDefault(); n = Math.max(0, Math.min(pages.length - 1, n));
+        tabs[n].focus(); go(n);
+      });
+    });
+    prevB.addEventListener('click', function () { go(cur - 1); });
+    nextB.addEventListener('click', function () { go(cur + 1); });
+    setNav(); progress();
+  }
+
+  function speedSVG() {
+    var s = '', i, y, x, w;
+    for (i = 0; i < 18; i++) {
+      y = (i * 5.6 + Math.random() * 3).toFixed(1); x = Math.random() * 150; w = 24 + Math.random() * 50;
+      s += '<rect x="' + x.toFixed(1) + '" y="' + y + '" width="' + w.toFixed(1) + '" height=".6"/><rect x="' + (x + 200).toFixed(1) + '" y="' + y + '" width="' + w.toFixed(1) + '" height=".6"/>';
+    }
+    return '<svg viewBox="0 0 400 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><g fill="#f4ead6">' + s + '</g></svg>';
+  }
 
   /* boss battle */
   var arena = $('.bt-arena'); if (!arena) return;

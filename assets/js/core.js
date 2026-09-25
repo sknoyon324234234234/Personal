@@ -493,29 +493,126 @@
         '</div>' +
       '</div>';
 
+    buildMenu(h);
+  }
+
+  /* Full-screen menu: link list on the left, a preview card on the right that follows
+     hover / focus. Facts come from tools/seo.config.json. */
+  var MENU_INFO = {
+    home: { tags: 'Websites|Telegram bots|AI agents|Shops', ic: 'home', n: 5, post: '+', what: 'years building', d: 'Start here. Who I am, what I build and roughly what it costs.' },
+    lab: { tags: '3D gallery|Telegram bot|AI agent|Crypto checkout', ic: 'sparkle', n: 30, what: 'motion pieces', d: 'Demos you can actually use: a shop bot, AI agents, a Chrome extension, a Minecraft world.' },
+    shop: { tags: 'Cart|Admin panel|AI agent|bKash · USDT', ic: 'cart', n: 12, what: 'store templates', d: 'Working stores with cart, admin panel and bKash, card or USDT checkout.' },
+    kit: { tags: 'Buttons|Cards|Forms|Motion', ic: 'layers', n: 50, what: 'components', d: 'Headers, buttons, cards, forms and loaders. Restyle them, then copy the HTML and CSS.' },
+    demos: { tags: 'SaaS|Restaurant|Fashion|Dashboard', ic: 'monitor', n: 15, what: 'full demo sites', d: 'A SaaS, a restaurant, a jeweller, a crypto dashboard and more, on every screen size.' },
+    pages: { tags: 'Homepage|Login|Dashboard|Export', ic: 'window', n: 13, what: 'pages, one design system', d: 'Change fonts, colours and layout live, then export the code.' },
+    world: { tags: 'Terminal|Playground|Dev tools|Algorithms', ic: 'terminal', n: 17, what: 'dev tools', d: 'A terminal, a code playground, an API console, an algorithm arena and a typing dojo.' },
+    learn: { tags: 'HTML · CSS|JavaScript|SQL|Security', ic: 'book', n: 141, what: 'short lessons', d: 'How websites work, from HTML to security and SEO, each with a live preview.' },
+    hire: { tags: 'Fixed quote|bKash · USDT|Fast reply', ic: 'briefcase', n: 50, pre: '$', what: 'is where prices start', d: 'Pick what you need and get a price and timeline in about a minute.' }
+  };
+
+  function buildMenu(h) {
+    var cur = 0;
+    NAV.forEach(function (n, i) { if (n.id === page) cur = i; });
+    function stat(m) { return (m.pre || '') + m.n + (m.post || ''); }
+    function num(i) { return (i < 9 ? '0' : '') + (i + 1); }
+
     var mm = document.createElement('div');
     mm.className = 'mmenu';
     mm.id = 'mmenu';
     mm.setAttribute('aria-hidden', 'true');
-    mm.innerHTML = '<div class="kanji-bg mmenu-kanji" aria-hidden="true">忍</div><nav aria-label="Mobile"><ol>' +
-      NAV.map(function (n, i) {
-        return '<li><a href="' + n.href + '" style="--i:' + i + '"' + (n.id === page ? ' aria-current="page"' : '') + '><small>0' + (i + 1) + '</small><span>' + esc(n.label) + '</span><span class="jp">' + n.jp + '</span></a></li>';
-      }).join('') + '</ol></nav>' +
-      '<div class="mmenu-foot">' + contacts().slice(0, 3).map(function (c) {
-        return '<a class="chip" href="' + esc(c.href) + '" target="_blank" rel="noopener">' + icon(c.icon) + esc(c.label) + '</a>';
-      }).join('') + '<span class="chip">' + icon('pin') + esc(C.city + ', ' + C.country) + '</span></div>';
+    mm.setAttribute('role', 'dialog');
+    mm.setAttribute('aria-label', 'Site menu');
+    var links = NAV.map(function (n, i) {
+      var m = MENU_INFO[n.id] || {};
+      return '<li style="--i:' + i + '"><a href="' + n.href + '" data-i="' + i + '" aria-describedby="nvd-' + n.id + '"' + (n.id === page ? ' aria-current="page"' : '') + '>' +
+        '<small class="nv-no">' + num(i) + '</small>' +
+        '<span class="nv-label"><span class="nv-t">' + esc(n.label) + '</span>' +
+          (n.id === page ? '<em class="nv-here">You are here</em>' : '') +
+          '<span class="nv-meta">' + stat(m) + ' ' + esc(m.what || '') + '</span></span>' +
+        '<span class="nv-jp" aria-hidden="true">' + n.jp + '</span></a></li>';
+    }).join('');
+    var descs = NAV.map(function (n) { return '<span id="nvd-' + n.id + '">' + esc((MENU_INFO[n.id] || {}).d || '') + '</span>'; }).join('');
+    var foot = contacts().slice(0, 3).map(function (c) {
+      var tg = c.id === 'telegram';
+      return '<a class="nv-chip' + (tg ? ' nv-tg' : '') + '" href="' + esc(c.href) + '" target="_blank" rel="noopener">' +
+        (tg ? tgLogo() : icon(c.icon)) + '<span>' + esc(tg ? c.text : c.label) + '</span></a>';
+    }).join('') + '<span class="nv-chip">' + icon('pin') + '<span>' + esc(C.city + ', ' + C.country) + '</span></span>';
+
+    mm.innerHTML =
+      '<div class="container container-wide nv-inner">' +
+        '<nav class="nv-nav" aria-label="All pages"><p class="nv-kicker">Menu <span aria-hidden="true">· 道</span></p><ol>' + links + '</ol></nav>' +
+        '<aside class="nv-card" aria-hidden="true">' +
+          '<div class="nv-card-top"><span class="nv-card-no"></span><span class="nv-card-ic"></span></div>' +
+          '<div class="nv-card-jp"></div>' +
+          '<div class="nv-card-body">' +
+            '<h2 class="nv-card-t"></h2><p class="nv-card-d"></p><ul class="nv-card-tags"></ul>' +
+            '<p class="nv-card-stat"><b></b><span></span></p>' +
+          '</div>' +
+          '<i class="nv-card-bar"></i>' +
+        '</aside>' +
+        '<div class="nv-foot">' + foot + '<span class="nv-hint"><kbd>Esc</kbd> to close</span></div>' +
+        '<div class="sr-only">' + descs + '</div>' +
+      '</div>';
     h.after(mm);
 
+    var card = $('.nv-card', mm), shown = -1, tick = 0;
+    function show(i) {
+      if (i === shown) return;
+      var n = NAV[i], m = MENU_INFO[n.id] || {}, dir = i > shown ? 1 : -1;
+      shown = i;
+      card.style.setProperty('--dir', dir);
+      $('.nv-card-no', card).textContent = num(i) + ' / 0' + NAV.length;
+      $('.nv-card-ic', card).innerHTML = icon(m.ic || 'arrow-right');
+      $('.nv-card-jp', card).textContent = n.jp;
+      $('.nv-card-t', card).textContent = n.label;
+      $('.nv-card-d', card).textContent = m.d || '';
+      $('.nv-card-tags', card).innerHTML = (m.tags || '').split('|').map(function (x) { return x ? '<li>' + esc(x) + '</li>' : ''; }).join('');
+      $('.nv-card-stat span', card).textContent = m.what || '';
+      card.classList.toggle('is-here', n.id === page);
+      $$('.mmenu nav a').forEach(function (a) { a.classList.toggle('is-shown', +a.getAttribute('data-i') === i); });
+      card.classList.remove('swap'); void card.offsetWidth; card.classList.add('swap');
+      // count the stat up
+      var b = $('.nv-card-stat b', card), id = ++tick, t0 = performance.now();
+      if (reduce || !root.classList.contains('menu-open')) { b.textContent = stat(m); return; }
+      (function step(now) {
+        if (id !== tick) return;
+        var p = Math.min(1, (now - t0) / 520), e = 1 - Math.pow(1 - p, 3);
+        b.textContent = (m.pre || '') + Math.round(m.n * e) + (p < 1 ? '' : (m.post || ''));
+        if (p < 1) requestAnimationFrame(step);
+      })(t0);
+    }
+    $$('nav a', mm).forEach(function (a) {
+      var i = +a.getAttribute('data-i');
+      a.addEventListener('pointerenter', function () { show(i); });
+      a.addEventListener('focus', function () { show(i); });
+    });
+
     var btn = $('.menu-btn', h);
-    btn.addEventListener('click', function () {
-      var open = !root.classList.contains('menu-open');
+    function setOpen(open, keepFocus) {
       root.classList.toggle('menu-open', open);
       btn.setAttribute('aria-expanded', open);
       btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
       mm.setAttribute('aria-hidden', !open);
-    });
+      if (open) {
+        shown = -1; show(cur);
+        mm.scrollTop = 0;
+        setTimeout(function () { var a = $$('nav a', mm)[cur]; if (a && root.classList.contains('menu-open')) a.focus({ preventScroll: true }); }, reduce ? 0 : 420);
+      } else if (!keepFocus && mm.contains(document.activeElement)) {
+        btn.focus({ preventScroll: true });
+      }
+    }
+    btn.addEventListener('click', function () { setOpen(!root.classList.contains('menu-open')); });
+    mm.addEventListener('click', function (e) { if (e.target.closest('nav a')) setOpen(false, true); });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && root.classList.contains('menu-open')) btn.click();
+      if (!root.classList.contains('menu-open')) return;
+      if (e.key === 'Escape') { setOpen(false); btn.focus({ preventScroll: true }); return; }
+      if (e.key !== 'Tab') return;
+      // keep Tab inside the menu and its close button
+      var f = [btn].concat($$('a[href]', mm));
+      var at = f.indexOf(document.activeElement);
+      if (at === -1) { e.preventDefault(); f[e.shiftKey ? f.length - 1 : 0].focus(); return; }
+      if (!e.shiftKey && at === f.length - 1) { e.preventDefault(); f[0].focus(); }
+      else if (e.shiftKey && at === 0) { e.preventDefault(); f[f.length - 1].focus(); }
     });
   }
 
