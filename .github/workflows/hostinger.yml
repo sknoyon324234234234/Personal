@@ -1,0 +1,36 @@
+name: Deploy to Hostinger
+
+# Optional. Uploads the site to Hostinger over FTP on every push to main.
+# Turn it on in GitHub → Settings → Secrets and variables → Actions:
+#   Variables:  HOSTINGER_FTP_SERVER   e.g. ftp.yourdomain.com  (hPanel → Files → FTP Accounts)
+#               HOSTINGER_DIR          optional, default public_html/
+#   Secrets:    HOSTINGER_FTP_USERNAME, HOSTINGER_FTP_PASSWORD
+# Until HOSTINGER_FTP_SERVER is set, this workflow skips itself.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: hostinger
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ vars.HOSTINGER_FTP_SERVER != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the upload folder (site files only)
+        run: |
+          mkdir dist
+          rsync -a ./ dist/ --exclude '.git' --exclude '.github' --exclude '.claude' --exclude 'dist' \
+            --exclude 'tools' --exclude 'README.md' --exclude 'DEPLOY.md' --exclude '.gitattributes'
+      - name: Upload over FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ vars.HOSTINGER_FTP_SERVER }}
+          username: ${{ secrets.HOSTINGER_FTP_USERNAME }}
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: ${{ vars.HOSTINGER_DIR || 'public_html/' }}

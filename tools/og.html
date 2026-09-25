@@ -3,47 +3,70 @@
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex">
-<title>OG cover render</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="../assets/css/core.css">
+<title>Share image render</title>
+<!-- Renders one 1200x630 link-preview image. Driven by URL params:
+     ?t=Title&k=Kicker&s=Subtitle&jp=漢字&img=characters/xiraiya.webp&pet=characters/gama.webp&c=%23c4321d&tags=a|b|c&url=domain -->
+<link rel="stylesheet" href="fonts/fonts.css">
 <style>
-html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #0f0d0b; }
-.grain, .curtain, .progress, .toasts, .tabbar { display: none !important; }
-.og { position: relative; width: 1200px; height: 630px; overflow: hidden; isolation: isolate; background: linear-gradient(180deg, #0c0a08, #17120e 60%, #1f1812); }
-.sun { position: absolute; right: 90px; top: 60px; width: 430px; height: 430px; border-radius: 50%; z-index: -2; background: radial-gradient(circle at 42% 38%, #ef6a4c, #e0442e 46%, #b8321f); }
-.sun::before { content: ''; position: absolute; left: -18%; width: 78%; top: 60%; height: 6%; border-radius: 99px; background: #17120e; }
-.peaks { position: absolute; left: 0; right: 0; bottom: 0; height: 330px; z-index: -1; }
-.peaks svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.left { position: absolute; left: 64px; top: 58px; bottom: 54px; width: 640px; display: flex; flex-direction: column; }
-.kick { display: flex; align-items: center; gap: 14px; font: 500 14px/1 'JetBrains Mono', monospace; letter-spacing: .22em; text-transform: uppercase; color: #bfb29a; }
-.title { position: relative; margin-top: 42px; display: flex; align-items: flex-start; gap: 18px; }
-.title svg { position: absolute; left: -20px; bottom: -14px; width: 560px; height: 70px; }
-.title b { position: relative; font: 800 112px/.9 'Shippori Mincho B1', serif; letter-spacing: .03em; color: #efe4cc; }
-.seal { display: grid; gap: 2px; padding: 9px 6px; font: 800 24px/1 'Shippori Mincho B1', serif; color: #fbf1dc; background: #e0442e; box-shadow: inset 0 0 0 2px #e0442e, inset 0 0 0 4px rgba(251,241,220,.8); transform: rotate(4deg); margin-top: 6px; }
-h1 { margin: 34px 0 0; font: 700 38px/1.18 'Shippori Mincho B1', serif; color: #efe4cc; }
-h1 em { font-style: normal; color: #e0442e; }
-.meta { margin-top: auto; display: flex; gap: 22px; padding-top: 14px; border-top: 1px solid rgba(239,228,204,.2); font: 700 18px/1 'Shippori Mincho B1', serif; color: #efe4cc; }
-.meta span + span { padding-left: 22px; border-left: 1px solid rgba(239,228,204,.18); }
-.mascot { position: absolute; right: 40px; bottom: -6px; width: 400px; }
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #0e0b09; }
+.og { --c: #c4321d; position: relative; width: 1200px; height: 630px; overflow: hidden; isolation: isolate; background: radial-gradient(ellipse at 78% 38%, #2a1a12 0%, #140f0b 52%, #0b0907 100%); color: #f3e9d6; font-family: 'Zen Kaku Gothic New', sans-serif; }
+.grain { position: absolute; inset: 0; z-index: 3; opacity: .07; background-image: radial-gradient(#fff 1px, transparent 1.2px); background-size: 4px 4px; mix-blend-mode: overlay; pointer-events: none; }
+.sun { position: absolute; right: 70px; top: 44px; width: 470px; height: 470px; border-radius: 50%; z-index: -2; background: radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--c) 60%, #ffb088), var(--c) 55%, color-mix(in srgb, var(--c) 60%, #000)); box-shadow: 0 0 120px 10px color-mix(in srgb, var(--c) 40%, transparent); }
+.sun::before, .sun::after { content: ''; position: absolute; left: 6%; right: 46%; height: 4%; border-radius: 99px; background: rgba(20, 15, 11, .55); }
+.sun::before { top: 64%; } .sun::after { top: 72%; left: 14%; right: 56%; height: 2.6%; }
+.ring { position: absolute; right: 38px; top: 12px; width: 534px; height: 534px; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--c) 45%, transparent); z-index: -2; }
+.peaks { position: absolute; left: 0; right: 0; bottom: 0; height: 250px; z-index: -1; }
+.kanji { position: absolute; left: 520px; top: -40px; z-index: -1; font: 800 360px/1 'Shippori Mincho B1', serif; color: transparent; -webkit-text-stroke: 1.5px rgba(243, 233, 214, .07); }
+.art { position: absolute; right: 118px; bottom: -8px; height: 612px; z-index: 1; filter: drop-shadow(0 30px 40px rgba(0, 0, 0, .55)); }
+.pet { position: absolute; right: 18px; bottom: -4px; height: 190px; z-index: 2; filter: drop-shadow(0 16px 20px rgba(0, 0, 0, .5)); }
+.left { position: absolute; left: 66px; top: 56px; bottom: 50px; width: 590px; display: flex; flex-direction: column; z-index: 2; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.mark { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 10px; background: var(--c); font: 800 24px 'Shippori Mincho B1', serif; color: #fff8ee; box-shadow: inset 0 0 0 2px var(--c), inset 0 0 0 4px rgba(255, 248, 238, .75); transform: rotate(-4deg); }
+.brand b { font: 800 26px 'Shippori Mincho B1', serif; letter-spacing: .14em; }
+.brand span { font: 500 13px 'JetBrains Mono', monospace; letter-spacing: .2em; text-transform: uppercase; color: #b9aa90; margin-left: 6px; }
+.kick { margin-top: 54px; display: inline-flex; align-items: center; gap: 12px; font: 700 15px 'JetBrains Mono', monospace; letter-spacing: .22em; text-transform: uppercase; color: color-mix(in srgb, var(--c) 45%, #ffd9c4); }
+.kick::before { content: ''; width: 34px; height: 3px; background: var(--c); }
+h1 { margin: 16px 0 0; font: 800 60px/1.06 'Shippori Mincho B1', serif; letter-spacing: -.01em; text-wrap: balance; }
+h1 em { font-style: normal; color: color-mix(in srgb, var(--c) 70%, #ffb088); }
+p { margin: 22px 0 0; max-width: 540px; font: 500 24px/1.4 'Zen Kaku Gothic New', sans-serif; color: #d9ccb4; }
+.foot { margin-top: auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.tag { padding: 9px 16px; border-radius: 99px; border: 1.5px solid rgba(243, 233, 214, .22); font: 700 15px 'Zen Kaku Gothic New', sans-serif; color: #efe4cc; background: rgba(243, 233, 214, .04); }
+.url { position: absolute; left: 66px; bottom: 18px; font: 500 13px 'JetBrains Mono', monospace; letter-spacing: .08em; color: #8f826c; }
 </style>
 </head>
 <body>
-<div class="og">
-  <div class="sun"></div>
-  <div class="peaks"><svg viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><path d="M0 600V352C58 342 86 262 136 250 188 238 204 334 256 324 306 312 324 190 384 176 446 164 456 300 524 292 594 284 604 226 662 214 724 202 742 318 804 310 872 302 884 152 954 142 1024 134 1032 290 1102 282 1162 274 1182 232 1244 222 1306 212 1322 330 1384 322 1444 314 1472 252 1522 246 1562 242 1582 296 1600 298V600Z" fill="#3b3129" opacity=".55"/><path d="M0 600V438C70 430 98 336 168 326 232 318 250 424 318 414 380 404 404 300 474 296 546 292 566 432 640 424 716 416 744 356 806 352 874 348 890 452 962 444 1034 436 1054 330 1126 324 1196 318 1214 440 1282 434 1346 428 1372 380 1432 376 1500 372 1530 440 1600 436V600Z" fill="#231c16"/><path d="M0 600V520C96 506 150 470 230 478 312 486 340 530 430 522 520 514 560 470 650 474 744 478 770 528 870 522 966 516 1010 482 1100 486 1196 490 1224 532 1320 526 1410 520 1452 492 1530 494 1566 495 1590 504 1600 506V600Z" fill="#0f0d0b"/></svg></div>
+<div class="og" id="og">
+  <div class="ring"></div><div class="sun"></div>
+  <div class="kanji" id="jp"></div>
+  <svg class="peaks" viewBox="0 0 1200 250" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 160 L140 90 L240 140 L380 60 L520 150 L640 100 L760 170 L900 80 L1040 150 L1200 100 L1200 250 L0 250Z" fill="#1c1510"/>
+    <path d="M0 210 L160 150 L300 200 L460 130 L620 200 L780 150 L940 210 L1100 160 L1200 190 L1200 250 L0 250Z" fill="#120d0a"/>
+  </svg>
+  <img class="art" id="art" alt="">
+  <img class="pet" id="pet" alt="">
   <div class="left">
-    <div class="kick"><span class="hanko sm">忍</span>The toad sage of code · Rajshahi, Bangladesh</div>
-    <div class="title">
-      <svg viewBox="0 0 1000 160" preserveAspectRatio="none"><path d="M14 92C120 58 330 40 560 44 720 46 880 58 988 70 996 72 996 90 984 92 860 110 690 124 520 126 330 128 150 124 24 118 6 116 2 98 14 92Z" fill="#e0442e"/></svg>
-      <b>XIRAIYA</b><span class="seal"><span>児</span><span>雷</span><span>也</span></span>
-    </div>
-    <h1>Websites, bots, apps &amp; <em>AI agents</em> that work while you sleep.</h1>
-    <div class="meta"><span>5+ years</span><span>11 services</span><span>Live demos of everything</span></div>
+    <div class="brand"><span class="mark">忍</span><b>XIRAIYA</b><span>Full-stack developer</span></div>
+    <span class="kick" id="k"></span>
+    <h1 id="t"></h1>
+    <p id="s"></p>
+    <div class="foot" id="tags"></div>
   </div>
-  <div class="mascot" data-mascot></div>
+  <div class="url" id="url"></div>
+  <div class="grain"></div>
 </div>
-<script src="../assets/js/icons.js"></script>
-<script src="../assets/js/config.js"></script>
-<script src="../assets/js/core.js"></script>
+<script>
+  var q = new URLSearchParams(location.search), $ = function (i) { return document.getElementById(i); };
+  var og = $('og');
+  og.style.setProperty('--c', q.get('c') || '#c4321d');
+  $('k').textContent = q.get('k') || '';
+  $('t').innerHTML = (q.get('t') || 'Xiraiya').replace(/\*(.+?)\*/g, '<em>$1</em>');
+  $('s').textContent = q.get('s') || '';
+  $('jp').textContent = q.get('jp') || '忍';
+  $('url').textContent = q.get('url') || '';
+  $('tags').innerHTML = (q.get('tags') || '').split('|').filter(Boolean).map(function (t) { return '<span class="tag">' + t + '</span>'; }).join('');
+  $('art').src = '../assets/img/' + (q.get('img') || 'characters/xiraiya.webp');
+  if (q.get('pet')) $('pet').src = '../assets/img/' + q.get('pet'); else $('pet').remove();
+</script>
 </body>
 </html>

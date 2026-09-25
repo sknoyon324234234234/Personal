@@ -6,6 +6,7 @@
   var K = window.XR_PVK;
   if (!K) return;
   var I = K.I, esc = K.esc, $ = K.$, $$ = K.$$, hl = K.hl, seg = K.seg, onSeg = K.onSeg, logLine = K.logLine, play = K.play, codeBlock = K.codeBlock;
+  var HOST = String((window.XIRAIYA_CONFIG || {}).siteUrl || location.origin + '/').replace(/^https?:\/\//, '').replace(/\/$/, '');
   function setSeg(root, sel, v) { $$(sel + ' button', root).forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-v') === v); }); }
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function bump(el, cls) { if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
@@ -752,7 +753,7 @@
   };
   PV.serp = function (k) {
     k.el.innerHTML = '<div class="pv pv-seo"><div class="se-form"><label><span>Title <em class="se-c1"></em></span><input class="se-t" value="Xiraiya — Websites, Shops and Telegram Bots in Bangladesh"></label><label><span>Description <em class="se-c2"></em></span><textarea class="se-d" rows="3">Hire Xiraiya to build fast websites, online shops with payments, Telegram bots and AI agents. Fixed prices from $50, reply within hours.</textarea></label></div>' +
-      '<div class="se-g"><div class="se-src"><span class="se-fav">X</span><div><b>Xiraiya</b><small>sknoyon324234234234.github.io › Personal</small></div></div><h4 class="se-h"></h4><p class="se-p"></p></div></div>';
+      '<div class="se-g"><div class="se-src"><span class="se-fav">X</span><div><b>Xiraiya</b><small>' + esc(HOST.replace(/\//g, ' › ')) + '</small></div></div><h4 class="se-h"></h4><p class="se-p"></p></div></div>';
     function run() {
       var t = $('.se-t', k.el).value, d = $('.se-d', k.el).value;
       $('.se-h', k.el).textContent = t.length > 60 ? t.slice(0, 57) + '…' : t;
@@ -765,13 +766,13 @@
   };
   PV.og = function (k) {
     k.el.innerHTML = '<div class="pv pv-seo"><div class="se-form"><label><span>og:title</span><input class="og-t" value="Xiraiya — build something legendary"></label><label><span>og:description</span><input class="og-d" value="Websites, shops, bots and AI agents. Instant estimates."></label></div>' +
-      '<div class="og-2"><div class="og-chat"><small>' + I('send') + ' Telegram</small><div class="og-msg"><p>check this out sknoyon324234234234.github.io/Personal</p><div class="og-card"><b class="og-site">Xiraiya</b><b class="og-tt"></b><span class="og-dd"></span><img src="assets/img/og-cover.png" alt=""></div></div></div>' +
-      '<div class="og-fb"><img src="assets/img/og-cover.png" alt=""><div><small>GITHUB.IO</small><b class="og-tt"></b><span class="og-dd"></span></div></div></div>' +
+      '<div class="og-2"><div class="og-chat"><small>' + I('send') + ' Telegram</small><div class="og-msg"><p>check this out ' + esc(HOST) + '</p><div class="og-card"><b class="og-site">Xiraiya</b><b class="og-tt"></b><span class="og-dd"></span><img src="assets/img/og-cover.jpg" alt=""></div></div></div>' +
+      '<div class="og-fb"><img src="assets/img/og-cover.jpg" alt=""><div><small>GITHUB.IO</small><b class="og-tt"></b><span class="og-dd"></span></div></div></div>' +
       '<pre class="pv-code og-code"></pre></div>';
     function run() {
       var t = $('.og-t', k.el).value, d = $('.og-d', k.el).value;
       $$('.og-tt', k.el).forEach(function (e) { e.textContent = t; }); $$('.og-dd', k.el).forEach(function (e) { e.textContent = d; });
-      $('.og-code', k.el).innerHTML = hl('<meta property="og:title" content="' + t + '">\n<meta property="og:description" content="' + d + '">\n<meta property="og:image" content="/og-cover.png">', 'html');
+      $('.og-code', k.el).innerHTML = hl('<meta property="og:title" content="' + t + '">\n<meta property="og:description" content="' + d + '">\n<meta property="og:image" content="/og-cover.jpg">', 'html');
     }
     k.on(k.el, 'input', run); run();
   };

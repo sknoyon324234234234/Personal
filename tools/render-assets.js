@@ -1,4 +1,4 @@
-/* Regenerates the social share image, favicons and demo thumbnails.
+/* Regenerates favicons and demo thumbnails. (Link-preview images: node tools/render-og.js)
    Usage (from the repo root):  npx playwright@1 install chromium   (once)
                                 node tools/render-assets.js
    Requires the "playwright" package (npm i -D playwright or a global install). */
@@ -14,18 +14,7 @@ const out = p => path.join(root, 'assets/img', p);
 (async () => {
   const browser = await chromium.launch();
 
-  // 1) Open Graph cover 1200x630
-  const og = await browser.newPage({ viewport: { width: 1200, height: 630 }, ignoreHTTPSErrors: true });
-  for (let attempt = 1; attempt <= 6; attempt++) {
-    await og.goto(file('tools/og.html'), { waitUntil: 'networkidle' });
-    await og.evaluate(() => document.fonts.ready);
-    const ok = await og.evaluate(() => document.fonts.check('800 54px "Shippori Mincho B1"') && document.fonts.check('500 14px "JetBrains Mono"'));
-    if (ok) break;
-    console.log('fonts not ready, retrying (' + attempt + ')');
-  }
-  await og.waitForTimeout(1500);
-  await og.screenshot({ path: out('og-cover.png') });
-  console.log('og-cover.png');
+  // 1) Link-preview images now come from tools/render-og.js (one per page, from tools/seo.config.json).
 
   // 2) Favicons / app icons from favicon.svg
   const svg = fs.readFileSync(out('favicon.svg'), 'utf8');

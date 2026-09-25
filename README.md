@@ -1,13 +1,14 @@
 # Xiraiya — Portfolio & Live Service Showroom
 
-![Xiraiya — websites, bots, apps & AI agents](assets/img/og-cover.png)
+![Xiraiya — websites, bots, apps & AI agents](assets/img/og/home.jpg)
 
 The personal website of **Xiraiya**, a 21-year-old full-stack developer from Rajshahi, Bangladesh with 5+ years of experience.
 It's a cinematic, ukiyo-e inspired portfolio where visitors can try a live, interactive version of every service before they hire.
 
 - **Pure HTML, CSS and JavaScript.** No framework and no build step. Open it, edit it and deploy it anywhere.
 - **No emojis.** Every icon is a custom SVG from `assets/js/icons.js`.
-- **SEO-ready.** Includes meta tags, Open Graph and Twitter cards, schema.org JSON-LD, `sitemap.xml`, `robots.txt` and a web manifest.
+- **SEO-ready.** One config file (`tools/seo.config.json`) and one command (`node tools/seo.js`) generate every page's title, description, canonical, hreflang, Open Graph and Twitter tags, a schema.org JSON-LD graph (WebSite, Person, ProfessionalService with prices, WebPage, BreadcrumbList, Course, FAQ), crawlable footer links, `sitemap.xml` with images, `robots.txt`, `llms.txt` and the Hostinger `.htaccess`. Each page has its own 1200×630 share image.
+- **Hostinger-ready.** See [DEPLOY.md](DEPLOY.md): HTTPS and host redirects, clean URLs, caching, compression, security headers and a working 404 page, plus Git, FTP-action or ZIP deployment.
 - **Accessible.** Uses semantic HTML, a skip link, keyboard support and visible focus styles, and honours `prefers-reduced-motion`.
 
 ## Pages
@@ -21,7 +22,6 @@ It's a cinematic, ukiyo-e inspired portfolio where visitors can try a live, inte
 | `demos.html` + `demos/` | Fifteen complete demo websites and a desktop/laptop/tablet/phone preview studio. New: **Aurèle** (fine jewellery: drag slider, ring size finder, fitting booking), **Nordhem** (furniture: shop-the-room hotspots, SVG sofa builder, room cost estimator, cart drawer), **Halide** (film cameras and lab: viewfinder hero, sunny 16 exposure calculator, lab pricing, roll tracker), **Kage Build** (gaming PCs: configurator with FPS estimates, power meter and compatibility fixes) and **Stride** (sneaker drops: countdown, size-first stock grid, raffle ticket, release calendar). Also Nova AI, Sakura Bistro, Vault, BlockRealm, Pulse, Mori Tea, Haven, Ledger, Nomad and Kumo Docs |
 | `pages.html` (**Pages Studio**) | **12 complete websites to choose from** (Lumen SaaS, Aurèle jewellery, Nordhem interiors, Thread & Co menswear, Glow Theory beauty, Sobuj plants, Halide film cameras, Kage Tech PCs, Deshi Loom handloom, Field Day sports club, Pebble baby wear, Stride sneakers), each with its own copy, real photos, colours, fonts, buttons and layouts across every page (`assets/js/pages-sites.js`). Thirteen page templates (homepage, log in, sign up, pricing, dashboard, blog post, contact, 404, portfolio, product, checkout, about + team, coming soon) built from 70 section variants. It has 10 one-click theme presets (Aurora, Swiss, Brutalist, Luxe, Playful, Terminal, Paper, Ocean glass, Forest, SaaS Indigo). A toolbar swaps, reorders, hides, duplicates and adds sections. Everything can be restyled live: colours, surface tone, light/dark, 8 font pairs, radius, spacing, shadows, borders, 8 button styles with shapes, sizes and hovers, and motion effects (scroll animations, card hover, background patterns, heading styles, a sticky glass navbar). It also has Select and Text modes (text edits are kept), desktop/tablet/phone/fluid-width previews with a drag handle, undo/redo, saved versions, a Code tab with a quality audit and highlighted source, share links and one-click HTML export |
 | `dev-world.html` (**Dev World**) | A developer village on an illustrated map (it turns into a starry night in ink mode) with seven buildings. It has a terminal with 40+ commands (including `curl` against the mock API, `calc`, `top`, `toadsay`, a playable `snake`, `grep` pipes and ghost autocomplete), a live HTML/CSS/JS playground with syntax highlighting, presets, a console and share links, 17 dev tools with search (JSON, regex, Base64, UUID, passwords, colours, SHA hashes, JWT, timestamps, gradients, box-shadows, Markdown, diff, cron, URL parser, case and unit converters), a mock REST API console with auth, history and fetch/curl/Python snippets, a git-graph career timeline with a heatmap, an **Algorithm Arena** (6 sorting algorithms, a 6-way race, and A*/Dijkstra/BFS/DFS pathfinding with walls, mud and mazes), a **Typing Dojo** code typing test with WPM, accuracy, ranks and best runs, and a village passport that stamps each building you use |
-| `tutorials.html` (**Motion Academy**) | After Effects-style tutorial player with a keyframe engine, timeline, layers, effect controls with an easing graph, motion paths, lesson notes, live CSS export, an easing lab and code guides |
 | `knowledge.html` (**Basic Knowledge**) | 141 short lessons in 13 chapters: how the web works, HTML & CSS, JavaScript, UI, UX, motion UI, backend & APIs, databases and MySQL, website security, what to do when you get hacked, tools & deploy, speed & SEO, and AI basics. Every lesson opens in a full-screen viewer with a live, animated preview (38 kinds): packet flows, a CSS playground with sliders, a real SQL console, attack simulators (SQL injection, XSS, CSRF, brute force, DDoS, phishing), live SHA-256 hashing, a real TOTP 2FA code, a JWT decoder, a git graph, a deploy pipeline, Web Vitals gauges, a tokenizer and more. Search, a random lesson, a learned-progress ring (saved in the browser), chapter chips, arrow-key and swipe navigation, and `#lesson-id` links |
 | `hire.html` | Packages, a 4-step project configurator with an instant estimate, and a brief hand-off by email, Telegram or WhatsApp. Also covers payment methods, next steps and an FAQ with FAQPage schema |
 | `404.html` | Custom "lost shinobi" page |
@@ -85,19 +85,14 @@ Then open `http://localhost:3000` (or `:8080`). Opening `index.html` directly al
 3. The site goes live at `https://sknoyon324234234234.github.io/Personal/`.
 4. Submit `https://sknoyon324234234234.github.io/Personal/sitemap.xml` in [Google Search Console](https://search.google.com/search-console).
 
-### Using a custom domain or a different host
+### Using a custom domain or Hostinger
 
-Canonical URLs, Open Graph images and the sitemap use the full GitHub Pages URL. Replace it everywhere in one go:
-
-```bash
-grep -rl "sknoyon324234234234.github.io/Personal/" --include=*.html --include=*.xml --include=*.txt --include=*.js . \
-  | xargs sed -i 's#https://sknoyon324234234234.github.io/Personal/#https://yourdomain.com/#g'
-```
+Set `"url"` in `tools/seo.config.json`, run `node tools/seo.js`, and push. Every absolute URL, the sitemap, robots.txt and `.htaccess` follow. Full steps: [DEPLOY.md](DEPLOY.md).
 
 ## Project structure
 
 ```
-index.html  showcase.html  shop.html  components.html  demos.html  pages.html  dev-world.html  knowledge.html  tutorials.html  hire.html  404.html
+index.html  showcase.html  shop.html  components.html  demos.html  pages.html  dev-world.html  knowledge.html  hire.html  404.html
 demos/                 twelve standalone demo websites
 assets/css/            core.css (design system), one stylesheet per page, phone.css (phone layout)
 assets/js/config.js    your details, prices, services, packages
@@ -109,18 +104,22 @@ assets/js/pages-kit.js Pages Studio template generator (sections, tokens, export
 assets/js/world.js     Dev World terminal, playground, toolbox, API console and git graph
 assets/js/knowledge-data.js  Basic Knowledge lessons (edit or add lessons here)
 assets/js/knowledge-pv*.js   Basic Knowledge live preview engines
-assets/img/            favicon, app icons, social share image, demo thumbnails
-tools/                 og.html + render-assets.js (regenerate images)
-sitemap.xml  robots.txt  site.webmanifest  .nojekyll
+assets/img/            favicon, app icons, og/ share images (one per page), demo thumbnails
+tools/seo.config.json  titles, descriptions, share-image text, domain, verification codes
+tools/seo.js           writes all SEO tags, sitemap.xml, robots.txt, llms.txt, .htaccess
+tools/render-og.js     draws the per-page share images from tools/og.html
+tools/render-assets.js favicons and demo thumbnails
+sitemap.xml  robots.txt  llms.txt  .htaccess  site.webmanifest  .nojekyll
 ```
 
 ## Regenerate images
 
-Run this after you change the look of the share image, the favicon or a demo site:
+Run this after you change share-image text, the favicon or a demo site:
 
 ```bash
 npm i -D playwright && npx playwright install chromium
-node tools/render-assets.js
+node tools/render-og.js      # share images, one per page
+node tools/render-assets.js  # favicons and demo thumbnails
 ```
 
 ## Notes

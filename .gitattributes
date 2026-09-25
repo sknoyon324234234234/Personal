@@ -1,0 +1,7 @@
+# Keep build tooling out of "Download ZIP" / git archive packages used for hosting uploads
+tools/ export-ignore
+.claude/ export-ignore
+README.md export-ignore
+DEPLOY.md export-ignore
+.gitattributes export-ignore
+.github/ export-ignore

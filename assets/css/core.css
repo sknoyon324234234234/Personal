@@ -835,3 +835,7 @@ html[data-mode="ink"] .mode-btn .mb-moon { transform: translateY(-120%) rotate(9
 
 /* grid children in page heroes may shrink to the screen */
 .page-hero-inner > * { min-width: 0; }
+
+/* crawlable page links shown until core.js builds the full footer */
+.seo-nav ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 22px; margin: 0; padding: 40px 20px; list-style: none; font-size: 14px; }
+.seo-nav a { color: var(--ink-2); }
