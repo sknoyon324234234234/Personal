@@ -64,3 +64,10 @@
   .st-devices button[data-dev="desktop"], .st-rotate, .st-size { display: none; }
   .st-title b { display: none; }
 }
+
+@media (hover: none) { .dm-play { opacity: .92; transform: scale(.8); } }
+@media (max-width: 640px) {
+  .dm-filter button, .st-tabs button, .st-btn { min-height: 44px; }
+  .st-devices button { height: 40px; width: 44px; }
+  .dm-actions .btn { flex: 1 1 140px; justify-content: center; min-height: 44px; }
+}

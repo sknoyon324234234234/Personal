@@ -202,7 +202,7 @@ html[data-mode="ink"] { --rl: #ff4f93; }
 .kx-log > li:not(:first-child) .kx-lv b { background: rgba(var(--fx), .1); color: var(--ink); }
 .kx-lv time { font: 500 12px var(--font-mono); color: var(--ink-3); }
 .kx-log ul { display: grid; gap: 5px; }
-.kx-log ul li { display: flex; gap: 10px; font-size: 14.5px; color: var(--ink-2); }
+.kx-log ul li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px; font-size: 14.5px; color: var(--ink-2); }
 .kx-log ul li::before { flex: none; width: 46px; font: 600 10px/1.9 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; }
 .kx-log .add::before { content: 'added'; color: #1f8a5b; }
 .kx-log .chg::before { content: 'change'; color: var(--gold); }
@@ -294,5 +294,11 @@ body:has(.site-header.is-hidden) .kb-nav { top: 0; }
   .kx-menu-wrap { height: auto; }
   .kx-menu { flex-wrap: wrap; }
   .kx-lane { grid-template-columns: minmax(0, 1fr); gap: 8px; }
-  .kx-log ul li { flex-wrap: wrap; }
+}
+
+/* phones: 44px tap targets for bench controls */
+@media (max-width: 640px) {
+  .kx-seg button, .kx-presets button, .ki-copy, .pg-langs button, .kb-nav-chips a, .kb-search { min-height: 44px; }
+  .kx-acc button { width: 44px; height: 44px; }
+  .kit-cta-grid .flex.wrap > .btn, .kx-copy .flex.wrap > .btn { flex: 1 1 220px; justify-content: center; }
 }

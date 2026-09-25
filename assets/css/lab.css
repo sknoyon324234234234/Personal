@@ -744,3 +744,25 @@ mark.hl { padding: 0 2px; border-radius: 3px; background: #ffe14d; color: #111; 
   .br-devices { display: none; }
   .lab-price { gap: 18px; padding: 12px 16px; }
 }
+
+/* ---------- stages size to their own column, not the viewport ----------
+   With the chapter sidebar on wide screens the stage column can be ~450px,
+   so side-by-side panels (chat + designer, invoice + log, phone + admin) stack
+   whenever the frame itself is narrow. */
+.lab-win { container-type: inline-size; }
+@container (max-width: 620px) {
+  .stage-tg { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .tg-admin { max-width: 360px; }
+  .stage-chat, .stage-ec, .pay { grid-template-columns: minmax(0, 1fr); }
+  .agent { grid-template-columns: minmax(0, 1fr); }
+  .agent-cfg { border-right: 0; border-bottom: 1px solid var(--line); }
+}
+@container (max-width: 820px) {
+  .agent { grid-template-columns: minmax(0, 1fr); }
+  .agent-cfg { border-right: 0; border-bottom: 1px solid var(--line); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .agent-cfg .ag-h { grid-column: 1 / -1; }
+}
+.ag-tools label { line-height: 1.25; min-width: 0; }
+.tg-admin dl div { gap: 12px; }
+.tg-admin dd { white-space: nowrap; }
+.cw-box { max-width: calc(100cqi - 32px); }

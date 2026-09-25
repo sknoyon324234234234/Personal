@@ -239,3 +239,20 @@
 /* gold chapters (extension, e-commerce, crypto): white on gold is ~3:1,
    so their CTA label switches to sumi ink (~5.5:1) */
 :is(#extension, #ecommerce, #crypto).lab-sec :is(.lab-ctas, .lab-row) .btn-primary { color: #1d1208; }
+
+/* phones: keep price, tiers and buttons together, in that order.
+   (phone.css orders .lab-price / .lab-row but not the tiers deck.js adds) */
+@media (max-width: 760px) {
+  body[data-page="lab"] .lab-grid .lab-info > .lab-tiers { order: 5; margin-top: -4px; }
+  body[data-page="lab"] .lab-grid .lab-row > .lab-price,
+  body[data-page="lab"] .lab-grid .lab-row > .lab-tiers { order: 0; }
+  body[data-page="lab"] .lab-row > .lab-tiers { flex-basis: 100%; }
+  /* 44px tap targets (phone.css stops at 40px) */
+  body[data-page="lab"] .wg-f button,
+  body[data-page="lab"] .lab-nav-inner a,
+  body[data-page="lab"] .br-tabs button,
+  body[data-page="lab"] .seg button { min-height: 44px; height: auto; }
+  body[data-page="lab"] .lw-btn { height: 44px; }
+  body[data-page="lab"] .wg-sb { height: 48px; }
+  body[data-page="lab"] .lh-ctas .btn { flex: 1 1 100%; justify-content: center; }
+}

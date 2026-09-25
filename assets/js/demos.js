@@ -63,6 +63,7 @@
     current = id;
     var d = DEMOS.find(function (x) { return x.id === id; });
     nameEl.textContent = d.name;
+    iframe.title = d.name + ' demo website preview';
     iframe.src = 'demos/' + id + '.html';
     openA.href = 'demos/' + id + '.html';
     $$('button', tabs).forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-demo') === id); });
