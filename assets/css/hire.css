@@ -135,3 +135,5 @@
   .nexts { grid-template-columns: 1fr; }
   .cfg-steps li { font-size: 12px; padding-right: 10px; }
 }
+
+.hire-bubble.over { --bw: 240px; bottom: calc(98% + 14px); }

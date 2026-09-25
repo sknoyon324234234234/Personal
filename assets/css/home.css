@@ -617,7 +617,7 @@ html:not(.js) .loader { display: none; }
 .crew-card.small .crew-art [data-mascot] { max-width: 140px; }
 .crew-sun { position: absolute; left: 50%; top: 18%; width: 72%; aspect-ratio: 1; border-radius: 50%; transform: translateX(-50%); background: radial-gradient(circle at 42% 38%, #ef6a4c, #d63a24 55%, #a82c1a); opacity: .9; }
 .crew-card.qa .crew-sun { background: radial-gradient(circle at 42% 38%, #5fb0a4, #2f807a 55%, #174a46); }
-.crew-bubble { position: absolute; left: 14px; top: 16px; z-index: 2; max-width: 150px; font-size: 13.5px; transform: rotate(-3deg); }
+.crew-bubble { position: absolute; left: 14px; top: 16px; z-index: 2; max-width: 190px; font-size: 13.5px; transform: rotate(-3deg); }
 .crew-info { display: grid; gap: 12px; padding: 26px; align-self: center; }
 .crew-role { font: 500 11px/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--red); }
 .crew-card.qa .crew-role { color: var(--cyan); }
@@ -679,3 +679,10 @@ html:not(.js) .loader { display: none; }
   .bento .svc.is-dim { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .bento .svc:hover::after { animation: none; } }
+
+/* bubbles over the artwork heads */
+.hero-bubble.over { --bw: 240px; bottom: calc(98% - 14px); }
+.crew-art.has-art { padding-top: 86px; }
+.crew-art.has-art [data-mascot] { max-width: 250px; }
+.crew-bubble.over { --bw: 210px; bottom: 344px; }
+@media (max-width: 760px) { .hero-bubble.over { --bw: 200px; } }

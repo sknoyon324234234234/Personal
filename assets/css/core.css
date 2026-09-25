@@ -763,4 +763,7 @@ html[data-mode="ink"] .mode-btn .mb-moon { transform: translateY(-120%) rotate(9
 @media (prefers-reduced-motion: reduce) { .mascot .m-fly, .mascot .m-tongue { display: none; } }
 
 .bubble.pop { animation: bubblePop .5s var(--ease-spring); }
+/* over the head: when a character is artwork, its bubble sits centred above the head, tail down */
+.bubble.over { left: 50%; right: auto; top: auto; width: var(--bw, 230px); max-width: none; margin-left: calc(var(--bw, 230px) / -2); text-align: center; transform-origin: 50% 100%; }
+.bubble.over::after { left: 50%; margin-left: -8px; }
 @keyframes bubblePop { 0% { transform: scale(.7) rotate(-6deg); } 100% { transform: rotate(-3deg); } }

@@ -1299,6 +1299,8 @@
     var art = C.characters || {}, who = /^tsunade/.test(k) ? 'tsunade' : k === 'toad' || k === 'slug' ? '' : 'xiraiya';
     if (who && art[who]) {
       el.innerHTML = standee(art[who], who === 'tsunade' ? 'Tsunade, head of QA' : (C.name || 'Xiraiya'), (k || '') + (who === 'tsunade' ? ' tsunade' : ' sage'));
+      var bub = el.parentElement && el.parentElement.querySelector(':scope > .bubble');
+      if (bub) { bub.classList.add('over'); el.parentElement.classList.add('has-art'); }
       return;
     }
     el.innerHTML = k === 'tsunade' ? tsunade() : k === 'tsunade-portrait' ? tsunade({ cls: 'portrait' }) : k === 'toad' ? miniToad() : k === 'slug' ? miniSlug() : mascot({ cls: k });

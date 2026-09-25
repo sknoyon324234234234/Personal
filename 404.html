@@ -28,7 +28,8 @@
 .nf .flex { gap: 12px; }
 .nf-mascot { max-width: 380px; justify-self: center; position: relative; width: 100%; }
 .nf-mascot .bubble { position: absolute; left: -4%; top: 6%; transform: rotate(-5deg); }
-@media (max-width: 800px) { .nf-grid { grid-template-columns: 1fr; text-align: center; } .nf p { margin-inline: auto; } .nf .flex { justify-content: center; } .nf-mascot { max-width: 260px; } }
+.nf-mascot .bubble.over { --bw: 250px; top: auto; left: 50%; bottom: calc(98% - 22px); transform: rotate(-2deg); }
+@media (max-width: 800px) { .nf-mascot.has-art { margin-top: 110px; } .nf-grid { grid-template-columns: 1fr; text-align: center; } .nf p { margin-inline: auto; } .nf .flex { justify-content: center; } .nf-mascot { max-width: 260px; } }
 </style>
 </head>
 <body data-page="404" id="top">
