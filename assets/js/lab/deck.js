@@ -188,12 +188,12 @@
 
   /* ---------- chapter dress: accent colour and a margin note under each stage ---------- */
   var DRESS = {
-    web: ['#c4321d', 'pick a panel on the screen, then switch the preview to phone size.'],
-    automation: ['#2c6f65', 'flip the Email lever off, turn the crank and read the paper tape.'],
-    extension: ['#b7862a', 'press 光 and 訳 together, then change the words to highlight.'],
+    web: ['#c4321d', 'add three sections with the hand-sign buttons, then hit Deploy.'],
+    automation: ['#2c6f65', 'switch one clone off, summon the rest, then read the morning report.'],
+    extension: ['#b7862a', 'install the extension, slay the pop-ups, then highlight your own words.'],
     minecraft: ['#4d7424', 'raise the 経 and 店 banners, type /kit, then hang a lantern.'],
-    desktop: ['#5f4f95', 'push the glowing panel, install, then take the update the app offers.'],
-    mobile: ['#a4473a', 'book tonight’s class, flip the membership card, then log a training day.'],
+    desktop: ['#5f4f95', 'download, install and launch, then add an invoice and take the update.'],
+    mobile: ['#a4473a', 'order two dishes, then follow the rider across the panels.'],
     'ai-chat': ['#c4321d', 'ask to track order 4821, switch to বাংলা, then ask for a human.'],
     makeover: ['#2c6f65', 'drag the red seal all the way across, then switch to another shop.'],
     scroll: ['#c4321d', 'drag the paper sideways and watch each seal stamp itself as you pass.'],

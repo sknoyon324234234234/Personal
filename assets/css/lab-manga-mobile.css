@@ -1,0 +1,121 @@
+/* Lab chapter 06 - Phone Jutsu (mobile apps / .apk): a drawn phone running a mini delivery app beside a 4-panel manga strip. Built on lab-manga.css. */
+
+/* ---------- page grid: stacked narrow, phone+strip side by side once roomy ---------- */
+.mph-page { display: grid; gap: 10px; grid-template-columns: 1fr; grid-template-areas: "head" "phone" "strip"; }
+.mph-p-head { grid-area: head; padding: 38px 14px 22px; }
+.mph-p-phone { grid-area: phone; display: grid; align-content: start; justify-items: center; gap: 0; padding: 16px 12px; }
+.mph-p-strip { grid-area: strip; padding: 10px; }
+
+/* ---------- head panel ---------- */
+.mph-head-in { display: grid; gap: 9px; }
+.mph-head-in .km-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 10px; }
+.mph-head-in .km-h .jp { font-size: 15px; color: var(--km-red); }
+.mph-head-in .km-bubble { justify-self: start; }
+
+/* ---------- the phone ---------- */
+.mph-phone { position: relative; width: 100%; max-width: 230px; aspect-ratio: 9 / 18.5; padding: 13px 9px 11px; border-radius: 30px; background: #14110d; border: 3px solid var(--km-ink); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .06), 5px 5px 0 var(--km-red); }
+.mph-notch { position: absolute; top: 10px; left: 50%; z-index: 3; width: 32%; height: 7px; margin-left: -16%; border-radius: 5px; background: #000; }
+.mph-screen { position: relative; height: 100%; overflow-x: hidden; overflow-y: auto; padding: 17px 9px 9px; border-radius: 18px; background: var(--km-paper); scrollbar-width: thin; scrollbar-color: rgba(10, 8, 6, .3) transparent; }
+.mph-push { position: absolute; left: 8px; right: 8px; top: 8px; z-index: 5; display: flex; align-items: center; gap: 7px; padding: 7px 10px; border-radius: 12px; font: 700 10px/1.3 var(--km-font); color: #fff8ec; background: rgba(10, 8, 6, .94); box-shadow: 0 4px 10px rgba(0, 0, 0, .35); opacity: 0; transform: translateY(-14px); transition: opacity .35s ease, transform .35s ease; pointer-events: none; }
+.mph-push .ic { flex: none; font-size: 13px; color: var(--km-gold); }
+.mph-push.is-in { opacity: 1; transform: translateY(0); }
+.mph-push.is-out { opacity: 0; transform: translateY(-10px); }
+
+/* ---------- APK / QR strip under the phone ---------- */
+.mph-apk { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 230px; margin-top: 12px; padding-top: 10px; border-top: 1.5px dotted rgba(10, 8, 6, .3); }
+.mph-qr { flex: none; width: 42px; height: 42px; padding: 3px; background: #fff; border: 1.5px solid var(--km-ink); }
+.mph-qr svg { display: block; width: 100%; height: 100%; }
+.mph-apk-t small { display: block; margin-top: 3px; font: 500 9.5px/1.35 var(--km-mono); color: rgba(10, 8, 6, .65); }
+
+/* ---------- menu screen ---------- */
+.mph-menu-h { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 8px; }
+.mph-menu-h b { font: 800 13px var(--km-disp); }
+.mph-menu-h small { display: inline-flex; align-items: center; gap: 3px; font: 600 9.5px var(--km-mono); color: rgba(10, 8, 6, .6); }
+.mph-menu-h small .ic { margin-right: 3px; font-size: 10px; color: var(--km-red); }
+.mph-list { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.mph-dish { position: relative; display: grid; gap: 5px; padding: 8px 9px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1.5px rgba(10, 8, 6, .14); }
+.mph-dish-t b { display: block; font: 700 12px/1.2 var(--km-font); }
+.mph-dish-t small { display: block; margin-top: 1px; font-size: 10px; line-height: 1.3; color: rgba(10, 8, 6, .55); }
+.mph-dish-r { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.mph-price { font: 800 12.5px var(--km-mono); color: var(--km-ink); }
+.mph-stepper { display: inline-flex; align-items: center; gap: 7px; }
+.mph-step { width: 24px; height: 24px; padding: 0; display: inline-grid; place-items: center; border-radius: 7px; border: 1.5px solid var(--km-ink); background: #fff; color: var(--km-ink); cursor: pointer; transition: transform .15s, background .2s; }
+.mph-step .ic { font-size: 11px; }
+.mph-step:hover { background: #fff3d6; }
+.mph-step:active { transform: scale(.88); }
+.mph-step:disabled { opacity: .35; cursor: not-allowed; }
+.mph-step:focus-visible { outline: 2px solid var(--km-red); outline-offset: 2px; }
+.mph-qty { min-width: 14px; font: 700 12px var(--km-mono); font-variant-numeric: tabular-nums; text-align: center; }
+.mph-blip { position: absolute; top: -3px; right: 8px; z-index: 4; font: 800 13px/1 var(--km-jp); color: #fff; -webkit-text-stroke: 1.5px var(--km-ink); paint-order: stroke fill; opacity: 0; transform: translateY(4px) scale(.6); pointer-events: none; }
+.mph-blip.is-pop { animation: mphBlip .6s cubic-bezier(.3, 1.7, .5, 1) both; }
+.mph-cart { display: grid; gap: 8px; margin-top: 10px; padding-top: 9px; border-top: 1.5px dashed rgba(10, 8, 6, .25); }
+.mph-cart-row { display: flex; align-items: baseline; justify-content: space-between; }
+.mph-cart-row small { font: 600 10px var(--km-mono); letter-spacing: .04em; text-transform: uppercase; color: rgba(10, 8, 6, .55); }
+.mph-cart-row b { font: 800 16px var(--km-disp); }
+.mph-order { width: 100%; }
+.mph-order .ic { margin-right: 2px; }
+
+/* ---------- tracking screen ---------- */
+.mph-track-h { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.mph-track-h small { font: 600 9.5px var(--km-mono); letter-spacing: .06em; text-transform: uppercase; color: rgba(10, 8, 6, .55); }
+.mph-track-h b { font: 800 17px var(--km-disp); color: var(--km-red); }
+.mph-steps { display: flex; justify-content: space-between; gap: 2px; margin: 0 0 12px; padding: 0; list-style: none; }
+.mph-steps li { flex: 1; display: grid; justify-items: center; gap: 5px; font: 600 8.5px/1.2 var(--km-mono); text-align: center; color: rgba(10, 8, 6, .4); }
+.mph-node { box-sizing: border-box; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 1.6px solid rgba(10, 8, 6, .3); background: #fff; color: rgba(10, 8, 6, .55); font: 800 10.5px/1 var(--km-mono); transition: transform .3s, background .3s, border-color .3s, color .3s; }
+.mph-node .ic { width: 11px; height: 11px; stroke-width: 3; }
+.mph-steps li.is-done { color: var(--km-teal); }
+.mph-steps li.is-done .mph-node { border-color: var(--km-teal); background: var(--km-teal); color: #fff; }
+.mph-steps li.is-now { color: var(--km-red); }
+.mph-steps li.is-now .mph-node { border-color: var(--km-red); background: var(--km-red); color: #fff; transform: scale(1.16); box-shadow: 0 0 0 3px rgba(196, 50, 29, .18); }
+.mph-note { min-height: 34px; margin: 0 0 10px; font-size: 12px; line-height: 1.45; color: rgba(10, 8, 6, .8); }
+.mph-wait { display: flex; align-items: center; gap: 6px; margin: 0; font: 600 10px var(--km-mono); color: rgba(10, 8, 6, .5); }
+.mph-wait .ic { font-size: 12px; color: var(--km-red); }
+.mph-again { width: 100%; }
+
+/* ---------- the strip: kitchen, pickup, road, doorbell ---------- */
+.mph-p-strip { display: flex; flex-direction: column; }
+.mph-strip { flex: 1 1 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 8px; }
+.mph-cell { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; min-height: 108px; padding: 8px; opacity: .5; transform: scale(.95); transition: opacity .5s ease, transform .5s ease; }
+.mph-cell.is-seen { opacity: 1; transform: scale(1); }
+.mph-art-box { position: absolute; inset: 8px 8px 24px; opacity: .92; }
+.mph-art-box svg { display: block; width: 100%; height: 100%; }
+.mph-ink { fill: none; stroke: var(--km-ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.mph-steam { fill: none; stroke: rgba(10, 8, 6, .45); stroke-width: 2.4; stroke-linecap: round; opacity: 0; transform: translateY(6px); transition: opacity .5s ease .1s, transform .5s ease .1s; }
+.mph-cell.is-seen .mph-steam { opacity: 1; transform: translateY(0); }
+.mph-bell { fill: #fff; stroke: var(--km-ink); stroke-width: 2.4; }
+.mph-road { fill: none; stroke: rgba(244, 234, 214, .4); stroke-width: 3; }
+.mph-rider { position: absolute; right: 8%; bottom: 16px; z-index: 1; width: 40%; height: auto; opacity: 0; transform: translateX(-26px); filter: drop-shadow(2px 3px 0 rgba(10, 8, 6, .3)); transition: opacity .5s ease, transform .5s ease; }
+.mph-cell.is-seen .mph-rider { opacity: 1; transform: translateX(0); }
+.mph-rider-go { right: 4%; width: 34%; transform: translateX(-60px); }
+.mph-cell.is-seen .mph-rider-go { transform: translateX(0); }
+.mph-sfx-slot { left: 9%; right: 9%; top: 8%; z-index: 3; max-height: 70%; overflow: hidden; font-size: clamp(18px, 4.6cqw, 34px); line-height: 1.05; letter-spacing: -.01em; white-space: normal; text-align: center; -webkit-text-stroke: 1.5px var(--km-ink); text-shadow: 2.5px 2.5px 0 var(--km-ink); }
+.mph-cell-l { position: relative; z-index: 2; font: 700 10px var(--km-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--km-ink); }
+.mph-cell.km-tone-dark .mph-cell-l { color: #f4ead6; }
+
+@keyframes mphBlip { 0% { opacity: 0; transform: translateY(6px) scale(.5); } 55% { opacity: 1; transform: translateY(-11px) scale(1.15); } 100% { opacity: 0; transform: translateY(-17px) scale(1); } }
+
+/* ---------- reflow as the stage widens: phone beside the strip, both stretched to the same height ---------- */
+@container (min-width: 520px) {
+  .mph-page { grid-template-columns: minmax(190px, 240px) 1fr; grid-template-areas: "head head" "phone strip"; }
+  .mph-cell { min-height: 130px; }
+}
+@container (min-width: 860px) {
+  .mph-page { grid-template-columns: minmax(220px, 270px) 1fr; }
+  .mph-phone { max-width: 250px; }
+  .mph-apk { max-width: 250px; }
+  .mph-strip { gap: 12px; }
+  .mph-cell { min-height: 220px; padding: 14px; }
+  .mph-art-box { inset: 14px 14px 32px; }
+  .mph-cell-l { font-size: 11.5px; }
+  .mph-note { font-size: 12.5px; }
+}
+@container (max-width: 359px) {
+  .mph-menu-h { flex-wrap: wrap; row-gap: 4px; }
+  .mph-dish { padding: 7px 8px; }
+}
+
+/* ---------- touch targets on real phones ---------- */
+@media (max-width: 760px) {
+  .mph-step { width: 44px; height: 44px; }
+  .mph-order, .mph-again { min-height: 44px; }
+}

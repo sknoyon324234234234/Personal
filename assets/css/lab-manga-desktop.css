@@ -1,0 +1,138 @@
+/* Lab chapter: coding manga (desktop). Built on lab-manga.css. */
+
+.mis-wrap { display: block; }
+.mis-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+
+/* ---------- step indicator (壱 弐 参 肆) ---------- */
+.mis-steps { position: relative; display: flex; gap: 4px; list-style: none; margin: 0; padding: 3px 0 0; }
+.mis-steps li { display: contents; }
+.mis-steps-line { position: absolute; left: 26px; right: 26px; top: 17px; z-index: 0; height: 2px; background: rgba(10, 8, 6, .15); }
+.mis-steps-line::before { content: ''; position: absolute; inset: 0; width: calc(var(--p, 0) * 100%); background: var(--km-red); transition: width .4s var(--ease-out, ease); }
+.mis-step { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 52px; padding: 4px 7px 6px; border-radius: 3px; color: var(--km-ink); background: var(--km-paper); opacity: .5; }
+.mis-step b { font: 800 17px/1 var(--km-jp); }
+.mis-step small { font: 700 8.5px/1 var(--km-mono); letter-spacing: .05em; text-transform: uppercase; }
+.mis-step.is-current { opacity: 1; color: #f4ead6; background: var(--km-ink); }
+.mis-step.is-done { opacity: .85; }
+.mis-step.is-done b { color: var(--km-red); }
+.mis-step:disabled { cursor: not-allowed; }
+
+/* ---------- the 2x2 manga page ---------- */
+.mis-page { grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; perspective: 1400px; }
+.mis-panel { position: relative; display: flex; flex-direction: column; gap: 8px; min-height: 320px; padding: 32px 13px 13px; }
+.mis-panel.is-current { box-shadow: inset 0 0 0 3px var(--km-red); }
+.mis-panel.mis-turn { animation: misTurn .45s cubic-bezier(.2, .8, .3, 1); }
+@keyframes misTurn { from { opacity: .25; transform: translateX(16px) rotateY(-8deg); } to { opacity: 1; transform: none; } }
+.mis-body { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
+.mis-panel.is-locked .mis-body { filter: blur(2px); opacity: .32; pointer-events: none; }
+.mis-lock { position: absolute; inset: 0; z-index: 9; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; padding: 14px; cursor: not-allowed; background: #1a1512 radial-gradient(rgba(255, 255, 255, .1) 1px, transparent 1.4px) 0 0 / 8px 8px; color: #f4ead6; }
+.mis-panel.is-locked .mis-lock { display: flex; }
+.mis-lock .ic { font-size: 20px; opacity: .8; }
+.mis-lock b { font: 800 38px/1 var(--km-disp); }
+.mis-lock span { font: 700 10px/1.2 var(--km-mono); letter-spacing: .1em; text-transform: uppercase; opacity: .75; }
+.mis-badge { position: absolute; top: 8px; right: 8px; z-index: 6; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; color: #fff; background: var(--km-teal); }
+.mis-badge .ic { font-size: 14px; }
+.mis-note { margin: 0; font: 600 12px/1.4 var(--km-font); color: rgba(10, 8, 6, .62); }
+.mis-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+
+/* ---------- 01 download ---------- */
+.mis-fly { position: relative; height: 96px; display: grid; place-items: center; overflow: hidden; }
+.mis-fly .km-speed { opacity: 0; transition: opacity .3s; }
+.mis-fly.is-go .km-speed { opacity: 1; }
+.mis-file { position: relative; z-index: 1; width: 58px; height: 70px; display: grid; place-items: center; font: 800 11px/1 var(--km-mono); background: #fff; border: 2.5px solid var(--km-ink); box-shadow: 3px 3px 0 var(--km-ink); }
+.mis-fly.is-go .mis-file { animation: misFly .5s cubic-bezier(.2, .8, .3, 1.1) both; }
+@keyframes misFly { from { opacity: 0; transform: translateX(-46px) scale(.7) rotate(-8deg); } to { opacity: 1; transform: none; } }
+.mis-file-fold { position: absolute; top: 0; right: 0; width: 14px; height: 14px; background: var(--km-paper-2); border-left: 2.5px solid var(--km-ink); border-bottom: 2.5px solid var(--km-ink); }
+.mis-sfx-dl { top: 2px; right: 12%; }
+.mis-sfx-install { top: -8px; right: 2px; font-size: clamp(18px, 3.6cqw, 30px); }
+.mis-sfx-launch { top: 2px; right: 5%; font-size: clamp(22px, 4cqw, 36px); }
+/* these two sit near live text (app title bar / install progress), so they pop then fade clear instead of staying on top forever */
+.mis-sfx-install.is-pop, .mis-sfx-launch.is-pop { animation: misSfxPop 1.6s cubic-bezier(.3, 1.3, .4, 1) both; }
+@keyframes misSfxPop { 0% { opacity: 0; transform: rotate(-9deg) scale(.3); } 18% { opacity: 1; transform: rotate(-9deg) scale(1.12); } 30% { transform: rotate(-9deg) scale(1); } 78% { opacity: 1; transform: rotate(-9deg) scale(1); } 100% { opacity: 0; transform: rotate(-9deg) scale(1); } }
+
+/* ---------- progress bar (shared) ---------- */
+.mis-progress-row { display: flex; align-items: center; gap: 9px; }
+.mis-bar { position: relative; flex: 1; height: 15px; overflow: hidden; background: #fff; border: 2.5px solid var(--km-ink); }
+.mis-bar i { display: block; height: 100%; width: 100%; transform-origin: left; transform: scaleX(var(--p, 0)); background: repeating-linear-gradient(135deg, var(--km-ink) 0 6px, #2a231c 6px 12px); transition: transform .26s linear; }
+.mis-pct { flex: none; min-width: 32px; font: 800 12px/1 var(--km-mono); text-align: right; }
+
+/* ---------- 02 install ---------- */
+.mis-field { display: grid; gap: 4px; font: 700 11.5px/1.3 var(--km-mono); letter-spacing: .04em; text-transform: uppercase; color: rgba(10, 8, 6, .65); }
+.mis-in { width: 100%; padding: 8px 10px; font: 600 12.5px/1.3 var(--km-mono); text-transform: none; letter-spacing: 0; color: var(--km-ink); background: #fff; border: 2.5px solid var(--km-ink); }
+.mis-in:focus-visible { outline: 3px solid var(--km-red); outline-offset: 2px; }
+.mis-checks { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.mis-check { display: flex; align-items: center; gap: 7px; padding: 3px 0; font: 600 12.5px/1.3 var(--km-font); cursor: pointer; }
+.mis-check input { width: 17px; height: 17px; accent-color: var(--km-red); }
+.mis-installing { display: grid; gap: 8px; }
+.mis-row { display: flex; align-items: center; gap: 10px; position: relative; }
+.mis-gama { position: relative; width: 54px; height: 54px; flex: none; }
+.mis-gama img { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(2px 2px 0 rgba(10, 8, 6, .22)); }
+.mis-drop { position: absolute; top: 2px; right: 2px; width: 6px; height: 8px; opacity: 0; background: #bfe3ee; border: 1.5px solid var(--km-ink); border-radius: 0 60% 60% 60%; }
+.mis-drop.d2 { top: 9px; right: 15px; width: 5px; height: 6px; }
+.mis-gama.is-sweat .mis-drop { animation: misDrop .8s ease-in 3; }
+.mis-gama.is-sweat .mis-drop.d2 { animation-delay: .28s; }
+@keyframes misDrop { 0% { opacity: 0; transform: translateY(-2px); } 15% { opacity: 1; } 100% { opacity: 0; transform: translateY(16px); } }
+.mis-file-tick { margin: 0; min-height: 1.3em; font: 600 11.5px/1.3 var(--km-mono); color: rgba(10, 8, 6, .68); }
+
+/* ---------- 03 license ---------- */
+.mis-key-wrap { position: relative; display: inline-block; margin: 4px 30px 6px 2px; }
+.mis-key { margin: 0; padding: 12px 14px; font: 800 18px/1.3 var(--km-mono); letter-spacing: .05em; background: #fff; border: 2.5px dashed var(--km-ink); }
+.mis-stamp { position: absolute; top: -14px; right: -16px; z-index: 3; display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; color: #fff4ea; background: var(--km-red); border: 3px solid #fff4ea; box-shadow: 0 0 0 3px var(--km-red), 3px 4px 6px rgba(10, 8, 6, .3); font: 800 18px/1 var(--km-jp); opacity: 0; transform: scale(2.6) rotate(-18deg); pointer-events: none; }
+.mis-stamp.is-on { animation: misStamp .6s cubic-bezier(.25, .7, .3, 1.15) both; }
+@keyframes misStamp { 0% { opacity: 0; transform: scale(2.6) rotate(-18deg); } 55% { opacity: 1; transform: scale(.85) rotate(-6deg); } 75% { transform: scale(1.06) rotate(-10deg); } 100% { opacity: 1; transform: scale(1) rotate(-8deg); } }
+
+/* ---------- 04 launch: the app window ---------- */
+.mis-app { display: flex; flex-direction: column; flex: 1; min-height: 0; background: #fff; border: 2.5px solid var(--km-ink); box-shadow: 4px 4px 0 var(--km-ink); }
+.mis-appbar { display: flex; align-items: center; gap: 10px; padding: 7px 11px; font: 800 12px/1 var(--km-disp); background: var(--km-paper-2); border-bottom: 2.5px solid var(--km-ink); }
+.mis-dots { display: inline-flex; gap: 5px; }
+.mis-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--km-ink); opacity: .35; }
+.mis-appbar b { flex: 1; min-width: 0; }
+.mis-ver { flex: none; padding: 2px 7px; font: 700 10px/1 var(--km-mono); border: 1.5px solid var(--km-ink); border-radius: 999px; }
+.mis-appwrap { display: flex; flex: 1; min-height: 0; }
+.mis-side { display: flex; flex-direction: column; gap: 2px; width: 108px; flex: none; padding: 7px; background: var(--km-paper); border-right: 2.5px solid var(--km-ink); }
+.mis-side button { display: flex; align-items: center; gap: 7px; padding: 7px 8px; font: 700 11px/1.2 var(--km-font); text-align: left; color: var(--km-ink); background: transparent; border-radius: 2px; }
+.mis-side button.is-on { color: #f4ead6; background: var(--km-ink); }
+.mis-side .ic { font-size: 13px; flex: none; }
+.mis-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 7px; padding: 9px; overflow: auto; }
+.mis-toolbar { display: flex; gap: 7px; flex-wrap: wrap; }
+.mis-table-wrap { overflow-x: auto; }
+.mis-table { width: 100%; border-collapse: collapse; font: 600 12px/1.3 var(--km-font); }
+.mis-table th { padding: 5px 7px; font: 700 9.5px/1 var(--km-mono); letter-spacing: .07em; text-transform: uppercase; color: rgba(10, 8, 6, .55); text-align: left; border-bottom: 2px solid var(--km-ink); white-space: nowrap; }
+.mis-table td { padding: 6px 7px; border-bottom: 1.5px dashed rgba(10, 8, 6, .25); white-space: nowrap; }
+.mis-amt { font-weight: 800; font-variant-numeric: tabular-nums; }
+.mis-stamp-btn { padding: 4px 9px; font: 800 10px/1 var(--km-mono); letter-spacing: .07em; text-transform: uppercase; border-radius: 2px; border: 2px solid; transform: rotate(-3deg); }
+.mis-stamp-btn.is-paid { color: var(--km-teal); background: rgba(44, 111, 101, .08); border-color: var(--km-teal); }
+.mis-stamp-btn.is-unpaid { color: var(--km-red); background: rgba(196, 50, 29, .08); border-color: var(--km-red); }
+.mis-view-other p { margin: 20px 4px; }
+.mis-spin { animation: misSpin .9s linear 1; }
+@keyframes misSpin { to { transform: rotate(360deg); } }
+
+/* ---------- responsive: container queries against .lab-win ---------- */
+@container (min-width: 900px) {
+  .mis-panel { min-height: 400px; }
+}
+@container (max-width: 620px) {
+  .mis-page { grid-template-columns: 1fr; }
+  .mis-panel { display: none; min-height: 0; }
+  .mis-panel.is-current { display: flex; }
+}
+@container (max-width: 420px) {
+  .mis-panel { padding: 30px 10px 10px; }
+  .mis-side { flex-direction: row; width: auto; overflow-x: auto; border-right: 0; border-bottom: 2.5px solid var(--km-ink); }
+  .mis-side button { white-space: nowrap; }
+  .mis-key { font-size: 15px; padding: 9px 11px; }
+  .mis-stamp { width: 62px; height: 62px; font-size: 15px; top: -10px; right: -10px; }
+  .mis-file { width: 48px; height: 58px; }
+  .mis-top { align-items: flex-start; }
+}
+@container (max-width: 340px) {
+  .mis-step { min-width: 44px; padding: 4px 4px 5px; }
+  .mis-step small { display: none; }
+}
+
+@media (max-width: 760px) {
+  .mis-step, .mis-side button, .mis-stamp-btn, .mis-check { min-height: 44px; }
+  .mis-check input { width: 20px; height: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mis-drop, .mis-spin { animation: none !important; }
+}

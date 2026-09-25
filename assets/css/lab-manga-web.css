@@ -1,0 +1,111 @@
+/* Lab chapter 01 — The Build Arc (Sakura Ramen site build). Built on lab-manga.css; prefix mwb-. */
+
+.mwb { container-type: inline-size; min-width: 0; }
+.mwb * { box-sizing: border-box; }
+
+/* ---------- page grid: a manga collage that reflows with the stage's own width ---------- */
+.mwb-page { display: grid; gap: 8px; grid-template-columns: 1fr; grid-template-areas: "intro" "signs" "code" "preview" "deploy"; }
+.mwb-page > .km-panel { min-width: 0; }
+.mwb-page > .km-panel:nth-child(1) { animation-delay: 0s; }
+.mwb-page > .km-panel:nth-child(2) { animation-delay: .06s; }
+.mwb-page > .km-panel:nth-child(3) { animation-delay: .12s; }
+.mwb-page > .km-panel:nth-child(4) { animation-delay: .18s; }
+.mwb-page > .km-panel:nth-child(5) { animation-delay: .24s; }
+.mwb-p { display: flex; flex-direction: column; gap: 10px; padding: 14px; }
+.mwb-p-intro { grid-area: intro; padding-top: 36px; padding-bottom: 26px; min-height: 190px; }
+.mwb-p-signs { grid-area: signs; }
+.mwb-p-code { grid-area: code; padding: 0; min-height: 260px; }
+.mwb-p-preview { grid-area: preview; padding: 0; min-height: 260px; }
+.mwb-p-deploy { grid-area: deploy; }
+
+/* ---------- 01 intro: mascot + speech bubble ---------- */
+.mwb-intro-body { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
+.mwb-mascot { display: block; height: 130px; width: auto; filter: drop-shadow(3px 4px 0 rgba(10, 8, 6, .22)); }
+.mwb-bubble { max-width: 230px; }
+
+/* ---------- 02 hand signs ---------- */
+.mwb-signs { display: flex; flex-wrap: wrap; gap: 8px; }
+.mwb-sign { flex: 1 1 auto; min-width: 92px; }
+.mwb-sign-jp { font-size: 17px; line-height: 1; }
+.mwb-status { margin: 0; padding: 8px 10px; font: 600 12px/1.4 var(--km-mono); color: var(--km-ink); background: rgba(10, 8, 6, .06); border-left: 3px solid var(--km-red); }
+
+/* ---------- 03 code panel: a tiny editor with a typewriter caret ---------- */
+.mwb-editor-bar { display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: #1a1512; border-bottom: 1px solid rgba(244, 234, 214, .12); }
+.mwb-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(244, 234, 214, .25); }
+.mwb-dot:first-child { background: var(--km-red-2); }
+.mwb-file { margin-left: 6px; font: 600 11px/1 var(--km-mono); letter-spacing: .05em; color: rgba(244, 234, 214, .65); }
+.mwb-sfx { top: 30px; right: 10px; font-size: 22px; opacity: 0; }
+.mwb-code { min-height: 220px; max-height: 380px; overflow-y: auto; overflow-x: hidden; }
+.mwb-code-ln { white-space: pre-wrap; overflow-wrap: anywhere; }
+.mwb-caret-wrap { display: flex; align-items: center; min-height: 1.2em; }
+
+/* ---------- 04 preview panel: the drawn mini website ---------- */
+.mwb-browser { display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--km-paper-2); border-bottom: 2px solid var(--km-ink); }
+.mwb-browser .mwb-dot { background: rgba(10, 8, 6, .2); }
+.mwb-browser .mwb-dot:first-child { background: var(--km-red); }
+.mwb-url { margin-left: 8px; padding: 3px 10px; font: 600 11px/1.3 var(--km-mono); color: var(--km-ink); background: #fff; border: 1.5px solid var(--km-ink); border-radius: 3px; }
+.mwb-site { position: relative; min-height: 200px; max-height: 380px; overflow-y: auto; overflow-x: hidden; background: var(--km-paper); }
+.mwb-empty { margin: 0; padding: 40px 16px; text-align: center; font: 600 12px/1.5 var(--km-mono); color: rgba(10, 8, 6, .4); }
+.mwb-flashlines { animation: mwbFlash .5s ease-out both; }
+
+.mwb-v { border-bottom: 2px solid var(--km-ink); }
+.mwb-v:last-child { border-bottom: 0; }
+.mwb-v-cap { display: block; padding: 6px 12px; font: 700 10px/1.3 var(--km-mono); letter-spacing: .08em; text-transform: uppercase; color: #f4ead6; background: var(--km-ink); }
+
+.mwb-v-hero { padding: 26px 16px; text-align: center; color: #f4ead6; background: linear-gradient(180deg, #241914, #150f0b); }
+.mwb-v-k { display: block; margin-bottom: 2px; font-size: 26px; line-height: 1; opacity: .7; }
+.mwb-v-hero h3 { margin: 0 0 4px; font: 800 22px/1.1 var(--km-disp); color: #fff; }
+.mwb-v-hero p { margin: 0 0 12px; font: 500 11.5px/1.4 var(--km-font); color: rgba(244, 234, 214, .8); }
+.mwb-v-btn { display: inline-block; padding: 8px 18px; font: 800 11px/1 var(--km-disp); letter-spacing: .03em; color: #fff; background: var(--km-red); border-radius: 2px; }
+
+.mwb-v-menu ul { list-style: none; margin: 0; padding: 6px 14px 12px; display: grid; gap: 6px; }
+.mwb-v-menu li { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px dashed rgba(10, 8, 6, .25); font: 600 12.5px/1.3 var(--km-font); }
+.mwb-v-menu b { font-family: var(--km-mono); color: var(--km-red); }
+
+.mwb-v-gallery .mwb-v-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding: 2px; }
+.mwb-v-tiles i { display: grid; place-items: center; aspect-ratio: 1; font-style: normal; color: rgba(10, 8, 6, .4); }
+.mwb-v-tiles .ic { width: 22px; height: 22px; }
+
+.mwb-v-booking { padding: 6px 14px 14px; display: grid; gap: 8px; }
+.mwb-v-field { display: block; padding: 8px 10px; font: 600 11.5px/1 var(--km-font); color: rgba(10, 8, 6, .5); background: #fff; border: 1.5px solid rgba(10, 8, 6, .3); border-radius: 3px; }
+.mwb-v-booking .mwb-v-btn { justify-self: start; background: var(--km-ink); }
+
+.mwb-v-pay { padding: 6px 14px 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+.mwb-v-tag { padding: 7px 14px; font: 800 11px/1 var(--km-disp); color: #fff; border-radius: 999px; }
+.mwb-v-tag.is-bkash { background: #e2136e; }
+.mwb-v-tag.is-nagad { background: #f6921e; }
+.mwb-v-tag.is-card { background: var(--km-ink); }
+
+/* ---------- 05 deploy: the final wide panel ---------- */
+.mwb-deploy-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.mwb-deploy-txt { margin: 0; font: 700 13px/1.3 var(--km-font); }
+.mwb-count { font: 800 20px/1 var(--km-disp); margin-right: 2px; }
+.mwb-deploy { margin-left: auto; min-width: 150px; }
+.mwb-deploy-result { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 26px 16px; min-height: 160px; text-align: center; }
+.mwb-donsfx { top: 6px; right: 8%; }
+.mwb-deploy-msg { position: relative; z-index: 2; margin: 0; font: 700 14px/1.4 var(--km-font); }
+.mwb-deploy-msg b { font-family: var(--km-disp); }
+.mwb-reset { position: relative; z-index: 2; }
+
+@keyframes mwbFlash { 0% { opacity: .85; } 100% { opacity: 0; } }
+
+/* ---------- responsive: the stage's own width, not the viewport ---------- */
+@container (min-width: 420px) {
+  .mwb-page { grid-template-columns: 1fr 1fr; grid-template-areas: "intro signs" "code code" "preview preview" "deploy deploy"; }
+  .mwb-intro-body { flex-direction: row; align-items: flex-end; justify-content: flex-start; text-align: left; }
+  .mwb-mascot { height: 160px; }
+}
+@container (min-width: 640px) {
+  .mwb-page { grid-template-columns: 1.15fr 1fr; grid-template-areas: "intro signs" "code preview" "deploy deploy"; }
+  .mwb-p-code, .mwb-p-preview { min-height: 360px; }
+  .mwb-code, .mwb-site { min-height: 320px; max-height: 440px; }
+}
+@container (min-width: 920px) {
+  .mwb-page { grid-template-columns: .85fr .65fr 1fr; grid-template-areas: "intro intro signs" "code code preview" "deploy deploy deploy"; }
+  .mwb-mascot { height: 200px; }
+  .mwb-deploy-msg { font-size: 16px; }
+}
+
+@media (max-width: 760px) {
+  .mwb-sign { min-height: 44px; }
+}
