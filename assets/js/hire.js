@@ -18,11 +18,18 @@
   $('.packs').innerHTML = (C.packages || []).map(function (p, i) {
     return '<article class="pack card' + (p.popular ? ' hot' : '') + '" data-reveal style="--d:' + (i * .08) + 's">' + (p.popular ? '<span class="pack-rib">Most popular</span>' : '') +
       '<div class="pack-h"><span class="hanko">' + esc(p.jp || '') + '</span><div><b>' + esc(p.name) + '</b><small>' + esc(p.tagline || '') + '</small></div></div>' +
-      '<div class="pack-price"><small>from </small>' + money(p.price) + '<small> / ' + esc(p.per || 'project') + '</small></div>' +
+      '<div class="pack-price">' + money(p.price) + (p.to ? '<small> – </small>' + money(p.to) : '') + '<small> / ' + esc(p.per || 'project') + '</small></div>' +
       '<ul>' + p.features.map(function (f) { return '<li>' + I('check') + '<span>' + esc(f) + '</span></li>'; }).join('') + '</ul>' +
       '<button type="button" class="btn ' + (p.popular ? 'btn-primary' : 'btn-ghost') + '" data-pack="' + i + '">Start with ' + esc(p.name) + ' ' + I('arrow-right') + '</button></article>';
   }).join('');
   XR.reveals($('.packs'));
+
+  /* price list: every service with its tiers */
+  var plist = $('.plist');
+  if (plist) plist.innerHTML = S.map(function (s) {
+    return '<article class="pl card"><h3>' + I(s.icon) + esc(s.name) + '<small>' + money(s.priceFrom) + ' – ' + money(s.priceTo || s.priceFrom) + '</small></h3><ul>' +
+      (s.tiers || []).map(function (t) { return '<li><span>' + esc(t[0]) + '</span><i></i><b>' + (t[1] === t[2] ? money(t[1]) : money(t[1]) + '–' + money(t[2]).replace(/^\D+/, '')) + '</b></li>'; }).join('') + '</ul></article>';
+  }).join('');
 
   /* configurator state */
   var state = { svc: [], feats: {}, tl: 'standard', design: 'make', sup: '0', step: 0 };
@@ -109,7 +116,7 @@
       return;
     }
     var total = base;
-    if (state.design === 'make') { total *= 1.15; html += '<li class="sub"><span>Custom UI design</span><span>+15%</span></li>'; }
+    if (state.design === 'make') html += '<li class="sub"><span>Custom UI design</span><span>included</span></li>';
     var tl = TL[state.tl];
     total *= tl[0];
     if (state.tl !== 'standard') html += '<li class="sub"><span>' + tl[2] + ' timeline</span><span>' + (tl[0] > 1 ? '+' : '') + Math.round((tl[0] - 1) * 100) + '%</span></li>';
@@ -118,7 +125,10 @@
     if (chosenPack) html = '<li><b>Package: ' + esc(chosenPack.name) + '</b><span>from ' + money(chosenPack.price) + '</span></li>' + html;
     var low = Math.max(total, chosenPack ? chosenPack.price : 0);
     est.low = Math.round(low / 10) * 10;
-    est.high = Math.round(low * 1.4 / 10) * 10;
+    /* the top of the range never passes the most the chosen services can cost */
+    var cap = state.svc.reduce(function (a, id) { return a + (byId[id].priceTo || byId[id].priceFrom * 3); }, 0) + (total - base > 0 ? total - base : 0);
+    (state.svc).forEach(function (id) { (state.feats[id] || []).forEach(function (fid) { var f = byId[id].features.find(function (x) { return x.id === fid; }); if (f) cap += f.price; }); });
+    est.high = Math.round(Math.max(low * 1.15, Math.min(low * 1.4, cap)) / 10) * 10;
     mins.sort(function (a, b) { return b - a; }); maxs.sort(function (a, b) { return b - a; });
     var dmin = mins[0] + mins.slice(1).reduce(function (a, b) { return a + b; }, 0) * .5 + nf * .5;
     var dmax = maxs[0] + maxs.slice(1).reduce(function (a, b) { return a + b; }, 0) * .5 + nf;

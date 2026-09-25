@@ -229,3 +229,9 @@
   .lab-sec .lab-feats.cols { grid-template-columns: minmax(0, 1fr); }
   .lab-note { font-size: 14px; }
 }
+
+/* price tiers under each chapter's price */
+.lab-tiers { display: grid; gap: 6px; width: 100%; max-width: 380px; margin-top: -8px; }
+.lab-tiers li { display: flex; align-items: baseline; gap: 8px; font-size: 13.5px; color: var(--ink-2); }
+.lab-tiers li i { flex: 1; border-bottom: 1.5px dotted var(--line-2); transform: translateY(-3px); min-width: 10px; }
+.lab-tiers li b { color: var(--ac); font-variant-numeric: tabular-nums; white-space: nowrap; }

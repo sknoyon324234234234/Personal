@@ -202,6 +202,13 @@
     crypto: ['#d9a441', 'pick a coin, press Simulate payment and read the webhook log.']
   };
   var ARROW = '<svg class="arr" viewBox="0 0 44 34" aria-hidden="true"><path d="M4 31c9-2 19-9 25-24"/><path d="M22 10l7-4 3 8"/></svg>';
+  function tiers() {
+    CH.forEach(function (c) {
+      var sec = doc.getElementById(c.id), s = (XR.services || []).filter(function (x) { return x.id === c.id; })[0], pr = sec && $('.lab-price', sec);
+      if (!s || !s.tiers || !pr || $('.lab-tiers', sec)) return;
+      pr.insertAdjacentHTML('afterend', '<ul class="lab-tiers">' + s.tiers.map(function (t) { return '<li><span>' + XR.esc(t[0]) + '</span><i></i><b>' + (t[1] === t[2] ? XR.fmtPrice(t[1]) : XR.fmtPrice(t[1]) + '–' + t[2]) + '</b></li>'; }).join('') + '</ul>');
+    });
+  }
   function dress() {
     CH.forEach(function (c) {
       var sec = doc.getElementById(c.id), d = DRESS[c.id];
@@ -215,6 +222,7 @@
   doc.addEventListener('DOMContentLoaded', function () {
     buildWindows();
     dress();
+    tiers();
     buildShell();
     combo();
     paintProgress();

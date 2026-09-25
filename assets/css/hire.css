@@ -136,4 +136,14 @@
   .cfg-steps li { font-size: 12px; padding-right: 10px; }
 }
 
+/* price list */
+.pl-head { margin: clamp(40px, 5vw, 64px) 0 18px; } .pl-head p { color: var(--ink-2); max-width: 60ch; margin-top: 6px; }
+.plist { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.pl { padding: 18px 20px; }
+.pl h3 { display: flex; align-items: center; gap: 10px; font: 700 16px var(--font-body); margin-bottom: 12px; }
+.pl h3 .ic { color: var(--red); flex: none; } .pl h3 small { margin-left: auto; font: 600 12.5px var(--font-mono); color: var(--red); white-space: nowrap; }
+.pl ul { display: grid; gap: 8px; }
+.pl li { display: flex; align-items: baseline; gap: 8px; font-size: 14px; color: var(--ink-2); }
+.pl li i { flex: 1; border-bottom: 1.5px dotted var(--line-2); transform: translateY(-3px); min-width: 12px; }
+.pl li b { color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .hire-bubble.over { --bw: 240px; bottom: calc(98% + 14px); }

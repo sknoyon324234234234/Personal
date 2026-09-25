@@ -66,12 +66,12 @@ window.XIRAIYA_CONFIG = {
 
   // ---- PACKAGES shown on the Hire page (edit names, prices and features) -----
   packages: [
-    { name: 'Spark', jp: '火', price: 149, per: 'project', tagline: 'Launch something small, fast.',
-      features: ['Landing page or single-purpose bot', 'Mobile-first design', 'Basic SEO & analytics', '7 days of free fixes', 'Delivery in 3–7 days'] },
-    { name: 'Blade', jp: '刃', price: 499, per: 'project', tagline: 'For businesses ready to automate.', popular: true,
-      features: ['Web app, store or advanced bot', 'Custom UI design in Figma', 'Payments: crypto, bKash, card', 'AI chat or automation workflow', '30 days of free fixes'] },
-    { name: 'Legend', jp: '伝', price: 1499, per: 'project', tagline: 'The full autopilot system.',
-      features: ['Store / platform + admin dashboard', 'AI agents with custom tools', 'Telegram bot + mobile app', 'Crypto auto-payments & webhooks', '60 days support + handover docs'] }
+    { name: 'Spark', jp: '火', price: 50, to: 100, per: 'project', tagline: 'Small and simple, done fast.',
+      features: ['Landing page ($50–70) or automated Telegram bot ($50–100)', 'Mobile-first design', 'Basic SEO & analytics', '7 days of free fixes', 'Delivery in 2–5 days'] },
+    { name: 'Blade', jp: '刃', price: 100, to: 300, per: 'project', tagline: 'A shop or a custom bot.', popular: true,
+      features: ['Normal shop ($100–150)', 'Automated shop with AI agent and auto payments ($150–300)', 'Payments: bKash, Nagad, card, crypto', 'Custom UI design', '30 days of free fixes'] },
+    { name: 'Legend', jp: '伝', price: 250, to: 500, per: 'project', tagline: 'The biggest builds.',
+      features: ['Custom Telegram bot ($150–400)', 'Web apps, AI agents, full systems ($250–500)', 'Admin dashboard + automations', 'Crypto auto-payments & webhooks', '60 days support + handover docs'] }
   ],
 
   // Typical first reply time shown on the Hire page
@@ -80,114 +80,115 @@ window.XIRAIYA_CONFIG = {
 
 /* ---------------------------------------------------------------------------
    SERVICES — used by the Lab, the Hire page configurator and prices.
-   priceFrom = your starting price in USD. Edit freely.
+   priceFrom / priceTo = the price range in USD, tiers = the price list
+   shown on the Hire page and in the Lab. More requirements, more money.
    --------------------------------------------------------------------------- */
 window.XIRAIYA_SERVICES = [
-  { id: 'web',        icon: 'globe',  jp: '網', name: 'Websites & Web Apps',       priceFrom: 149, days: '5–14',
+  { id: 'web',        icon: 'globe',  jp: '網', name: 'Websites & Web Apps',       priceFrom: 50, priceTo: 500, tiers: [['Landing page', 50, 70], ['Business site, up to 5 pages', 80, 150], ['Web app or dashboard', 250, 500]], days: '5–14',
     short: 'Cinematic landing pages, business sites, dashboards and full web apps.',
     tech: ['HTML/CSS/JS', 'React', 'Next.js', 'Node.js', 'Tailwind', 'WordPress'],
     features: [
-      { id: 'pages', label: 'Extra pages (per 5)', price: 60 },
-      { id: 'cms', label: 'CMS / admin panel', price: 150 },
-      { id: 'auth', label: 'User accounts & login', price: 120 },
-      { id: 'seo', label: 'Advanced SEO + analytics', price: 70 },
-      { id: 'anim', label: 'Cinematic animations', price: 90 },
-      { id: 'i18n', label: 'Multi-language (EN / BN ...)', price: 80 }
+      { id: 'pages', label: 'Extra pages (per 5)', price: 25 },
+      { id: 'cms', label: 'CMS / admin panel', price: 60 },
+      { id: 'auth', label: 'User accounts & login', price: 50 },
+      { id: 'seo', label: 'Advanced SEO + analytics', price: 30 },
+      { id: 'anim', label: 'Cinematic animations', price: 35 },
+      { id: 'i18n', label: 'Multi-language (EN / BN ...)', price: 30 }
     ] },
-  { id: 'automation', icon: 'flow',   jp: '自', name: 'Automation Tools',          priceFrom: 99,  days: '3–10',
+  { id: 'automation', icon: 'flow',   jp: '自', name: 'Automation Tools',          priceFrom: 40, priceTo: 300, tiers: [['Simple script or scraper', 40, 50], ['Workflow with integrations', 100, 200], ['Full automation system', 250, 300]],  days: '3–10',
     short: 'Scrapers, workflow bots, auto-posting, data pipelines and API integrations.',
     tech: ['Python', 'Node.js', 'Playwright', 'Puppeteer', 'n8n', 'Cron / Queues'],
     features: [
-      { id: 'scrape', label: 'Web scraping / data extraction', price: 80 },
-      { id: 'sheets', label: 'Google Sheets / Excel sync', price: 50 },
-      { id: 'sched', label: 'Scheduled runs (24/7 cloud)', price: 60 },
-      { id: 'api', label: 'Third-party API integrations', price: 90 },
-      { id: 'dash', label: 'Control dashboard', price: 120 }
+      { id: 'scrape', label: 'Web scraping / data extraction', price: 30 },
+      { id: 'sheets', label: 'Google Sheets / Excel sync', price: 20 },
+      { id: 'sched', label: 'Scheduled runs (24/7 cloud)', price: 25 },
+      { id: 'api', label: 'Third-party API integrations', price: 35 },
+      { id: 'dash', label: 'Control dashboard', price: 50 }
     ] },
-  { id: 'telegram',   icon: 'send',   jp: '伝', name: 'Telegram Bots',             priceFrom: 79,  days: '3–10',
+  { id: 'telegram',   icon: 'send',   jp: '伝', name: 'Telegram Bots',             priceFrom: 50, priceTo: 400, tiers: [['Automated normal bot', 50, 100], ['Custom bot (payments, admin, AI)', 150, 400]],  days: '3–10',
     short: 'Shop bots, support bots, group managers, signal & payment bots.',
     tech: ['Node.js', 'grammY', 'Python', 'aiogram', 'MongoDB', 'Webhooks'],
     features: [
-      { id: 'pay', label: 'Payments (crypto / Telegram Stars)', price: 90 },
-      { id: 'admin', label: 'Admin panel & broadcast', price: 80 },
-      { id: 'ai', label: 'AI replies (LLM)', price: 110 },
-      { id: 'groups', label: 'Group moderation', price: 60 },
-      { id: 'mini', label: 'Telegram Mini App', price: 180 }
+      { id: 'pay', label: 'Payments (crypto / Telegram Stars)', price: 35 },
+      { id: 'admin', label: 'Admin panel & broadcast', price: 30 },
+      { id: 'ai', label: 'AI replies (LLM)', price: 45 },
+      { id: 'groups', label: 'Group moderation', price: 25 },
+      { id: 'mini', label: 'Telegram Mini App', price: 70 }
     ] },
-  { id: 'extension',  icon: 'puzzle', jp: '拡', name: 'Chrome Extensions',         priceFrom: 119, days: '4–12',
+  { id: 'extension',  icon: 'puzzle', jp: '拡', name: 'Chrome Extensions',         priceFrom: 40, priceTo: 300, tiers: [['Simple extension', 40, 50], ['Extension with accounts or sync', 100, 200], ['Full product, store-ready', 250, 300]], days: '4–12',
     short: 'Manifest V3 extensions: productivity, scrapers, trackers, page tools.',
     tech: ['Manifest V3', 'JavaScript', 'TypeScript', 'React', 'Service Workers'],
     features: [
-      { id: 'popup', label: 'Designed popup UI', price: 50 },
-      { id: 'sync', label: 'Cloud sync & accounts', price: 110 },
-      { id: 'content', label: 'Page injection / automation', price: 80 },
-      { id: 'store', label: 'Chrome Web Store publishing', price: 40 }
+      { id: 'popup', label: 'Designed popup UI', price: 20 },
+      { id: 'sync', label: 'Cloud sync & accounts', price: 45 },
+      { id: 'content', label: 'Page injection / automation', price: 30 },
+      { id: 'store', label: 'Chrome Web Store publishing', price: 15 }
     ] },
-  { id: 'minecraft',  icon: 'cube',   jp: '塊', name: 'Minecraft Plugins',         priceFrom: 59,  days: '2–10',
+  { id: 'minecraft',  icon: 'cube',   jp: '塊', name: 'Minecraft Plugins',         priceFrom: 30, priceTo: 250, tiers: [['Simple plugin', 30, 50], ['Economy, shop or ranks', 80, 150], ['Minigame or network system', 200, 250]],  days: '2–10',
     short: 'Custom Paper/Spigot plugins: economies, shops, ranks, minigames.',
     tech: ['Java', 'Paper / Spigot', 'Velocity', 'MySQL', 'Vault', 'PlaceholderAPI'],
     features: [
-      { id: 'gui', label: 'Custom inventory GUIs', price: 40 },
-      { id: 'db', label: 'MySQL / SQLite storage', price: 50 },
-      { id: 'eco', label: 'Economy / shop system', price: 70 },
-      { id: 'mini', label: 'Minigame logic', price: 150 },
-      { id: 'web', label: 'Server website + store', price: 120 }
+      { id: 'gui', label: 'Custom inventory GUIs', price: 15 },
+      { id: 'db', label: 'MySQL / SQLite storage', price: 20 },
+      { id: 'eco', label: 'Economy / shop system', price: 30 },
+      { id: 'mini', label: 'Minigame logic', price: 60 },
+      { id: 'web', label: 'Server website + store', price: 50 }
     ] },
-  { id: 'desktop',    icon: 'window', jp: '機', name: 'Desktop Apps (.exe)',       priceFrom: 149, days: '5–20',
+  { id: 'desktop',    icon: 'window', jp: '機', name: 'Desktop Apps (.exe)',       priceFrom: 50, priceTo: 400, tiers: [['Simple tool', 50, 50], ['App with database', 100, 250], ['Full software + installer, updates', 250, 400]], days: '5–20',
     short: 'Windows software with installers: tools, dashboards, POS, utilities.',
     tech: ['Electron', 'C# / .NET', 'Python', 'Tauri', 'SQLite'],
     features: [
-      { id: 'installer', label: 'Signed installer (.exe / .msi)', price: 60 },
-      { id: 'update', label: 'Auto-updates', price: 80 },
-      { id: 'license', label: 'License keys / activation', price: 100 },
-      { id: 'offline', label: 'Offline database', price: 60 }
+      { id: 'installer', label: 'Signed installer (.exe / .msi)', price: 25 },
+      { id: 'update', label: 'Auto-updates', price: 30 },
+      { id: 'license', label: 'License keys / activation', price: 40 },
+      { id: 'offline', label: 'Offline database', price: 25 }
     ] },
-  { id: 'mobile',     icon: 'phone',  jp: '携', name: 'Mobile Apps (.apk)',        priceFrom: 199, days: '10–30',
+  { id: 'mobile',     icon: 'phone',  jp: '携', name: 'Mobile Apps (.apk)',        priceFrom: 50, priceTo: 500, tiers: [['Simple app', 50, 50], ['App with login and data', 150, 250], ['Full app with payments', 250, 500]], days: '10–30',
     short: 'Android apps delivered as APK / Play Store: shops, tools, fitness, delivery.',
     tech: ['Flutter', 'React Native', 'Kotlin', 'Firebase'],
     features: [
-      { id: 'push', label: 'Push notifications', price: 60 },
-      { id: 'auth', label: 'Login & user profiles', price: 90 },
-      { id: 'pay', label: 'In-app payments', price: 110 },
-      { id: 'play', label: 'Play Store publishing', price: 50 },
-      { id: 'ios', label: 'iOS build too', price: 250 }
+      { id: 'push', label: 'Push notifications', price: 25 },
+      { id: 'auth', label: 'Login & user profiles', price: 35 },
+      { id: 'pay', label: 'In-app payments', price: 45 },
+      { id: 'play', label: 'Play Store publishing', price: 20 },
+      { id: 'ios', label: 'iOS build too', price: 100 }
     ] },
-  { id: 'ai-agent',   icon: 'chip',   jp: '知', name: 'AI Agents',                 priceFrom: 249, days: '7–21',
+  { id: 'ai-agent',   icon: 'chip',   jp: '知', name: 'AI Agents',                 priceFrom: 50, priceTo: 500, tiers: [['Single-task agent', 50, 50], ['Agent with custom tools', 150, 250], ['Multi-agent system', 250, 500]], days: '7–21',
     short: 'Autonomous agents that plan, use tools, and finish real business tasks.',
     tech: ['Claude / GPT APIs', 'Tool calling', 'RAG', 'Vector DB', 'Python', 'Node.js'],
     features: [
-      { id: 'tools', label: 'Custom tools (DB, email, CRM ...)', price: 150 },
-      { id: 'rag', label: 'Knowledge base (RAG)', price: 140 },
-      { id: 'memory', label: 'Long-term memory', price: 90 },
-      { id: 'panel', label: 'Agent config panel', price: 160 },
-      { id: 'multi', label: 'Multi-agent workflows', price: 220 }
+      { id: 'tools', label: 'Custom tools (DB, email, CRM ...)', price: 60 },
+      { id: 'rag', label: 'Knowledge base (RAG)', price: 55 },
+      { id: 'memory', label: 'Long-term memory', price: 35 },
+      { id: 'panel', label: 'Agent config panel', price: 65 },
+      { id: 'multi', label: 'Multi-agent workflows', price: 90 }
     ] },
-  { id: 'ai-chat',    icon: 'chat',   jp: '話', name: 'AI Chat Systems',           priceFrom: 199, days: '5–15',
+  { id: 'ai-chat',    icon: 'chat',   jp: '話', name: 'AI Chat Systems',           priceFrom: 50, priceTo: 300, tiers: [['FAQ chat widget', 50, 50], ['Chat trained on your docs', 100, 200], ['Multi-channel with human handoff', 250, 300]], days: '5–15',
     short: 'Website / Telegram / WhatsApp chat that answers, sells and hands off to humans.',
     tech: ['LLM APIs', 'WebSockets', 'Knowledge base', 'Widget SDK'],
     features: [
-      { id: 'kb', label: 'Train on your docs & FAQ', price: 90 },
-      { id: 'handoff', label: 'Human handoff inbox', price: 120 },
-      { id: 'channels', label: 'Telegram + WhatsApp channels', price: 130 },
-      { id: 'bangla', label: 'Bangla + English replies', price: 50 }
+      { id: 'kb', label: 'Train on your docs & FAQ', price: 35 },
+      { id: 'handoff', label: 'Human handoff inbox', price: 50 },
+      { id: 'channels', label: 'Telegram + WhatsApp channels', price: 50 },
+      { id: 'bangla', label: 'Bangla + English replies', price: 20 }
     ] },
-  { id: 'ecommerce',  icon: 'bag',    jp: '店', name: 'E-commerce Stores',         priceFrom: 399, days: '10–30',
+  { id: 'ecommerce',  icon: 'bag',    jp: '店', name: 'E-commerce Stores',         priceFrom: 100, priceTo: 500, tiers: [['Normal shop', 100, 150], ['Automated shop: AI agent + auto payments', 150, 300], ['Large custom store', 300, 500]], days: '10–30',
     short: 'Custom stores on autopilot: AI agent, auto-payments, inventory, notifications.',
     tech: ['Next.js', 'Node.js', 'Shopify', 'WooCommerce', 'Stripe', 'Crypto gateways'],
     features: [
-      { id: 'agent', label: 'AI shopping assistant', price: 180 },
-      { id: 'autopilot', label: 'Autopilot agent (restock, replies, recovery)', price: 250 },
-      { id: 'crypto', label: 'Crypto auto-payments', price: 150 },
-      { id: 'local', label: 'bKash / Nagad payments', price: 90 },
-      { id: 'admin', label: 'Custom admin dashboard', price: 200 }
+      { id: 'agent', label: 'AI shopping assistant', price: 70 },
+      { id: 'autopilot', label: 'Autopilot agent (restock, replies, recovery)', price: 100 },
+      { id: 'crypto', label: 'Crypto auto-payments', price: 60 },
+      { id: 'local', label: 'bKash / Nagad payments', price: 35 },
+      { id: 'admin', label: 'Custom admin dashboard', price: 80 }
     ] },
-  { id: 'crypto',     icon: 'btc',    jp: '貨', name: 'Crypto & Auto Payments',    priceFrom: 149, days: '4–14',
+  { id: 'crypto',     icon: 'btc',    jp: '貨', name: 'Crypto & Auto Payments',    priceFrom: 50, priceTo: 250, tiers: [['Payment button or link', 50, 50], ['Auto-confirming checkout', 100, 200], ['Full payment + payout system', 200, 250]], days: '4–14',
     short: 'Auto-confirming crypto checkouts, invoices, webhooks and payout bots.',
     tech: ['USDT / BTC / ETH / BNB', 'Binance Pay', 'Webhooks', 'HMAC', 'Node.js'],
     features: [
-      { id: 'multi', label: 'Multiple coins & networks', price: 80 },
-      { id: 'invoice', label: 'Invoices & payment links', price: 70 },
-      { id: 'webhook', label: 'Auto-confirm webhooks', price: 90 },
-      { id: 'payout', label: 'Automatic payouts', price: 150 }
+      { id: 'multi', label: 'Multiple coins & networks', price: 30 },
+      { id: 'invoice', label: 'Invoices & payment links', price: 30 },
+      { id: 'webhook', label: 'Auto-confirm webhooks', price: 35 },
+      { id: 'payout', label: 'Automatic payouts', price: 60 }
     ] }
 ];
