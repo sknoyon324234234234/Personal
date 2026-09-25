@@ -1217,7 +1217,7 @@ input:checked + .utg-cb { background: var(--cc); border-color: var(--cc); color:
 .se-form { display: grid; gap: 8px; }
 .se-form label { display: grid; gap: 4px; font-size: 12px; font-weight: 600; }
 .se-form label span { display: flex; justify-content: space-between; }
-.se-form em { font: 700 11px var(--font-mono); font-style: normal; }
+.se-form em { font: 700 11px var(--font-mono); font-style: normal; background: none; padding: 0; }
 .se-form em.ok { color: var(--ok); } .se-form em.mid { color: var(--mid); } .se-form em.bad { color: var(--bad); }
 .se-g { display: grid; gap: 4px; padding: 18px; border-radius: 16px; background: #fff; color: #202124; border: 1px solid #dadce0; font-family: Arial, sans-serif; }
 .se-src { display: flex; gap: 10px; align-items: center; }

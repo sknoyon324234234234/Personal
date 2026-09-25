@@ -265,7 +265,7 @@
       if (e.target.closest('.rs-reset')) { hold = Date.now(); db = [{ id: 1, name: 'Keyboard', price: 129 }, { id: 2, name: 'Mouse', price: 49 }]; nid = 3; rows(0); }
     });
     run(0);
-    k.every(function () { if (Date.now() - hold < 6000) return; var n = (cur + 1) % A.length; if (n === 0) { db = [{ id: 1, name: 'Keyboard', price: 129 }, { id: 2, name: 'Mouse', price: 49 }]; nid = 3; } run(n); }, 2400);
+    k.every(function () { if (Date.now() - hold < 6000) return; var n = (cur + 1) % A.length; if (n === 0) { db = [{ id: 1, name: 'Keyboard', price: 129 }, { id: 2, name: 'Mouse', price: 49 }]; nid = 3; } run(n); }, 3600);
   };
 
   function b64u(s) { return btoa(unescape(encodeURIComponent(s))).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_'); }
