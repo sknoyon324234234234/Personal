@@ -195,7 +195,7 @@
     var seen = {}, names = [], cc = false;
     Object.keys(c).forEach(function (k) {
       var x = c[k], n = (x.photographer || '').replace(/\s+/g, ' ').trim();
-      if (!n || n === 'unknown' || seen[n]) return;
+      if (!n || /^unknown/i.test(n) || seen[n]) return;
       seen[n] = 1;
       var lic = x.license && !/unsplash/i.test(x.license) ? x.license : '';
       if (lic) cc = true;

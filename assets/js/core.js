@@ -1226,7 +1226,7 @@
       { g: 'Actions', t: 'Shop with the AI assistant', s: 'Store demo', ic: 'bag', href: 'shop.html' }
     );
     var c = (C.contact || {});
-    if (c.email) items.push({ g: 'Actions', t: 'Copy email address', s: c.email, ic: 'mail', run: function () { copy(c.email).then(function () { toast('Email copied'); }); } });
+    if (real(c.email)) items.push({ g: 'Actions', t: 'Copy email address', s: c.email, ic: 'mail', run: function () { copy(c.email).then(function () { toast('Email copied'); }); } });
     items.push({ g: 'Actions', t: 'Back to top', s: 'Scroll up', ic: 'arrow-up', run: function () { window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); } });
     return items;
   }

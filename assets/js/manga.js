@@ -36,7 +36,7 @@
       vis.innerHTML = '<span class="ty-s"></span><span class="ty-h"></span>';
       b.appendChild(sr); b.appendChild(vis);
       b._t = text; b._s = vis.firstChild; b._h = vis.lastChild;
-      b._h.textContent = text;
+      if (RM) b._s.textContent = text; else b._h.textContent = text;
     }
     function typeBubble(b, delay) {
       if (b._done) return 0;
@@ -102,10 +102,10 @@
     /* ---- camera: each panel pans or zooms with its scroll position.
        Only panels on screen are measured, and only on frames after a scroll. ---- */
     var CAM = {
-      push: function (k) { return [0, 2 - k * 4, 1.03 + k * 0.1]; },
-      zoom: function (k) { return [0, 0, 1 + k * 0.12]; },
-      pan: function (k) { return [4 - k * 8, 0, 1.1]; },
-      'pan-r': function (k) { return [-4 + k * 8, 0, 1.1]; }
+      push: function (k) { return [0, 1.5 - k * 3, 1.02 + k * 0.07]; },
+      zoom: function (k) { return [0, 0, 1 + k * 0.08]; },
+      pan: function (k) { return [3 - k * 6, 0, 1.07]; },
+      'pan-r': function (k) { return [-3 + k * 6, 0, 1.07]; }
     };
     function camera() {
       ticking = false;
@@ -150,8 +150,11 @@
       nextB.hidden = cur === last;
       if (cur < last) $('b', nextB).textContent = names[cur + 1];
       endP.hidden = cur !== last;
-      tabs.forEach(function (t, i) { t.setAttribute('aria-selected', i === cur ? 'true' : 'false'); t.tabIndex = i === cur ? 0 : -1; });
-      tabsWrap.style.setProperty('--i', cur);
+      selectTab(cur);
+    }
+    function selectTab(n) {
+      tabs.forEach(function (t, i) { t.setAttribute('aria-selected', i === n ? 'true' : 'false'); t.tabIndex = i === n ? 0 : -1; });
+      tabsWrap.style.setProperty('--i', n);
     }
     function go(n) {
       if (n < 0 || n >= pages.length || n === cur || turning) return;
@@ -161,7 +164,7 @@
       lastCount = -1;
       if (RM) { old.hidden = true; nw.hidden = false; cur = n; setNav(); progress(); return; }
       turning = true;
-      tabsWrap.style.setProperty('--i', n);
+      selectTab(n);
       book.style.minHeight = book.offsetHeight + 'px';
       old.style.setProperty('--dir', dir); old.classList.add('turn-out');
       brush.classList.remove('go', 'back'); void brush.offsetWidth;
