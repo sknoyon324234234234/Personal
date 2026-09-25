@@ -75,7 +75,6 @@
   var desktop = window.matchMedia('(min-width: 761px)');
   var ticking = false;
 
-  var lastHsP = -1, lastW = 0, lastDist = -1;
   function update() {
     ticking = false;
     var vh = innerHeight;
@@ -88,16 +87,10 @@
       var lastP = panels[panels.length - 1], firstP = panels[0];
       /* travel from the first panel centred to the last panel centred */
       var dist = lastP && firstP ? (lastP.offsetLeft + lastP.offsetWidth / 2) - (firstP.offsetLeft + firstP.offsetWidth / 2) : track.scrollWidth - innerWidth;
-      /* parked before or after the gallery with nothing changed: the panels are already in place */
-      var same = (p === 0 || p === 1) && p === lastHsP && innerWidth === lastW && dist === lastDist;
-      lastHsP = p; lastW = innerWidth; lastDist = dist;
-      if (!same) {
       track.style.transform = 'translate3d(' + (-p * Math.max(0, dist)).toFixed(1) + 'px,0,0)';
       if (prog) prog.style.setProperty('--p', p.toFixed(4));
       tilt3d();
-      }
     } else if (track) {
-      lastHsP = -1;
       track.style.transform = '';
       panels.forEach(function (pn) { pn.style.transform = ''; pn.style.opacity = ''; });
       tilt3d(true);
