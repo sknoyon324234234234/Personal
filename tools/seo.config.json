@@ -172,7 +172,7 @@
       "path": "pages.html",
       "name": "Pages Studio",
       "title": "Pages Studio — Restyle Website Templates Live | Xiraiya",
-      "description": "Twelve complete website templates. Change fonts, colours and layout in real time, preview homepage, login and dashboard pages, then export the code.",
+      "description": "Thirteen complete pages, one design system. Change fonts, colours and layout in real time, preview homepage, login and dashboard pages, then export the code.",
       "ogTitle": "Pages Studio — restyle full page templates live | Xiraiya",
       "ogDescription": "Homepage, login, sign-up, pricing, dashboard and more. Swap section variants, button styles, colours and fonts, then export the HTML.",
       "keywords": "",
@@ -186,7 +186,7 @@
         "color": "#2f6fe0",
         "kicker": "Pages Studio · 頁",
         "title": "Restyle a whole website *in real time.*",
-        "subtitle": "Twelve complete websites. Change fonts, colours and layout, then export.",
+        "subtitle": "Thirteen complete pages. Change fonts, colours and layout, then export.",
         "tags": "Homepage|Login|Dashboard|Export",
         "jp": "頁"
       }
@@ -199,7 +199,7 @@
       "title": "Dev World — Terminal, Code Playground & Dev Tools | Xiraiya",
       "description": "A developer village: working terminal, live HTML/CSS/JS playground, 17 dev tools, a mock REST API console, algorithm arena and a typing dojo.",
       "ogTitle": "Dev World — a whole developer village | Xiraiya",
-      "ogDescription": "Type commands in the terminal, write code in the playground, use nine dev tools and call a mock API. All in the browser.",
+      "ogDescription": "Type commands in the terminal, write code in the playground, use 17 dev tools and call a mock API. All in the browser.",
       "keywords": "",
       "type": "WebApplication",
       "priority": "0.7",
