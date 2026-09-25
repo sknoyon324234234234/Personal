@@ -85,7 +85,7 @@ window.XIRAIYA_CONFIG = {
    --------------------------------------------------------------------------- */
 window.XIRAIYA_SERVICES = [
   { id: 'web',        icon: 'globe',  jp: '網', name: 'Websites & Web Apps',       priceFrom: 50, priceTo: 500, tiers: [['Landing page', 50, 70], ['Business site, up to 5 pages', 80, 150], ['Web app or dashboard', 250, 500]], days: '5–14',
-    short: 'Cinematic landing pages, business sites, dashboards and full web apps.',
+    short: 'Landing pages, business sites, dashboards and full web apps that load fast on any phone.',
     tech: ['HTML/CSS/JS', 'React', 'Next.js', 'Node.js', 'Tailwind', 'WordPress'],
     features: [
       { id: 'pages', label: 'Extra pages (per 5)', price: 25 },
@@ -154,7 +154,7 @@ window.XIRAIYA_SERVICES = [
       { id: 'ios', label: 'iOS build too', price: 100 }
     ] },
   { id: 'ai-agent',   icon: 'chip',   jp: '知', name: 'AI Agents',                 priceFrom: 50, priceTo: 500, tiers: [['Single-task agent', 50, 50], ['Agent with custom tools', 150, 250], ['Multi-agent system', 250, 500]], days: '7–21',
-    short: 'Autonomous agents that plan, use tools, and finish real business tasks.',
+    short: 'Agents that use your tools and data to finish real work, like restocking or clearing a support inbox.',
     tech: ['Claude / GPT APIs', 'Tool calling', 'RAG', 'Vector DB', 'Python', 'Node.js'],
     features: [
       { id: 'tools', label: 'Custom tools (DB, email, CRM ...)', price: 60 },
@@ -164,7 +164,7 @@ window.XIRAIYA_SERVICES = [
       { id: 'multi', label: 'Multi-agent workflows', price: 90 }
     ] },
   { id: 'ai-chat',    icon: 'chat',   jp: '話', name: 'AI Chat Systems',           priceFrom: 50, priceTo: 300, tiers: [['FAQ chat widget', 50, 50], ['Chat trained on your docs', 100, 200], ['Multi-channel with human handoff', 250, 300]], days: '5–15',
-    short: 'Website / Telegram / WhatsApp chat that answers, sells and hands off to humans.',
+    short: 'Chat for your website, Telegram or WhatsApp. Answers customers and passes the tricky ones to you.',
     tech: ['LLM APIs', 'WebSockets', 'Knowledge base', 'Widget SDK'],
     features: [
       { id: 'kb', label: 'Train on your docs & FAQ', price: 35 },
@@ -173,7 +173,7 @@ window.XIRAIYA_SERVICES = [
       { id: 'bangla', label: 'Bangla + English replies', price: 20 }
     ] },
   { id: 'ecommerce',  icon: 'bag',    jp: '店', name: 'E-commerce Stores',         priceFrom: 100, priceTo: 500, tiers: [['Normal shop', 100, 150], ['Automated shop: AI agent + auto payments', 150, 300], ['Large custom store', 300, 500]], days: '10–30',
-    short: 'Custom stores on autopilot: AI agent, auto-payments, inventory, notifications.',
+    short: 'Custom stores that mostly run themselves: AI assistant, auto-payments, stock and order alerts.',
     tech: ['Next.js', 'Node.js', 'Shopify', 'WooCommerce', 'Stripe', 'Crypto gateways'],
     features: [
       { id: 'agent', label: 'AI shopping assistant', price: 70 },
