@@ -459,15 +459,15 @@
      Header + mobile menu + footer
      ------------------------------------------------------------------ */
   var NAV = [
-    { id: 'home', href: 'index.html', label: 'Home', jp: '家' },
-    { id: 'lab', href: 'showcase.html', label: 'The Lab', short: 'Lab', jp: '技' },
-    { id: 'shop', href: 'shop.html', label: 'Shop Templates', short: 'Shop', jp: '店' },
-    { id: 'kit', href: 'components.html', label: 'UI Kit', jp: '型' },
-    { id: 'demos', href: 'demos.html', label: 'Demo Sites', short: 'Demos', jp: '演' },
-    { id: 'pages', href: 'pages.html', label: 'Pages', jp: '頁' },
-    { id: 'world', href: 'dev-world.html', label: 'Dev World', jp: '里' },
-    { id: 'learn', href: 'knowledge.html', label: 'Basic Knowledge', short: 'Learn', jp: '学' },
-    { id: 'hire', href: 'hire.html', label: 'Hire Me', jp: '雇' }
+    { id: 'home', href: './', label: 'Home', jp: '家' },
+    { id: 'lab', href: 'showcase', label: 'The Lab', short: 'Lab', jp: '技' },
+    { id: 'shop', href: 'shop', label: 'Shop Templates', short: 'Shop', jp: '店' },
+    { id: 'kit', href: 'components', label: 'UI Kit', jp: '型' },
+    { id: 'demos', href: 'demos', label: 'Demo Sites', short: 'Demos', jp: '演' },
+    { id: 'pages', href: 'pages', label: 'Pages', jp: '頁' },
+    { id: 'world', href: 'dev-world', label: 'Dev World', jp: '里' },
+    { id: 'learn', href: 'knowledge', label: 'Basic Knowledge', short: 'Learn', jp: '学' },
+    { id: 'hire', href: 'hire', label: 'Hire Me', jp: '雇' }
   ];
 
   function roll(t) { return '<span class="roll"><span data-t="' + esc(t) + '">' + esc(t) + '</span></span>'; }
@@ -482,13 +482,13 @@
       '<a class="skip" href="#main">Skip to content</a>' +
       '<div class="hdr-bg"></div>' +
       '<div class="container container-wide hdr-bar">' +
-        '<a class="brand" href="index.html" aria-label="' + esc(C.name || 'Xiraiya') + ' — home">' + brandMark() + '<span class="brand-word">' + esc((C.name || 'Xiraiya').toUpperCase()) + '</span><span class="brand-jp">開発者</span></a>' +
+        '<a class="brand" href="./" aria-label="' + esc(C.name || 'Xiraiya') + ' — home">' + brandMark() + '<span class="brand-word">' + esc((C.name || 'Xiraiya').toUpperCase()) + '</span><span class="brand-jp">開発者</span></a>' +
         '<nav class="hdr-nav" aria-label="Primary">' + links + '</nav>' +
         '<div class="hdr-actions">' +
           '<button type="button" class="hdr-search" data-palette aria-label="Search and quests (Ctrl K)">' + icon('search') + '<span>Search</span><kbd>Ctrl K</kbd></button>' +
           '<button type="button" class="mode-btn" data-mode-toggle aria-label="Switch to ink (dark) mode" title="Paper / ink mode"><span class="mb-sun">' + icon('sun') + '</span><span class="mb-moon">' + icon('moon') + '</span></button>' +
           '<span class="status' + (C.available === false ? ' off' : '') + '"><i></i>' + (C.available === false ? 'Booked — waitlist open' : 'Available for work') + '</span>' +
-          '<a class="btn btn-primary btn-sm" href="hire.html" data-magnetic>' + roll('Hire me') + icon('arrow-up-right', 'ic-up') + '</a>' +
+          '<a class="btn btn-primary btn-sm" href="hire" data-magnetic>' + roll('Hire me') + icon('arrow-up-right', 'ic-up') + '</a>' +
           '<button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mmenu"><span></span><span></span></button>' +
         '</div>' +
       '</div>';
@@ -619,10 +619,10 @@
   // App-style bottom tab bar (shown on phones only, via phone.css)
   function buildTabbar() {
     var TABS = [
-      { id: 'home', href: 'index.html', label: 'Home', ic: 'home' },
-      { id: 'lab', href: 'showcase.html', label: 'Lab', ic: 'sparkle' },
-      { id: 'hire', href: 'hire.html', label: 'Hire me', ic: 'briefcase', cls: 'tb-hire' },
-      { id: 'shop', href: 'shop.html', label: 'Shop', ic: 'cart' }
+      { id: 'home', href: './', label: 'Home', ic: 'home' },
+      { id: 'lab', href: 'showcase', label: 'Lab', ic: 'sparkle' },
+      { id: 'hire', href: 'hire', label: 'Hire me', ic: 'briefcase', cls: 'tb-hire' },
+      { id: 'shop', href: 'shop', label: 'Shop', ic: 'cart' }
     ];
     var nav = document.createElement('nav');
     nav.className = 'tabbar';
@@ -668,7 +668,7 @@
     var f = $('#site-footer');
     if (!f) return;
     var svc = SERVICES.slice(0, 7).map(function (s) {
-      return '<li><a href="showcase.html#' + s.id + '">' + esc(s.name) + '</a></li>';
+      return '<li><a href="showcase#' + s.id + '">' + esc(s.name) + '</a></li>';
     }).join('');
     var ct = contacts().map(function (c) {
       return '<li><a href="' + esc(c.href) + '" target="_blank" rel="noopener">' + icon(c.icon) + esc(c.text) + '</a></li>';
@@ -678,17 +678,17 @@
         '<div class="ftr-cta">' +
           '<span class="eyebrow">Next chapter · 次の章</span>' +
           '<h2 class="h1">Got an idea? Send it over. <span class="grad-text">I’ll build it.</span></h2>' +
-          '<div class="flex wrap"><a class="btn btn-primary btn-lg" href="hire.html" data-magnetic>Start a project ' + icon('arrow-right') + '</a>' +
-          '<a class="btn btn-ghost btn-lg" href="showcase.html">Explore the Lab</a></div>' +
+          '<div class="flex wrap"><a class="btn btn-primary btn-lg" href="hire" data-magnetic>Start a project ' + icon('arrow-right') + '</a>' +
+          '<a class="btn btn-ghost btn-lg" href="showcase">Explore the Lab</a></div>' +
         '</div>' +
         '<div class="ftr-grid">' +
-          '<div class="ftr-about"><a class="brand" href="index.html">' + brandMark() + '<span class="brand-word">' + esc((C.name || 'Xiraiya').toUpperCase()) + '</span></a>' +
+          '<div class="ftr-about"><a class="brand" href="./">' + brandMark() + '<span class="brand-word">' + esc((C.name || 'Xiraiya').toUpperCase()) + '</span></a>' +
             '<p>' + esc(C.age) + '-year-old developer from ' + esc(C.city) + ', ' + esc(C.country) + '. ' + esc(C.experienceYears) + '+ years building websites, bots, apps and AI agents that keep working after I log off.</p>' +
             '<div class="ftr-clock">' + icon('clock') + '<span>' + esc(C.city) + ' · <b data-clock>--:--</b> GMT+6</span></div>' +
             (C.contact && real(C.contact.telegram) ? '<a class="ftr-tg" href="https://t.me/' + esc(C.contact.telegram) + '" target="_blank" rel="noopener" aria-label="Message Xiraiya on Telegram"><span class="ftr-tg-ic">' + tgLogo() + '</span><span><small>Fastest reply</small><b>@' + esc(C.contact.telegram) + '</b></span>' + icon('arrow-up-right') + '</a>' : '') + '</div>' +
           '<div><h3>Explore</h3><ul>' + NAV.map(function (n) { return '<li><a href="' + n.href + '">' + esc(n.label) + '</a></li>'; }).join('') + '</ul></div>' +
-          '<div><h3>Services</h3><ul>' + svc + '<li><a href="showcase.html">All services</a></li></ul></div>' +
-          '<div><h3>Contact</h3><ul>' + ct + '<li><a href="hire.html">' + icon('briefcase') + 'Project brief form</a></li></ul></div>' +
+          '<div><h3>Services</h3><ul>' + svc + '<li><a href="showcase">All services</a></li></ul></div>' +
+          '<div><h3>Contact</h3><ul>' + ct + '<li><a href="hire">' + icon('briefcase') + 'Project brief form</a></li></ul></div>' +
         '</div>' +
       '</div>' +
       mangaWord((C.name || 'Xiraiya').toUpperCase()) +
@@ -1217,18 +1217,18 @@
     var inLab = ['web', 'automation', 'extension', 'minecraft', 'desktop', 'mobile', 'ai-chat'];
     SERVICES.forEach(function (sv) {
       var lab = inLab.indexOf(sv.id) > -1;
-      items.push({ g: lab ? 'Live demos in the Lab' : 'Services', t: sv.name, s: 'from ' + fmtPrice(sv.priceFrom), ic: sv.icon, href: lab ? 'showcase.html#' + sv.id : 'hire.html?service=' + sv.id });
+      items.push({ g: lab ? 'Live demos in the Lab' : 'Services', t: sv.name, s: 'from ' + fmtPrice(sv.priceFrom), ic: sv.icon, href: lab ? 'showcase#' + sv.id : 'hire?service=' + sv.id });
     });
     [['Aurèle', 'Fine jewellery atelier', 'aurele'], ['Nordhem', 'Furniture and sofa builder', 'nordhem'], ['Halide', 'Film cameras and lab', 'halide'], ['Kage Build', 'Gaming PC configurator', 'kage'], ['Stride', 'Sneaker drops and raffle', 'stride'], ['Nova AI', 'SaaS landing page', 'nova-saas'], ['Sakura Bistro', 'Restaurant', 'sakura-bistro'], ['Vault', 'Crypto dashboard', 'vault-dashboard'], ['BlockRealm', 'Minecraft server site', 'blockrealm'], ['Pulse', 'App landing page', 'pulse-app'], ['Mori Tea', 'Tea shop', 'mori-tea'], ['Haven', 'Architecture and homes', 'haven'], ['Ledger', 'Banking dashboard', 'ledger'], ['Nomad', 'Travel booking', 'nomad'], ['Kumo Docs', 'Developer docs', 'devdocs']].forEach(function (d) {
-      items.push({ g: 'Demo websites', t: d[0], s: d[1], ic: 'window', href: 'demos/' + d[2] + '.html' });
+      items.push({ g: 'Demo websites', t: d[0], s: d[1], ic: 'window', href: 'demos/' + d[2] });
     });
     items.push(
-      { g: 'Actions', t: 'Build in the block garden', s: 'Minecraft plugins you can switch on', ic: 'cube', href: 'showcase.html#minecraft' },
-      { g: 'Actions', t: 'Get a price estimate', s: '60-second configurator', ic: 'sliders', href: 'hire.html#configure' },
-      { g: 'Actions', t: 'Start a project', s: 'Send a brief', ic: 'rocket', href: 'hire.html' },
-      { g: 'Actions', t: 'Before and after: site makeovers', s: 'Drag an old site into a fast one', ic: 'wand', href: 'showcase.html#makeover' },
-      { g: 'Actions', t: 'Hang a wish on the wish wall', s: 'See how I would build it', ic: 'pen', href: 'showcase.html#wishes' },
-      { g: 'Actions', t: 'Shop with the AI assistant', s: 'Store demo', ic: 'bag', href: 'shop.html' }
+      { g: 'Actions', t: 'Build in the block garden', s: 'Minecraft plugins you can switch on', ic: 'cube', href: 'showcase#minecraft' },
+      { g: 'Actions', t: 'Get a price estimate', s: '60-second configurator', ic: 'sliders', href: 'hire#configure' },
+      { g: 'Actions', t: 'Start a project', s: 'Send a brief', ic: 'rocket', href: 'hire' },
+      { g: 'Actions', t: 'Before and after: site makeovers', s: 'Drag an old site into a fast one', ic: 'wand', href: 'showcase#makeover' },
+      { g: 'Actions', t: 'Hang a wish on the wish wall', s: 'See how I would build it', ic: 'pen', href: 'showcase#wishes' },
+      { g: 'Actions', t: 'Shop with the AI assistant', s: 'Store demo', ic: 'bag', href: 'shop' }
     );
     var c = (C.contact || {});
     if (real(c.email)) items.push({ g: 'Actions', t: 'Copy email address', s: c.email, ic: 'mail', run: function () { copy(c.email).then(function () { toast('Email copied'); }); } });

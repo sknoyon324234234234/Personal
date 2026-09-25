@@ -28,8 +28,16 @@ ErrorDocument 404 /404.html
   # /hire/ → /hire (keeps relative asset paths working)
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^(.+)/$ /$1 [R=301,L]
-  # clean URLs: /hire serves hire.html
-  RewriteCond %{REQUEST_FILENAME} !-d
+  # a page and a folder with the same name (demos.html and demos/): /demos/ → /demos
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{REQUEST_FILENAME} ^(.+?)/?$
+  RewriteCond %1.html -f
+  RewriteRule ^(.+)/$ /$1 [R=301,L]
+  # /hire.html → /hire, so every page has one clean address (query strings are kept)
+  RewriteCond %{ENV:REDIRECT_STATUS} ^$
+  RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
+  RewriteRule ^ /%1 [R=301,L,NE]
+  # clean URLs: /hire serves hire.html (and /demos serves demos.html even though demos/ exists)
   RewriteCond %{REQUEST_FILENAME}.html -f
   RewriteRule ^(.+)$ $1.html [L]
 </IfModule>

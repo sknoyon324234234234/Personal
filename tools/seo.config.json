@@ -69,7 +69,7 @@
     {
       "id": "lab",
       "file": "showcase.html",
-      "path": "showcase.html",
+      "path": "showcase",
       "name": "The Lab",
       "title": "The Lab — Live Demos of Websites, Bots & AI Agents | Xiraiya",
       "description": "Try it live: automation workflows, a Chrome extension, a playable Minecraft world, an AI chat, before-and-after site makeovers and a 28-piece motion gallery.",
@@ -94,7 +94,7 @@
     {
       "id": "shop",
       "file": "shop.html",
-      "path": "shop.html",
+      "path": "shop",
       "name": "Shop Templates",
       "title": "Shop Templates — Online Stores with AI & Payments | Xiraiya",
       "description": "Twelve working online store templates for fashion, beauty, jewellery and tech, with cart, admin panel, AI shopping agent and bKash, card and USDT payments.",
@@ -119,7 +119,7 @@
     {
       "id": "kit",
       "file": "components.html",
-      "path": "components.html",
+      "path": "components",
       "name": "UI Kit",
       "title": "UI Kit — 50 Live Web Components & Motion | Xiraiya",
       "description": "Fifty live UI components you can restyle: headers, navigation, heroes, buttons, cards, forms, footers and loaders, with copy-ready HTML and CSS.",
@@ -144,7 +144,7 @@
     {
       "id": "demos",
       "file": "demos.html",
-      "path": "demos.html",
+      "path": "demos",
       "name": "Demo Sites",
       "title": "Demo Websites — 15 Complete Sites to Explore | Xiraiya",
       "description": "Fifteen complete demo websites: SaaS, restaurant, jewellery, furniture, film cameras, crypto dashboard, Minecraft server and more, on every device size.",
@@ -169,7 +169,7 @@
     {
       "id": "pages",
       "file": "pages.html",
-      "path": "pages.html",
+      "path": "pages",
       "name": "Pages Studio",
       "title": "Pages Studio — Restyle Website Templates Live | Xiraiya",
       "description": "Thirteen complete pages, one design system. Change fonts, colours and layout in real time, preview homepage, login and dashboard pages, then export the code.",
@@ -194,7 +194,7 @@
     {
       "id": "world",
       "file": "dev-world.html",
-      "path": "dev-world.html",
+      "path": "dev-world",
       "name": "Dev World",
       "title": "Dev World — Terminal, Code Playground & Dev Tools | Xiraiya",
       "description": "A developer village: working terminal, live HTML/CSS/JS playground, 17 dev tools, a mock REST API console, algorithm arena and a typing dojo.",
@@ -219,7 +219,7 @@
     {
       "id": "learn",
       "file": "knowledge.html",
-      "path": "knowledge.html",
+      "path": "knowledge",
       "name": "Basic Knowledge",
       "title": "Basic Knowledge — 141 Web Dev Lessons, Live Demos | Xiraiya",
       "description": "Learn how websites work with 141 short lessons and live previews: HTML, CSS, JavaScript, UI/UX, APIs, MySQL, security, SEO, deployment and AI.",
@@ -244,7 +244,7 @@
     {
       "id": "hire",
       "file": "hire.html",
-      "path": "hire.html",
+      "path": "hire",
       "name": "Hire Me",
       "title": "Hire Xiraiya — Instant Quote for Websites, Bots & AI",
       "description": "Get an instant estimate for a website, shop, Telegram bot, app or AI agent. Landing pages from $50. Pay by bKash, Nagad, USDT, Binance or bank.",

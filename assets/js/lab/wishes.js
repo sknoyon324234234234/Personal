@@ -60,7 +60,7 @@
         '<ol class="ew-plan">' + w.plan.map(function (p) { return '<li>' + XR.esc(p) + '</li>'; }).join('') + '</ol>' +
         (s.tech ? '<p class="ew-stack">' + s.tech.slice(0, 5).map(XR.esc).join(' / ') + '</p>' : '') +
         '<div class="ew-foot"><span class="ew-price">From <b>' + XR.fmtPrice(s.priceFrom || 30) + '</b>' + (s.days ? ' · ' + XR.esc(s.days) + ' days' : '') + '</span>' +
-        '<a class="btn btn-primary btn-sm" href="hire.html?service=' + encodeURIComponent(w.svc) + '"' + (w.mine ? ' data-brief' : '') + '>Start this wish ' + XR.icon('arrow-right') + '</a></div>';
+        '<a class="btn btn-primary btn-sm" href="hire?service=' + encodeURIComponent(w.svc) + '"' + (w.mine ? ' data-brief' : '') + '>Start this wish ' + XR.icon('arrow-right') + '</a></div>';
       slip.classList.remove('is-open'); void slip.offsetWidth; slip.classList.add('is-open');
     }
     function swing(b) {

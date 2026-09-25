@@ -240,8 +240,8 @@
     over = true; paint();
     var box = document.createElement('div'); box.className = 'bt-win';
     box.innerHTML = win
-      ? '<b>DEADLINE<br>DEFEATED</b><p>Shipped on Thursday with a day to spare. That is how it goes with a real project too.</p><div><a class="btn btn-primary" href="hire.html">Beat my deadline</a><button type="button" class="btn btn-ghost" data-again>Play again</button></div>'
-      : '<b>TO BE<br>CONTINUED…</b><p>Even sages need a second try. Deadlines are easier with a plan.</p><div><button type="button" class="btn btn-primary" data-again>Try again</button><a class="btn btn-ghost" href="hire.html">Get a plan</a></div>';
+      ? '<b>DEADLINE<br>DEFEATED</b><p>Shipped on Thursday with a day to spare. That is how it goes with a real project too.</p><div><a class="btn btn-primary" href="hire">Beat my deadline</a><button type="button" class="btn btn-ghost" data-again>Play again</button></div>'
+      : '<b>TO BE<br>CONTINUED…</b><p>Even sages need a second try. Deadlines are easier with a plan.</p><div><button type="button" class="btn btn-primary" data-again>Try again</button><a class="btn btn-ghost" href="hire">Get a plan</a></div>';
     arena.appendChild(box);
     log.textContent = win ? 'The Deadline falls. The toad does a small victory hop.' : 'The Deadline wins this round.';
     if (win && XR.quest) try { XR.quest('battle'); } catch (e) { /* ignore */ }

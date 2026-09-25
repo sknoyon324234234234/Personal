@@ -22,9 +22,9 @@
   var FILES = {
     'about.txt': function () { return 'Hi, I am ' + esc(C.name || 'Xiraiya') + '. ' + AGE + ' years old, ' + YEARS + ' years of shipping code, based in ' + esc(CITY) + '.\nI build websites, automations, Telegram bots, Chrome extensions,\nMinecraft plugins, desktop and Android apps, and AI agents.\nFavourite bug: the one that only happens on Fridays.'; },
     'skills.json': function () { return json({ frontend: ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React', 'Next.js'], backend: ['Node.js', 'Python', 'FastAPI', 'PostgreSQL', 'Redis'], bots: ['Telegram Bot API', 'Discord.js', 'n8n', 'Puppeteer'], games: ['Java', 'Paper/Spigot', 'Kotlin'], apps: ['Electron', 'Tauri', 'Android (Kotlin)', 'Flutter'], ai: ['OpenAI', 'Claude', 'LangChain', 'RAG', 'tool calling'] }); },
-    'projects.md': function () { return '<span class="t-hd"># Selected projects</span>\n- Nova AI            SaaS landing page        <a href="demos.html#preview=nova-saas">open</a>\n- Ledger             banking dashboard        <a href="demos.html#preview=ledger">open</a>\n- BlockRealm         playable Minecraft demo  <a href="showcase.html#minecraft">open</a>\n- Pages Studio       live page builder        <a href="pages.html">open</a>\n- 40+ bots and automations running for real clients'; },
+    'projects.md': function () { return '<span class="t-hd"># Selected projects</span>\n- Nova AI            SaaS landing page        <a href="demos#preview=nova-saas">open</a>\n- Ledger             banking dashboard        <a href="demos#preview=ledger">open</a>\n- BlockRealm         playable Minecraft demo  <a href="showcase#minecraft">open</a>\n- Pages Studio       live page builder        <a href="pages">open</a>\n- 40+ bots and automations running for real clients'; },
     'services.md': function () { return '<span class="t-hd"># What I build</span>\n' + (XR.services || []).map(function (s) { return '- ' + pad(s.name, 26) + '<span class="t-dim">from</span> <span class="t-grn">' + esc(XR.fmtPrice(s.priceFrom)) + '</span>'; }).join('\n'); },
-    'contact.txt': function () { var c = {}; (XR.contacts ? XR.contacts() : []).forEach(function (x) { c[x.id] = x.text; }); return 'email     ' + esc(c.email || 'see the Hire page') + '\ntelegram  ' + esc(c.telegram || 'see the Hire page') + '\nform      <a href="hire.html">hire.html</a>'; },
+    'contact.txt': function () { var c = {}; (XR.contacts ? XR.contacts() : []).forEach(function (x) { c[x.id] = x.text; }); return 'email     ' + esc(c.email || 'see the Hire page') + '\ntelegram  ' + esc(c.telegram || 'see the Hire page') + '\nform      <a href="hire">hire.html</a>'; },
     '.secrets': function () { return '<span class="t-yel">up up down down left right left right b a</span>\n<span class="t-dim">(you did not hear it from me)</span>'; },
     'todo.txt': function () { return '[x] learn to code\n[x] ship 120 projects\n[x] make a toad the company mascot\n[ ] sleep\n[ ] build your project  <span class="t-dim">&lt;- this one is up to you</span>'; }
   };
@@ -42,11 +42,11 @@
     projects: function () { return FILES['projects.md'](); },
     services: function () { return FILES['services.md'](); },
     contact: function () { return FILES['contact.txt'](); },
-    hire: function () { setTimeout(function () { location.href = 'hire.html'; }, 900); return '<span class="t-grn">Opening the Hire page...</span>'; },
+    hire: function () { setTimeout(function () { location.href = 'hire'; }, 900); return '<span class="t-grn">Opening the Hire page...</span>'; },
     ls: function (a) { var all = a[0] === '-a' || a[0] === '-la'; return Object.keys(FILES).filter(function (f) { return all || f[0] !== '.'; }).map(function (f) { return /\.(json)$/.test(f) ? '<span class="t-yel">' + f + '</span>' : f[0] === '.' ? '<span class="t-dim">' + f + '</span>' : '<span class="t-blu">' + f + '</span>'; }).join('  '); },
     cat: function (a) { if (!a[0]) return '<span class="t-red">cat: missing file name.</span> Try <span class="t-grn">cat about.txt</span>'; var f = FILES[a[0]]; return f ? f() : '<span class="t-red">cat: ' + esc(a[0]) + ': No such file.</span> Run <span class="t-grn">ls</span> to see what is here.'; },
     open: function (a) {
-      var map2 = { home: 'index.html', lab: 'showcase.html', shop: 'shop.html', kit: 'components.html', demos: 'demos.html', pages: 'pages.html', hire: 'hire.html', minecraft: 'showcase.html#minecraft' };
+      var map2 = { home: './', lab: 'showcase', shop: 'shop', kit: 'components', demos: 'demos', pages: 'pages', hire: 'hire', minecraft: 'showcase#minecraft' };
       var t = map2[(a[0] || '').toLowerCase()];
       if (!t) return 'open what? Try: ' + Object.keys(map2).map(function (k) { return '<span class="t-grn">' + k + '</span>'; }).join(', ');
       setTimeout(function () { location.href = t; }, 700); return 'Opening <a href="' + t + '">' + t + '</a>...';
@@ -61,7 +61,7 @@
       return COMMITS.slice().reverse().slice(0, 8).map(function (c) { return '<span class="t-yel">' + c.h + '</span> ' + (c.tag ? '<span class="t-mag">(' + c.tag + ')</span> ' : '') + esc(c.m) + ' <span class="t-dim">' + c.y + '</span>'; }).join('\n') + '\n<span class="t-dim">...and more in the Git Tower below.</span>';
     },
     sudo: function (a) {
-      if (a.join(' ') === 'hire-me' || a.join(' ') === 'hire me') { setTimeout(function () { location.href = 'hire.html#configure'; }, 1600); return '[sudo] password for guest: ********\n<span class="t-grn">Access granted.</span> Summoning the toad sage...\nOpening the price configurator.'; }
+      if (a.join(' ') === 'hire-me' || a.join(' ') === 'hire me') { setTimeout(function () { location.href = 'hire#configure'; }, 1600); return '[sudo] password for guest: ********\n<span class="t-grn">Access granted.</span> Summoning the toad sage...\nOpening the price configurator.'; }
       if (/^rm/.test(a[0] || '')) return '<span class="t-red">Nice try.</span> The toad has disabled self-destruct.';
       return '[sudo] password for guest: ********\n<span class="t-red">guest is not in the sudoers file.</span> This incident will be reported to the toad.';
     },
@@ -344,7 +344,7 @@
         p.addEventListener('click', function (e) { if (e.target.dataset.a === 'c') { XR.copy($('#so', p).textContent); XR.toast('CSS copied'); } });
         draw();
       } },
-    { id: 'md', name: 'Markdown preview', ic: 'book', ui: '<h3 class="h4">Markdown preview</h3><p>Headings, bold, italic, code, lists, quotes and links. Renders as you type.</p><div class="tl-grid"><textarea class="tl-area" id="mi" spellcheck="false" style="min-height:280px"># Village notes\n\nThe **toad** says: ship *small*, ship often.\n\n- Terminal with `snake`\n- 17 dev tools\n- An algorithm arena\n\n> Speed is how little you wait.\n\n1. Write code\n2. Run it\n3. [Hire me](hire.html)</textarea><div class="md-out" id="mo"></div></div>',
+    { id: 'md', name: 'Markdown preview', ic: 'book', ui: '<h3 class="h4">Markdown preview</h3><p>Headings, bold, italic, code, lists, quotes and links. Renders as you type.</p><div class="tl-grid"><textarea class="tl-area" id="mi" spellcheck="false" style="min-height:280px"># Village notes\n\nThe **toad** says: ship *small*, ship often.\n\n- Terminal with `snake`\n- 17 dev tools\n- An algorithm arena\n\n> Speed is how little you wait.\n\n1. Write code\n2. Run it\n3. [Hire me](hire)</textarea><div class="md-out" id="mo"></div></div>',
       init: function (p) { var go = function () { $('#mo', p).innerHTML = md($('#mi', p).value); }; $('#mi', p).addEventListener('input', go); go(); } },
     { id: 'diff', name: 'Diff checker', ic: 'filter', ui: '<h3 class="h4">Diff checker</h3><p>Paste two versions to see what changed, line by line.</p><div class="tl-grid"><textarea class="tl-area" id="da" spellcheck="false">const price = 100\nconst tax = 0.15\nconsole.log(price * tax)</textarea><textarea class="tl-area" id="db" spellcheck="false">const price = 120\nconst tax = 0.15\nconst total = price * (1 + tax)\nconsole.log(total)</textarea></div><div class="tl-msg" id="dm"></div><div class="diff" id="do"></div>',
       init: function (p) {

@@ -171,7 +171,7 @@
       $('.combo-total').textContent = XR.fmtPrice(sum);
       $('.combo-meta').textContent = list.length ? list.length + (list.length === 1 ? ' system' : ' systems') + ' · about ' + lo + '–' + Math.max(lo, hi) + ' days' + (list.length > 1 ? ', built in parallel' : '') : 'Pick at least one system';
       $('.combo-list').innerHTML = list.map(function (s) { return '<li><span>' + XR.esc(s.name) + '</span><b>' + XR.fmtPrice(s.priceFrom) + '</b></li>'; }).join('');
-      $('.combo-go').setAttribute('href', list.length ? 'hire.html?service=' + list.map(function (s) { return s.id; }).join(',') : 'hire.html');
+      $('.combo-go').setAttribute('href', list.length ? 'hire?service=' + list.map(function (s) { return s.id; }).join(',') : 'hire');
       $('.combo-sum').classList.toggle('is-empty', !list.length);
     }
     box.addEventListener('click', function (e) {

@@ -5,11 +5,11 @@
 
   /* m: [before, after] for load (s), weight (MB), Lighthouse, requests */
   var SITES = [
-    { url: 'sakurabistro.com', img: 'assets/img/demos/sakura-bistro.jpg', alt: 'The rebuilt Sakura Bistro homepage', href: 'demos/sakura-bistro.html', old: 'a',
+    { url: 'sakurabistro.com', img: 'assets/img/demos/sakura-bistro.jpg', alt: 'The rebuilt Sakura Bistro homepage', href: 'demos/sakura-bistro', old: 'a',
       m: [[7.8, 0.9], [6.4, 0.42], [34, 99], [118, 14]] },
-    { url: 'moritea.shop', img: 'assets/img/demos/mori-tea.jpg', alt: 'The rebuilt Mori Tea homepage', href: 'demos/mori-tea.html', old: 'b',
+    { url: 'moritea.shop', img: 'assets/img/demos/mori-tea.jpg', alt: 'The rebuilt Mori Tea homepage', href: 'demos/mori-tea', old: 'b',
       m: [[6.1, 1.1], [4.9, 0.51], [41, 97], [96, 18]] },
-    { url: 'nordhem.dk', img: 'assets/img/demos/nordhem.jpg', alt: 'The rebuilt Nordhem homepage', href: 'demos/nordhem.html', old: 'c',
+    { url: 'nordhem.dk', img: 'assets/img/demos/nordhem.jpg', alt: 'The rebuilt Nordhem homepage', href: 'demos/nordhem', old: 'c',
       m: [[9.2, 1.3], [11.2, 0.69], [27, 96], [164, 22]] }
   ];
 

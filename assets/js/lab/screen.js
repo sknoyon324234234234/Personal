@@ -40,10 +40,10 @@
       panels.forEach(function (p, k) { p.setAttribute('aria-selected', k === i); p.tabIndex = k === i ? 0 : -1; });
       if (focus) panels[i].focus();
       url.textContent = s[3];
-      open.href = 'demos/' + s[2] + '.html';
+      open.href = 'demos/' + s[2];
       stage.classList.add('is-loading');
       iframe.onload = function () { stage.classList.remove('is-loading'); };
-      iframe.src = 'demos/' + s[2] + '.html';
+      iframe.src = 'demos/' + s[2];
     }
     panels.forEach(function (p, i) {
       p.addEventListener('click', function () { pick(i); });

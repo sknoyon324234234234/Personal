@@ -125,12 +125,12 @@ function head(p) {
   ].filter(Boolean).join('\n');
 }
 const STRIP = [
-  /<!-- seo:start[\s\S]*?<!-- seo:end -->\n?/g,
-  /<title>[\s\S]*?<\/title>\n?/g,
-  /<meta name="(description|keywords|author|robots|googlebot|google-site-verification|msvalidate\.01|yandex-verification)"[^>]*>\n?/g,
-  /<meta (property|name)="(og|twitter):[^"]+"[^>]*>\n?/g,
-  /<link rel="(canonical|sitemap)"[^>]*>\n?/g,
-  /<link rel="alternate" hreflang[^>]*>\n?/g
+  /<!-- seo:start[\s\S]*?<!-- seo:end -->\r?\n?/g,
+  /<title>[\s\S]*?<\/title>\r?\n?/g,
+  /<meta name="(description|keywords|author|robots|googlebot|google-site-verification|msvalidate\.01|yandex-verification)"[^>]*>\r?\n?/g,
+  /<meta (property|name)="(og|twitter):[^"]+"[^>]*>\r?\n?/g,
+  /<link rel="(canonical|sitemap)"[^>]*>\r?\n?/g,
+  /<link rel="alternate" hreflang[^>]*>\r?\n?/g
 ];
 function footerLinks(cur) {
   return '<footer class="site-footer" id="site-footer"><nav class="seo-nav" aria-label="All pages"><ul>' +
@@ -141,8 +141,8 @@ for (const p of cfg.pages) {
   let s = read(p.file);
   for (const re of STRIP) s = s.replace(re, '');
   /* page-specific structured data (FAQ, demo list) stays; generic blocks are replaced by the graph */
-  s = s.replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>\n?/g, (m, body) => /FAQPage|hasPart/.test(body) ? m : '');
-  s = s.replace(/(<meta name="viewport"[^>]*>\n)/, '$1' + head(p) + '\n');
+  s = s.replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>\r?\n?/g, (m, body) => /FAQPage|hasPart/.test(body) ? m : '');
+  s = s.replace(/(<meta name="viewport"[^>]*>\r?\n)/, '$1' + head(p) + '\n');
   s = s.replace(/<footer class="site-footer" id="site-footer">[\s\S]*?<\/footer>/, footerLinks(p.id));
   write(p.file, s);
   if (p.title.length > 62) console.warn('! title over 62 chars: ' + p.file);
@@ -152,8 +152,8 @@ console.log('Updated ' + cfg.pages.length + ' pages');
 
 /* ---------- 5. 404 page works at any depth on Apache/LiteSpeed ---------- */
 let e404 = read('404.html');
-e404 = e404.replace(/<base href="[^"]*">\n?/, '').replace(/(<meta name="viewport"[^>]*>\n)/, '$1<base href="' + BASE_PATH + '">\n');
-if (!/name="robots"/.test(e404)) e404 = e404.replace(/(<base href[^>]*>\n)/, '$1<meta name="robots" content="noindex">\n');
+e404 = e404.replace(/<base href="[^"]*">\r?\n?/, '').replace(/(<meta name="viewport"[^>]*>\r?\n)/, '$1<base href="' + BASE_PATH + '">\n');
+if (!/name="robots"/.test(e404)) e404 = e404.replace(/(<base href[^>]*>\r?\n)/, '$1<meta name="robots" content="noindex">\n');
 write('404.html', e404);
 
 /* ---------- 6. sitemap.xml ---------- */
@@ -228,8 +228,16 @@ write('.htaccess', [
   '  # /hire/ → /hire (keeps relative asset paths working)',
   '  RewriteCond %{REQUEST_FILENAME} !-d',
   '  RewriteRule ^(.+)/$ ' + BASE_PATH + '$1 [R=301,L]',
-  '  # clean URLs: /hire serves hire.html',
-  '  RewriteCond %{REQUEST_FILENAME} !-d',
+  '  # a page and a folder with the same name (demos.html and demos/): /demos/ → /demos',
+  '  RewriteCond %{REQUEST_FILENAME} -d',
+  '  RewriteCond %{REQUEST_FILENAME} ^(.+?)/?$',
+  '  RewriteCond %1.html -f',
+  '  RewriteRule ^(.+)/$ ' + BASE_PATH + '$1 [R=301,L]',
+  '  # /hire.html → /hire, so every page has one clean address (query strings are kept)',
+  '  RewriteCond %{ENV:REDIRECT_STATUS} ^$',
+  '  RewriteCond %{THE_REQUEST} \\s/+(.+?)\\.html[\\s?] [NC]',
+  '  RewriteRule ^ ' + BASE_PATH + '%1 [R=301,L,NE]',
+  '  # clean URLs: /hire serves hire.html (and /demos serves demos.html even though demos/ exists)',
   '  RewriteCond %{REQUEST_FILENAME}.html -f',
   '  RewriteRule ^(.+)$ $1.html [L]',
   '</IfModule>',
