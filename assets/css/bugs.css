@@ -134,7 +134,7 @@ html[data-mode="ink"] .ant-bar { box-shadow: inset 0 0 0 1px var(--ant-kuro-rim)
 /* census: castes, food and nests per colony */
 .ant-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .ant-census { width: 100%; margin: 2px 0 0; border-collapse: separate; border-spacing: 0; font-size: 12.5px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface-2); }
-.ant-census caption { padding: 0 0 6px; text-align: left; font: 500 10.5px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.ant-cap { margin: 0 0 6px; font: 500 10.5px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
 .ant-census th, .ant-census td { padding: 5px 10px; text-align: right; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
 .ant-census thead th { border-top: 0; padding-top: 8px; font-weight: 700; font-size: 13px; color: var(--ink); white-space: nowrap; }
 .ant-census thead th i { display: inline-block; width: 9px; height: 9px; margin-right: 6px; border-radius: 50%; vertical-align: 0; }
@@ -155,7 +155,7 @@ html[data-mode="ink"] .ant-bar { box-shadow: inset 0 0 0 1px var(--ant-kuro-rim)
 .ant-log li[data-c="0"]::before { background: var(--ant-aka); }
 .ant-log li[data-c="1"]::before { background: var(--ant-kuro); box-shadow: 0 0 0 1px var(--line-2); }
 .ant-log li[data-c="w"]::before { background: rgb(var(--ant-water)); }
-.ant-log li.is-empty { color: var(--ink-3); }
+.ant-log li.is-empty { display: block; color: var(--ink-3); }
 .ant-log li.is-empty::before { display: none; }
 
 .ant-acts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
@@ -166,6 +166,8 @@ html[data-mode="ink"] .ant-bar { box-shadow: inset 0 0 0 1px var(--ant-kuro-rim)
 }
 .ant-acts button:hover { border-color: var(--line-2); background: rgba(var(--fx), .07); }
 .ant-acts button[aria-pressed="true"] { color: var(--on-red); background: var(--red); border-color: var(--red); }
+/* the scent toggle is on by default, so its "on" look stays quiet */
+.ant-acts button[data-ant="trails"][aria-pressed="true"] { color: var(--red); background: rgba(var(--fx), .04); border-color: var(--red); }
 .ant-acts button svg { flex: none; width: 16px; height: 16px; }
 .ant-acts button span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .ant-acts .ant-wide { grid-column: 1 / -1; justify-content: center; }

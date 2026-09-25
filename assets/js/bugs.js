@@ -151,23 +151,35 @@
       var r = docRect(el);
       if (r.w < 14 || r.h < 10 || r.x > VW - 4 || r.x + r.w < 4) continue;
       var s = surfMap.get(el);
-      if (!s) { s = { el: el, kind: kindOf(el), rad0: radiusOf(el, r.w, r.h), frame: -1 }; surfMap.set(el, s); }
-      setRect(s, r);
+      if (!s) { s = { el: el, kind: kindOf(el), rad0: radiusOf(el, r.w, r.h), frame: -1, next: 0, cx: null, cy: 0, pinned: false }; surfMap.set(el, s); }
+      setRect(s, r); s.cx = r.x - sx; s.cy = r.y - sy;
       s.alive = true; s.frame = frameNo;
       out.push(s); seen.add(el);
     }
     surfMap.forEach(function (s, el) { if (!seen.has(el)) { s.alive = false; surfMap.delete(el); } });
     surfs = out;
   }
-  /* fresh rect for a surface an ant is using (fixed headers and sliders move every frame) */
+  /* fresh rect for a surface an ant is using. Fixed headers and sliders move every frame, but
+     most things never do: a surface that held still is re-read only a few times a second, and
+     one that moves with the viewport (a fixed bar) is shifted by the scroll without a read. */
   function live(s) {
     if (s.frame === frameNo || !s.alive) return s;
     s.frame = frameNo;
     if (!s.el.isConnected) { s.alive = false; return s; }
     if (s.kind !== 'bar' && (s.y > sy + VH + 300 || s.y + s.h < sy - 300)) return s;
-    var r = docRect(s.el);
-    if (r.w < 4 || r.h < 4) { s.alive = false; return s; }
-    setRect(s, r);
+    if (now < s.next) {
+      if (s.pinned) { s.x = s.cx + sx; s.y = s.cy + sy; }
+      return s;
+    }
+    var q = s.el.getBoundingClientRect();
+    if (q.width < 4 || q.height < 4) { s.alive = false; return s; }
+    var x = q.left + sx, y = q.top + sy;
+    var moved = Math.abs(x - s.x) + Math.abs(y - s.y) + Math.abs(q.width - s.w) + Math.abs(q.height - s.h) > .5;
+    var still2 = s.cx != null && Math.abs(q.left - s.cx) + Math.abs(q.top - s.cy) < .5;
+    s.pinned = moved && still2;
+    s.next = moved && !s.pinned ? 0 : now + (s.kind === 'bar' ? .15 : .3);
+    s.cx = q.left; s.cy = q.top;
+    setRect(s, { x: x, y: y, w: q.width, h: q.height });
     return s;
   }
   function arcPt(cx, cy, r, a) { return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r, a: a + HALF }; }
@@ -1571,6 +1583,7 @@
     return best;
   }
   function placeScenery(secs, obs) {
+    patches.forEach(function (p) { if (p.tree) p.tree.alive = false; }); /* ants on an old tree climb down */
     var boxes = obs.map(function (o) { return { x: o.x - 10, y: o.y - 40, w: o.w + 20, h: o.h + 52 }; });
     var used = nests.map(function (n) { return { x: n.x - 40, y: n.y - 34, w: 80, h: 64 }; });
     used.push({ x: 0, y: VH - 100, w: 100, h: 100 }); /* the ant button's corner on the first screen */
@@ -1582,6 +1595,7 @@
       var wantTree = R() < (lite ? .55 : .72), kind = kinds[(off + tk) % 3]; /* the three kinds take turns */
       var spec = wantTree ? treePatchSpec(R, kind) : smallPatchSpec(R);
       var spot = findSpot(r, boxes, used, spec.w, spec.h, i % 2 === 1, R);
+      if (!spot && wantTree) { spec = treePatchSpec(R, kind, .7); spot = findSpot(r, boxes, used, spec.w, spec.h, i % 2 === 1, R); }
       if (!spot && wantTree) { spec = smallPatchSpec(R); spot = findSpot(r, boxes, used, spec.w, spec.h, i % 2 === 1, R); }
       if (!spot) return;
       if (spec.tree) tk++;
@@ -1619,8 +1633,8 @@
     }
     return parts;
   }
-  function treePatchSpec(R, kind) {
-    var h = lite ? rr(R, 38, 54) : rr(R, 50, 80), tw = h * (kind === 'sakura' ? 1.05 : kind === 'pine' ? 1.1 : .9);
+  function treePatchSpec(R, kind, k) {
+    var h = (lite ? rr(R, 36, 52) : rr(R, 50, 80)) * (k || 1), tw = h * (kind === 'sakura' ? 1.05 : kind === 'pine' ? 1.1 : .9);
     var extra = rr(R, 26, 44), flip = R() < .5, w = Math.round(tw + extra);
     var tx = flip ? w - tw / 2 - 2 : tw / 2 + 2;
     var parts = smallParts(R, flip ? 2 : tw * .8, flip ? w - tw * .8 : w - 6, 3);
@@ -2518,7 +2532,7 @@
     sx = window.scrollX || window.pageXOffset || 0; sy = window.scrollY || window.pageYOffset || 0;
     /* layout reads are spread out: surfaces one second, text and anchors the next */
     if (every('surf', 2, dt)) { measure(); refreshSurfaces(); anchorNests(); anchorPatches(); phReset(); }
-    if (every('text', 2, dt) && frameNo > 2) refreshTexts();
+    if (every('text', 4, dt) && frameNo > 2) refreshTexts();
     if (every('slow', .5, dt)) { tendTrails(.5); phFade(.5); watchNests(.5); colonies(.5); cv.classList.toggle('is-covered', !!doc.querySelector('.pst.full, .present, .studio')); }
     if (every('heal', .25, dt)) heal(.25);
     if (every('cursor', .4, dt)) watchCursor();
@@ -2613,7 +2627,7 @@
       '<p class="ant-sub">Two ant colonies live on this site. Scouts find food and lay scent, workers follow it and haul leaves home together, soldiers guard the nests. They climb the little trees, eat letters and fight for every section. Everything grows back.</p>' +
       '<div class="ant-bar" role="img" aria-label="Territory"><i></i></div>' +
       '<div class="ant-bar-cap"><span>Aka territory</span><span>Kuro territory</span></div>' +
-      '<table class="ant-census"><caption>Colony census</caption><thead><tr><th scope="col"><span class="ant-sr">Caste or store</span></th>' +
+      '<p class="ant-cap" id="ant-census-t">Colony census</p><table class="ant-census" aria-labelledby="ant-census-t"><thead><tr><th scope="col"><span class="ant-sr">Caste or store</span></th>' +
         COL.map(function (c) { return '<th scope="col" data-col="' + c.id + '"><i aria-hidden="true"></i>' + c.name + '<span class="ant-jp2" aria-hidden="true">' + c.jp + '</span></th>'; }).join('') + '</tr></thead><tbody>' +
         ROWS.map(function (r) { return '<tr><th scope="row">' + r[1] + '</th>' + COL.map(function (c) { return '<td data-k="' + r[0] + '" data-col="' + c.id + '">0</td>'; }).join('') + '</tr>'; }).join('') +
       '</tbody></table>' +
