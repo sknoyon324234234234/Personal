@@ -1,5 +1,5 @@
 /* XIRAIYA — The Lab, Part II: the Motion Wing (動の間).
-   Seventeen small interactive experiments in motion, 3D, type and feel.
+   Thirty small interactive experiments in motion, 3D, type and feel.
    Each exhibit mounts when its card is on screen and is torn down when it leaves. */
 (function () {
   'use strict';
