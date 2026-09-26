@@ -983,55 +983,194 @@
      起きろ ARISE — darkness, the word, shadow soldiers rise from the
      ground, and the rubble rises with them back into place
      ================================================================== */
-  function soldier(c, s, t) {
-    var h = s.base || vh(), size = s.size, rise = s.rise;
-    var top = h + 10 - rise * size * 2.3, x = s.x + Math.sin(t / 900 + s.ph) * 3;
-    var hr = size * .17, hy = top + hr * 1.3, sh = hy + size * .2, sw = size * .52;
-    c.save();
-    /* body: near-black armour that melts into smoke toward the ground */
-    var g = c.createLinearGradient(0, top - hr, 0, h);
-    g.addColorStop(0, 'rgba(5,2,12,' + (.96 * s.o) + ')'); g.addColorStop(.55, 'rgba(10,4,24,' + (.9 * s.o) + ')'); g.addColorStop(1, 'rgba(30,10,70,0)');
-    c.fillStyle = g;
-    c.beginPath();
-    /* horned helmet */
-    c.moveTo(x - hr, hy + hr * .4);
-    c.lineTo(x - hr * 1.05, hy - hr * .3);
-    c.quadraticCurveTo(x - hr * 1.9, hy - hr * 1.2, x - hr * 1.6, top - hr * 1.6);
-    c.quadraticCurveTo(x - hr * 1.2, hy - hr * 1.3, x - hr * .7, top + hr * .1);
-    c.lineTo(x, top - hr * .8);
-    c.lineTo(x + hr * .7, top + hr * .1);
-    c.quadraticCurveTo(x + hr * 1.2, hy - hr * 1.3, x + hr * 1.6, top - hr * 1.6);
-    c.quadraticCurveTo(x + hr * 1.9, hy - hr * 1.2, x + hr * 1.05, hy - hr * .3);
-    c.lineTo(x + hr, hy + hr * .4);
-    /* spiked pauldrons */
-    c.lineTo(x + hr * .9, sh - size * .06);
-    c.lineTo(x + sw * .7, sh - size * .12); c.lineTo(x + sw * 1.25, sh - size * .2); c.lineTo(x + sw * 1.05, sh + size * .02);
-    c.lineTo(x + sw * 1.1, sh + size * .18);
-    /* ragged cloak edges down into the smoke */
-    for (var k = 0; k <= 7; k++) { var yy = sh + size * .2 + k * (h - sh) / 7; c.lineTo(x + sw * (.95 - k * .05) + Math.sin(t / 160 + k * 1.3 + s.ph) * 7, yy); }
-    for (var k2 = 7; k2 >= 0; k2--) { var yy2 = sh + size * .2 + k2 * (h - sh) / 7; c.lineTo(x - sw * (.95 - k2 * .05) + Math.sin(t / 150 + k2 * 1.3 + s.ph + 2) * 7, yy2); }
-    c.lineTo(x - sw * 1.1, sh + size * .18); c.lineTo(x - sw * 1.05, sh + size * .02);
-    c.lineTo(x - sw * 1.25, sh - size * .2); c.lineTo(x - sw * .7, sh - size * .12);
-    c.lineTo(x - hr * .9, sh - size * .06);
-    c.closePath(); c.fill();
-    var edge = c.createLinearGradient(0, top - hr, 0, h);
-    edge.addColorStop(0, 'rgba(170,110,255,' + (.8 * s.o) + ')'); edge.addColorStop(.6, 'rgba(120,60,255,' + (.35 * s.o) + ')'); edge.addColorStop(1, 'rgba(120,60,255,0)');
-    c.strokeStyle = edge; c.lineWidth = 1.3; c.stroke();
-    /* a greatsword planted in front */
-    if (s.sword) {
-      var bx = x + sw * .35, by = sh + size * .15;
-      c.fillStyle = 'rgba(6,3,14,' + s.o + ')'; c.strokeStyle = 'rgba(170,110,255,' + (.7 * s.o) + ')';
-      c.beginPath(); c.moveTo(bx - 4, by); c.lineTo(bx + 4, by); c.lineTo(bx + 3, h); c.lineTo(bx - 3, h); c.closePath(); c.fill(); c.stroke();
-      c.beginPath(); c.moveTo(bx - 16, by); c.lineTo(bx + 16, by); c.lineWidth = 4; c.stroke();
+
+  /* ---------- cel shading: three flat tones and a hard-edged step ----------
+     The Monarch and the knights are drawn like anime cels: an ink-black fill,
+     one violet mid-tone where the seal's light catches the form, a thin white
+     rim on the lit edge, a thick outline, and a hard ground shadow cast away
+     from the seal. There are no gradients: the mid-tone is the shape minus
+     itself pushed away from the light, so the terminator wraps round every
+     curve like a painted one. Figures further back are mixed toward the fog. */
+  var TONE = { ink: [5, 2, 12], mid: [82, 42, 190], rim: [240, 232, 255], line: [0, 0, 0], fog: [70, 44, 120] };
+  function mixc(a, b, k) { return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * k) + ',' + Math.round(a[1] + (b[1] - a[1]) * k) + ',' + Math.round(a[2] + (b[2] - a[2]) * k) + ')'; }
+  function tones(dim) { var k = 1 - dim; return { ink: mixc(TONE.ink, TONE.fog, k * .8), mid: mixc(TONE.mid, TONE.fog, k * .7), rim: mixc(TONE.rim, TONE.fog, k * .9), line: mixc(TONE.line, TONE.fog, k * .6) }; }
+  /* paint one part of a figure: path(c) traces it in screen pixels, (lx, ly)
+     points at the light, band is the width of the mid-tone step, ow the
+     outline; lod 0 = full, 1 = no rim, 2 = flat ink (the far ranks) */
+  function paintCel(c, path, lx, ly, tn, band, ow, lod) {
+    c.beginPath(); path(c);
+    if (lod >= 2) { c.fillStyle = tn.ink; c.fill(); }
+    else {
+      c.save(); c.clip();
+      var rim = ow * .5 + 2, mid = ow * .5 + band;
+      c.fillStyle = lod ? tn.mid : tn.rim; c.fill();
+      if (!lod) { c.translate(-lx * rim, -ly * rim); c.fillStyle = tn.mid; c.beginPath(); path(c); c.fill(); c.translate(lx * rim, ly * rim); }
+      c.translate(-lx * mid, -ly * mid); c.fillStyle = tn.ink; c.beginPath(); path(c); c.fill();
+      c.restore();
     }
-    /* eyes */
-    var eb = s.eye || 1;
-    c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(1, s.o * (.85 + Math.sin(t / 90 + s.ph) * .15) * eb);
-    c.fillStyle = '#b9f0ff';
-    c.beginPath(); c.ellipse(x - hr * .4, hy, hr * .28, hr * .07, -.3, 0, TAU); c.ellipse(x + hr * .4, hy, hr * .28, hr * .07, .3, 0, TAU); c.fill();
-    c.globalAlpha = Math.min(1, s.o * .25 * eb); c.fillStyle = '#7b3fff'; c.beginPath(); c.ellipse(x, hy, hr * 1.2 * (1 + (eb - 1) * .5), hr * .5 * (1 + (eb - 1) * .5), 0, 0, TAU); c.fill();
+    c.beginPath(); path(c);
+    c.lineWidth = ow; c.strokeStyle = tn.line; c.lineJoin = 'round'; c.lineCap = 'round'; c.stroke();
+  }
+  /* a scratch canvas the size of the effect canvas: figures are drawn on to it
+     opaque, then composited once with alpha, so overlapping parts never show
+     through each other while a figure fades or casts its shadow */
+  var celBuf = null, celBx = null;
+  function celBuffer() {
+    if (!celBuf) { celBuf = document.createElement('canvas'); celBx = celBuf.getContext('2d'); }
+    if (celBuf.width !== cv.width || celBuf.height !== cv.height) { celBuf.width = cv.width; celBuf.height = cv.height; }
+    celBx.setTransform(DPR, 0, 0, DPR, 0, 0); celBx.clearRect(0, 0, W, H);
+    return celBx;
+  }
+  function composite(c, alpha) { if (alpha <= 0) return; c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = Math.min(1, alpha); c.drawImage(celBuf, 0, 0); c.restore(); }
+  /* path builders in figure space: units of the figure's size, feet at the
+     origin, y up; polyPath turns them into pixels */
+  function capsule(a, b, wa, wb) {
+    var dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, nx = -dy / l, ny = dx / l, ex = dx / l * .04, ey = dy / l * .04;
+    return [[a[0] - ex + nx * wa, a[1] - ey + ny * wa], [b[0] + ex + nx * wb, b[1] + ey + ny * wb], [b[0] + ex - nx * wb, b[1] + ey - ny * wb], [a[0] - ex - nx * wa, a[1] - ey - ny * wa]];
+  }
+  function polyPath(pts, S) { return function (c) { for (var i = 0; i < pts.length; i++) { if (i) c.lineTo(pts[i][0] * S, -pts[i][1] * S); else c.moveTo(pts[i][0] * S, -pts[i][1] * S); } c.closePath(); }; }
+  function discPath(x, y, r, S) { return function (c) { c.moveTo((x + r) * S, -y * S); c.arc(x * S, -y * S, r * S, 0, TAU); c.closePath(); }; }
+  function lerpPose(a, b, k, out) { for (var key in b) out[key] = a[key] + (b[key] - a[key]) * k; return out; }
+  var EASE = {
+    out: function (t) { return 1 - Math.pow(1 - t, 3); },
+    inq: function (t) { return t * t; },
+    back: function (t) { var s = 1.35; t -= 1; return 1 + t * t * ((s + 1) * t + s); },
+    land: function (t) { return t < .7 ? 1.06 * (1 - Math.pow(1 - t / .7, 3)) : 1.06 - .06 * ((t - .7) / .3); }
+  };
+  /* the pose rig: a figure holds its current pose and a queue of changes, each
+     with its own start, length and ease; a change starts from whatever the
+     blend is at that moment, so an interruption never pops. Key drawings,
+     with the in-betweens computed. */
+  function rig(pose) {
+    var cur = {}, from = {}, to = null, t0 = 0, dur = 1, ease = EASE.out, queue = [];
+    for (var k in pose) cur[k] = from[k] = pose[k];
+    return {
+      pose: cur,
+      to: function (p, at, ms, e) { queue.push({ p: p, at: at, ms: ms, e: e || EASE.out }); },
+      step: function (now) {
+        queue.sort(function (a, b) { return a.at - b.at; });
+        while (queue.length && queue[0].at <= now) { var q = queue.shift(); for (var k2 in cur) from[k2] = cur[k2]; to = q.p; t0 = q.at; dur = q.ms; ease = q.e; }
+        if (to) lerpPose(from, to, ease(Math.min(1, (now - t0) / dur)), cur);
+        return cur;
+      }
+    };
+  }
+  /* draws a figure's parts, back to front, at s.x / s.base (sunk by s.sink
+     while it comes out of the ground, scaled by s.sx / s.sy on a smear or squash drawing) */
+  function drawFigure(c, s, parts, lx, ly, tn, lod) {
+    var S = s.size, ow = Math.max(1.5, S * .018), band = S * .13;
+    c.save(); c.translate(s.x, s.base + (s.sink || 0)); c.scale(s.sx || 1, s.sy || 1);
+    parts.forEach(function (pt) {
+      if (pt[1] === 'cel') paintCel(c, pt[0], lx, ly, tn, band * pt[2], ow, lod);
+      else if (pt[1] === 'ink') { c.beginPath(); pt[0](c); c.fillStyle = tn.ink; c.fill(); c.lineWidth = ow; c.strokeStyle = tn.line; c.lineJoin = 'round'; c.stroke(); }
+      else if (pt[1] === 'hole') { c.beginPath(); pt[0](c); c.fillStyle = tn.ink; c.fill(); }
+      else if (pt[1] === 'edge') { if (lod < 2) { c.beginPath(); pt[0](c); c.lineWidth = ow * .6; c.strokeStyle = tn.mid; c.lineJoin = 'round'; c.stroke(); } }
+      else if (lod < 2) { c.beginPath(); pt[0](c); c.lineWidth = ow * .7; c.strokeStyle = tn.line; c.lineJoin = 'round'; c.lineCap = 'round'; c.stroke(); }
+    });
     c.restore();
   }
+  /* the figure's silhouette flattened on to the ground and sheared away from
+     the seal: a hard cast shadow, drawn into the buffer so parts never stack */
+  function castShadow(b, s, parts, w) {
+    var k = (s.x - w / 2) / (w / 2);
+    b.save(); b.translate(s.x, s.base); b.transform(s.sx || 1, 0, -k * .9, .14 * (s.sy || 1), 0, 0); b.translate(0, s.sink || 0);
+    b.fillStyle = '#000';
+    parts.forEach(function (pt) { if (pt[1] !== 'line') { b.beginPath(); pt[0](b); b.fill(); } });
+    b.restore();
+    b.beginPath(); b.ellipse(s.x, s.base, s.size * .5, s.size * .06, 0, 0, TAU); b.fill();
+  }
+  /* which way the seal's light falls on a figure: from the seal's centre,
+     which sits low in the middle of the screen, up at the figure's chest */
+  function sealLight(s, chestY) {
+    var dx = vw() / 2 - s.x, dy = s.base + 40 - (s.base - chestY * s.size), l = Math.hypot(dx, dy) || 1;
+    return [dx / l, dy / l];
+  }
+
+  /* ---------- the knight: pose keyframes ----------
+     Joints in units of the knight's size, feet at the origin, y up: hips h,
+     knees kl/kr, feet fl/fr, chest c, neck n, head hd, shoulders sl/sr,
+     elbows el/er, hands hl/hr; bow = head pitch, shrug, spread and flare for
+     the cloak, sw = where the greatsword stands, grip/gripR = a hand on it. */
+  var KP = {
+    stand: { hx: 0, hy: 1, klx: .17, kly: .5, flx: .2, fly: 0, krx: -.17, kry: .5, frx: -.22, fry: 0, cx: 0, cy: 1.5, nx: 0, ny: 1.82, hdx: 0, hdy: 2.06, bow: 0, slx: .4, sly: 1.74, srx: -.4, sry: 1.74, shrug: .05, elx: .5, ely: 1.34, hlx: .5, hly: .98, erx: -.5, ery: 1.34, hrx: -.5, hry: .98, spread: 1, flare: 0, swx: .3, swy: 0, grip: 1, gripR: 1 },
+    rise: { hx: 0, hy: .78, klx: .3, kly: .4, flx: .34, fly: 0, krx: -.3, kry: .4, frx: -.36, fry: 0, cx: 0, cy: 1.22, nx: 0, ny: 1.52, hdx: 0, hdy: 1.72, bow: .9, slx: .42, sly: 1.44, srx: -.42, sry: 1.44, shrug: .8, elx: .58, ely: 1.08, hlx: .5, hly: .72, erx: -.58, ery: 1.08, hrx: -.5, hry: .72, spread: 1.35, flare: 1, swx: .3, swy: 0, grip: 0, gripR: 0 },
+    brace: { hx: 0, hy: .82, klx: .33, kly: .43, flx: .42, fly: 0, krx: -.33, kry: .43, frx: -.44, fry: 0, cx: 0, cy: 1.3, nx: 0, ny: 1.62, hdx: 0, hdy: 1.84, bow: .35, slx: .45, sly: 1.54, srx: -.45, sry: 1.54, shrug: .5, elx: .74, ely: 1.32, hlx: .94, hly: 1.08, erx: -.74, ery: 1.32, hrx: -.94, hry: 1.08, spread: 1.45, flare: 1, swx: .3, swy: 0, grip: 0, gripR: 0 },
+    saluteAnt: { hx: 0, hy: .94, klx: .2, kly: .47, flx: .24, fly: 0, krx: -.2, kry: .47, frx: -.26, fry: 0, cx: 0, cy: 1.43, nx: 0, ny: 1.74, hdx: 0, hdy: 1.97, bow: .2, slx: .41, sly: 1.66, srx: -.41, sry: 1.66, shrug: .3, elx: .5, ely: 1.28, hlx: .48, hly: .92, erx: -.54, ery: 1.24, hrx: -.56, hry: .88, spread: 1.1, flare: .2, swx: .3, swy: 0, grip: 1, gripR: 0 },
+    salute: { hx: 0, hy: 1.02, klx: .17, kly: .51, flx: .2, fly: 0, krx: -.17, kry: .51, frx: -.22, fry: 0, cx: 0, cy: 1.53, nx: 0, ny: 1.86, hdx: 0, hdy: 2.1, bow: -.15, slx: .42, sly: 1.77, srx: -.42, sry: 1.77, shrug: .2, elx: .47, ely: 1.36, hlx: .47, hly: .98, erx: -.66, ery: 1.52, hrx: -.1, hry: 1.5, spread: 1.05, flare: .3, swx: .34, swy: .3, grip: 1, gripR: 0 },
+    kneelAnt: { hx: 0, hy: 1.05, klx: .16, kly: .53, flx: .19, fly: 0, krx: -.16, kry: .53, frx: -.21, fry: 0, cx: 0, cy: 1.55, nx: 0, ny: 1.88, hdx: 0, hdy: 2.12, bow: -.05, slx: .41, sly: 1.8, srx: -.41, sry: 1.8, shrug: .35, elx: .5, ely: 1.4, hlx: .5, hly: 1.04, erx: -.5, ery: 1.4, hrx: -.5, hry: 1.04, spread: 1.1, flare: .4, swx: .32, swy: 0, grip: 1, gripR: 1 },
+    kneel: { hx: -.05, hy: .56, klx: .36, kly: .56, flx: .44, fly: 0, krx: -.22, kry: .03, frx: -.64, fry: .04, cx: .04, cy: 1, nx: .07, ny: 1.3, hdx: .1, hdy: 1.5, bow: .75, slx: .46, sly: 1.24, srx: -.32, sry: 1.24, shrug: .1, elx: .68, ely: .96, hlx: .52, hly: .64, erx: -.38, ery: .78, hrx: -.3, hry: .06, spread: 1.15, flare: .15, swx: .36, swy: 0, grip: 1, gripR: 1 }
+  };
+  /* every part of a knight in its pose, back to front, as [path, kind];
+     kind: 'cel' shaded, 'ink' flat with an outline, 'line' drawn on top */
+  function knightParts(s, t, p) {
+    var S = s.size, ph = s.ph, parts = [], k, hl = [p.hlx, p.hly], hr = [p.hrx, p.hry], el = [p.elx, p.ely], er = [p.erx, p.ery];
+    var sw = [p.swx, p.swy], pom = [sw[0], sw[1] + 1.37];
+    function add(fn, kind, bs) { parts.push([fn, kind, bs || 1]); }
+    if (s.sword) {
+      /* a hand on the greatsword's pommel pulls that arm with it */
+      if (p.grip > 0) { hl = [hl[0] + (pom[0] - .05 - hl[0]) * p.grip, hl[1] + (pom[1] - .06 - hl[1]) * p.grip]; el = [el[0] + ((p.slx + hl[0]) / 2 + .16 - el[0]) * p.grip, el[1] + ((p.sly + hl[1]) / 2 - .02 - el[1]) * p.grip]; }
+      if (p.gripR > 0) { hr = [hr[0] + (pom[0] + .06 - hr[0]) * p.gripR, hr[1] + (pom[1] - .16 - hr[1]) * p.gripR]; er = [er[0] + ((p.srx + hr[0]) / 2 - .14 - er[0]) * p.gripR, er[1] + ((p.sry + hr[1]) / 2 - .04 - er[1]) * p.gripR]; }
+    }
+    /* the cloak: hangs from the shoulders, its ragged hem swaying in the seal's draught */
+    var cl = [[p.slx - .04, p.sly + .04], [p.slx + .16 * p.spread + .1 * p.flare, p.sly - .5], [p.hx + .5 * p.spread + .18 * p.flare, .5 + .2 * p.flare]];
+    for (k = 0; k <= 6; k++) cl.push([p.hx + (.55 - k / 6 * 1.1) * p.spread + Math.sin(t / 160 + k * 1.3 + ph) * .05, (k % 2 ? .02 : .13) + Math.abs(k - 3) / 3 * .2 * p.flare]);
+    cl.push([p.hx - .5 * p.spread - .18 * p.flare, .5 + .2 * p.flare], [p.srx - .16 * p.spread - .1 * p.flare, p.sry - .5], [p.srx + .04, p.sry + .04]);
+    add(polyPath(cl, S), 'cel', 1.3);
+    /* legs: thigh, shin, foot */
+    var hipL = [p.hx + .1, p.hy - .02], hipR = [p.hx - .1, p.hy - .02], kl = [p.klx, p.kly], kr = [p.krx, p.kry], fl = [p.flx, p.fly], fr = [p.frx, p.fry];
+    add(polyPath(capsule(hipR, kr, .19, .15), S), 'cel', .55); add(polyPath(capsule(kr, fr, .15, .11), S), 'cel', .45);
+    add(polyPath([[fr[0] + .12, fr[1] + .02], [fr[0] - .16, fr[1] + .02], [fr[0] - .14, fr[1] + .14], [fr[0] + .1, fr[1] + .16]], S), 'ink');
+    add(polyPath(capsule(hipL, kl, .19, .15), S), 'cel', .55); add(polyPath(capsule(kl, fl, .15, .11), S), 'cel', .45);
+    add(polyPath([[fl[0] - .12, fl[1] + .02], [fl[0] + .16, fl[1] + .02], [fl[0] + .14, fl[1] + .14], [fl[0] - .1, fl[1] + .16]], S), 'ink');
+    /* torso, the chest plate and the belt */
+    add(polyPath([[p.hx - .25, p.hy - .04], [p.hx + .25, p.hy - .04], [p.hx + .22, p.hy + .14], [p.cx + .32, p.cy], [p.slx - .02, p.sly + .02], [p.srx + .02, p.sry + .02], [p.cx - .32, p.cy], [p.hx - .22, p.hy + .14]], S), 'cel');
+    add(function (c) { c.moveTo((p.cx - .2) * S, -(p.cy + .1) * S); c.lineTo(p.cx * S, -(p.cy - .08) * S); c.lineTo((p.cx + .2) * S, -(p.cy + .1) * S); }, 'line');
+    add(function (c) { c.moveTo((p.hx - .22) * S, -(p.hy + .1) * S); c.lineTo((p.hx + .22) * S, -(p.hy + .1) * S); }, 'line');
+    /* the greatsword, planted or raised, behind the hands that hold it */
+    if (s.sword) {
+      add(polyPath([[sw[0] - .035, sw[1]], [sw[0] + .035, sw[1]], [sw[0] + .05, sw[1] + 1.05], [sw[0] - .05, sw[1] + 1.05]], S), 'cel', .3);
+      add(function (c) { c.moveTo(sw[0] * S, -(sw[1] + .12) * S); c.lineTo(sw[0] * S, -(sw[1] + .98) * S); }, 'line');
+      add(polyPath([[sw[0] - .18, sw[1] + 1.04], [sw[0] + .18, sw[1] + 1.04], [sw[0] + .14, sw[1] + 1.12], [sw[0] - .14, sw[1] + 1.12]], S), 'cel', .4);
+      add(polyPath(capsule([sw[0], sw[1] + 1.1], [sw[0], sw[1] + 1.33], .05, .045), S), 'cel', .3);
+      add(discPath(pom[0], pom[1], .06, S), 'cel', .4);
+    }
+    /* arms: the left, then the right in front of it (it salutes) */
+    add(polyPath(capsule([p.slx, p.sly - .04], el, .16, .12), S), 'cel', .5); add(polyPath(capsule(el, hl, .12, .1), S), 'cel', .4); add(discPath(hl[0], hl[1], .085, S), 'cel', .45);
+    add(polyPath(capsule([p.srx, p.sry - .04], er, .16, .12), S), 'cel', .5); add(polyPath(capsule(er, hr, .12, .1), S), 'cel', .4); add(discPath(hr[0], hr[1], .085, S), 'cel', .45);
+    /* spiked pauldrons */
+    var sh = p.shrug;
+    add(polyPath([[p.slx - .28, p.sly + .06 + sh * .05], [p.slx + .02, p.sly + .22 + sh * .08], [p.slx + .12, p.sly + .06], [p.slx + .25, p.sly + .3 + sh * .1], [p.slx + .3, p.sly + .02], [p.slx + .44, p.sly + .12], [p.slx + .3, p.sly - .15], [p.slx - .05, p.sly - .17]], S), 'cel', .75);
+    add(polyPath([[p.srx + .28, p.sry + .06 + sh * .05], [p.srx - .02, p.sry + .22 + sh * .08], [p.srx - .12, p.sry + .06], [p.srx - .25, p.sry + .3 + sh * .1], [p.srx - .3, p.sry + .02], [p.srx - .44, p.sry + .12], [p.srx - .3, p.sry - .15], [p.srx + .05, p.sry - .17]], S), 'cel', .75);
+    /* the horned helmet; a bow tips it forward and drops the horns */
+    var hx = p.hdx + p.bow * .04, hy = p.hdy - p.bow * .05, hb = p.bow * .15;
+    add(function (c) {
+      c.moveTo((hx - .19) * S, -(hy - .18) * S); c.lineTo((hx - .21) * S, -(hy + .02) * S);
+      c.quadraticCurveTo((hx - .36) * S, -(hy + .18) * S, (hx - .3) * S, -(hy + .5 - hb) * S);
+      c.quadraticCurveTo((hx - .22) * S, -(hy + .22) * S, (hx - .13) * S, -(hy + .24) * S);
+      c.lineTo(hx * S, -(hy + .32 - hb * .5) * S); c.lineTo((hx + .13) * S, -(hy + .24) * S);
+      c.quadraticCurveTo((hx + .22) * S, -(hy + .22) * S, (hx + .3) * S, -(hy + .5 - hb) * S);
+      c.quadraticCurveTo((hx + .36) * S, -(hy + .18) * S, (hx + .21) * S, -(hy + .02) * S);
+      c.lineTo((hx + .19) * S, -(hy - .18) * S); c.lineTo((hx + .1) * S, -(hy - .25) * S); c.lineTo((hx - .1) * S, -(hy - .25) * S); c.closePath();
+    }, 'cel', .8);
+    add(function (c) { c.moveTo((hx - .17) * S, -(hy - .02 - p.bow * .03) * S); c.lineTo((hx + .17) * S, -(hy - .02 - p.bow * .03) * S); }, 'line');
+    s.eyeX = s.x + hx * S * (s.sx || 1); s.eyeY = s.base + (s.sink || 0) - (hy - .02 - p.bow * .03) * S * (s.sy || 1);
+    return parts;
+  }
+  /* burning eyes and their violet halo, added with light on top of the helmet */
+  function knightEyes(c, s, t) {
+    var S = s.size, eb = s.eye || 1, x = s.eyeX, y = s.eyeY, hr = S * .17;
+    c.save(); c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(1, s.o * (.85 + Math.sin(t / 90 + s.ph) * .15) * eb);
+    c.fillStyle = '#b9f0ff';
+    c.beginPath(); c.ellipse(x - hr * .42, y, hr * .3, hr * .07, -.3, 0, TAU); c.ellipse(x + hr * .42, y, hr * .3, hr * .07, .3, 0, TAU); c.fill();
+    c.globalAlpha = Math.min(1, s.o * .25 * eb); c.fillStyle = '#7b3fff'; c.beginPath(); c.ellipse(x, y, hr * 1.2 * (1 + (eb - 1) * .5), hr * .5 * (1 + (eb - 1) * .5), 0, 0, TAU); c.fill();
+    c.restore();
+  }
+  /* one knight in its current pose, cel-shaded and lit from the seal */
+  function soldier(c, s, parts) {
+    var L = sealLight(s, s.pose.cy);
+    drawFigure(c, s, parts, L[0], L[1], tones(s.dim), s.lod || 0);
+  }
+
 
   /* Solo Leveling style System window */
   function sysWindow(title, lines, opt) {
@@ -1122,78 +1261,247 @@
     return m && m[key] != null ? m[key] : def;
   }
 
+  /* the cel clock: the Monarch and the knights are drawn on twos and threes,
+     like hand-drawn animation, while particles, fog and the camera keep
+     running at 60. A drawing is held for 2 frames of 24 (83 ms), every
+     fourth one for 3, and a figure's count starts on the beat that spawned
+     it, so every new drawing lands on the music. cel(ms) says which drawing
+     (0, 1, 2...) is up `ms` after that beat, and when it went up. */
+  var CEL = 1000 / 24, HOLDS = [2, 2, 2, 3], CYCLE = 9;
+  function cel(ms) {
+    if (!(ms > 0)) return { n: 0, at: 0 };
+    var f = Math.floor(ms / CEL), c = Math.floor(f / CYCLE), r = f - c * CYCLE, n = 0, at = 0;
+    while (n < HOLDS.length - 1 && at + HOLDS[n] <= r) at += HOLDS[n++];
+    return { n: c * HOLDS.length + n, at: (c * CYCLE + at) * CEL };
+  }
+  /* how a figure erupts from the ground, drawing by drawing, as [width,
+     height, rise]: smear frames stretched tall and thin that streak up past
+     its full height, a squash frame as it lands, then the last pose is held
+     hard for HOLD drawings before it starts to breathe (on twos, IDLE ms of
+     sway per drawing) */
+  var KNIGHT = [[.55, 1.55, .9], [.82, 1.18, 1], [1.1, .92, 1], [1, 1, 1]];
+  var LORD = [[.7, 1.3, .5], [.8, 1.22, .82], [.9, 1.08, 1], [1.06, .95, 1], [1, 1, 1]];
+  var HOLD = 6, IDLE = 90;
+  function pose(seq, d) { return seq[Math.min(d.n, seq.length - 1)]; }
+  function idle(seq, d) { return Math.max(0, d.n - (seq.length - 1) - HOLD) * IDLE; }
+  /* speed lines under a smear frame, the same ones for as long as the drawing is held */
+  function streaks(c, s, n) {
+    var rr = seeded((s.ph * 1e4 | 0) + n), i;
+    c.save(); c.globalCompositeOperation = 'lighter'; c.strokeStyle = '#b28cff'; c.lineCap = 'round';
+    for (i = 0; i < 5; i++) {
+      var sx = s.x + (rr() - .5) * s.size * 1.1, len = s.size * (1.2 + rr() * 1.4) * (n ? .6 : 1), yb = s.base - rr() * s.size * .3;
+      c.globalAlpha = (n ? .25 : .45) * s.o; c.lineWidth = 1 + rr() * 2.5;
+      c.beginPath(); c.moveTo(sx, yb); c.lineTo(sx + (rr() - .5) * 8, yb - len); c.stroke();
+    }
+    c.restore();
+  }
+
   /* the shadow army: a front line of knights that erupt on the drop, and two
      ranks behind them (smaller, dimmer, standing higher up in the fog) that
-     rise on the accents; all their eyes pulse with the music */
+     rise on the accents; all their eyes pulse with the music. Every knight is
+     a cel-shaded figure on a pose rig, drawn on the cel clock: it erupts
+     hunched (rise), lands low (brace), snaps upright, salutes with a fist to
+     the chest, and goes down on one knee, each change with its anticipation,
+     snap and hold, sampled once per drawing so a key reads on a held frame. */
   function legion(cine) {
-    var w = vw(), h = vh(), n = phone ? 4 : 8, list = [], ranks = [], kneelT = 0, fade = 1, i, j;
+    var w = vw(), h = vh(), n = phone ? 4 : 8, list = [], ranks = [], kneelT = 0, fade = 1, lyr, i, j;
     for (i = 0; i < n; i++) {
       var slot = (i + .5) / n, off = Math.abs(slot - .5);
-      list.push({ x: slot * w + rand(-24, 24), size: rand(.88, 1.1) * (phone ? 96 : 138) * (1.15 - off * .5), base: h, dim: 1, rise: 0, o: 1, ph: rand(0, 6), sword: i % 2 === 1, t0: 0, eye: 1, off: off });
+      list.push({ x: slot * w + rand(-24, 24), size: rand(.88, 1.1) * (phone ? 96 : 138) * (1.15 - off * .5), base: h + 6, dim: 1, o: 1, ph: rand(0, 6), sword: i % 2 === 1, t0: 0, eye: 1, off: off, lod: 0, rig: rig(KP.rise), pose: KP.rise, dn: -1 });
     }
     list.sort(function (a, b) { return a.off - b.off; });   /* the middle rises first */
     [[phone ? 5 : 10, .62, h - (phone ? 40 : 62), .72], [phone ? 6 : 13, .44, h - (phone ? 72 : 112), .5]].forEach(function (rk, ri) {
-      for (j = 0; j < rk[0]; j++) ranks.push({ x: (j + .5) / rk[0] * w + rand(-20, 20), size: rand(.9, 1.08) * (phone ? 96 : 138) * rk[1], base: rk[2], dim: rk[3], rise: 0, o: 0, ph: rand(0, 6), sword: Math.random() < .3, t0: 0, eye: 1, rank: ri });
+      for (j = 0; j < rk[0]; j++) ranks.push({ x: (j + .5) / rk[0] * w + rand(-20, 20), size: rand(.9, 1.08) * (phone ? 96 : 138) * rk[1], base: rk[2], dim: rk[3], o: 0, ph: rand(0, 6), sword: Math.random() < .3, t0: 0, eye: 1, rank: ri, lod: phone ? 2 : 1, rig: rig(KP.rise), pose: KP.rise, dn: -1 });
     });
-    var spk = sparkField('150,100,255');
-    function eyeY(s) { return s.base + 10 - s.rise * s.size * 2.3 + s.size * .17 * 1.3; }
-    function draw(c, t, now, s, k) {
-      if (!s.t0 || now < s.t0) return;
-      var r = Math.min(1, (now - s.t0) / (s.rank == null ? 650 : 900));
-      s.rise = (1 - Math.pow(1 - r, 4)) * (1 - .22 * (1 - Math.pow(1 - k, 3)));
-      s.o = fade * s.dim; s.eye = 1 + (s.eye - 1) * .9;
-      soldier(c, s, t);
+    var spk = sparkField('150,100,255'), mist = sprite('34,18,64');
+    var order = ranks.filter(function (s) { return s.rank === 1; }).concat(ranks.filter(function (s) { return s.rank === 0; }), list);
+    function eyeY(s) { return s.eyeY || s.base - s.size * 2.06; }
+    /* layer time now: the cel clocks and the pose rigs run on it, so a hit-stop holds them too */
+    function lnow() { return Math.max(1, performance.now() - lyr.t0); }
+    function up(s, t) { return s.t0 && t >= s.t0; }
+    /* the erupt: smear drawings up out of the ground, a squash as it lands
+       (the brace), then the snap upright; a knight that rises after the
+       kneel was called goes down on one knee as soon as it stands */
+    function erupt(s, at) {
+      s.t0 = at; s.eye = Math.max(s.eye, 1.8);
+      s.rig.to(KP.brace, at + CEL * 2, 1); s.rig.to(KP.stand, at + CEL * 4, 250, EASE.back);
+      if (kneelT) { s.rig.to(KP.kneelAnt, at + CEL * 10, 170, EASE.inq); s.rig.to(KP.kneel, at + CEL * 12, 300, EASE.land); }
     }
-    layer(function (c, t, now) {
+    lyr = layer(function (c, t, now) {
       if (cine.ending) fade = Math.max(0, fade - .025);
-      var k = kneelT ? Math.min(1, (now - kneelT) / 900) : 0;
-      spk.draw(c);
-      /* back to front: the far rank, the near rank, then the front line */
-      for (var ri = 1; ri >= 0; ri--) ranks.forEach(function (s) { if (s.rank === ri) draw(c, t, now, s, k); });
-      list.forEach(function (s) { draw(c, t, now, s, k); });
+      spk.draw(c); c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
+      var b = celBuffer(), vis = [];
+      order.forEach(function (s) {
+        if (!up(s, t)) return;
+        /* on twos and threes: the pose, the smear and the sway only change with the drawing, never between */
+        var d = cel(t - s.t0), p = pose(KNIGHT, d);
+        s.o = fade; s.eye = 1 + (s.eye - 1) * .9;
+        if (s.dn !== d.n) {
+          s.dn = d.n; s.sx = p[0]; s.sy = p[1]; s.sink = (1 - p[2]) * s.size * 2.6;
+          s.pose = s.rig.step(s.t0 + d.at); s.parts = knightParts(s, s.t0 + idle(KNIGHT, d), s.pose);
+        }
+        vis.push(s);
+        /* the ground: a hard shadow thrown away from the seal */
+        b.save(); if (s.rank != null) { b.beginPath(); b.rect(0, 0, w, s.base + 2); b.clip(); }
+        castShadow(b, s, s.parts, w); b.restore();
+      });
+      composite(c, .5 * fade);
+      /* back to front: the far rank, the near rank, then the front line; each
+         rank stands in its own mist so its feet vanish into the fog */
+      var tgt = fade < 1 ? celBuffer() : c, rk = null;
+      vis.forEach(function (s) {
+        if (s.rank !== rk) { if (rk != null) rankMist(rk); rk = s.rank; }
+        if (s.dn < 2) streaks(tgt, s, s.dn);
+        tgt.save(); if (s.rank != null) { tgt.beginPath(); tgt.rect(0, 0, w, s.base + 2); tgt.clip(); }
+        soldier(tgt, s, s.parts); tgt.restore();
+      });
+      if (rk != null) rankMist(rk);
+      if (tgt !== c) composite(c, fade);
+      vis.forEach(function (s) { knightEyes(c, s, t); });
+      function rankMist(ri) {
+        var t2 = tgt; t2.save(); t2.globalCompositeOperation = 'source-over';
+        ranks.forEach(function (s) { if (s.rank === ri && up(s, t)) { blob(t2, mist, s.x - s.size * .3, s.base + 2, s.size * .55, .55); blob(t2, mist, s.x + s.size * .35, s.base + 6, s.size * .5, .5); } });
+        t2.restore();
+      }
       if (cine.ending && fade <= 0) return false;
     });
     return {
       spawn: function (wave, waves) {
-        var per = Math.ceil(n / waves);
+        var per = Math.ceil(n / waves), now = lnow();
         list.slice(wave * per, wave * per + per).forEach(function (s) {
-          s.t0 = performance.now(); s.eye = 2.2;
+          erupt(s, now); s.eye = 2.2;
           shockwave(s.x, h, '#9a6bff', s.size * 2.4, 700);
           spk.burst(s.x, h - 4, phone ? 10 : 22, 13, -Math.PI / 2, .9, 3);
           later(480, function () { if (!cine.dead) lensFlare(s.x, eyeY(s), '120,220,255', 800, .4); });
         });
       },
-      /* a whole rank rises out of the fog, rippling outward from the middle */
+      /* a whole rank rises out of the fog, rippling outward from the middle;
+         the ripple is snapped to the cel grid, so the rank changes drawings together */
       rank: function (ri) {
-        var now = performance.now();
-        ranks.forEach(function (s) { if (s.rank === ri) { s.t0 = now + Math.abs(s.x - w / 2) / w * 700 + rand(0, 120); s.eye = 1.8; } });
+        var now = lnow();
+        ranks.forEach(function (s) { if (s.rank === ri) erupt(s, now + Math.round((Math.abs(s.x - w / 2) / w * 700 + rand(0, 120)) / (CEL * 2)) * CEL * 2); });
       },
       pulse: function (k) { list.concat(ranks).forEach(function (s) { s.eye = Math.max(s.eye, k || 1.5); }); },
+      /* the salute: a dip, then the right fist snaps to the chest, the middle first */
       salute: function () {
+        var now = lnow(); cine.saluteT = performance.now();
         list.forEach(function (s, i) {
           if (!s.t0) return;
           s.eye = 2.8;
-          later(i * 70, function () { if (!cine.dead) lensFlare(s.x, eyeY(s), '140,210,255', 1000, .55); });
+          var at = Math.max(now + CEL * 4 + i * CEL * 2, s.t0 + CEL * 8);
+          s.rig.to(KP.saluteAnt, at - CEL * 2, 170, EASE.inq); s.rig.to(KP.salute, at, 200, EASE.back);
+          later(at - now, function () { if (!cine.dead) lensFlare(s.x, eyeY(s), '140,210,255', 1000, .55); });
         });
-        ranks.forEach(function (s) { s.eye = 2.4; });
+        ranks.forEach(function (s) {
+          s.eye = 2.4;
+          if (!up(s, now)) return;
+          var at = Math.max(now + CEL * 6 + Math.round(Math.abs(s.x - w / 2) / w * 5) * CEL * 2 + s.rank * CEL * 3, s.t0 + CEL * 10);
+          s.rig.to(KP.saluteAnt, at - CEL * 2, 170, EASE.inq); s.rig.to(KP.salute, at, 200, EASE.back);
+        });
       },
-      kneel: function () { kneelT = performance.now(); }
+      /* the kneel: a breath up, then down hard on one knee, sparks off the ground */
+      kneel: function () {
+        var now = lnow(); kneelT = now; cine.kneelT = performance.now();
+        list.concat(ranks).forEach(function (s) {
+          if (!s.t0) return;
+          var at = now + CEL * 4 + Math.round(Math.abs(s.x - w / 2) / w * 6) * CEL * 2 + (s.rank == null ? 0 : (s.rank + 1) * CEL * 4);
+          if (now < s.t0 + CEL * 10) at = Math.max(at, s.t0 + CEL * 12);   /* still landing: kneel once it stands */
+          s.rig.to(KP.kneelAnt, at - CEL * 2, 170, EASE.inq); s.rig.to(KP.kneel, at, 300, EASE.land);
+          if (s.rank == null) later(at - now + 180, function () { if (!cine.dead) spk.burst(s.x - s.size * .22, s.base - 6, phone ? 4 : 8, 6, -Math.PI / 2, 1.3, 2); });
+        });
+      }
     };
   }
 
-  /* the Shadow Monarch: a tall cloaked figure who rises from the seal on the
+  /* ---------- the Shadow Monarch: pose keyframes ----------
+     The same joints as a knight, in units of his size; hand = the right hand
+     open (1) or a fist (0), spread and flare shape the coat. */
+  var MP = {
+    stand: { hx: 0, hy: 1.28, klx: .13, kly: .64, flx: .16, fly: 0, krx: -.13, kry: .64, frx: -.18, fry: 0, cx: 0, cy: 1.92, nx: 0, ny: 2.24, hdx: 0, hdy: 2.45, bow: 0, slx: .38, sly: 2.16, srx: -.38, sry: 2.16, shrug: 0, elx: .46, ely: 1.66, hlx: .44, hly: 1.2, erx: -.46, ery: 1.66, hrx: -.44, hry: 1.2, hand: 0, spread: 1, flare: 0 },
+    rise: { hx: 0, hy: 1.12, klx: .16, kly: .56, flx: .18, fly: 0, krx: -.16, kry: .56, frx: -.2, fry: 0, cx: 0, cy: 1.72, nx: 0, ny: 2.02, hdx: 0, hdy: 2.22, bow: .55, slx: .37, sly: 1.95, srx: -.37, sry: 1.95, shrug: .3, elx: .5, ely: 1.46, hlx: .52, hly: 1.02, erx: -.5, ery: 1.46, hrx: -.52, hry: 1.02, hand: 0, spread: 1.45, flare: 1 },
+    cmdAnt: { hx: 0, hy: 1.27, klx: .13, kly: .64, flx: .16, fly: 0, krx: -.13, kry: .64, frx: -.18, fry: 0, cx: 0, cy: 1.9, nx: 0, ny: 2.22, hdx: 0, hdy: 2.43, bow: .08, slx: .38, sly: 2.15, srx: -.38, sry: 2.15, shrug: .1, elx: .46, ely: 1.66, hlx: .44, hly: 1.2, erx: -.5, ery: 1.9, hrx: -.14, hry: 2.02, hand: 0, spread: 1.05, flare: .2 },
+    command: { hx: 0, hy: 1.28, klx: .15, kly: .64, flx: .2, fly: 0, krx: -.17, kry: .64, frx: -.24, fry: 0, cx: .02, cy: 1.93, nx: .01, ny: 2.25, hdx: .02, hdy: 2.47, bow: -.06, slx: .38, sly: 2.15, srx: -.4, sry: 2.18, shrug: 0, elx: .46, ely: 1.66, hlx: .44, hly: 1.2, erx: -.86, ery: 2.16, hrx: -1.3, hry: 1.96, hand: 1, spread: 1.15, flare: .55 },
+    salute: { hx: 0, hy: 1.29, klx: .14, kly: .64, flx: .18, fly: 0, krx: -.15, kry: .64, frx: -.21, fry: 0, cx: 0, cy: 1.95, nx: 0, ny: 2.27, hdx: 0, hdy: 2.5, bow: -.18, slx: .38, sly: 2.17, srx: -.4, sry: 2.2, shrug: 0, elx: .46, ely: 1.66, hlx: .44, hly: 1.2, erx: -.7, ery: 2.5, hrx: -.62, hry: 2.95, hand: 1, spread: 1.1, flare: .7 },
+    rest: { hx: 0, hy: 1.28, klx: .13, kly: .64, flx: .16, fly: 0, krx: -.13, kry: .64, frx: -.18, fry: 0, cx: 0, cy: 1.92, nx: 0, ny: 2.24, hdx: 0, hdy: 2.45, bow: -.08, slx: .38, sly: 2.16, srx: -.38, sry: 2.16, shrug: 0, elx: .46, ely: 1.66, hlx: .44, hly: 1.2, erx: -.46, ery: 1.66, hrx: -.42, hry: 1.18, hand: 0, spread: .95, flare: 0 }
+  };
+  function monarchParts(s, t, p, push) {
+    var S = s.size, parts = [], k, hl = [p.hlx, p.hly], hr = [p.hrx - push * .1 * p.hand, p.hry - push * .02], el = [p.elx, p.ely], er = [p.erx, p.ery];
+    function add(fn, kind, bs) { parts.push([fn, kind, bs || 1]); }
+    /* the coat behind him: long, its tails streaming */
+    var co = [[p.slx + .02, p.sly + .05], [p.slx + .16 * p.spread + .1 * p.flare, p.sly - .45], [p.hx + .6 * p.spread + .2 * p.flare, .55 + .1 * p.flare]];
+    for (k = 0; k <= 8; k++) co.push([p.hx + (.72 - k / 8 * 1.44) * p.spread + Math.sin(t / 240 + k * .9) * .06 * (1 + p.flare), (k % 2 ? .01 : .08) + Math.abs(k - 4) / 4 * .22 * p.flare]);
+    co.push([p.hx - .6 * p.spread - .2 * p.flare, .55 + .1 * p.flare], [p.srx - .16 * p.spread - .1 * p.flare, p.sry - .45], [p.srx - .02, p.sry + .05]);
+    add(polyPath(co, S), 'cel', 1.4);
+    /* legs and boots, seen between the coat's front panels */
+    var hipL = [p.hx + .11, p.hy - .02], hipR = [p.hx - .11, p.hy - .02], kl = [p.klx, p.kly], kr = [p.krx, p.kry], fl = [p.flx, p.fly], fr = [p.frx, p.fry];
+    add(polyPath(capsule(hipR, kr, .2, .16), S), 'cel', .5); add(polyPath(capsule(kr, fr, .16, .13), S), 'cel', .45);
+    add(polyPath([[fr[0] + .13, fr[1]], [fr[0] - .17, fr[1]], [fr[0] - .15, fr[1] + .2], [fr[0] + .11, fr[1] + .24]], S), 'ink');
+    add(polyPath(capsule(hipL, kl, .2, .16), S), 'cel', .5); add(polyPath(capsule(kl, fl, .16, .13), S), 'cel', .45);
+    add(polyPath([[fl[0] - .13, fl[1]], [fl[0] + .17, fl[1]], [fl[0] + .15, fl[1] + .2], [fl[0] - .11, fl[1] + .24]], S), 'ink');
+    add(polyPath([[p.hx - .3, p.hy + .06], [p.hx - .04, p.hy + .06], [p.hx - .14 - .04 * p.flare, .02], [p.hx - .5 * p.spread - .12 * p.flare, .02 + .1 * p.flare]], S), 'cel', 1.1);
+    add(polyPath([[p.hx + .3, p.hy + .06], [p.hx + .04, p.hy + .06], [p.hx + .14 + .04 * p.flare, .02], [p.hx + .5 * p.spread + .12 * p.flare, .02 + .1 * p.flare]], S), 'cel', 1.1);
+    /* the torso: the coat buttoned to the waist, broad at the shoulders */
+    add(polyPath([[p.hx - .27, p.hy - .04], [p.hx + .27, p.hy - .04], [p.cx + .31, p.cy], [p.slx + .02, p.sly + .04], [p.srx - .02, p.sry + .04], [p.cx - .31, p.cy]], S), 'cel');
+    add(function (c) { c.moveTo(p.cx * S, -(p.cy + .12) * S); c.lineTo(p.hx * S, -(p.hy + .02) * S); }, 'line');
+    /* arms; the right one gives the command */
+    add(polyPath(capsule([p.slx, p.sly - .05], el, .15, .12), S), 'cel', .5); add(polyPath(capsule(el, hl, .12, .1), S), 'cel', .4); add(discPath(hl[0], hl[1], .085, S), 'cel', .45);
+    add(polyPath(capsule([p.srx, p.sry - .05], er, .15, .12), S), 'cel', .5); add(polyPath(capsule(er, hr, .12, .1), S), 'cel', .4);
+    if (p.hand > .5) {
+      /* the open hand, fingers spread, palm down over the seal */
+      var dx = hr[0] - er[0], dy = hr[1] - er[1], l = Math.hypot(dx, dy) || 1, ux = dx / l, uy = dy / l, nx = -uy, ny = ux, o = (p.hand - .5) * 2;
+      add(polyPath([[hr[0] - nx * .1, hr[1] - ny * .1], [hr[0] + nx * .1, hr[1] + ny * .1], [hr[0] + ux * .22 * o + nx * .14, hr[1] + uy * .22 * o + ny * .14], [hr[0] + ux * .3 * o + nx * .03, hr[1] + uy * .3 * o + ny * .03], [hr[0] + ux * .27 * o - nx * .08, hr[1] + uy * .27 * o - ny * .08], [hr[0] + ux * .17 * o - nx * .13, hr[1] + uy * .17 * o - ny * .13]], S), 'cel', .55);
+      add(function (c) {
+        c.moveTo((hr[0] + ux * .08) * S, -(hr[1] + uy * .08) * S); c.lineTo((hr[0] + ux * .26 * o + nx * .01) * S, -(hr[1] + uy * .26 * o + ny * .01) * S);
+        c.moveTo((hr[0] + ux * .1 + nx * .06) * S, -(hr[1] + uy * .1 + ny * .06) * S); c.lineTo((hr[0] + ux * .21 * o + nx * .08) * S, -(hr[1] + uy * .21 * o + ny * .08) * S);
+      }, 'line');
+    } else add(discPath(hr[0], hr[1], .085, S), 'cel', .45);
+    /* the high collar */
+    add(polyPath([[p.nx - .26, p.ny - .14], [p.nx + .26, p.ny - .14], [p.nx + .3, p.ny + .2], [p.nx + .13, p.ny + .08], [p.nx, p.ny], [p.nx - .13, p.ny + .08], [p.nx - .3, p.ny + .2]], S), 'cel', .8);
+    /* the hood, and the face in shadow under it */
+    var hx = p.hdx + p.bow * .05, hy = p.hdy - p.bow * .06;
+    add(function (c) {
+      c.moveTo((hx - .34) * S, -(hy - .3) * S);
+      c.quadraticCurveTo((hx - .3) * S, -(hy + .1) * S, (hx - .14) * S, -(hy + .28) * S);
+      c.quadraticCurveTo((hx - .02) * S, -(hy + .4) * S, (hx + .03) * S, -(hy + .5) * S);
+      c.quadraticCurveTo((hx + .1) * S, -(hy + .36) * S, (hx + .18) * S, -(hy + .26) * S);
+      c.quadraticCurveTo((hx + .3) * S, -(hy + .1) * S, (hx + .34) * S, -(hy - .3) * S);
+      c.lineTo((hx + .12) * S, -(hy - .34) * S); c.lineTo((hx - .12) * S, -(hy - .34) * S); c.closePath();
+    }, 'cel');
+    add(polyPath([[hx - .16, hy - .26], [hx + .16, hy - .26], [hx + .13, hy + .06], [hx + .02, hy + .18], [hx - .11, hy + .08]], S), 'hole');
+    add(function (c) { c.moveTo((hx - .12) * S, -(hy - .02) * S); c.lineTo((hx - .16) * S, -(hy - .26) * S); c.lineTo((hx + .16) * S, -(hy - .26) * S); c.lineTo((hx + .13) * S, -(hy + .02) * S); }, 'edge');
+    s.eyeX = s.x + hx * S * (s.sx || 1); s.eyeY = s.base + (s.sink || 0) - (hy - .01 - p.bow * .03) * S * (s.sy || 1);
+    return parts;
+  }
+
+  /* the Shadow Monarch: a tall hooded figure who rises from the seal on the
      command, coat streaming, eyes burning, wrapped in a violet-black aura;
-     purple lightning crackles around him when the music surges */
+     purple lightning crackles around him when the music surges. His poses:
+     he straightens as he rises, throws his hand out over the army as the
+     drop hits (the cue sheet says when), raises it to the sky for the
+     salute, and lowers it to receive the kneel. The army's salute and kneel
+     reach him through cine.saluteT / cine.kneelT, which legion() sets. */
   function monarch(cine) {
-    var w = vw(), h = vh(), S = phone ? 118 : 172, x0 = w / 2, t0 = 0, fade = 1, fx = [], zap = null, zapT = 0, surge = 0;
+    var w = vw(), h = vh(), S = phone ? 118 : 172, x0 = w / 2, t0 = 0, fade = 1, fx = [], zap = null, zapT = 0, surge = 0, push = 0, cued = 0, dn = -1, parts = null, lyr;
     var sprV = sprite('140,80,255'), sprD = sprite('6,2,14'), sprE = sprite('175,232,255', true);
-    layer(function (c, t, now) {
+    var fig = { x: x0, base: h + 6, size: S, dim: 1, ph: 0, o: 1, lod: 0, pose: MP.rise }, R = rig(MP.rise);
+    /* the command lands on the first hit of the drop: by the cue sheet, that long after the word */
+    var DROP0 = (mark('arise-voice', 'end', 1.85) - mark('arise-voice', 'word', 1.3) + mark('arise-theme', 'drop', [3.96])[0]) * 1000;
+    lyr = layer(function (c, t, now) {
       if (cine.ending) fade = Math.max(0, fade - .025);
       if (cine.ending && fade <= 0) return false;
       if (!t0) return;
-      surge *= .94;
-      var r = Math.min(1, (now - t0) / 1200), rise = 1 - Math.pow(1 - r, 3);
-      var foot = h + 8, H = S * 2.7, top = foot - rise * H, x = x0 + Math.sin(t / 1300) * 2;
+      surge *= .94; push *= .88;
+      /* the army's cues reach him here: the hand up to the sky for the salute, down to receive the kneel */
+      if (cine.saluteT && cued < 1) { cued = 1; R.to(MP.cmdAnt, t, 170, EASE.inq); R.to(MP.salute, t + 170, 220, EASE.back); }
+      if (cine.kneelT && cued < 2) { cued = 2; R.to(MP.rest, t + 200, 700); }
+      /* on twos and threes from the beat he rose on: smear drawings, a squash, then a hard hold before the coat streams */
+      var d = cel(t - t0), p = pose(LORD, d), rise = p[2];
+      var H = S * 2.7, top = fig.base - rise * H, x = x0 + Math.sin(t / 1300) * 2;
+      fig.o = fade;
+      if (dn !== d.n) {
+        dn = d.n; fig.x = x; fig.sx = p[0]; fig.sy = p[1]; fig.sink = (1 - rise) * S * 2.9;
+        fig.pose = R.step(t0 + d.at); parts = monarchParts(fig, t0 + idle(LORD, d), fig.pose, push);
+      }
       /* the aura: violet flames and black smoke boiling up off him */
       for (var k = 0; k < (phone ? 3 : 6); k++) {
         var a = rand(-1, 1);
@@ -1208,32 +1516,20 @@
         c.restore();
         return true;
       });
-      /* the silhouette: hood, high collar, broad shoulders, a long coat whose tails stream */
-      c.globalCompositeOperation = 'source-over';
-      var hw = S * .11, headY = top + S * .16, shY = top + S * .42, shW = S * .34, hemW = S * .62, q, yy;
-      var g = c.createLinearGradient(0, top, 0, foot);
-      g.addColorStop(0, 'rgba(4,2,10,' + fade + ')'); g.addColorStop(.7, 'rgba(8,3,20,' + (.95 * fade) + ')'); g.addColorStop(1, 'rgba(20,8,50,' + (.3 * fade) + ')');
-      c.fillStyle = g; c.beginPath();
-      c.moveTo(x - hw * 1.05, headY + hw * .9);
-      c.quadraticCurveTo(x - hw * 1.35, top - hw * .2, x, top - hw * .55);
-      c.quadraticCurveTo(x + hw * 1.35, top - hw * .2, x + hw * 1.05, headY + hw * .9);
-      c.lineTo(x + shW * .55, shY - S * .05); c.quadraticCurveTo(x + shW, shY - S * .04, x + shW * 1.05, shY + S * .08);
-      c.lineTo(x + shW * 1.1, shY + S * .75); c.lineTo(x + shW * .92, shY + S * .78);
-      for (q = 0; q <= 8; q++) { yy = shY + S * .5 + q / 8 * (foot - shY - S * .5); c.lineTo(x + shW * .9 + (hemW - shW * .9) * (q / 8) + Math.sin(t / 240 + q * .9) * 9 * (q / 8), yy); }
-      for (q = 8; q >= 0; q--) { yy = shY + S * .5 + q / 8 * (foot - shY - S * .5); c.lineTo(x - shW * .9 - (hemW - shW * .9) * (q / 8) + Math.sin(t / 230 + q * .9 + 2) * 9 * (q / 8), yy); }
-      c.lineTo(x - shW * .92, shY + S * .78); c.lineTo(x - shW * 1.1, shY + S * .75);
-      c.lineTo(x - shW * 1.05, shY + S * .08); c.quadraticCurveTo(x - shW, shY - S * .04, x - shW * .55, shY - S * .05);
-      c.closePath(); c.fill();
-      var edge = c.createLinearGradient(0, top, 0, foot);
-      edge.addColorStop(0, 'rgba(190,140,255,' + (.9 * fade) + ')'); edge.addColorStop(.6, 'rgba(120,60,255,' + (.4 * fade) + ')'); edge.addColorStop(1, 'rgba(120,60,255,0)');
-      c.strokeStyle = edge; c.lineWidth = 1.6; c.stroke();
+      c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
+      /* his shadow on the seal, then the figure */
+      if (dn < 2) streaks(c, fig, dn);
+      castShadow(celBuffer(), fig, parts, w); composite(c, .5 * fade);
+      var L = sealLight(fig, fig.pose.cy);
+      if (fade < 1) { drawFigure(celBuffer(), fig, parts, L[0], L[1], tones(1), 0); composite(c, fade); }
+      else drawFigure(c, fig, parts, L[0], L[1], tones(1), 0);
       /* the eyes */
       c.globalCompositeOperation = 'lighter';
-      var ey = headY + hw * .15, eb = (.8 + Math.sin(t / 110) * .2 + surge) * fade * rise;
-      blob(c, sprE, x - hw * .38, ey, hw * .55 * (1 + surge), eb); blob(c, sprE, x + hw * .38, ey, hw * .55 * (1 + surge), eb);
+      var hw = S * .11, ey = fig.eyeY, eb = (.8 + Math.sin(t / 110) * .2 + surge) * fade * rise;
+      blob(c, sprE, fig.eyeX - hw * .9, ey, hw * .55 * (1 + surge), eb); blob(c, sprE, fig.eyeX + hw * .9, ey, hw * .55 * (1 + surge), eb);
       c.fillStyle = '#e6f6ff'; c.globalAlpha = Math.min(1, eb);
-      c.fillRect(x - hw * .55, ey - 1, hw * .32, 2); c.fillRect(x + hw * .23, ey - 1, hw * .32, 2);
-      /* purple lightning when the music surges */
+      c.fillRect(fig.eyeX - hw * 1.08, ey - 1, hw * .36, 2); c.fillRect(fig.eyeX + hw * .72, ey - 1, hw * .36, 2);
+      /* purple lightning when the music surges: at 60, never held */
       if (surge > .3 && now > zapT) {
         zapT = now + rand(40, 90);
         var za = rand(0, TAU), zy = top + H * rand(.15, .7);
@@ -1244,8 +1540,12 @@
       c.globalAlpha = 1;
     });
     return {
-      rise: function () { t0 = performance.now(); surge = 1.3; },
-      surge: function (k) { surge = Math.max(surge, k); }
+      rise: function () {
+        t0 = Math.max(1, performance.now() - lyr.t0); surge = 1.3;
+        R.to(MP.stand, t0 + CEL * 5, 600);
+        R.to(MP.cmdAnt, t0 + DROP0 - 260, 240, EASE.inq); R.to(MP.command, t0 + DROP0 - 20, 200, EASE.back);
+      },
+      surge: function (k) { surge = Math.max(surge, k); if (k >= 1.05) { push = 1; dn = -1; } }
     };
   }
 
