@@ -45,7 +45,7 @@
 <link rel="stylesheet" href="assets/css/core.css?v=82fbbd71">
 <link rel="stylesheet" href="assets/css/perf.css?v=8fc2f82d" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="assets/css/mystery.css?v=d7009d8a">
-<link rel="stylesheet" href="assets/css/home.css?v=8087e4f1">
+<link rel="stylesheet" href="assets/css/home.css?v=8eb751f0">
 <link rel="stylesheet" href="assets/css/manga.css?v=74b1df1b">
 <link rel="stylesheet" href="assets/css/circuit.css?v=7d1f0d8a">
 <link rel="stylesheet" href="assets/css/bugs.css?v=ae1c485a">
@@ -132,42 +132,59 @@
     </div>
   </div>
 
-  <!-- ============ THE HIDDEN VILLAGE (3D) ============ -->
-  <section class="vl" id="village" aria-labelledby="vl-title">
-    <div class="vl-stage" data-village>
-      <canvas class="vl-canvas" aria-hidden="true"></canvas>
-      <div class="vl-fallback" aria-hidden="true">
-        <img src="assets/img/anime/albedo.webp" alt="" loading="lazy" decoding="async" style="--x:18%;--h:78%">
-        <img src="assets/img/anime/blaze.webp" alt="" loading="lazy" decoding="async" style="--x:38%;--h:64%">
-        <img src="assets/img/anime/shade.webp" alt="" loading="lazy" decoding="async" style="--x:62%;--h:70%">
-        <img src="assets/img/anime/maid.webp" alt="" loading="lazy" decoding="async" style="--x:84%;--h:66%">
+  <!-- ============ MOTION REEL (a live After Effects comp) ============ -->
+  <section class="rl" id="reel" aria-labelledby="rl-title">
+    <div class="rl-pin">
+      <div class="rl-app">
+        <header class="rl-bar" style="--i:0">
+          <span class="hanko sm" aria-hidden="true">動</span>
+          <h2 class="rl-title" id="rl-title">Comp 01 · What I build, <em>in motion.</em></h2>
+          <span class="rl-ws" aria-hidden="true"><b>Motion</b><i>Animation</i><i>Effects</i></span>
+          <span class="rl-file" aria-hidden="true">xiraiya_reel_v12_FINAL.aep</span>
+          <span class="rl-mode" aria-hidden="true" data-m="scrub">Scrub</span>
+          <div class="rl-transport" role="group" aria-label="Playback">
+            <button type="button" class="rl-tb" data-rl="start" aria-label="Go to first frame"><svg class="ic" aria-hidden="true"><use href="#i-skip-back"/></svg></button>
+            <button type="button" class="rl-tb rl-play" data-rl="play" aria-pressed="false" aria-label="Play composition"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg></button>
+            <button type="button" class="rl-tb" data-rl="end" aria-label="Go to last frame"><svg class="ic" aria-hidden="true"><use href="#i-skip-fwd"/></svg></button>
+            <button type="button" class="rl-tb" data-rl="loop" aria-pressed="true" aria-label="Loop playback"><svg class="ic" aria-hidden="true"><use href="#i-loop"/></svg></button>
+          </div>
+        </header>
+        <div class="rl-body" style="--i:1">
+          <div class="rl-view">
+            <div class="rl-board">
+              <div class="rl-comp" aria-hidden="true"></div>
+              <svg class="rl-guides" aria-hidden="true"></svg>
+            </div>
+            <p class="rl-vfoot" aria-hidden="true"><span data-rl-zoom>Fit</span><span>Full</span><span data-rl-tc>0:00:00:00</span><span>Active Camera</span></p>
+            <p class="rl-hint" aria-hidden="true"><i></i>Scroll to scrub · Space to play · J / K keys</p>
+          </div>
+          <aside class="rl-fx" aria-hidden="true">
+            <p class="rl-ph">Effect Controls · <b data-rl-sel>Null_CAM</b></p>
+            <dl class="rl-props"></dl>
+            <div class="rl-graph">
+              <p class="rl-ph">Graph Editor</p>
+              <div class="rl-gbox">
+                <svg viewBox="0 0 200 100" preserveAspectRatio="none"><path class="g-grid" d="M0 25H200M0 50H200M0 75H200M50 0V100M100 0V100M150 0V100"/><path class="g-hand" d=""/><path class="g-curve" d=""/></svg>
+                <i class="g-dot"></i>
+              </div>
+              <small data-rl-ez>Easy Ease</small>
+            </div>
+          </aside>
+        </div>
+        <div class="rl-tl" style="--i:2">
+          <div class="rl-tl-head"><span>Comp 01 · Timeline</span><span class="rl-tc2" data-rl-tc aria-hidden="true">0:00:00:00</span></div>
+          <div class="rl-layers" aria-hidden="true"></div>
+          <div class="rl-tracks">
+            <div class="rl-ruler" role="slider" tabindex="0" aria-label="Playhead, in frames" aria-valuemin="0" aria-valuemax="360" aria-valuenow="0" aria-valuetext="0 seconds, opening"></div>
+            <div class="rl-cache" aria-hidden="true"></div>
+            <div class="rl-rows" aria-hidden="true"></div>
+            <div class="rl-ph-wrap" aria-hidden="true"><i class="rl-ph-line"></i><b class="rl-ph-head"></b></div>
+          </div>
+        </div>
+        <footer class="rl-status" style="--i:3" aria-hidden="true"><span data-rl-state>Ready</span><span>30 fps · 120 BPM · <span data-rl-beat>Bar 1 · Beat 1</span></span><span>Frame <span data-rl-frame>0</span> / 360</span></footer>
       </div>
-      <div class="vl-grain" aria-hidden="true"></div>
-      <div class="vl-bars" aria-hidden="true"><i></i><i></i></div>
+      <p class="sr-only">I build websites, Telegram bots, AI agents, Chrome extensions, Minecraft plugins, Android apps and crypto checkouts that work while you sleep.</p>
     </div>
-    <div class="vl-ui container container-wide">
-      <header class="vl-head">
-        <p class="vl-kicker"><span class="hanko sm">里</span><span>Episode 00 · 隠れ里 · The Hidden Village</span></p>
-        <h2 class="vl-title" id="vl-title">Walk into <em>the village.</em></h2>
-        <p class="vl-lead">A small 3D village where the crew lives. Drag to look around, tap a character to meet them, and switch between dusk and night.</p>
-      </header>
-      <div class="vl-ctrls" role="group" aria-label="Village controls">
-        <button type="button" class="vl-btn" data-vl="time" aria-pressed="false"><svg class="ic"><use href="#i-moon"/></svg><span>Night</span></button>
-        <button type="button" class="vl-btn" data-vl="spin" aria-pressed="true"><svg class="ic"><use href="#i-play"/></svg><span>Auto orbit</span></button>
-        <button type="button" class="vl-btn" data-vl="next"><svg class="ic"><use href="#i-arrow-right"/></svg><span>Next character</span></button>
-      </div>
-      <p class="vl-hint" aria-hidden="true"><span>Drag to orbit</span><span>Tap a character</span></p>
-    </div>
-    <aside class="vl-card" aria-live="polite" hidden>
-      <button type="button" class="vl-x" aria-label="Close character card"><svg class="ic"><use href="#i-close"/></svg></button>
-      <img class="vl-card-img" src="" alt="" width="200" height="300">
-      <div class="vl-card-body">
-        <small class="vl-card-role"></small>
-        <b class="vl-card-name"></b>
-        <p class="vl-card-line"></p>
-        <dl class="vl-card-stats"></dl>
-      </div>
-    </aside>
   </section>
 
   <section class="sp" data-sp="albedo" id="albedo" aria-label="Albedo, the Overseer"></section>
@@ -766,7 +783,7 @@
 <script src="assets/js/bugs.js?v=24137c14" defer></script>
 <script src="assets/js/impact.js?v=820ac2ba" defer></script>
 <script src="assets/js/home.js?v=8ff85049" defer></script>
-<script src="assets/js/home-village.js?v=da6fe44c" defer></script>
+<script src="assets/js/home-reel.js?v=f634fdab" defer></script>
 <script src="assets/js/home-manga.js?v=f899e166" defer></script>
 <script src="assets/js/home-spotlights.js?v=55a10c94" defer></script>
 <script src="assets/js/manga.js?v=d79280c2" defer></script>

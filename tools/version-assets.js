@@ -23,7 +23,6 @@ const list = dir => fs.readdirSync(path.join(root, dir)).map(f => path.posix.joi
 const DEPS = {
   'assets/js/powers.js': ['assets/css/powers.css', 'assets/sfx/sounds.js'],
   'assets/js/shop.js': [...list('assets/css/shop'), ...list('assets/js/shop')].sort(),
-  'assets/js/home-village.js': ['assets/vendor/three.module.min.js'],
 };
 
 // line endings are normalised so Windows and Linux checkouts give the same hash
