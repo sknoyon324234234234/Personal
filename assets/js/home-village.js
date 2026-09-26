@@ -305,12 +305,15 @@
     /* ------- sizing + visibility ------- */
     function size() {
       var w = stage.clientWidth, h = stage.clientHeight;
+      if (w < 10 || h < 10) return;
       renderer.setSize(w, h, false);
-      camera.aspect = w / Math.max(1, h);
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
     }
     size();
     window.addEventListener('resize', size);
+    /* browser zoom, dev tools and late layout change the stage without a window resize */
+    if (window.ResizeObserver) new ResizeObserver(function () { size(); dirty = true; }).observe(stage);
     var visible = true;
     new IntersectionObserver(function (en) { visible = en[0].isIntersecting; if (visible) loop(); }, { rootMargin: '100px' }).observe(stage);
     document.addEventListener('visibilitychange', function () { if (!document.hidden) loop(); });
@@ -329,6 +332,9 @@
       orbit.th += (want.th - orbit.th) * k8;
       orbit.ph += (want.ph - orbit.ph) * k8;
       orbit.r += (want.r - orbit.r) * k6;
+      /* the camera can never end up inside the square or above the sky */
+      orbit.r = XR.clamp(orbit.r, active > -1 ? 5 : 12, 34);
+      orbit.ph = XR.clamp(orbit.ph, .6, 1.45);
       target.lerp(goal, k6);
       camera.position.set(target.x + Math.sin(orbit.th) * Math.sin(orbit.ph) * orbit.r, target.y + Math.cos(orbit.ph) * orbit.r, target.z + Math.cos(orbit.th) * Math.sin(orbit.ph) * orbit.r);
       camera.lookAt(target);

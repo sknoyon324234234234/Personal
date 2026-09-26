@@ -771,7 +771,8 @@ html:not(.js) .loader { display: none; }
   .vl-hint { display: none; }
   .vl-ctrls { gap: 8px; }
   .vl-btn { padding: 0 14px; font-size: 13px; }
-  .vl-card { top: auto; bottom: 96px; transform: none; left: 16px; right: 16px; width: auto; grid-template-columns: 84px 1fr; }
+  .vl-card { top: auto; bottom: 142px; transform: none; left: 16px; right: 16px; width: auto; grid-template-columns: 84px 1fr; padding: 12px; gap: 10px; }
+  .vl-card-line { font-size: 13px; margin-bottom: 8px; }
   .vl-card.in { animation-name: vlCardUp; }
   .vl-card-img { width: 84px; height: 130px; }
   .vl-card-name { font-size: 24px; }
