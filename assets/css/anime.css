@@ -1,0 +1,240 @@
+/* =====================================================================
+   XIRAIYA — anime layer for the inner pages (see assets/js/anime.js)
+   Manga opening spread, heroine guide, screentone, chapter stamps, SFX,
+   panel-slash transition. Colours come from core.css tokens so washi
+   and ink modes both work.
+   ===================================================================== */
+
+:root { --ax-line: var(--ink); --ax-paper: var(--surface); --ax-tone: rgba(var(--fx), .16); }
+html[data-mode="ink"] { --ax-line: #efe4cc; --ax-tone: rgba(255, 255, 255, .09); }
+
+/* ---------- hero screentone + speed lines ---------- */
+.ax-hero { isolation: isolate; }
+.ax-tone { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.ax-tone i { position: absolute; inset: 0; }
+.ax-speed {
+  background: repeating-conic-gradient(from 0deg at 78% 42%, transparent 0 1.6deg, rgba(var(--fx), .07) 1.6deg 2deg, transparent 2deg 5.5deg);
+  -webkit-mask: radial-gradient(circle at 78% 42%, transparent 0 18%, #000 60%);
+          mask: radial-gradient(circle at 78% 42%, transparent 0 18%, #000 60%);
+  animation: axSpin 60s linear infinite;
+  transform-origin: 78% 42%;
+}
+.ax-dots {
+  background: radial-gradient(var(--ax-tone) 1.2px, transparent 1.6px) 0 0 / 9px 9px;
+  -webkit-mask: linear-gradient(200deg, #000 0%, transparent 45%), linear-gradient(20deg, #000 0%, transparent 35%);
+          mask: linear-gradient(200deg, #000 0%, transparent 45%), linear-gradient(20deg, #000 0%, transparent 35%);
+}
+@keyframes axSpin { to { transform: rotate(360deg); } }
+.ax-hero > .container, .ax-hero > .page-hero-inner { position: relative; z-index: 1; }
+
+/* ---------- opening spread ---------- */
+.ax-open { position: relative; padding: clamp(8px, 2vw, 24px) 0 clamp(40px, 6vw, 80px); }
+.ax-spread {
+  display: grid; gap: 12px;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  grid-template-areas: "girl title title" "girl toy jump";
+}
+.ax-p {
+  position: relative; min-width: 0;
+  background: var(--ax-paper); color: var(--ink);
+  border: 3px solid var(--ax-line); border-radius: 4px;
+  box-shadow: 6px 6px 0 var(--ax-line);
+  padding: clamp(16px, 2vw, 26px);
+  display: grid; align-content: start; gap: 12px;
+}
+.ax-p-girl { grid-area: girl; min-height: 440px; overflow: hidden; padding: 0; clip-path: polygon(0 0, 100% 0, 96% 100%, 0 100%); cursor: pointer; background: var(--sumi); border-color: var(--sumi); }
+.ax-p-title { grid-area: title; clip-path: polygon(1.5% 0, 100% 0, 100% 100%, 0 100%); padding-left: clamp(24px, 3vw, 40px); }
+.ax-p-toy { grid-area: toy; }
+.ax-p-jump { grid-area: jump; }
+.ax-spread:not(:has(.ax-p-jump)) { grid-template-areas: "girl title title" "girl toy toy"; }
+.ax-spread:not(:has(.ax-p-toy)) { grid-template-areas: "girl title title" "girl jump jump"; }
+
+/* heroine panel */
+.ax-burst {
+  position: absolute; inset: -20%;
+  background:
+    radial-gradient(circle at 50% 55%, rgba(210, 60, 38, .55) 0 14%, transparent 42%),
+    repeating-conic-gradient(from 0deg at 50% 55%, #1a1410 0 3deg, #0a0806 3deg 7deg);
+  animation: axSpin 90s linear infinite;
+}
+.ax-p-girl.is-ink { background: #f4ecdc; border-color: var(--ax-line); }
+.ax-p-girl.is-ink .ax-burst { background: radial-gradient(circle at 50% 55%, rgba(196, 50, 29, .22) 0 12%, transparent 40%), repeating-conic-gradient(from 0deg at 50% 55%, #f4ecdc 0 3deg, #e5d9c2 3deg 7deg); }
+.ax-kanji { position: absolute; right: 4%; top: 2%; font-family: var(--font-jp); font-weight: 800; font-size: clamp(120px, 14vw, 220px); line-height: 1; color: rgba(210, 60, 38, .28); writing-mode: vertical-rl; pointer-events: none; }
+.ax-girl {
+  position: absolute; left: 62%; bottom: -2%; transform: translateX(-50%);
+  height: min(106%, 620px); width: auto; max-width: none;
+  filter: drop-shadow(0 0 0 #fff) drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 18px 30px rgba(0, 0, 0, .55));
+  transition: transform .5s var(--ease-spring);
+  image-rendering: auto;
+}
+.ax-p-girl.is-ink .ax-girl { filter: contrast(1.1) drop-shadow(0 14px 22px rgba(0, 0, 0, .18)); mix-blend-mode: multiply; height: 100%; bottom: 0; }
+.ax-p-girl:hover .ax-girl, .ax-p-girl:focus-visible .ax-girl { transform: translateX(-50%) translateY(-6px) scale(1.02); }
+.ax-p-girl.is-poked .ax-girl { animation: axPoke .45s var(--ease-spring); }
+@keyframes axPoke { 0% { transform: translateX(-50%) scale(1); } 35% { transform: translateX(-50%) scale(1.06) rotate(-2deg); } 100% { transform: translateX(-50%) scale(1); } }
+.ax-p .ax-bubble {
+  position: absolute; left: 14px; top: 14px; z-index: 2; max-width: min(52%, 250px); width: auto;
+  margin: 0; padding: 12px 16px; border-radius: 50% / 40%;
+  background: #fffdf8; color: #1d1208; border: 2.5px solid #1d1208;
+  font: 700 14px/1.4 var(--font-body); text-align: center;
+  box-shadow: 3px 3px 0 #1d1208;
+}
+.ax-bubble::after { content: ''; position: absolute; right: 18%; bottom: -14px; width: 20px; height: 18px; background: #fffdf8; border-right: 2.5px solid #1d1208; border-bottom: 2.5px solid #1d1208; clip-path: polygon(0 0, 100% 0, 100% 100%); transform: skewX(-20deg); }
+.ax-p-girl.is-poked .ax-bubble { animation: axBub .35s var(--ease-spring); }
+@keyframes axBub { from { transform: scale(.85); } }
+.ax-name {
+  position: absolute; left: 0; bottom: 18px; z-index: 2;
+  display: grid; padding: 8px 18px 8px 16px;
+  background: var(--red); color: var(--on-red);
+  clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+}
+.ax-name b { font: 800 22px/1 var(--font-display); letter-spacing: .02em; }
+.ax-name small { font: 600 11px/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; opacity: .9; }
+.ax-bigsfx {
+  position: absolute; right: 10px; bottom: 10px; z-index: 2;
+  font: 900 clamp(34px, 4vw, 54px)/1 var(--font-jp); color: #fff;
+  -webkit-text-stroke: 2px #1d1208; paint-order: stroke fill;
+  text-shadow: 4px 4px 0 var(--red);
+  transform: rotate(-10deg);
+}
+
+/* title panel */
+.ax-ep { font: 700 12px/1 var(--font-mono); letter-spacing: .24em; text-transform: uppercase; color: var(--red); display: inline-flex; align-items: center; gap: 10px; }
+.ax-ep::before { content: ''; width: 34px; height: 3px; background: var(--red); }
+.ax-p .ax-arc { color: var(--ink); opacity: 1; margin: 0; font: 800 clamp(28px, 3.6vw, 52px)/1.05 var(--font-display); letter-spacing: -.01em; }
+.ax-p .ax-blurb { opacity: 1; margin: 0; color: var(--ink-2); max-width: 60ch; }
+.ax-cap { font: 700 11px/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+
+/* chapter jump list */
+.ax-p-jump ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.ax-p-jump a { display: grid; grid-template-columns: 52px 1fr; gap: 8px; align-items: baseline; padding: 9px 6px; min-height: 44px; border-bottom: 1px dashed var(--line-2); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; line-height: 1.35; transition: background .2s, padding .2s; }
+.ax-p-jump a span { font: 700 12px/1 var(--font-jp); color: var(--red); }
+.ax-p-jump a:hover, .ax-p-jump a:focus-visible { background: rgba(var(--fx), .05); padding-left: 12px; }
+
+/* toys */
+.ax-btn { justify-self: start; }
+.ax-pull { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.5; }
+.ax-pull b { color: var(--ink); }
+.ax-stars { color: var(--gold); letter-spacing: .1em; margin-right: 4px; }
+.ax-gacha { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center; }
+.ax-capsule { width: 64px; height: 64px; border-radius: 50%; border: 3px solid var(--ax-line); position: relative; overflow: hidden; background: linear-gradient(var(--red) 0 50%, #fffdf8 50%); }
+.ax-capsule::after { content: ''; position: absolute; left: 0; right: 0; top: calc(50% - 2px); height: 4px; background: var(--ax-line); }
+.ax-capsule i { position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px; border-radius: 50%; background: #fffdf8; border: 3px solid var(--ax-line); z-index: 1; }
+.ax-capsule.is-spin { animation: axShake .18s linear infinite; }
+.ax-capsule.is-open { animation: axPop .5s var(--ease-spring); background: linear-gradient(var(--gold) 0 50%, #fffdf8 50%); }
+@keyframes axShake { 0%, 100% { transform: rotate(-14deg); } 50% { transform: rotate(14deg); } }
+@keyframes axPop { 40% { transform: scale(1.25) rotate(12deg); } }
+
+.ax-rank { display: grid; grid-template-columns: 72px 1fr; gap: 14px; align-items: center; }
+.ax-rank p { margin: 0; display: grid; gap: 4px; }
+.ax-rank-t { font: 800 20px/1.15 var(--font-display); }
+.ax-rank-d { color: var(--ink-2); font-size: 14px; line-height: 1.45; }
+.ax-rank-l {
+  width: 72px; height: 72px; display: grid; place-items: center;
+  border: 4px double var(--red); border-radius: 50%; color: var(--red);
+  font: 900 36px/1 var(--font-display); transform: rotate(-8deg);
+}
+.ax-rank-l[data-r="S"] { color: var(--gold); border-color: var(--gold); }
+.ax-rank-k { font-family: var(--font-jp); }
+.ax-rank-l.is-stamp { animation: axStamp .45s var(--ease-spring); }
+@keyframes axStamp { 0% { transform: scale(2.2) rotate(-24deg); opacity: 0; } 100% { transform: scale(1) rotate(-8deg); opacity: 1; } }
+.ax-bar { height: 10px; border: 2px solid var(--ax-line); border-radius: 99px; overflow: hidden; }
+.ax-bar i { display: block; height: 100%; width: 0; background: repeating-linear-gradient(-45deg, var(--red) 0 8px, var(--red-2) 8px 16px); transition: width .8s var(--ease-out); }
+
+.ax-res { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.ax-res a { display: grid; justify-items: center; gap: 2px; text-align: center; color: var(--ink); text-decoration: none; padding: 6px 2px; border-radius: 8px; transition: transform .25s var(--ease-spring), background .2s; }
+.ax-res a:hover, .ax-res a:focus-visible { transform: translateY(-4px); background: rgba(var(--fx), .05); }
+.ax-res img { height: 96px; width: auto; object-fit: contain; filter: drop-shadow(0 6px 8px rgba(0, 0, 0, .25)); }
+.ax-res b { font: 800 14px/1.1 var(--font-display); }
+.ax-res small { font-size: 11px; color: var(--ink-3); line-height: 1.2; }
+.ax-p-res { grid-column: 2 / -1; }
+.ax-spread:has(.ax-p-res) { grid-template-areas: "girl title title" "girl toy toy" "girl jump jump"; }
+
+.ax-doors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ax-doors a { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 12px; border: 2px solid var(--ax-line); border-radius: 4px; color: var(--ink); text-decoration: none; font-weight: 700; transition: transform .2s, box-shadow .2s; }
+.ax-doors a span { font: 800 22px/1 var(--font-jp); color: var(--red); }
+.ax-doors a:hover, .ax-doors a:focus-visible { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--ax-line); }
+.ax-open-404 { width: 100%; margin-top: clamp(24px, 4vw, 48px); padding-bottom: 0; position: relative; z-index: 1; }
+
+/* demos: episode tags + picked card */
+.ax-epi { display: inline-block; margin-bottom: 6px; padding: 3px 8px; font: 700 11px/1.2 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--on-red); background: var(--sumi); clip-path: polygon(0 0, 100% 0, 94% 100%, 0 100%); }
+html[data-mode="ink"] .ax-epi { background: var(--red); }
+.dm.ax-pick { outline: 4px solid var(--red); outline-offset: 4px; animation: axFlash .6s var(--ease-spring) 2; }
+@keyframes axFlash { 50% { transform: scale(1.03); } }
+
+/* entrance */
+.ax-wait .ax-p { opacity: 0; transform: translateY(26px) scale(.97); }
+.ax-wait.is-in .ax-p { opacity: 1; transform: none; transition: opacity .5s var(--ease-out), transform .6s var(--ease-spring); }
+.ax-wait.is-in .ax-p:nth-child(2) { transition-delay: .09s; }
+.ax-wait.is-in .ax-p:nth-child(3) { transition-delay: .18s; }
+.ax-wait.is-in .ax-p:nth-child(4) { transition-delay: .27s; }
+
+/* ---------- chapter stamps + scroll SFX ---------- */
+.ax-has-stamp { position: relative; isolation: isolate; }
+.ax-stamp {
+  position: relative; transform: rotate(-3deg); margin-left: 14px; justify-self: start; vertical-align: middle;
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px;
+  border: 2px solid var(--red); color: var(--red); border-radius: 3px;
+  pointer-events: none; opacity: .85; white-space: nowrap; line-height: 1;
+}
+.ax-stamp b { font: 800 16px/1 var(--font-jp); letter-spacing: .08em; }
+.ax-stamp small { font: 700 10px/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase; }
+.ax-sfx {
+  position: absolute; right: -4%; top: 34%; z-index: -1; pointer-events: none;
+  font: 900 clamp(70px, 9vw, 140px)/1 var(--font-jp); color: transparent;
+  -webkit-text-stroke: 2px rgba(var(--fx), .14);
+  transform: rotate(-8deg) scale(.6); opacity: 0;
+  transition: transform .6s var(--ease-spring), opacity .6s;
+  white-space: nowrap;
+}
+.ax-sfx.is-in { transform: rotate(-8deg) scale(1); opacity: 1; }
+
+/* ---------- panel-slash page transition ---------- */
+.ax-slash { position: fixed; inset: 0; z-index: 401; pointer-events: none; display: grid; place-items: center; }
+.ax-slash i { position: absolute; left: -20%; right: -20%; height: 38%; background: var(--sumi); transform: translateX(-120%) skewY(-8deg); border-bottom: 5px solid var(--red); }
+.ax-slash i:nth-child(1) { top: -6%; }
+.ax-slash i:nth-child(2) { top: 31%; transform: translateX(120%) skewY(-8deg); }
+.ax-slash i:nth-child(3) { top: 68%; }
+.ax-slash b { position: relative; font: 900 clamp(60px, 12vw, 150px)/1 var(--font-jp); color: #fff; -webkit-text-stroke: 3px var(--red); paint-order: stroke fill; opacity: 0; transform: scale(1.6) rotate(-8deg); }
+html.is-leaving .ax-slash i { transform: translateX(0) skewY(-8deg); transition: transform .38s var(--ease-in-out); }
+html.is-leaving .ax-slash i:nth-child(2) { transition-delay: .05s; }
+html.is-leaving .ax-slash i:nth-child(3) { transition-delay: .1s; }
+html.is-leaving .ax-slash b { opacity: 1; transform: scale(1) rotate(-8deg); transition: opacity .2s .22s, transform .3s var(--ease-spring) .22s; }
+
+/* ---------- tablet ---------- */
+@media (max-width: 1100px) {
+  .ax-spread, .ax-spread:not(:has(.ax-p-jump)), .ax-spread:not(:has(.ax-p-toy)), .ax-spread:has(.ax-p-res) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "girl title" "girl toy" "jump jump";
+  }
+  .ax-p-res { grid-column: auto; }
+  .ax-res { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ax-sfx { display: none; }
+}
+
+/* ---------- phone (matches phone.css breakpoint) ---------- */
+@media (max-width: 759px) {
+  .ax-spread, .ax-spread:not(:has(.ax-p-jump)), .ax-spread:not(:has(.ax-p-toy)), .ax-spread:has(.ax-p-res) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "title" "girl" "toy" "jump";
+  }
+  .ax-p { box-shadow: 4px 4px 0 var(--ax-line); }
+  .ax-p-girl { min-height: 380px; clip-path: none; }
+  .ax-p-title { clip-path: none; padding-left: 18px; }
+  .ax-p .ax-bubble { font-size: 13px; max-width: 54%; padding: 10px 12px; }
+  .ax-girl { height: 94%; bottom: 0; left: 64%; }
+  .ax-p-girl.is-ink .ax-girl { height: 90%; left: 60%; }
+  .ax-name b { font-size: 19px; }
+  .ax-stamp { margin-left: 8px; padding: 4px 7px; }
+  .ax-stamp small { display: none; }
+  .ax-res { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ax-res img { height: 80px; }
+  .ax-btn { justify-self: stretch; }
+  .ax-speed { opacity: .6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ax-speed, .ax-burst { animation: none; }
+  .ax-wait .ax-p { opacity: 1; transform: none; }
+  .ax-slash { display: none; }
+}
