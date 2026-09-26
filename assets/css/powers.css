@@ -52,6 +52,10 @@
 html.pw-neg body > *:not(.pw-canvas):not(.pw-glow):not(.pw-bloom):not(.pw-light):not(.pw-sfx):not(.pw-flash):not(.pw-ink):not(.pw-dock) { filter: invert(1) grayscale(1) contrast(3); }
 html.pw-neg.pw-neg-violet body > *:not(.pw-canvas):not(.pw-glow):not(.pw-bloom):not(.pw-light):not(.pw-sfx):not(.pw-flash):not(.pw-ink):not(.pw-dock) { filter: invert(1) grayscale(1) contrast(3) sepia(1) hue-rotate(215deg) saturate(4); }
 html.pw-neg.pw-neg-gold body > *:not(.pw-canvas):not(.pw-glow):not(.pw-bloom):not(.pw-light):not(.pw-sfx):not(.pw-flash):not(.pw-ink):not(.pw-dock) { filter: invert(1) grayscale(1) contrast(3) sepia(1) saturate(5); }
+/* the drop's freeze frame: one held black-and-white negative, effects included, with no bloom */
+html.pw-mono .pw-canvas, html.pw-mono .pw-light { filter: grayscale(1) contrast(1.25); }
+html.pw-mono .pw-glow, html.pw-mono .pw-bloom { opacity: 0; }
+html.pw-mono .pw-bars::before, html.pw-mono .pw-bars::after { background: #fff; }   /* inverted with the page, so the bars stay black */
 .pw-dim { position: fixed; inset: 0; z-index: 580; pointer-events: none; opacity: 0; transition: opacity .5s; background: radial-gradient(ellipse at var(--px, 50%) var(--py, 60%), rgba(20, 40, 90, .25), rgba(3, 5, 14, .86) 70%); }
 .pw-dim.on { opacity: 1; }
 .pw-dim.kame { background: radial-gradient(ellipse at var(--px, 50%) var(--py, 60%), rgba(30, 90, 200, .3), rgba(2, 6, 20, .82) 70%); }

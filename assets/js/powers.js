@@ -340,6 +340,8 @@
     var tx = (px - cxs) * (1 - scale), ty = (py - cys) * (1 - scale);
     shakeTargets().forEach(function (t) {
       var cur = t.__pwCam || 'translate(0px,0px) scale(1)';
+      /* a move that cuts in on one still playing (a skip mid push-in) starts from where the camera is now, not where it was going */
+      if (cams.some(function (c) { return c.t === t && c.a.playState !== 'finished'; })) cur = getComputedStyle(t).transform;
       var next = 'translate(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px) scale(' + scale + ')';
       var done = pivot(t);
       var a = t.animate([{ transform: cur }, { transform: next }], { duration: ms, easing: ease2 || 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' });
@@ -1110,6 +1112,8 @@
      grid and accents. Without marks it uses the same timings.
        · darkness falls, the System counts the fallen, the seal opens
        · "ARISE": the command lands on the word with impact frames
+       · the camera leans in on the word (speed lines on the seal), freezes
+         black-and-white on the drop's first hit and kicks out on its second
        · the theme starts as the word ends; souls tear out of the rubble
        · on each hit of the drop a wave of shadow knights erupts
        · the page rebuilds on the beat, bottom to top, fed by soul light
@@ -1333,7 +1337,9 @@
       fog.forEach(function (f) { blob(c, sprV, f.x, f.y + 24, f.r * .8, .1 * fade); });
       /* ripples out across the ground from the seal, on the beat */
       rings = rings.filter(function (rg) {
-        var k2 = (now - rg.t) / 1400;
+        /* a ring pushed on a beat timer can be newer than this frame's timestamp: clamp, since
+           a negative radius throws in ellipse() and an exception here stops the whole loop */
+        var k2 = Math.max(0, (now - rg.t) / 1400);
         if (k2 >= 1) return false;
         var e2 = 1 - Math.pow(1 - k2, 3), rx = e2 * w * .6 + 20;
         c.strokeStyle = 'rgba(170,120,255,1)'; c.globalAlpha = (1 - k2) * .55 * rg.k * fade; c.lineWidth = 2;
@@ -1430,7 +1436,6 @@
     /* ---- 1. darkness falls ---- */
     var sh = overlay('pw-shadow'); on(sh);
     letterbox(true);
-    camera(w / 2, h * .85, 1.07, 2400, 'cubic-bezier(.4,0,.2,1)');
     var lit = pageLight('140,80,255'), boost = 0;
     layer(function (c, t) {
       if (lit.dead) return false;
@@ -1445,6 +1450,45 @@
       '<g fill="#d9c6ff" font-size="11" font-family="serif" text-anchor="middle"><text y="-88">影</text><text y="96">王</text><text x="-90" y="4">起</text><text x="90" y="4">兵</text></g></svg>';
     on(seal);
     function sealPulse(k) { seal.animate([{ filter: 'brightness(' + (1 + k) + ') saturate(1.4)' }, { filter: 'brightness(1)' }], { duration: 420, easing: 'ease-out' }); }
+
+    /* ---- the camera: the command, shot as one deliberate cut ----
+       darkness    a barely-there creep toward the seal, ending as the word lands
+       the word    the hit-stop holds the frame; then a low, slow push-in on the seal that leans in harder toward the drop
+       the drop    the first hit freezes as a black-and-white negative under a longer hit-stop; the second hit releases it
+                   with a sudden dolly-out past neutral; the last hit settles the camera, so the god rays and the rebuild
+                   play on a still frame. Every move starts and ends on a mark, so the picture stays locked to the sound */
+    var SX = w / 2, SY = h * .76;                                                    /* the seal, low in frame (measured once it is up) */
+    var STOP1 = 140, STOP2 = DROP.length > 1 ? Math.round((DROP[1] - DROP[0]) * 1000) : 0;   /* hit-stops: the word; the drop, held until its second hit */
+    var PUSH = tm(DROP[0]) - WORD - STOP1;                                           /* the push-in: from the end of the word's hit-stop to the drop */
+    function sealY() { var r = seal.getBoundingClientRect(); return r.height > 0 ? r.top + r.height / 2 : h * .76; }
+    camera(SX, SY, 1.03, WORD, 'cubic-bezier(.4,0,.6,1)');
+    /* the freeze frame: the world stops (canvas, shakes and all) and holds one black-and-white negative */
+    function freeze(ms) {
+      hitStop(ms);
+      root.classList.add('pw-neg', 'pw-mono');
+      setTimeout(function () { root.classList.remove('pw-neg', 'pw-mono'); }, ms);
+    }
+    /* the release: a sudden dolly-out past neutral (the last hit settles it); the speed lines burst outward */
+    function release() { camera(SX, SY, .965, 180, 'cubic-bezier(.1,.9,.2,1)'); burstT = performance.now(); }
+    /* speed lines on twos, like anime cels: they converge on the seal through the push-in, tighten toward the drop, hold
+       through the freeze and flip into one outward burst on the release; drawn under the fog and the army */
+    var linesOn = false, linesT = 0, linesSeed = 0, lineT0 = -1, burstT = 0;
+    layer(function (c, t, now) {
+      if (cine.dead) return false;
+      if (!linesOn) return;
+      if (lineT0 < 0) lineT0 = t;
+      var age = t - lineT0, p = Math.min(1, age / PUSH), inner = (phone ? 90 : 170) - p * (phone ? 30 : 60);
+      if (!burstT && now - linesT > 83) { linesT = now; linesSeed = (Math.random() * 1e9) | 0; }
+      if (!burstT) {
+        var k = age < 500 ? 1 - age / 500 * .5 : .5 + Math.pow(Math.max(0, (p - .55) / .45), 2) * .5;   /* a flash on the word, a simmer, then the build to the drop */
+        focusLines(c, SX, SY, inner, 'rgba(214,196,255,1)', phone ? 34 : 68, .2 * k, seeded(linesSeed));
+        return;
+      }
+      var q = Math.max(0, (now - burstT) / 200);
+      if (q >= 1) return false;
+      focusLines(c, SX, SY, inner + q * q * Math.hypot(w, h) * .5, '#ffffff', phone ? 44 : 90, .4 * (1 - q), seeded(linesSeed));
+    });
+
     var air = atmosphere(cine), army = legion(cine), lord = monarch(cine);
     if (restoring) ruin.anims.forEach(function (p) {
       p.dark = p.el.animate([{ transform: p.end, filter: phone ? 'none' : 'brightness(.5) saturate(.4)' }, { transform: p.end, filter: SHADOW }],
@@ -1463,7 +1507,10 @@
 
     /* ---- 2. the command ---- */
     at(WORD, function () {
-      hitStop(140);
+      SY = sealY();
+      camera(SX, SY, 1.15, PUSH, 'cubic-bezier(.55,0,.8,.5)');   /* made before the hit-stop, so it holds on its first frame and ends on the drop */
+      linesOn = true;
+      hitStop(STOP1);
       chroma(600);
       lensFlare(w / 2, h * .3, '150,90,255', 1600, 1.8);
       smokeRing(w / 2, h, '40,15,80', phone ? 10 : 18);
@@ -1482,13 +1529,20 @@
       at(tm(LOUD), function () { flare(.5); sealPulse(1); });
     }
 
-    /* ---- 4. the drop: a wave of knights erupts on each hit ---- */
+    /* ---- 4. the drop: a wave of knights erupts on each hit ----
+       the first hit is the freeze frame (its wave erupts into the release), the second hit releases it */
     DROP.forEach(function (d, i) {
       at(tm(d), function () {
-        army.spawn(i, DROP.length); lord.surge(1.1); air.ripple(1.2);
+        var held = !!STOP2 && i === 0;
+        /* camera moves first, so this hit's shake rides on top of them instead of being replaced by them */
+        if (STOP2 && i === 1) { release(); army.spawn(0, DROP.length); }
+        if (i === DROP.length - 1) cameraReset(900);
+        if (!held) army.spawn(i, DROP.length);
+        lord.surge(1.1); air.ripple(1.2);
         shake(7 + i * 3, 360); flare(.6 + i * .15); sealPulse(1.2);
         if (i === 0) air.retract();
-        if (i === DROP.length - 1) { impact(['neg', 'black'], 'violet'); chroma(300); cameraReset(900); sh.classList.add('thin'); }
+        if (held) freeze(STOP2);                                           /* after the shake and the pulse, so they hold on their first frame too */
+        if (i === DROP.length - 1) { impact(['neg', 'black'], 'violet'); chroma(300); sh.classList.add('thin'); }
       });
     });
     if (restoring) at(tm(DROP[0]), function () { ruinParts.forEach(function (p) { p.style.transition = 'opacity 1.4s'; p.style.opacity = '0'; }); });
