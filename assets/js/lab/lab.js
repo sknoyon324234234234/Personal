@@ -29,6 +29,14 @@
   }
   function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
+  /* old chapter links (showcase#web and friends) now open that service's brief; the wish wall became the Bingo Book */
+  var MOVED = { web: 'hire?service=web', automation: 'hire?service=automation', extension: 'hire?service=extension', desktop: 'hire?service=desktop', mobile: 'hire?service=mobile', 'ai-chat': 'hire?service=ai-chat', wishes: '#bingo' };
+  var moved = MOVED[location.hash.slice(1)];
+  if (moved) {
+    if (moved.charAt(0) === '#') { try { history.replaceState(null, '', moved); } catch (e) { location.hash = moved; } }
+    else location.replace(moved);
+  }
+
   window.LAB = {
     register: function (name, fn) { stages[name] = fn; },
     qr: XR.qr, rng: rng, hash: hash, now: now, stamp: stamp, sleep: sleep

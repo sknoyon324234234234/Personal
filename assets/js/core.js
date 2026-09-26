@@ -668,7 +668,7 @@
     var f = $('#site-footer');
     if (!f) return;
     var svc = SERVICES.slice(0, 7).map(function (s) {
-      return '<li><a href="showcase#' + s.id + '">' + esc(s.name) + '</a></li>';
+      return '<li><a href="' + (s.id === 'minecraft' ? 'showcase#minecraft' : 'hire?service=' + s.id) + '">' + esc(s.name) + '</a></li>';
     }).join('');
     var ct = contacts().map(function (c) {
       return '<li><a href="' + esc(c.href) + '" target="_blank" rel="noopener">' + icon(c.icon) + esc(c.text) + '</a></li>';
@@ -1169,16 +1169,16 @@
     { id: 'world-terminal', label: 'Run a command in the village terminal', xp: 20 },
     { id: 'world-tool', label: 'Use a tool in the Dev Toolbox', xp: 20 },
     { id: 'world-passport', label: 'Collect all 7 village stamps', xp: 50 },
-    { id: 'stage-web', label: 'Deploy a site in the Build Arc', xp: 20 },
-    { id: 'stage-automation', label: 'Summon the shadow-clone scripts', xp: 20 },
-    { id: 'stage-extension', label: 'Slay the pop-up demons', xp: 20 },
+    { id: 'stage-signs', label: 'Cast a jutsu in the Hand-Sign Dojo', xp: 20 },
+    { id: 'stage-chakra', label: 'Find your chakra nature', xp: 20 },
+    { id: 'stage-summon', label: 'Summon from the scroll', xp: 20 },
     { id: 'stage-minecraft', label: 'Build in the block garden', xp: 30 },
-    { id: 'stage-desktop', label: 'Finish the installer arc', xp: 20 },
-    { id: 'stage-mobile', label: 'Order food on the manga phone', xp: 20 },
-    { id: 'stage-chat', label: 'Ask sensei a question', xp: 20 },
+    { id: 'stage-exam', label: 'Sit the Ninja Academy exam', xp: 20 },
+    { id: 'stage-panel', label: 'Ink a page in the Panel Maker', xp: 20 },
+    { id: 'stage-power', label: 'Power up on the scouter', xp: 20 },
     { id: 'stage-makeover', label: 'Drag an old site into a fast one', xp: 20 },
     { id: 'stage-scroll', label: 'Unroll the project scroll', xp: 20 },
-    { id: 'stage-wishes', label: 'Hang a wish on the wish wall', xp: 20 },
+    { id: 'stage-bingo', label: 'Open the Bingo Book', xp: 20 },
     { id: 'learn', label: 'Open a Basic Knowledge lesson', xp: 20 },
     { id: 'wing', label: 'Open a Motion Wing exhibit full screen', xp: 20 },
     { id: 'palette', label: 'Open the Command Center', xp: 10 },
@@ -1214,7 +1214,7 @@
     var items = [];
     NAV.forEach(function (n) { items.push({ g: 'Pages', t: n.label, s: n.jp, ic: n.id === 'hire' ? 'briefcase' : n.id === 'shop' ? 'cart' : n.id === 'lab' ? 'sparkle' : n.id === 'kit' ? 'layers' : n.id === 'demos' ? 'monitor' : n.id === 'pages' ? 'window' : n.id === 'world' ? 'terminal' : n.id === 'learn' ? 'book' : 'home', href: n.href }); });
     /* services without a Lab chapter of their own open the brief form instead */
-    var inLab = ['web', 'automation', 'extension', 'minecraft', 'desktop', 'mobile', 'ai-chat'];
+    var inLab = ['minecraft'];
     SERVICES.forEach(function (sv) {
       var lab = inLab.indexOf(sv.id) > -1;
       items.push({ g: lab ? 'Live demos in the Lab' : 'Services', t: sv.name, s: 'from ' + fmtPrice(sv.priceFrom), ic: sv.icon, href: lab ? 'showcase#' + sv.id : 'hire?service=' + sv.id });
@@ -1227,7 +1227,9 @@
       { g: 'Actions', t: 'Get a price estimate', s: '60-second configurator', ic: 'sliders', href: 'hire#configure' },
       { g: 'Actions', t: 'Start a project', s: 'Send a brief', ic: 'rocket', href: 'hire' },
       { g: 'Actions', t: 'Before and after: site makeovers', s: 'Drag an old site into a fast one', ic: 'wand', href: 'showcase#makeover' },
-      { g: 'Actions', t: 'Hang a wish on the wish wall', s: 'See how I would build it', ic: 'pen', href: 'showcase#wishes' },
+      { g: 'Actions', t: 'Cast a jutsu in the Hand-Sign Dojo', s: 'Weave the signs', ic: 'hand', href: 'showcase#signs' },
+      { g: 'Actions', t: 'Power up past 9000', s: 'The power scouter', ic: 'flame', href: 'showcase#power' },
+      { g: 'Actions', t: 'Print your own wanted poster', s: 'The Bingo Book', ic: 'target', href: 'showcase#bingo' },
       { g: 'Actions', t: 'Shop with the AI assistant', s: 'Store demo', ic: 'bag', href: 'shop' }
     );
     var c = (C.contact || {});

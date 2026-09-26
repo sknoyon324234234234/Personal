@@ -1,6 +1,6 @@
 /* =====================================================================
-   XIRAIYA — The Lab: hand-made chapters (makeover, project scroll,
-   wish wall). Paper, sumi ink, vermilion seals and wood instead of
+   XIRAIYA — The Lab: hand-made chapters (makeover, project scroll).
+   Paper, sumi ink, vermilion seals and wood instead of
    app mockups, so these stages undo the dark .lab-stage palette.
    ===================================================================== */
 
@@ -294,113 +294,13 @@
   .em-step { width: 44px; height: 44px; }
 }
 
-/* =====================================================================
-   10 · THE WISH WALL — ema plaques on a shrine rack
-   ===================================================================== */
-.ew { display: grid; gap: 14px; }
-.ew-shrine {
-  position: relative; padding: 0 18px 26px; border-radius: 16px; overflow: hidden;
-  background:
-    radial-gradient(90% 70% at 50% 0, rgba(255, 190, 110, .16), transparent 70%),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, .035) 0 1px, transparent 1px 58px),
-    repeating-linear-gradient(90deg, rgba(0, 0, 0, .12) 0 2px, transparent 2px 58px) 29px 0,
-    linear-gradient(180deg, #3d2615, #291a0d);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .3), inset 0 -40px 60px -30px rgba(0, 0, 0, .45), var(--shadow-lg);
-}
-.ew-beam { position: relative; height: 70px; margin: 0 -18px 4px; }
-.ew-beam::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 20px; background: linear-gradient(180deg, #7b4c27, #53321a); box-shadow: 0 3px 6px rgba(0, 0, 0, .4); }
-.ew-rope { position: absolute; left: 0; top: 8px; width: 100%; height: 44px; overflow: visible; }
-.ew-rope-l { fill: none; stroke: #cdb277; stroke-width: 11; stroke-linecap: round; }
-.ew-rope-s { fill: none; stroke: #8f7440; stroke-width: 11; stroke-dasharray: 3 7; stroke-linecap: butt; opacity: .7; }
-.ew-shide { position: absolute; top: 34px; width: 16px; height: 34px; background: #fbf7ec; clip-path: polygon(0 0, 100% 0, 100% 28%, 30% 28%, 30% 56%, 100% 56%, 100% 84%, 30% 84%, 30% 100%, 0 100%, 0 72%, 70% 72%, 70% 44%, 0 44%, 0 16%); filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .3)); }
-.ew-shide:nth-child(2) { left: 24%; }
-.ew-shide:nth-child(3) { left: 50%; top: 40px; margin-left: -8px; }
-.ew-shide:nth-child(4) { right: 24%; }
-
-.ew-rack { display: grid; grid-template-columns: repeat(3, minmax(0, 150px)); justify-content: center; gap: 30px clamp(12px, 3cqw, 26px); padding-top: 14px; }
-@container (min-width: 900px) { .ew-rack { grid-template-columns: repeat(5, minmax(0, 150px)); } }
-.ew-ema {
-  position: relative; display: block; width: 100%; height: 132px; padding: 0; border: 0; background: none; cursor: pointer;
-  perspective: 700px; transform-origin: 50% -18px; transition: transform .6s var(--ease-spring);
-  filter: drop-shadow(0 8px 7px rgba(0, 0, 0, .45));
-}
-.ew-ema::before { content: ''; position: absolute; left: 50%; top: -20px; width: 2px; height: 30px; margin-left: -1px; background: linear-gradient(#e0d4b8, #c4321d 60%); border-radius: 2px; }
-.ew-ema::after { content: ''; position: absolute; left: 50%; top: -24px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: #1a0f06; box-shadow: 0 0 0 2px #7b4c27; }
-.ew-ema:hover { transform: rotate(-2.5deg); }
-.ew-rack > :nth-child(even) .ew-ema:hover { transform: rotate(2.5deg); }
-.ew-ema:focus-visible { outline: 0; }
-.ew-ema:focus-visible .ew-face { box-shadow: inset 0 0 0 3px #fff4ea; }
-.ew-card { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .75s cubic-bezier(.3, 1.35, .5, 1); }
-.ew-ema.is-on .ew-card { transform: rotateY(180deg); }
-.ew-face {
-  position: absolute; inset: 0; display: grid; align-content: start; justify-items: center; gap: 6px; padding: 30px 10px 10px;
-  text-align: center; backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  clip-path: polygon(50% 0, 100% 24%, 100% 100%, 0 100%, 0 24%);
-  background:
-    radial-gradient(circle at 50% 17%, #3a230f 3px, transparent 3.5px),
-    repeating-linear-gradient(92deg, rgba(120, 70, 30, .09) 0 2px, transparent 2px 7px),
-    linear-gradient(180deg, #e7c692, #d2a568);
-  box-shadow: inset 0 0 0 2px rgba(110, 66, 30, .35), inset 0 -10px 16px -10px rgba(110, 66, 30, .45);
-}
-.ew-front .ic { font-size: 18px; color: var(--verm); }
-.ew-front b { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; font: 700 12.5px/1.32 var(--font-display); color: #3a230f; }
-.ew-back { transform: rotateY(180deg); align-content: center; gap: 7px; background: radial-gradient(circle at 50% 17%, #3a230f 3px, transparent 3.5px), repeating-linear-gradient(92deg, rgba(120, 70, 30, .09) 0 2px, transparent 2px 7px), linear-gradient(180deg, #dcb57c, #c4955a); }
-.ew-back .cr-seal { width: 38px; height: 38px; font-size: 19px; margin-top: 12px; }
-.ew-back small { font: 600 10.5px/1.25 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: #3a230f; }
-.ew-mine .ew-face { background: radial-gradient(circle at 50% 17%, #3a230f 3px, transparent 3.5px), repeating-linear-gradient(92deg, rgba(120, 70, 30, .08) 0 2px, transparent 2px 7px), linear-gradient(180deg, #f1d7a8, #deb57a); }
-.ew-mine .ew-front i { font: 600 9.5px/1 var(--font-mono); font-style: normal; letter-spacing: .1em; text-transform: uppercase; color: var(--verm); }
-.ew-ema.is-swing { animation: ewSwing .9s var(--ease-out); }
-@keyframes ewSwing { 0% { transform: rotate(0); } 18% { transform: rotate(7deg); } 40% { transform: rotate(-5deg); } 62% { transform: rotate(3deg); } 82% { transform: rotate(-1.2deg); } 100% { transform: rotate(0); } }
-.ew-ema.is-new { animation: ewDrop .8s var(--ease-spring) both; }
-@keyframes ewDrop { from { opacity: 0; transform: translateY(-46px) rotate(-10deg); } }
-
-.ew-slip {
-  position: relative; padding: 20px 22px 18px; border-radius: 4px; min-height: 92px;
-  background: repeating-linear-gradient(90deg, rgba(31, 24, 19, .025) 0 1px, transparent 1px 26px), #fbf6ea;
-  box-shadow: 0 0 0 1px rgba(40, 28, 16, .12), var(--shadow);
-}
-.ew-slip::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--verm); border-radius: 4px 4px 0 0; }
-.ew-slip.is-open { animation: ewUnfold .55s var(--ease-out); }
-@keyframes ewUnfold { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
-.ew-hint { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; margin: 0; font-size: 14px; color: var(--ink-3); }
-.ew-hint .ic { color: var(--verm); }
-.ew-slip-h { display: flex; align-items: flex-start; gap: 14px; }
-.ew-slip-h .cr-seal { flex: none; }
-.ew-slip-h small { display: block; font: 600 10.5px/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--verm); }
-.ew-slip-h b { display: block; margin-top: 2px; font: 800 20px/1.15 var(--font-display); }
-.ew-quote { margin: 12px 0 0; font: 600 15px/1.45 var(--font-display); color: var(--ink-2); }
-.ew-plan { counter-reset: s; display: grid; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
-.ew-plan li { counter-increment: s; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
-.ew-plan li::before { content: counter(s); width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font: 700 12px/1 var(--font-jp); color: var(--verm); border: 1.5px solid rgba(196, 50, 29, .55); }
-.ew-stack { margin: 12px 0 0; font: 500 12.5px/1.6 var(--font-mono); color: var(--ink-3); }
-.ew-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin-top: 14px; padding-top: 12px; border-top: 1.5px dotted rgba(31, 24, 19, .25); }
-.ew-price { font-size: 13px; color: var(--ink-3); }
-.ew-price b { font: 800 19px/1 var(--font-display); color: var(--ink); }
-
-.ew-write { display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 12px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--surface); transition: border-color .25s, box-shadow .3s; }
-.ew-write:focus-within { border-color: var(--ink); box-shadow: 0 0 0 4px rgba(196, 50, 29, .12); }
-.ew-brush { flex: none; color: var(--verm); font-size: 17px; }
-.ew-write input { flex: 1; min-width: 0; height: 36px; border: 0; outline: 0; background: none; font-size: 14.5px; color: var(--ink); }
-.ew-write input::placeholder { color: var(--ink-3); }
-
-@container (max-width: 520px) {
-  .ew-shrine { padding: 0 12px 20px; }
-  .ew-beam { margin: 0 -12px 2px; }
-  .ew-rack { grid-template-columns: repeat(2, minmax(0, 150px)); gap: 30px 14px; }
-  .ew-slip { padding: 18px 16px 16px; }
-}
-
 @media (max-width: 760px) {
   .mk-tabs button { min-height: 48px; }
   .mk-open { min-height: 40px; }
   .mk-handle { width: 54px; height: 54px; margin: -27px 0 0 -27px; }
   .em-seals button { min-height: 44px; }
-  .ew-ema { height: 140px; }
-  .ew-write input { height: 40px; }
-  .ew-write .btn { min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mk-view.is-swap .mk-after, .ew-ema.is-swing, .ew-ema.is-new, .ew-slip.is-open { animation: none; }
+  .mk-view.is-swap .mk-after { animation: none; }
   .em-scene.is-seen .em-stamp { animation: none; opacity: .92; transform: rotate(-8deg); }
-  .ew-card { transition-duration: .01ms; }
 }
