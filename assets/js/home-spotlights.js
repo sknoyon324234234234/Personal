@@ -13,22 +13,22 @@
   var IMG = 'assets/img/anime/';
 
   var GIRLS = {
-    albedo: { n: 1, name: 'Albedo', role: 'The Overseer', job: 'Project lead', kanji: '統', fx: 'feathers', side: 'r', pixel: false,
+    albedo: { n: 1, name: 'Albedo', role: 'The Overseer', job: 'Project lead', kanji: '統', ch: '第一話', sfx: ['ドン', 'ゴゴゴ'], fx: 'feathers', side: 'r', pixel: false,
       quote: 'Every project runs on my plan. Deadlines are not suggestions.',
       stats: [['Leadership', 98], ['Planning', 95], ['Patience', 14]], svc: ['web', 'Plan my project'] },
-    blaze: { n: 2, name: 'Blaze', role: 'Flame kunoichi', job: 'Front-end', kanji: '炎', fx: 'embers', side: 'l', pixel: true,
+    blaze: { n: 2, name: 'Blaze', role: 'Flame kunoichi', job: 'Front-end', kanji: '炎', ch: '第二話', sfx: ['ボッ', 'メラメラ'], fx: 'embers', side: 'l', pixel: true,
       quote: 'Slow pages burn first. Mine load before you blink.',
       stats: [['Speed', 99], ['Style', 92], ['Chill', 8]], svc: ['web', 'Build my website'] },
-    shade: { n: 3, name: 'Shade', role: 'Shadow weaver', job: 'Automation and bots', kanji: '影', fx: 'void', side: 'r', pixel: false,
+    shade: { n: 3, name: 'Shade', role: 'Shadow weaver', job: 'Automation and bots', kanji: '影', ch: '第三話', sfx: ['スッ', 'ザワザワ'], fx: 'void', side: 'r', pixel: false,
       quote: 'My shadow clones work the night shift, so you never have to.',
       stats: [['Clones', 97], ['Stealth', 94], ['Sleep', 3]], svc: ['automation', 'Automate my work'] },
-    aqua: { n: 4, name: 'Aqua', role: 'Tide mage', job: 'Databases and APIs', kanji: '水', fx: 'bubbles', side: 'l', pixel: true,
+    aqua: { n: 4, name: 'Aqua', role: 'Tide mage', job: 'Databases and APIs', kanji: '水', ch: '第四話', sfx: ['ザバァ', 'ゴボゴボ'], fx: 'bubbles', side: 'l', pixel: true,
       quote: 'Data flows where I tell it to. Nothing leaks.',
       stats: [['Flow', 93], ['Security', 96], ['Small talk', 20]], svc: ['ai-agent', 'Connect my systems'] },
-    noir: { n: 5, name: 'Noir', role: 'Night scribe', job: 'Back-end and Telegram bots', kanji: '墨', fx: 'ink', side: 'r', pixel: true,
+    noir: { n: 5, name: 'Noir', role: 'Night scribe', job: 'Back-end and Telegram bots', kanji: '墨', ch: '第五話', sfx: ['シーン', 'カタカタ'], fx: 'ink', side: 'r', pixel: true,
       quote: 'I write the server code while the village sleeps.',
       stats: [['Uptime', 99], ['Focus', 95], ['Daylight', 6]], svc: ['telegram', 'Build my bot'] },
-    maid: { n: 6, name: 'Honey', role: 'Tea house keeper', job: 'Support and AI chat', kanji: '光', fx: 'sparkle', side: 'l', pixel: true,
+    maid: { n: 6, name: 'Honey', role: 'Tea house keeper', job: 'Support and AI chat', kanji: '光', ch: '第六話', sfx: ['キラッ', 'ドキドキ'], fx: 'sparkle', side: 'l', pixel: true,
       quote: 'Every customer gets an answer. In English or Bangla, with a smile!',
       stats: [['Kindness', 100], ['Replies', 97], ['Grumpiness', 1]], svc: ['ai-chat', 'Add AI chat'] }
   };
@@ -40,22 +40,25 @@
     sec.classList.add('sp-' + id, 'side-' + g.side);
     var letters = g.name.toUpperCase().split('').map(function (ch, i) { return '<span style="--l:' + i + '">' + ch + '</span>'; }).join('');
     sec.innerHTML =
-      '<div class="sp-bg" aria-hidden="true"><i class="sp-rays"></i><span class="sp-kanji jp">' + g.kanji + '</span><i class="sp-orb"></i></div>' +
-      '<canvas class="sp-fx" aria-hidden="true"></canvas>' +
-      '<div class="sp-bars" aria-hidden="true"><i></i><i></i></div>' +
-      '<div class="container container-wide sp-grid">' +
-        '<figure class="sp-fig"><i class="sp-halo" aria-hidden="true"></i>' +
-          '<img class="sp-img' + (g.pixel ? ' px' : '') + '" src="' + IMG + id + '.webp" alt="' + g.name + ', ' + g.role + '" loading="lazy" decoding="async">' +
-          '<i class="sp-sweep" aria-hidden="true"></i></figure>' +
-        '<div class="sp-copy">' +
-          '<p class="sp-no"><b>' + String(g.n).padStart(2, '0') + '</b><span>/ 06</span> Character file · <span class="jp">' + g.kanji + '</span></p>' +
-          '<h2 class="sp-name" aria-label="' + g.name + '">' + letters + '</h2>' +
-          '<p class="sp-role">' + g.role + ' <em>·</em> ' + g.job + '</p>' +
-          '<blockquote class="sp-quote"><p>' + XR.esc(g.quote) + '</p></blockquote>' +
-          '<dl class="sp-stats">' + g.stats.map(function (s, i) {
-            return '<div style="--v:' + s[1] + '%;--d:' + (i * .12) + 's"><dt>' + s[0] + '</dt><dd><i></i><b>' + s[1] + '</b></dd></div>';
-          }).join('') + '</dl>' +
-          '<a class="sp-link" href="hire?service=' + g.svc[0] + '">' + g.svc[1] + ' <svg class="ic"><use href="#i-arrow-right"/></svg></a>' +
+      '<div class="container container-wide sp-page">' +
+        '<p class="sp-top"><span class="jp">' + g.ch + '</span><span>Character file ' + String(g.n).padStart(2, '0') + ' / 06 · ' + g.role + '</span><i></i></p>' +
+        '<div class="sp-panels">' +
+          '<figure class="sp-main pnl"><i class="sp-lines" aria-hidden="true"></i><i class="sp-burst" aria-hidden="true"></i>' +
+            '<span class="sp-kanji jp" aria-hidden="true">' + g.kanji + '</span><canvas class="sp-fx" aria-hidden="true"></canvas>' +
+            '<img class="sp-img' + (g.pixel ? ' px' : '') + '" src="' + IMG + id + '.webp" alt="' + g.name + ', ' + g.role + '" loading="lazy" decoding="async">' +
+            '<span class="sp-sfx a jp" aria-hidden="true">' + g.sfx[0] + '</span><span class="sp-sfx b jp" aria-hidden="true">' + g.sfx[1] + '</span>' +
+            '<h2 class="sp-name" aria-label="' + g.name + '">' + letters + '</h2>' +
+          '</figure>' +
+          '<figure class="sp-close pnl"><img class="sp-img2' + (g.pixel ? ' px' : '') + '" src="' + IMG + id + '.webp" alt="" loading="lazy" decoding="async"><i class="sp-tone" aria-hidden="true"></i><i class="sp-flash" aria-hidden="true"></i>' +
+            '<blockquote class="sp-quote"><p>' + XR.esc(g.quote) + '</p></blockquote></figure>' +
+          '<div class="sp-file pnl">' +
+            '<p class="sp-no"><b>' + String(g.n).padStart(2, '0') + '</b><span>/ 06</span> Character file</p>' +
+            '<p class="sp-role">' + g.role + ' <em>·</em> ' + g.job + '</p>' +
+            '<dl class="sp-stats">' + g.stats.map(function (s, i) {
+              return '<div style="--v:' + s[1] + '%;--d2:' + (i * .12) + 's"><dt>' + s[0] + '</dt><dd><i></i><b>' + s[1] + '</b></dd></div>';
+            }).join('') + '</dl>' +
+            '<a class="sp-link" href="hire?service=' + g.svc[0] + '">' + g.svc[1] + ' <svg class="ic"><use href="#i-arrow-right"/></svg></a>' +
+          '</div>' +
         '</div>' +
       '</div>';
     var sc = { sec: sec, g: g, canvas: $('.sp-fx', sec), on: false, parts: [], raf: 0 };
@@ -68,11 +71,11 @@
     en.forEach(function (e) {
       var sc = scenes.find(function (s) { return s.sec === e.target; });
       if (!sc) return;
-      if (e.isIntersecting && e.intersectionRatio > .35) sc.sec.classList.add('in');
+      if (e.isIntersecting && e.intersectionRatio > .2) sc.sec.classList.add('in');
       sc.on = e.isIntersecting;
       if (sc.on && !XR.reduce) start(sc);
     });
-  }, { threshold: [0, .35, .6] });
+  }, { threshold: [0, .2, .5] });
   scenes.forEach(function (sc) { io.observe(sc.sec); });
 
   /* scroll parallax: --p runs from -1 (entering) to 1 (leaving) */
@@ -147,7 +150,7 @@
     var dpr = Math.min(window.devicePixelRatio || 1, 1.5), W = 0, H = 0;
     var small = window.matchMedia('(max-width: 760px)').matches;
     function size() {
-      W = sc.sec.clientWidth; H = sc.sec.clientHeight;
+      W = c.parentNode.clientWidth; H = c.parentNode.clientHeight;
       c.width = W * dpr; c.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     size();
