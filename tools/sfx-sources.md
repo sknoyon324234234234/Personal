@@ -1,0 +1,19 @@
+# Power sound sources
+
+The clips in `assets/sfx/` were cut, layered and loudness-mastered (about -7 to -12 LUFS, peaks at -1 dBTP)
+from these Pixabay sound effects. All are under the Pixabay Content License: free for commercial use,
+no attribution required; they may not be resold or redistributed as standalone sound files.
+
+| Clip | Made from |
+| --- | --- |
+| `chidori` | [Tesla ascending](https://pixabay.com/sound-effects/film-special-effects-tesla-ascending-m-77096/) + [Electric Spark](https://pixabay.com/sound-effects/film-special-effects-electric-spark-404229/) |
+| `chidori-hit` | [Lightning Strike](https://pixabay.com/sound-effects/nature-lightning-strike-386161/) + [Glass Shatter](https://pixabay.com/sound-effects/film-special-effects-glass-shatter-291049/) + [Thunder For Anime](https://pixabay.com/sound-effects/film-special-effects-thunder-for-anime-161022/) |
+| `kamehameha` | [Anime_charge_03](https://pixabay.com/sound-effects/film-special-effects-anime-charge-03-96230/) + [Energy Charge-Up Full Power](https://pixabay.com/sound-effects/film-special-effects-energy-charge-up-full-power-452848/) |
+| `kamehameha-fire` | [Energy Beam Blast (1)](https://pixabay.com/sound-effects/film-special-effects-energy-beam-blast-1-482513/) + [Epic Cinematic Explosion](https://pixabay.com/sound-effects/epic-cinematic-explosion-454857/) |
+| `super-saiyan` | [Energy Charge-Up Full Power](https://pixabay.com/sound-effects/film-special-effects-energy-charge-up-full-power-452848/) + [Thunder For Anime](https://pixabay.com/sound-effects/film-special-effects-thunder-for-anime-161022/) |
+| `super-saiyan-burst` | [Epic Cinematic Explosion](https://pixabay.com/sound-effects/epic-cinematic-explosion-454857/) |
+| `wind` | [Strong Gusting Wind](https://pixabay.com/sound-effects/film-special-effects-strong-gusting-wind-537714/) (seamless 11 s loop) |
+| `arise` | [Dark Magic (1)](https://pixabay.com/sound-effects/film-special-effects-dark-magic-1-378650/) + a low boom from [Epic Cinematic Explosion](https://pixabay.com/sound-effects/epic-cinematic-explosion-454857/) |
+| `arise-rise` | [Cinematic and Magical Riser](https://pixabay.com/sound-effects/film-special-effects-sfx-cinematic-and-magical-riser-sound-effect-373215/) |
+
+To replace a clip, drop a new file with the same name into `assets/sfx/`, run `node tools/version-assets.js`, and push.

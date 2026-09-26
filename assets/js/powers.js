@@ -69,7 +69,10 @@
       var Ctx = window.AudioContext || window.webkitAudioContext;
       if (!Ctx) return null;
       try { AC = new Ctx(); } catch (e) { return null; }
-      master = AC.createGain(); master.gain.value = .9; master.connect(AC.destination);
+      /* full volume into a brickwall limiter, so clips that overlap stay loud but never clip */
+      var lim = AC.createDynamicsCompressor();
+      lim.threshold.value = -2; lim.knee.value = 0; lim.ratio.value = 20; lim.attack.value = .001; lim.release.value = .12;
+      master = AC.createGain(); master.gain.value = 1; master.connect(lim); lim.connect(AC.destination);
     }
     if (AC.state === 'suspended') AC.resume();
     return AC;
