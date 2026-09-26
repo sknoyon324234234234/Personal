@@ -98,12 +98,15 @@ these names (mp3, m4a, ogg, wav or webm), then run `node tools/version-assets.js
 | `chidori-hit` | when it strikes and the page shatters |
 | `arise` | the shadow spell, as the dark falls |
 | `arise-voice` | a voice saying "Arise", landing on the command |
-| `arise-rise` | when the fallen page rises back up |
+| `arise-theme` | the music under the whole Arise cinematic (its drop, beat and accents go in `assets/sfx/marks.json`) |
 | `wind` | loops while the wind blows |
 | `kamehameha` | the energy charging up |
-| `kamehameha-voice` | the full chant; the beam fires on its final HAAA (about 1.3 s before the clip ends) |
+| `kamehameha-voice` | the full chant; the beam fires on its HAAA (the `fire` mark in `marks.json`) and lasts for `beam` seconds |
 | `kamehameha-fire` | HAAAA, as the beam fires |
 | `super-saiyan` | the scream while powering up |
 | `super-saiyan-burst` | the golden burst at the end |
 
-A power with no clip is silent. Only add clips you have the right to publish.
+A power with no clip is silent. `assets/sfx/marks.json` holds the timings inside the clips that the powers sync
+to: the Chidori `strike`, the Kamehameha `fire` and `beam`, the Arise `word`, and the theme's `drop`, `beat`,
+`accents`, `salute`, `awake`, `title` and `end` (all in seconds). If you swap a clip, update its marks.
+Only add clips you have the right to publish.

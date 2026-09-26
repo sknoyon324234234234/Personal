@@ -197,3 +197,27 @@ html.pw-ssj .pw-toggle { border-color: #ffd35a; box-shadow: 0 0 0 3px rgba(10, 8
 .pw-bars.on::before, .pw-bars.on::after { transform: none; }
 html.pw-chroma body > main, html.pw-chroma body > .site-header, html.pw-chroma body > footer { filter: drop-shadow(5px 0 0 rgba(255, 0, 70, .55)) drop-shadow(-5px 0 0 rgba(0, 220, 255, .55)); }
 @media (max-width: 760px) { .pw-bars::before, .pw-bars::after { height: 7vh; } }
+
+/* Arise: the closing title card and the skip button */
+.pw-title { position: fixed; left: 0; top: 42%; z-index: 600; width: 100vw; padding: 7vh 0; transform: translateY(-50%); text-align: center; color: #efe6ff; pointer-events: none; opacity: 0; transition: opacity .9s; }
+.pw-title.on { opacity: 1; }
+/* a dark band behind the card so it reads over the page as it wakes */
+.pw-title::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(60% 50% at 50% 50%, rgba(6, 2, 16, .82), rgba(6, 2, 16, .55) 55%, transparent 80%); }
+.pw-title small { display: block; font: 600 13px/1 var(--font-jp, serif); letter-spacing: .5em; text-indent: .5em; color: #b99cff; opacity: 0; transform: translateY(8px); transition: opacity .8s .2s, transform .8s .2s; }
+.pw-title b { display: block; margin: 16px 0 14px; font: 800 clamp(30px, 6.2vw, 86px)/1 var(--font-display, serif); letter-spacing: .6em; text-indent: .6em; white-space: nowrap; color: #f6f1ff;
+  text-shadow: 0 0 22px rgba(150, 90, 255, .95), 0 0 64px rgba(110, 50, 255, .65); clip-path: inset(0 50% 0 50%); transition: clip-path 1.1s cubic-bezier(.16, 1, .3, 1) .1s, letter-spacing 2.6s cubic-bezier(.16, 1, .3, 1), text-indent 2.6s cubic-bezier(.16, 1, .3, 1); }
+.pw-title i { display: block; width: 0; height: 1px; margin: 0 auto 16px; background: linear-gradient(90deg, transparent, #b99cff, transparent); transition: width 1.4s cubic-bezier(.16, 1, .3, 1) .5s; }
+.pw-title span { display: block; font: 600 12px/1.6 var(--font-mono, monospace); letter-spacing: .3em; text-transform: uppercase; color: #8fd3ff; opacity: 0; transition: opacity .9s 1s; }
+.pw-title em { font-style: normal; color: #fff; }
+.pw-title.on small, .pw-title.on span { opacity: 1; transform: none; }
+.pw-title.on b { clip-path: inset(0 0 0 0); letter-spacing: .22em; text-indent: .22em; }
+.pw-title.on i { width: min(520px, 70vw); }
+.pw-skip { position: fixed; right: 20px; bottom: 20px; z-index: 601; padding: 10px 18px; border: 1px solid rgba(185, 156, 255, .5); border-radius: 99px; background: rgba(12, 6, 24, .72); color: #e6dcff; font: 600 12px/1 var(--font-mono, monospace); letter-spacing: .22em; text-transform: uppercase; cursor: pointer; opacity: 0; transition: opacity .5s, background .2s; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.pw-skip.on { opacity: 1; }
+.pw-skip:hover, .pw-skip:focus-visible { background: rgba(110, 50, 255, .55); outline: none; box-shadow: 0 0 0 2px #b99cff; }
+@media (max-width: 760px) {
+  .pw-title b { letter-spacing: .3em; text-indent: .3em; }
+  .pw-title.on b { letter-spacing: .1em; text-indent: .1em; }
+  .pw-title small, .pw-title span { letter-spacing: .2em; font-size: 11px; }
+  .pw-skip { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); right: 14px; }
+}

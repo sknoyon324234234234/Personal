@@ -56,7 +56,8 @@
        chidori-hit          the strike, as the page shatters
        arise                the shadow spell, as the dark falls
        arise-voice          a voice saying "Arise", landing on the command
-       arise-rise           the fallen page rising back up
+       arise-theme          the music under the whole Arise cinematic (its drop,
+                            beat and accents are in assets/sfx/marks.json)
        wind                 the gale (loops while the wind blows)
        kamehameha           the energy charging up
        kamehameha-voice     the full chant, ka... me... ha... me... HAAA (the
@@ -100,7 +101,7 @@
   }
   /* play a clip some ms from now; a looping clip runs until stopClip(name) */
   function clipDur(name) { return durs[name] || 0; }
-  function clip(name, ms, loop, gain) {
+  function clip(name, ms, loop, gain, keep) {
     var a = audio();
     if (!a || !sfxMap()[name]) return;
     preload();
@@ -112,7 +113,7 @@
       src.buffer = buf; src.loop = !!loop; g.gain.value = gain == null ? 1 : gain;
       src.connect(g); g.connect(master);
       src.start(Math.max(a.currentTime, at));
-      if (loop) { stopClip(name, 0); loops[name] = { s: src, g: g }; }
+      if (loop || keep) { stopClip(name, 0); loops[name] = { s: src, g: g }; }
     });
   }
   function stopClip(name, fade) {
@@ -584,7 +585,8 @@
     setBusy(true); closeDock();
     var w = vw(), h = vh();
     var sx = w * (phone ? .22 : .16), sy = h * .8, ex = w / 2, ey = h * (phone ? .56 : .58);
-    var CHARGE = reduce ? 500 : 1350, DASH = reduce ? 1 : 420, HIT = CHARGE + DASH;
+    /* the charge lasts until the strike marked in the clip (assets/sfx/marks.json) */
+    var DASH = reduce ? 1 : 420, CHARGE = reduce ? 500 : Math.max(900, mark('chidori', 'strike', 1.77) * 1000 - DASH), HIT = CHARGE + DASH;
     lock(true); letterbox(true);
     var dim = overlay('pw-dim'); dim.style.setProperty('--px', ex + 'px'); dim.style.setProperty('--py', ey + 'px'); on(dim);
     var lit = reduce ? null : pageLight('90,160,255'), spk = sparkField('70,150,255', function () { return vh() * .93; });
@@ -592,8 +594,9 @@
     /* camera: slow push in on the hand while it charges, whip to the target on the dash */
     camera(sx, sy, 1.07, CHARGE, 'cubic-bezier(.3,0,.2,1)');
     later(CHARGE, function () { camera(ex, ey, 1.12, DASH, 'cubic-bezier(.7,0,.3,1)'); });
-    clip('chidori', 0);
+    clip('chidori', 0, false, 1, true);
     clip('chidori-hit', HIT);
+    later(HIT, function () { stopClip('chidori', 450); });
 
     var trail = [], arcs = [];
     for (var i = 0; i < (phone ? 7 : 12); i++) arcs.push({ b: null, until: 0 });
@@ -836,7 +839,7 @@
       ];
       if (phone) kf.forEach(function (k) { delete k.filter; });
       var a = p.el.animate(kf, { duration: reduce ? 500 : rand(1300, 1900), delay: reduce ? 0 : delay, fill: 'both' });
-      anims.push({ el: p.el, a: a, end: end, v: vSettle, top: r.top });
+      anims.push({ el: p.el, a: a, end: end, v: vSettle, top: r.top, r: r });
     });
     ruin = { anims: anims, px: px, py: py };
     root.classList.add('pw-destroyed');
@@ -930,37 +933,12 @@
       c.beginPath(); c.moveTo(bx - 16, by); c.lineTo(bx + 16, by); c.lineWidth = 4; c.stroke();
     }
     /* eyes */
-    c.globalCompositeOperation = 'lighter'; c.globalAlpha = s.o * (.85 + Math.sin(t / 90 + s.ph) * .15);
+    var eb = s.eye || 1;
+    c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(1, s.o * (.85 + Math.sin(t / 90 + s.ph) * .15) * eb);
     c.fillStyle = '#b9f0ff';
     c.beginPath(); c.ellipse(x - hr * .4, hy, hr * .28, hr * .07, -.3, 0, TAU); c.ellipse(x + hr * .4, hy, hr * .28, hr * .07, .3, 0, TAU); c.fill();
-    c.globalAlpha = s.o * .25; c.fillStyle = '#7b3fff'; c.beginPath(); c.ellipse(x, hy, hr * 1.2, hr * .5, 0, 0, TAU); c.fill();
+    c.globalAlpha = Math.min(1, s.o * .25 * eb); c.fillStyle = '#7b3fff'; c.beginPath(); c.ellipse(x, hy, hr * 1.2 * (1 + (eb - 1) * .5), hr * .5 * (1 + (eb - 1) * .5), 0, 0, TAU); c.fill();
     c.restore();
-  }
-
-  function shadowArmy(total) {
-    var w = vw(), h = vh(), n = phone ? 3 : 6, army = [], smoke = [];
-    for (var i = 0; i < n; i++) army.push({ x: (i + .5) / n * w + rand(-30, 30), size: rand(.85, 1.15) * (phone ? 110 : 150) * (i % 2 ? 1 : 1.15), rise: 0, o: 1, ph: rand(0, 6), sword: i % 2 === 1, at: 700 + Math.abs(i - (n - 1) / 2) * 180 });
-    var ground = flicker(function () { var x = rand(0, w); return makeBolt(x, h, x + rand(-160, 160), h - rand(20, 90), 1, 1, .15); }, 80);
-    layer(function (c, t, now) {
-      if (t > total) return false;
-      var fade = t > total - 700 ? (total - t) / 700 : 1;
-      /* shadow smoke pouring up from the ground */
-      if (t < total - 900) for (var k = 0; k < (phone ? 2 : 4); k++) smoke.push({ x: rand(0, w), y: h + 30, r: rand(30, phone ? 70 : 110), v: rand(1.5, 4), l: 1 });
-      smoke = smoke.filter(function (s) {
-        s.y -= s.v; s.r *= 1.006; s.l -= .008;
-        var g = c.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r);
-        g.addColorStop(0, 'rgba(60,20,120,' + (.35 * s.l * fade) + ')'); g.addColorStop(1, 'rgba(10,4,24,0)');
-        c.fillStyle = g; c.beginPath(); c.arc(s.x, s.y, s.r, 0, TAU); c.fill();
-        return s.l > 0;
-      });
-      army.forEach(function (s) {
-        if (!s.glint && t > s.at + 600) { s.glint = true; lensFlare(s.x, h + 10 - s.size * 2.3 + s.size * .17 * 1.3, '120,220,255', 700, .35); }
-        var r = Math.max(0, Math.min(1, (t - s.at) / 900));
-        s.rise = 1 - Math.pow(1 - r, 3); s.o = fade;
-        if (s.rise > 0) soldier(c, s, t);
-      });
-      if (t < total - 800) { c.globalCompositeOperation = 'lighter'; drawBolt(c, ground(now), '#8a5cff', .8); }
-    });
   }
 
   /* Solo Leveling style System window */
@@ -1034,135 +1012,313 @@
   }
 
   /* ==================================================================
-     起きろ ARISE — shadow extraction, following the anime:
-     1. darkness falls and the seal opens under the fallen
-     2. "ARISE" — the command lands with impact frames
-     3. each fallen piece turns to shadow and its soul is torn out as
-        black-violet smoke streaming upward
-     4. the shadows stand up: every piece rises back to its place as a
-        black silhouette, knights rise behind, and they kneel
-     5. a violet sweep wakes them into full colour; the System confirms
+     起きろ ARISE — a cinematic shadow extraction, cut to the music.
+     Every beat comes from the cue sheet (assets/sfx/marks.json): where
+     the word lands inside the voice clip, and the theme's drop, beat
+     grid and accents. Without marks it uses the same timings.
+       · darkness falls, the System counts the fallen, the seal opens
+       · "ARISE": the command lands on the word with impact frames
+       · the theme starts as the word ends; souls tear out of the rubble
+       · on each hit of the drop a wave of shadow knights erupts
+       · the page rebuilds on the beat, bottom to top, fed by soul light
+       · the knights salute, a violet sweep wakes the page, they kneel
+       · the SHADOW ARMY title card, then it all fades with the music
+     Skip (the button or Esc) jumps to the end.
      ================================================================== */
+  function mark(name, key, def) {
+    var m = window.XR_SFX && window.XR_SFX.marks && window.XR_SFX.marks[name];
+    return m && m[key] != null ? m[key] : def;
+  }
+
+  /* the shadow knights: they erupt on cue, their eyes pulse with the music */
+  function legion(cine) {
+    var w = vw(), h = vh(), n = phone ? 4 : 8, list = [], kneelT = 0, fade = 1;
+    for (var i = 0; i < n; i++) {
+      var slot = (i + .5) / n, off = Math.abs(slot - .5);
+      list.push({ x: slot * w + rand(-24, 24), size: rand(.88, 1.1) * (phone ? 96 : 138) * (1.15 - off * .5), rise: 0, o: 1, ph: rand(0, 6), sword: i % 2 === 1, t0: 0, eye: 1, off: off });
+    }
+    list.sort(function (a, b) { return a.off - b.off; });   /* the middle rises first */
+    var spk = sparkField('150,100,255');
+    function eyeY(s) { return h + 10 - s.rise * s.size * 2.3 + s.size * .17 * 1.3; }
+    layer(function (c, t, now) {
+      if (cine.ending) fade = Math.max(0, fade - .025);
+      spk.draw(c);
+      list.forEach(function (s) {
+        if (!s.t0) return;
+        var r = Math.min(1, (now - s.t0) / 650), k = kneelT ? Math.min(1, (now - kneelT) / 900) : 0;
+        s.rise = (1 - Math.pow(1 - r, 4)) * (1 - .22 * (1 - Math.pow(1 - k, 3)));
+        s.o = fade; s.eye = 1 + (s.eye - 1) * .9;
+        soldier(c, s, t);
+      });
+      if (cine.ending && fade <= 0) return false;
+    });
+    return {
+      spawn: function (wave, waves) {
+        var per = Math.ceil(n / waves);
+        list.slice(wave * per, wave * per + per).forEach(function (s) {
+          s.t0 = performance.now(); s.eye = 2.2;
+          shockwave(s.x, h, '#9a6bff', s.size * 2.4, 700);
+          spk.burst(s.x, h - 4, phone ? 10 : 22, 13, -Math.PI / 2, .9, 3);
+          later(480, function () { if (!cine.dead) lensFlare(s.x, eyeY(s), '120,220,255', 800, .4); });
+        });
+      },
+      pulse: function (k) { list.forEach(function (s) { s.eye = Math.max(s.eye, k || 1.5); }); },
+      salute: function () {
+        list.forEach(function (s, i) {
+          if (!s.t0) return;
+          s.eye = 2.8;
+          later(i * 70, function () { if (!cine.dead) lensFlare(s.x, eyeY(s), '140,210,255', 1000, .55); });
+        });
+      },
+      kneel: function () { kneelT = performance.now(); }
+    };
+  }
+
+  /* the air: dark ground fog, drifting ash, bokeh, and soul light that
+     flows up into each piece of the page as it rises */
+  function atmosphere(cine) {
+    var w = vw(), h = vh(), ash = [], fog = [], flow = [], fade = 0, i;
+    for (i = 0; i < (phone ? 50 : 120); i++) ash.push({ x: rand(0, w), y: rand(0, h), v: rand(.2, .9), s: rand(1, 2.6), ph: rand(0, 6), big: Math.random() < .08 });
+    for (i = 0; i < (phone ? 6 : 12); i++) fog.push({ x: rand(-100, w + 100), y: h - rand(0, h * .16), r: rand(130, 280), v: rand(-.35, .35) });
+    var sprV = sprite('120,60,255'), sprD = sprite('8,3,18'), sprS = sprite('205,175,255', true);
+    layer(function (c, t, now) {
+      fade = cine.ending ? Math.max(0, fade - .02) : Math.min(1, fade + .02);
+      if (cine.ending && fade <= 0) return false;
+      c.globalCompositeOperation = 'source-over';
+      fog.forEach(function (f) { f.x += f.v; if (f.x < -320) f.x = w + 320; if (f.x > w + 320) f.x = -320; blob(c, sprD, f.x, f.y, f.r, .6 * fade); });
+      c.globalCompositeOperation = 'lighter';
+      fog.forEach(function (f) { blob(c, sprV, f.x, f.y + 24, f.r * .8, .1 * fade); });
+      ash.forEach(function (a) {
+        a.y -= a.v; a.x += Math.sin(t / 900 + a.ph) * .3;
+        if (a.y < -20) { a.y = h + 10; a.x = rand(0, w); }
+        if (a.big) blob(c, sprV, a.x, a.y, 14 + a.s * 6, .12 * fade);
+        else { c.globalAlpha = (.35 + .25 * Math.sin(t / 300 + a.ph)) * fade; c.fillStyle = '#b9a2ff'; c.fillRect(a.x, a.y, a.s, a.s); }
+      });
+      c.lineCap = 'round';
+      flow = flow.filter(function (p) {
+        var k = (now - p.t0) / p.d;
+        if (k < 0) return true;
+        if (k >= 1) return false;
+        var e = k * k * (3 - 2 * k), x = p.x0 + (p.x1 - p.x0) * e + Math.sin(k * 6 + p.ph) * p.sw * (1 - k), y = p.y0 + (p.y1 - p.y0) * e;
+        if (p.px != null) { c.strokeStyle = '#a07bff'; c.globalAlpha = .7 * fade; c.lineWidth = 2; c.beginPath(); c.moveTo(p.px, p.py); c.lineTo(x, y); c.stroke(); }
+        p.px = x; p.py = y;
+        blob(c, sprS, x, y, 7, .9 * fade);
+        return true;
+      });
+      c.globalAlpha = 1;
+    });
+    return {
+      flow: function (x0, y0, x1, y1, delay) { flow.push({ x0: x0, y0: y0, x1: x1, y1: y1, t0: performance.now() + (delay || 0), d: rand(650, 1050), ph: rand(0, 6), sw: rand(10, 40), px: null, py: null }); }
+    };
+  }
+
   function arise() {
     if (busy) return;
     var restoring = !!ruin;
     setBusy(true); closeDock();
     if (restoring) { ruin.rising = true; if (ruin.cta) { drop(ruin.cta, 600); ruin.cta = null; } }
-    var w = vw(), h = vh();
-    var count = restoring ? ruin.anims.length : 0;
-    clip('arise', 0);
-    clip('arise-voice', 700);
+    var w = vw(), h = vh(), count = restoring ? ruin.anims.length : 0;
+    var SHADOW = phone ? 'brightness(0)' : 'brightness(0) drop-shadow(0 0 5px rgba(140,80,255,.9))';
+
+    /* reduced motion: the word, and the page simply comes back */
+    if (reduce) {
+      clip('arise-voice', 0);
+      setTimeout(function () {
+        if (restoring) {
+          ruin.anims.forEach(function (p) { [p.a, p.dark, p.rise, p.wake].forEach(function (a) { if (a) a.cancel(); }); });
+          ruinParts.forEach(function (p) { p.remove(); }); ruinParts = [];
+          root.classList.remove('pw-destroyed'); lock(false); ruin = null;
+          sysWindow('SYSTEM', ['Shadow extraction <em>successful</em>.', 'The page lives again.']).close(2600);
+        }
+        setBusy(false); paint();
+      }, 600);
+      return;
+    }
+
+    /* ---- the cue sheet ---- */
+    var V = 500;                                                        /* the voice starts */
+    var WORD = V + mark('arise-voice', 'word', 1.3) * 1000;             /* the command lands */
+    var M0 = V + mark('arise-voice', 'end', 1.85) * 1000;               /* the theme starts as the word ends */
+    function tm(s) { return M0 + s * 1000; }
+    var DROP = mark('arise-theme', 'drop', [3.96, 4.16, 4.28, 4.4]);
+    var BEAT = mark('arise-theme', 'beat', .38), BEAT0 = mark('arise-theme', 'beat0', 4.12);
+    var ACC = mark('arise-theme', 'accents', [6.9, 8.26, 9.94, 12.14, 13.26, 16.32, 17.44, 18.94, 19.32, 21.76, 22.96]);
+    var SALUTE = mark('arise-theme', 'salute', 16.32), AWAKE = mark('arise-theme', 'awake', 19.32);
+    var TITLE = mark('arise-theme', 'title', 21.76), END = mark('arise-theme', 'end', 25.8);
+    var LOUD = mark('arise-theme', 'loud', 1.6), lastDrop = DROP[DROP.length - 1];
+    if (!restoring) { SALUTE = lastDrop + 2.6; TITLE = lastDrop + 4.6; END = lastDrop + 8; }
+
+    var cine = { dead: false, ending: false, timers: [] };
+    function at(ms, fn) { cine.timers.push(setTimeout(function () { if (!cine.dead) fn(); }, ms)); }
+
+    /* ---- sound ---- */
+    clip('arise', 0, false, .7);
+    clip('arise-voice', V);
+    clip('arise-theme', M0, false, 1, true);
+
+    /* ---- 1. darkness falls ---- */
     var sh = overlay('pw-shadow'); on(sh);
-    /* violet light welling up from the ground */
-    var lit = reduce ? null : pageLight('140,80,255');
-    if (lit) layer(function (c, t) { if (lit.dead) return false; var k = Math.min(1, t / 900); lit.at(w / 2, h * 1.05, h * (.75 + .12 * Math.sin(t / 480)), (.4 + .18 * Math.sin(t / 90) * Math.random()) * k); });
-    function litOff() { if (lit && !lit.dead) { lit.dead = true; lit.off(900); } }
     letterbox(true);
-    /* camera sinks toward the ground where the fallen lie */
-    camera(w / 2, h * .85, 1.06, 1400, 'cubic-bezier(.4,0,.2,1)');
+    camera(w / 2, h * .85, 1.07, 2400, 'cubic-bezier(.4,0,.2,1)');
+    var lit = pageLight('140,80,255'), boost = 0;
+    layer(function (c, t) {
+      if (lit.dead) return false;
+      boost *= .9;
+      var k = Math.min(1, t / 900);
+      lit.at(w / 2, h * 1.05, h * (.75 + .12 * Math.sin(t / 480) + boost * .3), (.38 + .12 * Math.sin(t / 90) * Math.random() + boost) * k);
+    });
+    function flare(k) { boost = Math.max(boost, k); }
     var seal = overlay('pw-seal');
     seal.innerHTML = '<svg viewBox="-100 -100 200 200"><g fill="none" stroke="#b28cff"><circle r="96" stroke-width="2"/><circle r="84" stroke-width="1" stroke-dasharray="3 6"/><circle r="52" stroke-width="2"/>' +
       '<path d="M0-84 73 42H-73Z M0 84-73-42H73Z" stroke-width="1.6"/><path d="M0-52V52M-45-26 45 26M45-26-45 26" stroke-width=".8" opacity=".6"/></g>' +
       '<g fill="#d9c6ff" font-size="11" font-family="serif" text-anchor="middle"><text y="-88">影</text><text y="96">王</text><text x="-90" y="4">起</text><text x="90" y="4">兵</text></g></svg>';
     on(seal);
-
-    /* 1 → the fallen go dark: every rubble piece becomes a shadow */
-    var SHADOW = phone ? 'brightness(0)' : 'brightness(0) drop-shadow(0 0 5px rgba(140,80,255,.9))';
+    function sealPulse(k) { seal.animate([{ filter: 'brightness(' + (1 + k) + ') saturate(1.4)' }, { filter: 'brightness(1)' }], { duration: 420, easing: 'ease-out' }); }
+    var air = atmosphere(cine), army = legion(cine);
     if (restoring) ruin.anims.forEach(function (p) {
       p.dark = p.el.animate([{ transform: p.end, filter: phone ? 'none' : 'brightness(.5) saturate(.4)' }, { transform: p.end, filter: SHADOW }],
-        { duration: reduce ? 1 : 700, delay: rand(0, 250), fill: 'forwards' });
+        { duration: 900, delay: rand(0, 400), fill: 'forwards' });
     });
-    var sys = null;
+    var sys = null, sys2 = null;
+    at(200, function () {
+      sys = sysWindow('SYSTEM', restoring ? ['<em>' + count + '</em> fallen targets detected.', 'Shadow extraction is available.'] : ['No fallen enemies found.', 'Summoning your standing shadow army.']);
+    });
 
-    /* 2 → the command */
-    later(880, function () {
+    /* skip: a button and Esc jump straight to the end */
+    var skip = el('button', 'pw-skip', 'Skip <span aria-hidden="true">&#9656;</span>');
+    skip.type = 'button';
+    document.body.appendChild(skip);
+    at(1200, function () { on(skip); });
+    skip.addEventListener('click', function () { finish(true); });
+    function onKey(e) { if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); finish(true); } }
+    document.addEventListener('keydown', onKey, true);
+
+    /* ---- 2. the command ---- */
+    at(WORD, function () {
       hitStop(140);
-      chroma(500);
-      lensFlare(w / 2, h * .3, '150,90,255', 1400, 1.6);
+      chroma(600);
+      lensFlare(w / 2, h * .3, '150,90,255', 1600, 1.8);
       smokeRing(w / 2, h, '40,15,80', phone ? 10 : 18);
       impact(['neg', 'black', 'neg'], 'violet');
-      shockwave(w / 2, h, '#9a6bff', Math.max(w, h), 1100);
-      shake(10, 900);
-      sfx('ARISE', w / 2, h * .3, { cls: 'xl pw-arise-word', en: '起きろ', life: 1900, rot: 0 });
+      shockwave(w / 2, h, '#9a6bff', Math.max(w, h), 1200);
+      shake(12, 900); flare(.9); sealPulse(1.6);
+      sfx('ARISE', w / 2, h * .3, { cls: 'xl pw-arise-word', en: '起きろ', life: 2200, rot: 0 });
+      if (sys) { sys.close(300); sys = null; }
     });
 
-    shadowArmy(restoring ? 5600 : 3800);
-
-    if (!restoring) {
-      later(1500, function () {
-        sys = sysWindow('SYSTEM', ['No fallen enemies found.', 'Summoning your standing shadow army instead.']);
+    /* ---- 3. souls torn out of the fallen, as the choir comes in ---- */
+    if (restoring) {
+      at(tm(.9), function () {
+        extractSouls(ruin.anims.map(function (p) { return p.el.getBoundingClientRect(); }), (DROP[0] - .9) * 1000);
       });
-      later(3600, function () {
-        drop(sh, 800); drop(seal, 800); letterbox(false); cameraReset(500); litOff();
-        if (sys) sys.close(0);
-        setBusy(false); paint();
-        toast('Use Chidori first, then Arise will extract the fallen page.');
+      at(tm(LOUD), function () {
+        flare(.5); sealPulse(1);
+        sys2 = sysWindow('SYSTEM', ['Shadow extraction in progress.', 'Targets: <em>' + count + '</em> fallen elements.'], { bar: true });
       });
-      return;
     }
 
-    /* 3 → souls torn out of the fallen */
-    later(1300, function () {
-      var rects = ruin.anims.map(function (p) { return p.el.getBoundingClientRect(); });
-      extractSouls(rects, 1500);
-      sys = sysWindow('SYSTEM', ['Shadow extraction in progress.', 'Targets: <em>' + count + '</em> fallen elements.'], { bar: true });
-      var t0 = performance.now();
-      (function tick() {
-        if (!sys) return;
-        var p = Math.min(1, (performance.now() - t0) / 3400);
-        sys.progress(p);
-        if (p < 1) requestAnimationFrame(tick);
-      })();
+    /* ---- 4. the drop: a wave of knights erupts on each hit ---- */
+    DROP.forEach(function (d, i) {
+      at(tm(d), function () {
+        army.spawn(i, DROP.length);
+        shake(7 + i * 3, 360); flare(.6 + i * .15); sealPulse(1.2);
+        if (i === DROP.length - 1) { impact(['neg', 'black'], 'violet'); chroma(300); cameraReset(900); sh.classList.add('thin'); }
+      });
     });
+    if (restoring) at(tm(DROP[0]), function () { ruinParts.forEach(function (p) { p.style.transition = 'opacity 1.4s'; p.style.opacity = '0'; }); });
 
-    /* 4 → the shadows stand up and take their places, then kneel */
-    var done = [];
-    later(2300, function () {
-      clip('arise-rise', 0);
-      cameraReset(1400);
-      sh.classList.add('thin');
-      ruinParts.forEach(function (p) { p.style.transition = 'opacity 1.2s'; p.style.opacity = '0'; });
+    /* the music breathes through everything: light, seal and eyes on the beat */
+    for (var b = BEAT0, n = 0; b < END; b += BEAT, n++) {
+      (function (bt, even) { at(tm(bt), function () { flare(even ? .28 : .14); army.pulse(even ? 1.6 : 1.25); if (even) sealPulse(.5); }); })(b, n % 2 === 0);
+    }
+    ACC.forEach(function (a) { if (a < END) at(tm(a), function () { flare(.55); sealPulse(1); shake(4, 260); }); });
+
+    /* ---- 5. the page rebuilds on the beat, bottom to top ---- */
+    var rebuilt = 0;
+    if (restoring) {
+      var beats = [];
+      for (var gb = BEAT0; gb < AWAKE - 2; gb += BEAT * 2) if (gb > lastDrop + BEAT) beats.push(gb);
+      var order = ruin.anims.slice().sort(function (a, c) { return (c.r ? c.r.bottom : c.top) - (a.r ? a.r.bottom : a.top); });
+      var G = Math.max(1, Math.min(beats.length, order.length)), per = Math.ceil(order.length / G);
+      beats.slice(0, G).forEach(function (bt, gi) {
+        at(tm(bt), function () {
+          order.slice(gi * per, gi * per + per).forEach(function (p) {
+            var v = p.v, mid = { x: v.x * .35, y: v.y * .35 - rand(30, 90), z: rand(80, 200), rx: v.rx * .2, ry: v.ry * .2, rz: v.rz * .25 };
+            var kf = [
+              { transform: tf(v), filter: phone ? SHADOW : SHADOW + ' blur(0px)', easing: 'cubic-bezier(.5,0,.3,1)' },
+              { transform: tf(mid, 1.04), filter: phone ? SHADOW : SHADOW + ' blur(1.4px)', offset: .55, easing: 'cubic-bezier(.2,.7,.2,1)' },
+              { transform: tf({ x: 0, y: -10, z: 40, rx: -8, ry: 0, rz: 0 }, 1.02), filter: phone ? SHADOW : SHADOW + ' blur(0px)', offset: .82, easing: 'cubic-bezier(.3,0,.3,1)' },
+              { transform: tf({ x: 0, y: 5, z: -10, rx: 6, ry: 0, rz: 0 }, .99), filter: phone ? SHADOW : SHADOW + ' blur(0px)', offset: .92 },
+              { transform: tf(Z0), filter: phone ? SHADOW : SHADOW + ' blur(0px)' }
+            ];
+            var dl = rand(0, 160);
+            p.rise = p.el.animate(kf, { duration: rand(1100, 1450), delay: dl, fill: 'forwards' });
+            if (p.r && Math.random() < (phone ? .35 : .7)) {
+              var cx = p.r.left + p.r.width / 2, cy = p.r.top + p.r.height / 2;
+              air.flow(cx + rand(-60, 60), h + 10, cx, cy, dl);
+            }
+          });
+          rebuilt = Math.min(1, (gi + 1) / G);
+          if (sys2) sys2.progress(rebuilt);
+        });
+      });
+    }
+
+    /* ---- 6. the knights salute, the page wakes, they kneel ---- */
+    at(tm(SALUTE), function () {
+      army.salute(); flare(1); sealPulse(2);
+      shockwave(w / 2, h, '#b28cff', Math.max(w, h) * .8, 1000); shake(9, 500);
+    });
+    if (restoring) at(tm(AWAKE), function () {
+      var SWEEP = 1500;
+      awakenSweep(SWEEP);
+      flash('#efe6ff', 500, .35);
       ruin.anims.forEach(function (p) {
-        var d = reduce ? 0 : Math.max(0, (h - p.top) / h) * 600 + rand(0, 300);
-        var v = p.v, mid = { x: v.x * .35, y: v.y * .35 - rand(30, 90), z: rand(80, 200), rx: v.rx * .2, ry: v.ry * .2, rz: v.rz * .25 };
-        var kf = reduce ? [{ opacity: 0 }, { opacity: 1 }] : [
-          { transform: tf(v), filter: phone ? SHADOW : SHADOW + ' blur(0px)', easing: 'cubic-bezier(.5,0,.3,1)' },
-          { transform: tf(mid, 1.04), filter: phone ? SHADOW : SHADOW + ' blur(1.4px)', offset: .55, easing: 'cubic-bezier(.2,.7,.2,1)' },
-          { transform: tf({ x: 0, y: -10, z: 40, rx: -8, ry: 0, rz: 0 }, 1.02), filter: phone ? SHADOW : SHADOW + ' blur(0px)', offset: .82, easing: 'cubic-bezier(.3,0,.3,1)' },
-          { transform: tf({ x: 0, y: 5, z: -10, rx: 6, ry: 0, rz: 0 }, .99), filter: phone ? SHADOW : SHADOW + ' blur(0px)', offset: .92 },
-          { transform: tf(Z0), filter: phone ? SHADOW : SHADOW + ' blur(0px)' }
-        ];
-        p.rise = p.el.animate(kf, { duration: reduce ? 400 : rand(1300, 1700), delay: d, fill: 'forwards' });
-        done.push(p.rise.finished.catch(function () {}));
+        var top = p.el.getBoundingClientRect().top, d = Math.max(0, Math.min(1, (top + 60) / (h + 120))) * SWEEP;
+        p.wake = p.el.animate([
+          { filter: SHADOW },
+          { filter: phone ? 'brightness(1.6)' : 'brightness(1.8) drop-shadow(0 0 8px rgba(170,120,255,.9))', offset: .35 },
+          { filter: 'none' }
+        ], { duration: 560, delay: d, fill: 'forwards' });
       });
-
-      /* 5 → awaken: a violet sweep brings the colour back, top to bottom */
-      Promise.all(done).then(function () {
-        var SWEEP = reduce ? 300 : 1100;
-        awakenSweep(SWEEP);
-        var wake = [];
-        ruin.anims.forEach(function (p) {
-          var top = p.el.getBoundingClientRect().top;
-          var d = reduce ? 0 : Math.max(0, Math.min(1, (top + 60) / (h + 120))) * SWEEP;
-          p.wake = p.el.animate([
-            { filter: SHADOW },
-            { filter: phone ? 'brightness(1.6)' : 'brightness(1.8) drop-shadow(0 0 8px rgba(170,120,255,.9))', offset: .35 },
-            { filter: 'none' }
-          ], { duration: reduce ? 200 : 520, delay: d, fill: 'forwards' });
-          wake.push(p.wake.finished.catch(function () {}));
-        });
-        Promise.all(wake).then(function () {
-          ruin.anims.forEach(function (p) { [p.a, p.dark, p.rise, p.wake].forEach(function (a) { if (a) a.cancel(); }); });
-          ruinParts.forEach(function (p) { p.remove(); }); ruinParts = [];
-          drop(sh, 800); drop(seal, 800); letterbox(false); litOff();
-          root.classList.remove('pw-destroyed');
-          if (sys) { sys.progress(1); sys.close(0); }
-          var fin = sysWindow('SYSTEM', ['Shadow extraction <em>successful</em>.', '<em>' + count + '</em> shadows have joined your army.', 'The page lives again.']);
-          fin.close(3400);
-          lock(false); ruin = null; setBusy(false); paint();
-        });
-      });
+      if (sys2) { sys2.progress(1); sys2.close(600); sys2 = null; }
     });
+    at(tm(restoring ? AWAKE + .4 : SALUTE + 1.2), function () { army.kneel(); });
+
+    /* ---- 7. the title card, then everything fades with the music ---- */
+    var card = null;
+    at(tm(TITLE), function () {
+      card = overlay('pw-title');
+      card.innerHTML = '<small>影の君主 · Shadow Monarch</small><b>SHADOW ARMY</b><i></i><span>' +
+        (restoring ? '<em>' + count + '</em> shadows have risen · the page lives again' : 'your shadows stand ready') + '</span>';
+      on(card);
+      flare(.7);
+    });
+    if (restoring) at(tm(TITLE + 1.2), function () {
+      sysWindow('SYSTEM', ['Shadow extraction <em>successful</em>.', '<em>' + count + '</em> shadows have joined your army.']).close(3200);
+    });
+    at(tm(END), function () { finish(false); });
+
+    function finish(skipped) {
+      if (cine.ending) return;
+      cine.ending = true; cine.dead = true;
+      cine.timers.forEach(clearTimeout);
+      document.removeEventListener('keydown', onKey, true);
+      stopClip('arise-theme', skipped ? 700 : 2400);
+      if (restoring && ruin) {
+        ruin.anims.forEach(function (p) { [p.a, p.dark, p.rise, p.wake].forEach(function (a) { if (a) a.cancel(); }); });
+        ruinParts.forEach(function (p) { p.remove(); }); ruinParts = [];
+        root.classList.remove('pw-destroyed');
+        lock(false); ruin = null;
+      }
+      if (skipped) flash('#efe6ff', 400, .3);
+      [sys, sys2].forEach(function (s) { if (s) s.close(0); });
+      drop(skip, 300); drop(sh, 900); drop(seal, 900); if (card) drop(card, 1200);
+      letterbox(false); cameraReset(700);
+      lit.dead = true; lit.off(1100);
+      setBusy(false); paint();
+      if (!restoring) toast('Use Chidori first, then Arise will extract the fallen page.');
+    }
   }
 
   /* ==================================================================
@@ -1254,10 +1410,14 @@
     var ox = portrait ? w / 2 : w * .14, oy = portrait ? h * .8 : h * .58, ang = portrait ? -Math.PI / 2 : 0;
     var dim = overlay('pw-dim kame'); dim.style.setProperty('--px', ox + 'px'); dim.style.setProperty('--py', oy + 'px'); on(dim);
     var STEP = reduce ? 150 : 520, CHARGE = STEP * 4 + 250, BEAM = reduce ? 600 : 1700;
-    /* with a voice clip, the charge lasts as long as the chant and the beam fires on its final HAAA
-       (about 1.3 s before the clip ends) */
+    /* with a voice clip, the charge lasts as long as the chant and the beam fires on its HAAA
+       (the 'fire' mark in assets/sfx/marks.json, else about 1.3 s before the clip ends) */
     var vd = clipDur('kamehameha-voice');
-    if (vd && !reduce) { CHARGE = Math.max(CHARGE, Math.round(vd * 1000 - 1300)); STEP = (CHARGE - 250) / 4; }
+    if (vd && !reduce) {
+      CHARGE = Math.max(CHARGE, Math.round(mark('kamehameha-voice', 'fire', vd - 1.3) * 1000));
+      BEAM = Math.max(BEAM, Math.round(mark('kamehameha-voice', 'beam', 1.7) * 1000));
+      STEP = (CHARGE - 250) / 4;
+    }
     var lit = reduce ? null : pageLight('70,150,255'), litB = reduce ? null : pageLight('110,180,255'), spk = sparkField('90,160,255');
     layer(function (c, t) { spk.draw(c); return t < CHARGE + BEAM + 1600; });
     clip('kamehameha-voice', 0);

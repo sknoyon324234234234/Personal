@@ -1,0 +1,16 @@
+{
+  "chidori": { "strike": 3.3 },
+  "kamehameha-voice": { "fire": 8.62, "beam": 7.6 },
+  "arise-voice": { "word": 1.3, "end": 1.85 },
+  "arise-theme": {
+    "loud": 1.6,
+    "drop": [3.96, 4.16, 4.28, 4.4],
+    "beat": 0.38,
+    "beat0": 4.12,
+    "accents": [6.9, 8.26, 9.94, 12.14, 13.26, 16.32, 17.44, 18.94, 19.32, 21.76, 22.96],
+    "salute": 16.32,
+    "awake": 19.32,
+    "title": 21.76,
+    "end": 25.8
+  }
+}

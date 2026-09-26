@@ -14,9 +14,11 @@ no attribution required; they may not be resold or redistributed as standalone s
 | `super-saiyan-burst` | [Epic Cinematic Explosion](https://pixabay.com/sound-effects/epic-cinematic-explosion-454857/) |
 | `wind` | [Strong Gusting Wind](https://pixabay.com/sound-effects/film-special-effects-strong-gusting-wind-537714/) (seamless 11 s loop) |
 | `arise` | [Dark Magic (1)](https://pixabay.com/sound-effects/film-special-effects-dark-magic-1-378650/) + a low boom from [Epic Cinematic Explosion](https://pixabay.com/sound-effects/epic-cinematic-explosion-454857/) |
-| `arise-rise` | [Cinematic and Magical Riser](https://pixabay.com/sound-effects/film-special-effects-sfx-cinematic-and-magical-riser-sound-effect-373215/) |
 
-Voice slots (not included, add your own): `arise-voice` (a voice saying "Arise", lands on the command) and
+Supplied by the site owner (not from Pixabay): `chidori` (replaced), `kamehameha-voice`, `arise-voice` and `arise-theme`.
+Their timings are in `assets/sfx/marks.json`.
+
+Voice slots: `arise-voice` (a voice saying "Arise", lands on the command) and
 `kamehameha-voice` (the full chant; the beam fires about 1.3 s before the clip ends, on the final HAAA).
 
 To replace a clip, drop a new file with the same name into `assets/sfx/`, run `node tools/version-assets.js`, and push.
