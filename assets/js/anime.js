@@ -24,8 +24,7 @@
     homura:{ img: 'blaze.webp', name: 'Homura', role: 'Mission desk', jp: '任務', w: 522, h: 994 },
     mizu:  { img: 'aqua.webp',  name: 'Mizu',   role: 'Web sensei', jp: '先生', w: 434, h: 970 },
     yoru:  { img: 'shade.webp', name: 'Yoru',   role: 'Film critic', jp: '夜', w: 686, h: 873 },
-    kuro:  { img: 'noir.webp',  name: 'Kuro',   role: 'UI kunoichi', jp: '黒', w: 298, h: 970 },
-    tsuno: { img: 'sketch-horns.webp', name: 'Tsuno', role: 'Page sketcher', jp: '墨', w: 736, h: 928, ink: true }
+    kuro:  { img: 'noir.webp',  name: 'Kuro',   role: 'UI kunoichi', jp: '黒', w: 298, h: 970 }
   };
 
   var PAGES = {
@@ -44,8 +43,8 @@
     kit:        { who: 'kuro',   ep: 6,  arc: 'The Arsenal Arc', kanji: '器', sfx: 'シャキン',
                   say: 'Fifty components, every one sharpened. Hover, click, then copy the code.',
                   blurb: 'Buttons, cards, forms and loaders you can poke. Then a button gets taken apart.' },
-    pages:      { who: 'tsuno',  ep: 8,  arc: 'The Sketchbook Arc', kanji: '描', sfx: 'サラサラ',
-                  say: 'I sketch it in ink first. You pick the theme and I colour it in.',
+    pages:      { who: 'homura', ep: 8,  arc: 'The Forge Arc', kanji: '鍛', sfx: 'カンカン',
+                  role: 'Page smith', say: 'Pick a theme and I’ll forge every section to match.',
                   blurb: 'Thirteen full pages, seventy section variants and ten themes. Export when it looks right.' },
     world:      { who: 'kuro',   ep: 9,  arc: 'The Village Arc', kanji: '里', sfx: 'ワイワイ',
                   say: 'Welcome to the village. Each of us guards one building. Say hi and we’ll walk you there.',
@@ -103,7 +102,7 @@
   }
 
   if (!P) return;
-  var G = CAST[P.who];
+  var G = Object.assign({}, CAST[P.who], P.role ? { role: P.role } : {});
 
   /* ---------------- the opening spread ---------------- */
   var epNo = P.ep ? ('0' + P.ep).slice(-2) : '??';
@@ -114,7 +113,7 @@
     '<section class="ax-open" aria-label="' + esc(P.arc) + ', guided by ' + esc(G.name) + '">' +
       '<div class="container container-wide">' +
         '<div class="ax-spread">' +
-          '<div class="ax-p ax-p-girl' + (G.ink ? ' is-ink' : '') + '">' +
+          '<div class="ax-p ax-p-girl">' +
             '<i class="ax-burst" aria-hidden="true"></i>' +
             '<span class="ax-kanji" aria-hidden="true">' + P.kanji + '</span>' +
             '<img class="ax-girl" src="' + IMG + G.img + '" alt="' + esc(G.name) + ', the ' + esc(G.role.toLowerCase()) + ', anime guide for this page" width="' + G.w + '" height="' + G.h + '" loading="lazy" decoding="async">' +

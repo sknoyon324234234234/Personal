@@ -58,8 +58,6 @@ html[data-mode="ink"] { --ax-line: #efe4cc; --ax-tone: rgba(255, 255, 255, .09);
     repeating-conic-gradient(from 0deg at 50% 55%, #1a1410 0 3deg, #0a0806 3deg 7deg);
   animation: axSpin 90s linear infinite;
 }
-.ax-p-girl.is-ink { background: #f4ecdc; border-color: var(--ax-line); }
-.ax-p-girl.is-ink .ax-burst { background: radial-gradient(circle at 50% 55%, rgba(196, 50, 29, .22) 0 12%, transparent 40%), repeating-conic-gradient(from 0deg at 50% 55%, #f4ecdc 0 3deg, #e5d9c2 3deg 7deg); }
 .ax-kanji { position: absolute; right: 4%; top: 2%; font-family: var(--font-jp); font-weight: 800; font-size: clamp(120px, 14vw, 220px); line-height: 1; color: rgba(210, 60, 38, .28); writing-mode: vertical-rl; pointer-events: none; }
 .ax-girl {
   position: absolute; left: 62%; bottom: -2%; transform: translateX(-50%);
@@ -68,7 +66,6 @@ html[data-mode="ink"] { --ax-line: #efe4cc; --ax-tone: rgba(255, 255, 255, .09);
   transition: transform .5s var(--ease-spring);
   image-rendering: auto;
 }
-.ax-p-girl.is-ink .ax-girl { filter: contrast(1.1) drop-shadow(0 14px 22px rgba(0, 0, 0, .18)); mix-blend-mode: multiply; height: 100%; bottom: 0; }
 .ax-p-girl:hover .ax-girl, .ax-p-girl:focus-visible .ax-girl { transform: translateX(-50%) translateY(-6px) scale(1.02); }
 .ax-p-girl.is-poked .ax-girl { animation: axPoke .45s var(--ease-spring); }
 @keyframes axPoke { 0% { transform: translateX(-50%) scale(1); } 35% { transform: translateX(-50%) scale(1.06) rotate(-2deg); } 100% { transform: translateX(-50%) scale(1); } }
@@ -223,7 +220,6 @@ html.is-leaving .ax-slash b { opacity: 1; transform: scale(1) rotate(-8deg); tra
   .ax-p-title { clip-path: none; padding-left: 18px; }
   .ax-p .ax-bubble { font-size: 13px; max-width: 54%; padding: 10px 12px; }
   .ax-girl { height: 94%; bottom: 0; left: 64%; }
-  .ax-p-girl.is-ink .ax-girl { height: 90%; left: 60%; }
   .ax-name b { font-size: 19px; }
   .ax-stamp { margin-left: 8px; padding: 4px 7px; }
   .ax-stamp small { display: none; }
