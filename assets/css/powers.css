@@ -157,3 +157,26 @@ html.pw-ssj .pw-toggle { border-color: #ffd35a; box-shadow: 0 0 0 3px rgba(10, 8
   html.pw-windy * { animation: none !important; }
 }
 @media print { .pw-dock, .pw-aura { display: none; } }
+
+/* ---------- Solo Leveling style System window ---------- */
+.pw-sys {
+  position: fixed; left: 50%; top: max(84px, 12vh); z-index: 606; width: min(90vw, 400px); padding: 14px 18px 16px;
+  transform: translateX(-50%) scaleY(.02); opacity: 0; transform-origin: center;
+  background: linear-gradient(180deg, rgba(8, 22, 44, .9), rgba(4, 12, 28, .92)); color: #d8f1ff;
+  border: 1px solid #5fd0ff; border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(95, 208, 255, .25), 0 0 24px rgba(60, 170, 255, .55), inset 0 0 22px rgba(60, 170, 255, .25);
+  font: 500 13.5px/1.55 var(--font-mono, ui-monospace, monospace); letter-spacing: .02em; text-shadow: 0 0 8px rgba(95, 208, 255, .6);
+  transition: transform .45s cubic-bezier(.16, 1, .3, 1), opacity .25s;
+}
+.pw-sys.on { transform: translateX(-50%) scaleY(1); opacity: 1; }
+.pw-sys::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(95, 208, 255, .06) 0 1px, transparent 1px 3px); }
+.pw-sys-h { display: flex; align-items: center; gap: 10px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid rgba(95, 208, 255, .45); }
+.pw-sys-h i { width: 22px; height: 22px; display: grid; place-items: center; border: 1.5px solid #5fd0ff; border-radius: 50%; font: 800 13px/1 var(--font-mono, monospace); font-style: normal; }
+.pw-sys-h b { font-weight: 700; letter-spacing: .3em; }
+.pw-sys p { margin: 0; }
+.pw-sys em { font-style: normal; color: #fff; font-weight: 700; }
+.pw-sys-bar { height: 6px; margin-top: 10px; border: 1px solid rgba(95, 208, 255, .6); border-radius: 3px; overflow: hidden; }
+.pw-sys-bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #3aa0ff, #b98cff); box-shadow: 0 0 10px #5fd0ff; }
+.pw-sys-n { margin-top: 4px; text-align: right; font-size: 11.5px; opacity: .8; }
+@media (prefers-reduced-motion: reduce) { .pw-sys { transition: opacity .2s; } }
+@media (max-width: 760px) { .pw-sys { top: auto; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); font-size: 12.5px; } }
