@@ -57,13 +57,15 @@
       "image": {
         "file": "og/home.jpg",
         "art": "characters/xiraiya.webp",
-        "pet": "characters/gama.webp",
+        "pet": "",
         "color": "#c4321d",
         "kicker": "Rajshahi · Bangladesh",
         "title": "Websites, bots & *AI agents* that work while you sleep.",
         "subtitle": "Full-stack developer · 5+ years · live demos of everything I build.",
         "tags": "Websites|Telegram bots|AI agents|Shops",
-        "jp": "家"
+        "jp": "家",
+        "shots": "shop/thread/hero.jpg|shot:lab-1|shot:home-2",
+        "small": true
       }
     },
     {
@@ -81,14 +83,15 @@
       "changefreq": "weekly",
       "image": {
         "file": "og/lab.jpg",
-        "art": "characters/xiraiya-writing.webp",
+        "art": "",
         "pet": "",
         "color": "#b8321f",
         "kicker": "The Lab · 実験室",
         "title": "Working demos, *not screenshots.*",
         "subtitle": "Websites, bots, extensions, apps, AI agents and a 28-piece motion gallery.",
         "tags": "3D gallery|Telegram bot|AI agent|Crypto checkout",
-        "jp": "技"
+        "jp": "技",
+        "shots": "shot:lab-0|shot:lab-1|shot:lab-2"
       }
     },
     {
@@ -106,14 +109,15 @@
       "changefreq": "weekly",
       "image": {
         "file": "og/shop.jpg",
-        "art": "characters/xiraiya-arms.webp",
+        "art": "",
         "pet": "",
         "color": "#2c6f65",
         "kicker": "Shop templates · 店",
         "title": "Online stores that *sell on autopilot.*",
         "subtitle": "Twelve full store demos with cart, AI shopping agent and auto payments.",
         "tags": "Cart|Admin panel|AI agent|bKash · USDT",
-        "jp": "店"
+        "jp": "店",
+        "shots": "shop/glow/hero.jpg|shop/carry/hero.jpg|shot:shop-1"
       }
     },
     {
@@ -131,14 +135,15 @@
       "changefreq": "monthly",
       "image": {
         "file": "og/kit.jpg",
-        "art": "characters/xiraiya-arms.webp",
+        "art": "",
         "pet": "",
         "color": "#5f4f95",
         "kicker": "UI Kit · 型",
         "title": "Fifty components, *live and restylable.*",
         "subtitle": "Headers, navigation, heroes, buttons, cards, forms, footers and loaders.",
         "tags": "Buttons|Cards|Forms|Motion",
-        "jp": "型"
+        "jp": "型",
+        "shots": "shot:kit-2|shot:kit-0"
       }
     },
     {
@@ -156,14 +161,15 @@
       "changefreq": "monthly",
       "image": {
         "file": "og/demos.jpg",
-        "art": "characters/xiraiya.webp",
-        "pet": "characters/katsuyu.webp",
+        "art": "",
+        "pet": "",
         "color": "#d9a441",
         "kicker": "Demo websites · 演",
         "title": "Fifteen complete sites *you can click through.*",
         "subtitle": "SaaS, restaurant, jewellery, film cameras, crypto dashboard and more.",
         "tags": "SaaS|Restaurant|Fashion|Dashboard",
-        "jp": "演"
+        "jp": "演",
+        "shots": "demos/sakura-bistro.jpg|demos/vault-dashboard.jpg|demos/kage.jpg"
       }
     },
     {
@@ -181,14 +187,15 @@
       "changefreq": "monthly",
       "image": {
         "file": "og/pages.jpg",
-        "art": "characters/xiraiya-writing.webp",
+        "art": "",
         "pet": "",
         "color": "#2f6fe0",
         "kicker": "Pages Studio · 頁",
         "title": "Restyle a whole website *in real time.*",
         "subtitle": "Thirteen complete pages. Change fonts, colours and layout, then export.",
         "tags": "Homepage|Login|Dashboard|Export",
-        "jp": "頁"
+        "jp": "頁",
+        "shots": "shot:pages-2|shot:pages-1"
       }
     },
     {
@@ -206,14 +213,15 @@
       "changefreq": "monthly",
       "image": {
         "file": "og/world.jpg",
-        "art": "characters/xiraiya-arms.webp",
-        "pet": "characters/gama.webp",
+        "art": "",
+        "pet": "",
         "color": "#1f8a5b",
         "kicker": "Dev World · 里",
         "title": "A village of *developer tools.*",
         "subtitle": "Terminal, code playground, 17 dev tools, API console and algorithm arena.",
         "tags": "Terminal|Playground|Dev tools|Algorithms",
-        "jp": "里"
+        "jp": "里",
+        "shots": "shot:world-2|shot:world-0"
       }
     },
     {
@@ -231,14 +239,15 @@
       "changefreq": "monthly",
       "image": {
         "file": "og/learn.jpg",
-        "art": "characters/xiraiya-writing.webp",
+        "art": "",
         "pet": "",
         "color": "#7c5cff",
         "kicker": "Basic Knowledge · 学",
         "title": "The web, explained *with live previews.*",
         "subtitle": "141 lessons: HTML, CSS, JS, UI/UX, APIs, MySQL, security, SEO and AI.",
         "tags": "141 lessons|SQL|Security|AI",
-        "jp": "学"
+        "jp": "学",
+        "shots": "shot:learn-2|shot:learn-0"
       }
     },
     {
@@ -256,15 +265,93 @@
       "changefreq": "monthly",
       "image": {
         "file": "og/hire.jpg",
-        "art": "characters/xiraiya-stop.webp",
-        "pet": "characters/gama.webp",
+        "art": "",
+        "pet": "",
         "color": "#e0442e",
         "kicker": "Hire Xiraiya · 雇",
         "title": "Your price and timeline *in 60 seconds.*",
         "subtitle": "Landing pages from $50, shops from $100, Telegram bots from $50.",
         "tags": "From $50|Fixed quote|USDT · bKash|Fast reply",
-        "jp": "雇"
+        "jp": "雇",
+        "shots": "shot:hire-0|shot:hire-2"
       }
+    }
+  ],
+  "ogShots": [
+    {
+      "id": "home-2",
+      "file": "index.html",
+      "y": 1800
+    },
+    {
+      "id": "lab-0",
+      "file": "showcase.html",
+      "y": 0
+    },
+    {
+      "id": "lab-1",
+      "file": "showcase.html",
+      "y": 900
+    },
+    {
+      "id": "lab-2",
+      "file": "showcase.html",
+      "y": 1800
+    },
+    {
+      "id": "shop-1",
+      "file": "shop.html",
+      "y": 900
+    },
+    {
+      "id": "kit-0",
+      "file": "components.html",
+      "y": 0
+    },
+    {
+      "id": "kit-2",
+      "file": "components.html",
+      "y": 1800
+    },
+    {
+      "id": "pages-1",
+      "file": "pages.html",
+      "y": 900
+    },
+    {
+      "id": "pages-2",
+      "file": "pages.html",
+      "y": 1800
+    },
+    {
+      "id": "world-0",
+      "file": "dev-world.html",
+      "y": 0
+    },
+    {
+      "id": "world-2",
+      "file": "dev-world.html",
+      "y": 1800
+    },
+    {
+      "id": "learn-0",
+      "file": "knowledge.html",
+      "y": 0
+    },
+    {
+      "id": "learn-2",
+      "file": "knowledge.html",
+      "y": 1800
+    },
+    {
+      "id": "hire-0",
+      "file": "hire.html",
+      "y": 0
+    },
+    {
+      "id": "hire-2",
+      "file": "hire.html",
+      "y": 1800
     }
   ]
 }

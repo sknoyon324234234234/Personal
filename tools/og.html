@@ -5,7 +5,10 @@
 <meta name="robots" content="noindex">
 <title>Share image render</title>
 <!-- Renders one 1200x630 link-preview image. Driven by URL params:
-     ?t=Title&k=Kicker&s=Subtitle&jp=漢字&img=characters/xiraiya.webp&pet=characters/gama.webp&c=%23c4321d&tags=a|b|c&url=domain -->
+     ?t=Title&k=Kicker&s=Subtitle&jp=漢字&img=characters/xiraiya.webp&pet=characters/gama.webp&c=%23c4321d&tags=a|b|c&url=domain
+     shots=a|b|c lays up to three of the section's own pictures out as a stack of cards: a path under
+     assets/img/ is a photo (demos/ screenshots get a browser bar), shot:ID is tools/og-shots/ID.jpg,
+     a screenshot of the page itself. small=1 shrinks the character to stand in front of them. -->
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
 * { box-sizing: border-box; }
@@ -32,6 +35,13 @@ h1 em { font-style: normal; color: color-mix(in srgb, var(--c) 70%, #ffb088); }
 p { margin: 22px 0 0; max-width: 540px; font: 500 24px/1.4 'Zen Kaku Gothic New', sans-serif; color: #d9ccb4; }
 .foot { margin-top: auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .tag { padding: 9px 16px; border-radius: 99px; border: 1.5px solid rgba(243, 233, 214, .22); font: 700 15px 'Zen Kaku Gothic New', sans-serif; color: #efe4cc; background: rgba(243, 233, 214, .04); }
+.art.small { right: -14px; height: 430px; }
+.shot { position: absolute; z-index: 1; overflow: hidden; border-radius: 14px; background: #1a1411; box-shadow: 0 34px 60px rgba(0, 0, 0, .6), 0 0 0 1.5px rgba(243, 233, 214, .2); }
+.shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
+.shot.win { padding-top: 26px; background: #241b16; }
+.shot.win::before { content: ''; position: absolute; left: 14px; top: 9px; width: 9px; height: 9px; border-radius: 50%; background: #ff5f57; box-shadow: 15px 0 #febc2e, 30px 0 #28c840; }
+.shot.win::after { content: ''; position: absolute; left: 70px; right: 70px; top: 7px; height: 12px; border-radius: 99px; background: rgba(243, 233, 214, .08); }
+.shot.front { box-shadow: 0 40px 70px rgba(0, 0, 0, .7), 0 0 0 2px color-mix(in srgb, var(--c) 70%, #fff); }
 .url { position: absolute; left: 66px; bottom: 18px; font: 500 13px 'JetBrains Mono', monospace; letter-spacing: .08em; color: #8f826c; }
 </style>
 </head>
@@ -65,8 +75,20 @@ p { margin: 22px 0 0; max-width: 540px; font: 500 24px/1.4 'Zen Kaku Gothic New'
   $('jp').textContent = q.get('jp') || '忍';
   $('url').textContent = q.get('url') || '';
   $('tags').innerHTML = (q.get('tags') || '').split('|').filter(Boolean).map(function (t) { return '<span class="tag">' + t + '</span>'; }).join('');
-  $('art').src = '../assets/img/' + (q.get('img') || 'characters/xiraiya.webp');
-  if (q.get('pet')) $('pet').src = '../assets/img/' + q.get('pet'); else $('pet').remove();
+  function src(p) { return p.indexOf('shot:') === 0 ? 'og-shots/' + p.slice(5) + '.jpg' : '../assets/img/' + p; }
+  /* the section's pictures: a back pair fanned out behind a front card, all right of the headline */
+  var shots = (q.get('shots') || '').split('|').filter(Boolean).slice(0, 3);
+  var SPOTS = { 1: [[660, 120, 500, -3]], 2: [[735, 44, 430, 6], [668, 222, 480, -3]], 3: [[790, 30, 380, 8], [650, 70, 400, -7], [702, 248, 460, 2]] }[shots.length] || [];
+  shots.forEach(function (p, i) {
+    var sp = SPOTS[i], d = document.createElement('div'), win = p.indexOf('shot:') === 0 || p.indexOf('demos/') === 0;
+    d.className = 'shot' + (win ? ' win' : '') + (i === shots.length - 1 ? ' front' : '');
+    d.style.cssText = 'left:' + sp[0] + 'px;top:' + sp[1] + 'px;width:' + sp[2] + 'px;height:' + Math.round(sp[2] * .625 + (win ? 26 : 0)) + 'px;transform:rotate(' + sp[3] + 'deg)';
+    d.innerHTML = '<img alt="" src="' + src(p) + '">';
+    og.insertBefore(d, $('art'));
+  });
+  if (q.get('img') || !shots.length) $('art').src = src(q.get('img') || 'characters/xiraiya.webp'); else $('art').remove();
+  if (q.get('small') && $('art')) $('art').classList.add('small');
+  if (q.get('pet')) $('pet').src = src(q.get('pet')); else $('pet').remove();
 </script>
 </body>
 </html>
