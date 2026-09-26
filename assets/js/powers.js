@@ -1850,3 +1850,51 @@
       embers: function (x, y, n2) { emb.burst(x, y, n2, 9, -Math.PI / 2, 1.4, 4); }
     };
   }
+
+  function arise() {
+    if (busy) return;
+    var restoring = !!ruin;
+    setBusy(true); closeDock();
+    if (restoring) { ruin.rising = true; if (ruin.cta) { drop(ruin.cta, 600); ruin.cta = null; } }
+    var w = vw(), h = vh(), count = restoring ? ruin.anims.length : 0;
+    var SHADOW = phone ? 'brightness(0)' : 'brightness(0) drop-shadow(0 0 5px rgba(140,80,255,.9))';
+
+    /* reduced motion: the word, and the page simply comes back */
+    if (reduce) {
+      clip('arise-voice', 0);
+      setTimeout(function () {
+        if (restoring) {
+          ruin.anims.forEach(function (p) { [p.a, p.dark, p.rise, p.wake].forEach(function (a) { if (a) a.cancel(); }); });
+          ruinParts.forEach(function (p) { p.remove(); }); ruinParts = [];
+          root.classList.remove('pw-destroyed'); lock(false); ruin = null;
+          sysWindow('SYSTEM', ['Shadow extraction <em>successful</em>.', 'The page lives again.']).close(2600);
+        }
+        setBusy(false); paint();
+      }, 600);
+      return;
+    }
+
+    /* ---- the cue sheet ---- */
+    var V = 500;                                                        /* the voice starts */
+    var WORD = V + mark('arise-voice', 'word', 1.3) * 1000;             /* the command lands */
+    var M0 = V + mark('arise-voice', 'end', 1.85) * 1000;               /* the theme starts as the word ends */
+    function tm(s) { return M0 + s * 1000; }
+    var DROP = mark('arise-theme', 'drop', [3.96, 4.16, 4.28, 4.4]);
+    var BEAT = mark('arise-theme', 'beat', .38), BEAT0 = mark('arise-theme', 'beat0', 4.12);
+    var ACC = mark('arise-theme', 'accents', [6.9, 8.26, 9.94, 12.14, 13.26, 16.32, 17.44, 18.94, 19.32, 21.76, 22.96]);
+    var SALUTE = mark('arise-theme', 'salute', 16.32), AWAKE = mark('arise-theme', 'awake', 19.32);
+    var TITLE = mark('arise-theme', 'title', 21.76), END = mark('arise-theme', 'end', 25.8);
+    var LOUD = mark('arise-theme', 'loud', 1.6), lastDrop = DROP[DROP.length - 1];
+    if (!restoring) { SALUTE = lastDrop + 2.6; TITLE = lastDrop + 4.6; END = lastDrop + 8; }
+
+    var cine = { dead: false, ending: false, timers: [] };
+    function at(ms, fn) { cine.timers.push(setTimeout(function () { if (!cine.dead) fn(); }, ms)); }
+
+    /* ---- sound ---- */
+    clip('arise', 0, false, .7);
+    clip('arise-voice', V);
+    clip('arise-theme', M0, false, 1, true);
+
+    /* ---- 1. darkness falls ---- */
+    var sh = overlay('pw-shadow'); on(sh);
+    letterbox(true);
