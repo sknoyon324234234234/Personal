@@ -49,9 +49,9 @@
 .pw-light { position: fixed; inset: 0; z-index: 585; pointer-events: none; opacity: 0; mix-blend-mode: screen; background: radial-gradient(circle var(--lr, 600px) at var(--lx, 50%) var(--ly, 50%), rgba(var(--lc), .6), rgba(var(--lc), .22) 38%, rgba(var(--lc), 0) 72%); }
 /* impact frames: a manga negative of the whole page, and solid frames */
 .pw-ink { position: fixed; inset: 0; z-index: 588; pointer-events: none; opacity: 0; background: #000; }
-html.pw-neg body > *:not(.pw-canvas):not(.pw-glow):not(.pw-bloom):not(.pw-light):not(.pw-sfx):not(.pw-flash):not(.pw-ink):not(.pw-dock) { filter: invert(1) grayscale(1) contrast(3); }
-html.pw-neg.pw-neg-violet body > *:not(.pw-canvas):not(.pw-glow):not(.pw-bloom):not(.pw-light):not(.pw-sfx):not(.pw-flash):not(.pw-ink):not(.pw-dock) { filter: invert(1) grayscale(1) contrast(3) sepia(1) hue-rotate(215deg) saturate(4); }
-html.pw-neg.pw-neg-gold body > *:not(.pw-canvas):not(.pw-glow):not(.pw-bloom):not(.pw-light):not(.pw-sfx):not(.pw-flash):not(.pw-ink):not(.pw-dock) { filter: invert(1) grayscale(1) contrast(3) sepia(1) saturate(5); }
+html.pw-neg body > *:not(.pw-canvas):not(.pw-glow):not(.pw-bloom):not(.pw-light):not(.pw-sfx):not(.pw-flash):not(.pw-ink):not(.pw-dock):not(.pw-cracks) { filter: invert(1) grayscale(1) contrast(3); }
+html.pw-neg.pw-neg-violet body > *:not(.pw-canvas):not(.pw-glow):not(.pw-bloom):not(.pw-light):not(.pw-sfx):not(.pw-flash):not(.pw-ink):not(.pw-dock):not(.pw-cracks) { filter: invert(1) grayscale(1) contrast(3) sepia(1) hue-rotate(215deg) saturate(4); }
+html.pw-neg.pw-neg-gold body > *:not(.pw-canvas):not(.pw-glow):not(.pw-bloom):not(.pw-light):not(.pw-sfx):not(.pw-flash):not(.pw-ink):not(.pw-dock):not(.pw-cracks) { filter: invert(1) grayscale(1) contrast(3) sepia(1) saturate(5); }
 .pw-dim { position: fixed; inset: 0; z-index: 580; pointer-events: none; opacity: 0; transition: opacity .5s; background: radial-gradient(ellipse at var(--px, 50%) var(--py, 60%), rgba(20, 40, 90, .25), rgba(3, 5, 14, .86) 70%); }
 .pw-dim.on { opacity: 1; }
 .pw-dim.kame { background: radial-gradient(ellipse at var(--px, 50%) var(--py, 60%), rgba(30, 90, 200, .3), rgba(2, 6, 20, .82) 70%); }
