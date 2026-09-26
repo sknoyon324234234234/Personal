@@ -796,18 +796,6 @@ html:not(.js) .loader { display: none; }
 .rs-meta b { font-family: var(--serif, serif); font-size: clamp(20px, 1.9vw, 28px); line-height: 1; }
 .rs-job { font-size: 12.5px; color: rgba(255,255,255,.85); }
 .rs-pow { width: 100%; margin-top: 4px; }
-.rs-sketch { margin-top: clamp(48px, 7vw, 90px); }
-.rs-sk-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 18px; }
-.rs-sk-title { margin: 0; font-family: var(--serif, serif); font-size: clamp(24px, 3vw, 36px); }
-.rs-sk-title .jp { color: var(--red); margin-right: 10px; }
-.rs-sk-head p { margin: 0; color: var(--ink-2); }
-.rs-strip { display: flex; gap: 18px; overflow-x: auto; padding: 14px max(16px, calc((100vw - 1480px) / 2 + 24px)) 26px; scroll-snap-type: x proximity; scrollbar-width: thin; cursor: grab; }
-.rs-strip.drag { cursor: grabbing; scroll-snap-type: none; }
-.rs-strip.drag .rs-panel { pointer-events: none; }
-.rs-panel { flex: 0 0 auto; width: clamp(180px, 20vw, 250px); aspect-ratio: 3 / 4.2; padding: 8px 8px 36px; border: 3px solid #111; background: #fff; position: relative; scroll-snap-align: start; transform: rotate(var(--r)); box-shadow: 5px 5px 0 #111; cursor: zoom-in; transition: transform .3s, box-shadow .3s; }
-.rs-panel:hover, .rs-panel:focus-visible { transform: rotate(0) translateY(-6px); box-shadow: 8px 10px 0 var(--red); }
-.rs-panel img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
-.rs-panel span { position: absolute; left: 10px; right: 10px; bottom: 8px; font: 700 13px var(--serif, serif); color: #111; text-align: left; }
 .rs-lb { position: fixed; inset: 0; z-index: 160; display: grid; place-items: center; padding: 20px; background: rgba(6,3,10,.9); opacity: 0; transition: opacity .25s; }
 .rs-lb[hidden] { display: none; }
 .rs-lb.in { opacity: 1; }
@@ -823,7 +811,6 @@ html:not(.js) .loader { display: none; }
 @media (max-width: 560px) {
   .rs-grid { grid-template-columns: repeat(2, 1fr); }
   .rs-card { box-shadow: 4px 4px 0 var(--red); }
-  .rs-panel { width: 62vw; }
 }
 @media (prefers-reduced-motion: reduce) {
   .rs-card, .rs-card img, .rs-lb-fig, .vl-canvas { transition: none; }

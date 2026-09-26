@@ -38,11 +38,11 @@
       ]
     },
     {
-      title: 'Epilogue · Before the ink', no: '終話',
+      title: 'Epilogue · Dawn', no: '終話',
       panels: [
-        { a: '1/1/4/3', clip: '0 0,100% 0,96% 100%,0 100%', bg: 'paper', img: ['sketch-oni', 'cover', '50% 8%', 1], cap: 'Every hero starts as a rough sketch.' },
-        { a: '1/3/4/5', clip: '4% 0,100% 0,100% 100%,0 100%', bg: 'paper', img: ['sketch-horns', 'cover', '50% 30%', 1], b: [['…just like your idea.', 50, 70, 'l']] },
-        { a: '4/1/7/3', clip: '0 0,100% 4%,100% 100%,0 100%', bg: 'paper', img: ['sketch-witch', 'cover', '50% 20%', 1], sfx: ['シャッ', 64, 12, -10, '#111'] },
+        { a: '1/1/4/3', clip: '0 0,100% 0,96% 100%,0 100%', bg: 'night', img: ['albedo', 'cover', '50% 10%', 1.3], cap: 'Dawn. The shop is live.' },
+        { a: '1/3/4/5', clip: '4% 0,100% 0,100% 100%,0 100%', bg: 'tone', img: ['noir', 'contain', '50% 100%', 1], b: [['First order already came in.', 52, 16, 'l']] },
+        { a: '4/1/7/3', clip: '0 0,100% 4%,100% 100%,0 100%', bg: 'water', img: ['aqua', 'contain', '50% 100%', 1], sfx: ['ピカッ', 72, 16, -10, '#4fd4ff'], b: [['And it loads in one second.', 4, 10, 'r']] },
         { a: '4/3/7/5', clip: '0 4%,100% 0,100% 100%,0 100%', bg: 'cta', cta: true }
       ]
     }
@@ -53,7 +53,7 @@
   function panelHTML(p, i) {
     var h = '<div class="pn bg-' + p.bg + (p.pop ? ' pop' : '') + '" style="--a:' + p.a + ';--clip:polygon(' + p.clip + ');--i:' + i + '">';
     h += '<div class="pn-frame">';
-    if (p.img && !p.pop) h += '<img class="pn-img' + (/^sketch/.test(p.img[0]) ? '' : ' px') + '" src="' + IMG + p.img[0] + '.webp" alt="" loading="lazy" decoding="async" style="object-fit:' + p.img[1] + ';object-position:' + p.img[2] + ';--s:' + p.img[3] + '">';
+    if (p.img && !p.pop) h += '<img class="pn-img' + (p.img[0] === 'albedo' || p.img[0] === 'shade' ? '' : ' px') + '" src="' + IMG + p.img[0] + '.webp" alt="" loading="lazy" decoding="async" style="object-fit:' + p.img[1] + ';object-position:' + p.img[2] + ';--s:' + p.img[3] + '">';
     if (p.big) h += '<b class="pn-big">' + esc(p.big) + '</b>';
     if (p.cta) h += '<div class="pn-cta"><small>Next chapter</small><b>Yours.</b><p>Tell me what your shop, bot or app should do and the crew gets to work tonight.</p><div><a class="btn btn-primary" href="hire">Start my chapter <svg class="ic"><use href="#i-arrow-right"/></svg></a><a class="btn btn-ghost" href="showcase">Enter the Lab</a></div></div>';
     h += '</div>';

@@ -1,8 +1,8 @@
 /* =====================================================================
-   XIRAIYA — home: the Hidden Village (3D), the roster and the sketch strip
+   XIRAIYA — home: the Hidden Village (3D), and the roster
    The village is a small three.js scene loaded only when it scrolls near.
    Characters are cut-out billboards that always turn to face the camera;
-   the sketches hang on notice boards. Without WebGL (or with reduced
+   wanted posters of the crew hang on notice boards. Without WebGL (or with reduced
    motion) a layered still of the crew is shown instead.
    ===================================================================== */
 (function () {
@@ -20,11 +20,6 @@
     { id: 'noir', name: 'Noir', role: 'Night scribe', el: 'Ink', job: 'Back-end', pow: 86, line: 'Writes the server code while the village sleeps.', h: 3.0, pixel: true },
     { id: 'maid', name: 'Honey', role: 'Tea house keeper', el: 'Light', job: 'Support and AI chat', pow: 90, line: 'Answers every customer in English and Bangla, with a smile.', h: 3.1, pixel: true }
   ];
-  var SKETCH = [
-    ['sketch-oni', 'Oni shrine maiden'], ['sketch-hunter', 'Android hunter'], ['sketch-witch', 'Hat witch'],
-    ['sketch-horns', 'Horned bloom'], ['sketch-dragon', 'Dragon maid'], ['sketch-dream', 'Daydream'], ['sketch-neko', 'Neko study']
-  ];
-
   /* ------------------------------------------------------------------
      Character card (shared by the village and the roster)
      ------------------------------------------------------------------ */
@@ -92,25 +87,6 @@
       }
     });
   }
-  var strip = $('.rs-strip');
-  if (strip) {
-    strip.innerHTML = SKETCH.map(function (s, i) {
-      return '<button type="button" class="rs-panel" style="--r:' + ((i % 3) - 1) * 1.2 + 'deg"><img src="' + IMG + s[0] + '.webp" alt="" loading="lazy" decoding="async"><span>' + s[1] + '</span></button>';
-    }).join('');
-    $$('.rs-panel', strip).forEach(function (b, i) {
-      b.setAttribute('aria-label', 'Sketch: ' + SKETCH[i][1] + '. Open');
-      b.addEventListener('click', function () { if (!strip.dataset.dragged) openLb(IMG + SKETCH[i][0] + '.webp', SKETCH[i][1]); });
-    });
-    // drag to scroll with a mouse
-    var down = false, sx = 0, sl = 0, moved = 0;
-    strip.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') return; down = true; sx = e.clientX; sl = strip.scrollLeft; moved = 0; });
-    window.addEventListener('pointermove', function (e) { if (!down) return; moved = Math.max(moved, Math.abs(e.clientX - sx)); strip.scrollLeft = sl - (e.clientX - sx); if (moved > 6) strip.classList.add('drag'); });
-    window.addEventListener('pointerup', function () {
-      if (!down) return; down = false; strip.classList.remove('drag');
-      if (moved > 6) { strip.dataset.dragged = '1'; setTimeout(function () { delete strip.dataset.dragged; }, 50); }
-    });
-  }
-
   /* ------------------------------------------------------------------
      The 3D village
      ------------------------------------------------------------------ */
@@ -260,7 +236,7 @@
       void post;
     });
 
-    /* notice boards with the sketches */
+    /* notice boards with wanted posters of the crew */
     var loader = new T.TextureLoader();
     function tex(src, pixel, cb) {
       var t = loader.load(src, function (tx) { dirty = true; if (cb) cb(tx.image); });
@@ -276,12 +252,14 @@
       var top = new T.Mesh(new T.BoxGeometry(4.4, .2, .7), roof2M); top.position.set(0, 3.9, 0); g.add(top);
       list.forEach(function (sk, k) {
         var w = 1.05, h = 1.55;
-        var pp = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshStandardMaterial({ map: tex(IMG + sk + '.webp'), roughness: 1 }));
-        pp.position.set(-1.2 + k * 1.2, 2.6, .07); pp.rotation.z = (k - 1) * .05; g.add(pp);
+        var paper = new T.Mesh(new T.PlaneGeometry(w, h), mat('#efe4cc', { flatShading: false }));
+        paper.position.set(-1.2 + k * 1.2, 2.6, .06); paper.rotation.z = (k - 1) * .05; g.add(paper);
+        var pp = new T.Mesh(new T.PlaneGeometry(w * .86, h * .86), new T.MeshStandardMaterial({ map: tex(IMG + sk + '.webp', sk !== 'albedo' && sk !== 'shade'), roughness: 1, transparent: true, alphaTest: .4 }));
+        pp.position.set(-1.2 + k * 1.2, 2.6, .075); pp.rotation.z = (k - 1) * .05; g.add(pp);
       });
     }
-    board(-7.2, 4.6, .9, ['sketch-oni', 'sketch-witch', 'sketch-hunter']);
-    board(7.4, 4.2, -.9, ['sketch-horns', 'sketch-dragon', 'sketch-neko']);
+    board(-7.2, 4.6, .9, ['albedo', 'blaze', 'aqua']);
+    board(7.4, 4.2, -.9, ['shade', 'noir', 'maid']);
 
     /* the crew as billboards */
     var people = [], shadowM = new T.MeshBasicMaterial({ color: '#000', transparent: true, opacity: .35, depthWrite: false });
