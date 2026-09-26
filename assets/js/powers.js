@@ -355,6 +355,28 @@
     var list = cams; cams = [];
     later((ms || 300) + 30, function () { list.forEach(function (c) { c.a.cancel(); c.done(); c.t.__pwCam = null; }); });
   }
+  /* a hard cut back to the wide shot: no easing, the framing simply changes on the next frame */
+  function cameraCut() {
+    var list = cams; cams = [];
+    list.forEach(function (c) { c.a.cancel(); c.done(); c.t.__pwCam = null; });
+  }
+  /* an impact tremor: one hard kick away from the hit, then a damped ring-down with a faster
+     tremor riding on it, the way a camera on a real rig settles; not random jitter every frame */
+  function quake(power, ms, ax, ay) {
+    if (reduce) return;
+    var n = Math.max(8, Math.round(ms / 16)), frames = [], ph = rand(0, TAU);
+    for (var i = 0; i <= n; i++) {
+      var u = i / n, T = u * ms / 1000, env = Math.exp(-4.2 * u) * (1 - u);
+      var slow = Math.cos(T * TAU * 6.5), fast = Math.sin(T * TAU * 14 + ph) * .35;
+      var x = power * env * (ax * slow + fast * .7), y = power * env * (ay * slow * .8 + fast), rz = power * env * .05 * Math.sin(T * TAU * 5 + ph), z = -power * 2 * env * Math.abs(slow);
+      frames.push({ transform: 'perspective(1400px) translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,' + z.toFixed(0) + 'px) rotateZ(' + rz.toFixed(2) + 'deg)' });
+    }
+    frames.push({ transform: 'perspective(1400px) translate3d(0px,0px,0px) rotateZ(0deg)' });
+    shakeTargets().forEach(function (t) {
+      var done = pivot(t);
+      t.animate(frames, { duration: ms, easing: 'linear', composite: 'add' }).finished.then(done, done);
+    });
+  }
   /* cinematic letterbox bars */
   var bars = null;
   function letterbox(onOff) {
@@ -524,11 +546,11 @@
     root.classList.toggle('pw-neg-gold', tint === 'gold');
     (function step() {
       root.classList.remove('pw-neg'); ink.style.opacity = 0;
-      var s = seq[i++];
+      var s = seq[i++], kind = s && s.length && typeof s !== 'string' ? s[0] : s, ms = s && typeof s !== 'string' ? s[1] : 55;   /* a step is 'neg' | 'black' | 'white', or [kind, ms] */
       if (!s) { ink.remove(); root.classList.remove('pw-neg-violet', 'pw-neg-gold'); return; }
-      if (s === 'neg') root.classList.add('pw-neg');
-      else { ink.style.background = s === 'white' ? '#fff' : '#000'; ink.style.opacity = 1; }
-      setTimeout(step, 55);
+      if (kind === 'neg') root.classList.add('pw-neg');
+      else { ink.style.background = kind === 'white' ? '#fff' : '#000'; ink.style.opacity = 1; }
+      setTimeout(step, ms);
     })();
   }
 
@@ -649,7 +671,7 @@
         else { var u = (dt - .2) / .8, e = u < .5 ? 16 * u * u * u * u * u : 1 - Math.pow(-2 * u + 2, 5) / 2; x = sx - 22 + (ex - sx + 22) * e; y = sy + 6 + (ey - sy - 6) * e - Math.sin(Math.PI * e) * 46; }
       }
       var fl = Math.random() < .25 + p * .4 ? rand(.5, 1) : rand(.8, .95);   /* the strobe quickens as it charges */
-      dim.style.opacity = (.8 + Math.random() * .2 * (.3 + p)).toFixed(2);
+      if (t < HIT) dim.style.opacity = (.8 + Math.random() * .2 * (.3 + p)).toFixed(2);
       if (lit && t < HIT) lit.at(x, y, 200 + p * 520 + flare * 160, Math.min(1, (.12 + bornE * .55 + flare * .3) * fl));
       /* focus lines, redrawn on twos like anime cels, tightening to the peak */
       if (!reduce && born > 0) {
@@ -737,48 +759,65 @@
 
     later(CHARGE, function () { camera(ex, ey, 1.14, DASH, 'cubic-bezier(.7,0,.3,1)'); surge(.8); });
 
-    /* the strike: freeze, white-blue flash, a ring of lightning bursting
-       outward with bolts to every edge, then the glass breaks */
+    /* the strike, cut like an anime impact: a hard cut to the wide shot, two white frames,
+       then negative and black impact frames held while the cracks race out across the
+       screen; the world resumes with a tremor, lightning bursting to every edge, and the
+       page breaks up into rubble that falls, tumbles and settles in dust */
+    var FREEZE = 230, BURST = 270;
     later(HIT, function () {
-      cameraReset(260);
-      hitStop(210);
-      chroma(480);
-      lensFlare(ex, ey, '90,170,255', 1200, 1.5);
-      impact(['neg', 'black', 'neg', 'black'], null);
-      flash('#eef7ff', 650, .9);
-      shake(phone ? 18 : 30, 820);
+      cameraCut();
+      hitStop(FREEZE);
+      /* impact frames are pure graphics: no soft light, no dim, just the negative page and the bolt */
+      if (lit) lit.at(ex, ey, 1, 0);
+      dim.style.transition = 'none'; dim.style.opacity = '0';
+      impact([['white', 33], ['neg', 66], ['black', 33], ['neg', 66], ['black', 33]], null);
+      lensFlare(ex, ey, '90,170,255', 700, 1);
       spk.burst(ex, ey, phone ? 50 : 110, 26, null, null, 4);
-      if (lit) layer(function (c2, t2) { var k = Math.max(0, 1 - t2 / 1200); lit.at(ex, ey, Math.max(w, h) * (.6 + (1 - k) * .4), k * (Math.random() < .3 ? .5 : 1)); if (k <= 0) { lit.off(200); return false; } });
-      shockwave(ex, ey, '#7cc4ff', Math.max(w, h) * .9, 900);
-      var ring = [], nr = phone ? 14 : 26;
+      /* the strike's light on the page dies down with a guttering flicker, not random jumps */
+      if (lit) layer(function (c2, t2) { var k = Math.max(0, 1 - t2 / 1200); lit.at(ex, ey, Math.max(w, h) * (.6 + (1 - k) * .4), k * (.65 + .35 * noise1(t2 / 45))); if (k <= 0) { lit.off(200); return false; } });
+      shockwave(ex, ey, '#7cc4ff', Math.max(w, h) * .9, 700);
+      var ring = [], nr = phone ? 12 : 20;
       for (var i = 0; i < nr; i++) ring.push({ b: null, until: 0, a: i / nr * TAU });
-      var edges = [], ne = phone ? 7 : 12;
+      /* fewer, bolder bolts to the edges, each drawing held for four frames */
+      var edges = [], ne = phone ? 5 : 7;
       for (i = 0; i < ne; i++) {
-        var a = (i / ne) * TAU + rand(-.2, .2);
-        edges.push(flicker((function (aa) { return function () { return makeBolt(ex, ey, ex + Math.cos(aa) * Math.max(w, h), ey + Math.sin(aa) * Math.max(w, h), 2.4, 2, .09); }; })(a), 50));
+        var a = (i / ne) * TAU + rand(-.25, .25);
+        edges.push(flicker((function (aa) { return function () { return makeBolt(ex, ey, ex + Math.cos(aa) * Math.max(w, h), ey + Math.sin(aa) * Math.max(w, h), 3, 2, .07); }; })(a), 66));
       }
       layer(function (c, t, now) {
-        if (t > 700) return false;
-        var k = 1 - t / 700, rr = (1 - Math.pow(1 - t / 700, 3)) * Math.max(w, h) * .62;
+        if (t > 520) return false;
+        var k = 1 - t / 520, rr = (1 - Math.pow(1 - t / 520, 3)) * Math.max(w, h) * .62;
         c.globalCompositeOperation = 'lighter';
-        edges.forEach(function (f) { if (t < 520) drawBolt(c, f(now), '#6ab8ff', 1 - t / 520); });
+        edges.forEach(function (f) { if (t < 340) drawBolt(c, f(now), '#6ab8ff', 1 - t / 340); });
         /* the ring: short bolts laid along an expanding circle */
         ring.forEach(function (r2) {
           if (!r2.b || now > r2.until) {
             var a0 = r2.a + rand(-.05, .05), a1 = a0 + TAU / nr * rand(.8, 1.3);
             r2.b = makeBolt(ex + Math.cos(a0) * rr, ey + Math.sin(a0) * rr * .85, ex + Math.cos(a1) * rr, ey + Math.sin(a1) * rr * .85, 1.3, 1, .2);
-            r2.until = now + 45;
+            r2.until = now + 60;
           }
           drawBolt(c, r2.b, '#8fd0ff', k);
         });
       });
-      later(200, function () { sfx('ピシャアアン', ex - (phone ? 40 : 190), ey - 70, { color: '#6ab8ff', life: 1200, rot: -12 }); });
       cracks(ex, ey);
-      glass(ex, ey);
-      shatter(ex, ey);
+      var landings = shatter(ex, ey, BURST);
+      scorch(ex, ey);
+      dust(ex, ey, floor, landings, FREEZE, BURST);
+      /* the frozen frames end: the camera kicks away from the hit and rings down */
+      var kx = w / 2 - ex, ky = h / 2 - ey, kl = Math.hypot(kx, ky);
+      later(FREEZE, function () {
+        quake(phone ? 16 : 26, 1100, kl > 1 ? kx / kl : 0, kl > 1 ? ky / kl : -1);
+        chroma(400);
+        glass(ex, ey);
+        var r = overlay('pw-ruin'); r.style.setProperty('--px', ex + 'px'); r.style.setProperty('--py', ey + 'px'); r.style.transition = 'opacity .7s'; on(r);
+        ruinParts.push(r);
+      });
+      /* the heaviest pieces landing thump the ground */
+      landings.filter(function (l) { return l.m > 2.4; }).slice(0, 3).forEach(function (l) { later(l.t, function () { quake(phone ? 2 : 4, 280, 0, 1); }); });
+      later(300, function () { sfx('ピシャアアン', ex - (phone ? 40 : 190), ey - 70, { color: '#6ab8ff', life: 1200, rot: -12 }); });
     });
-    later(HIT + 500, function () { drop(dim, 600); });
-    later(HIT + 1700, function () { letterbox(false); });
+    later(HIT + 600, function () { drop(dim, 100); });
+    later(HIT + 2000, function () { letterbox(false); });
   }
 
   var ruinParts = [];
@@ -858,9 +897,17 @@
     document.body.appendChild(svg);
     ruinParts.push(svg);
     if (!reduce) {
-      /* glass cracks almost instantly */
-      svg.animate([{ clipPath: 'circle(0px at ' + px + 'px ' + py + 'px)' }, { clipPath: 'circle(' + maxR.toFixed(0) + 'px at ' + px + 'px ' + py + 'px)' }],
-        { duration: 200, easing: 'cubic-bezier(.1,.8,.3,1)', fill: 'forwards' });
+      /* the cracks race out in six jumps over the impact frames, fast near the hit,
+         slowing as they reach the edges: propagation drawn on twos, not a smooth wipe */
+      svg.animate([
+        { clipPath: 'circle(0px at ' + px + 'px ' + py + 'px)', easing: 'steps(1, end)' },
+        { clipPath: 'circle(' + (maxR * .3).toFixed(0) + 'px at ' + px + 'px ' + py + 'px)', offset: .17, easing: 'steps(1, end)' },
+        { clipPath: 'circle(' + (maxR * .55).toFixed(0) + 'px at ' + px + 'px ' + py + 'px)', offset: .34, easing: 'steps(1, end)' },
+        { clipPath: 'circle(' + (maxR * .74).toFixed(0) + 'px at ' + px + 'px ' + py + 'px)', offset: .5, easing: 'steps(1, end)' },
+        { clipPath: 'circle(' + (maxR * .88).toFixed(0) + 'px at ' + px + 'px ' + py + 'px)', offset: .67, easing: 'steps(1, end)' },
+        { clipPath: 'circle(' + (maxR * .97).toFixed(0) + 'px at ' + px + 'px ' + py + 'px)', offset: .84, easing: 'steps(1, end)' },
+        { clipPath: 'circle(' + maxR.toFixed(0) + 'px at ' + px + 'px ' + py + 'px)' }
+      ], { duration: 200, fill: 'forwards' });
       svg.querySelector('.pw-crack-glow').animate([{ opacity: 1 }, { opacity: .8, offset: .15 }, { opacity: 0 }], { duration: 2400, easing: 'ease-out', fill: 'forwards' });
     }
     /* loose shards drop out of the screen, turning as they fall */
@@ -875,74 +922,232 @@
       document.body.appendChild(el2);
       ruinParts.push(el2);
       if (reduce) { el2.style.opacity = 0; return; }
-      var dx = rand(-60, 60) + (cxs - px) * .2, rot = rand(-70, 70);
-      el2.animate([
-        { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
-        { transform: 'translate(' + (dx * .15).toFixed(0) + 'px,4px) rotate(' + (rot * .05).toFixed(1) + 'deg)', opacity: 1, offset: .12 },
-        { transform: 'translate(' + dx.toFixed(0) + 'px,' + (h - cys + 120).toFixed(0) + 'px) rotate(' + rot.toFixed(0) + 'deg)', opacity: .9 }
-      ], { duration: rand(900, 1400), delay: rand(180, 700), easing: 'cubic-bezier(.55,0,.85,.55)', fill: 'forwards' });
+      /* a loose shard tips out after the burst and falls under gravity, drawn on the cel clock */
+      var dx = rand(-60, 60) + (cxs - px) * .2, rot = rand(-70, 70), fall = h - cys + 120, dur = rand(800, 1200), kf2 = [], nk = Math.round(dur / CEL);
+      for (var q = 0; q <= nk; q++) {
+        var u = q / nk, tip = Math.min(1, u / .18), drp = Math.max(0, (u - .18) / .82);
+        kf2.push({ transform: 'translate(' + (dx * (tip * .15 + drp * .85)).toFixed(0) + 'px,' + (4 * tip + fall * drp * drp).toFixed(0) + 'px) rotate(' + (rot * (tip * .05 + drp * .95)).toFixed(1) + 'deg)', easing: 'steps(1, end)' });
+      }
+      el2.animate(kf2, { duration: dur, delay: rand(320, 900), fill: 'forwards' });
     });
   }
 
+  /* the cel clock the rubble is drawn on: 24 drawings a second, each held until the next */
+  var CEL = 1000 / 24;
+  /* glass shards spat out of the hit: small ones fly fastest, all tumble, fall, skip once
+     off the rubble line and come to rest; drawn on the cel clock, lit on the side that
+     faces the hit while its light lasts */
   function glass(px, py) {
-    var shards = [], n = phone ? 26 : 48;
+    var shards = [], n = phone ? 18 : 32, floor = vh() * .93, W2 = vw(), cel = -1, DT = CEL / 1000;
     for (var i = 0; i < n; i++) {
-      var a = rand(0, TAU), sp = rand(4, 17), s = rand(10, phone ? 38 : 60);
-      shards.push({ x: px, y: py, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - rand(2, 8), r: rand(0, 6), vr: rand(-.2, .2),
+      var a = rand(0, TAU), s = rand(8, phone ? 34 : 54), sp = rand(300, 1400) * (1.3 - s / 60);
+      shards.push({ x: px, y: py, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - rand(100, 500), r: rand(0, 6), vr: rand(-9, 9), s: s, down: false,
         p: [[0, 0], [rand(.4, 1) * s, rand(-.4, .4) * s], [rand(-.3, .5) * s, rand(.5, 1) * s]] });
     }
     layer(function (c, t) {
       if (t > 2600) return false;
-      var H2 = vh();
+      var f = Math.floor(t / CEL);
+      if (f !== cel) {
+        for (var k = cel < 0 ? 1 : f - cel; k > 0; k--) shards.forEach(function (s) {
+          if (s.down) return;
+          s.vy += 2600 * DT; s.vx *= .992;
+          s.x += s.vx * DT; s.y += s.vy * DT; s.r += s.vr * DT;
+          if (s.x < 0 || s.x > W2) { s.vx *= -.4; s.x = Math.max(0, Math.min(W2, s.x)); }
+          if (s.y > floor - s.s * .3) {
+            s.y = floor - s.s * .3;
+            if (s.vy > 320) { s.vy *= -rand(.15, .3); s.vx *= .5; s.vr *= -.4; }
+            else { s.down = true; s.downT = t; }
+          }
+        });
+        cel = f;
+      }
+      var lit = Math.max(0, 1 - t / 1200), fade = Math.max(0, Math.min(1, (2600 - t) / 600));
       shards.forEach(function (s) {
-        s.x += s.vx; s.y += s.vy; s.vy += .45; s.vx *= .99; s.r += s.vr;
+        var face = !s.down && Math.cos(s.r + Math.atan2(py - s.y, px - s.x)) > .2 && lit > 0;
+        var a = fade * (s.down ? Math.max(0, 1 - (t - s.downT) / 700) : 1);
+        if (a <= 0) return;
         c.save(); c.translate(s.x, s.y); c.rotate(s.r);
         c.beginPath(); c.moveTo(s.p[0][0], s.p[0][1]); c.lineTo(s.p[1][0], s.p[1][1]); c.lineTo(s.p[2][0], s.p[2][1]); c.closePath();
-        c.globalAlpha = Math.max(0, 1 - t / 2600) * (s.y < H2 + 80 ? 1 : 0);
-        c.fillStyle = 'rgba(190,225,255,.28)'; c.fill();
-        c.strokeStyle = 'rgba(255,255,255,.9)'; c.lineWidth = 1.2; c.stroke();
+        c.globalAlpha = a;
+        c.fillStyle = face ? 'rgba(235,245,255,' + (.45 + lit * .4) + ')' : 'rgba(120,150,190,.3)'; c.fill();
+        c.strokeStyle = face ? '#fff' : 'rgba(190,215,245,.7)'; c.lineWidth = 1.2; c.stroke();
         c.restore();
+      });
+      c.globalAlpha = 1;
+    });
+  }
+
+  /* dust: two-tone cel smoke in clumps of circles, advanced on twos (12 drawings a second).
+     A dome rolls out of the hit and a wave runs along the ground; every piece of rubble that
+     lands kicks up its own puff, weighted by its mass; it all hangs, spreads and settles over
+     a few seconds. While the strike's light lasts the clumps are lit on the side facing it */
+  function dust(px, py, floor, events, off, burst) {
+    if (reduce) return;
+    /* this layer is born during the frozen impact frames, so its clock starts `off` ms after the hit */
+    var puffs = [], cel = -1, ei = 0, T = 1000 / 12, dome = false, t1 = burst - off;
+    /* only the heavier, faster landings raise dust, the heaviest first */
+    events = events.filter(function (e) { return e.v > 500 && e.m > .9; }).sort(function (a, b) { return b.m - a.m; }).slice(0, phone ? 22 : 48).sort(function (a, b) { return a.t - b.t; });
+    function add(x, y, vx, vy, r, life) { puffs.push({ x: x, y: y, vx: vx, vy: vy, r: r, g: rand(1.2, 3), age: 0, life: life, k: rand(0, TAU), a: 0 }); }
+    /* a clump of five circles, the shape cel smoke is drawn with */
+    function clump(c, p, ox, oy, sc, grow) {
+      var r = p.r * sc + (grow || 0);
+      c.beginPath();
+      c.moveTo(p.x + ox + r, p.y + oy); c.arc(p.x + ox, p.y + oy, r, 0, TAU);
+      for (var j = 0; j < 4; j++) {
+        var a = p.k + j * 1.6, rr = r * (j % 2 ? .62 : .74), x2 = p.x + Math.cos(a) * p.r * .6 + ox, y2 = p.y + Math.sin(a) * p.r * .38 + oy;
+        c.moveTo(x2 + rr, y2); c.arc(x2, y2, rr, 0, TAU);
+      }
+      c.fill();
+    }
+    layer(function (c, t) {
+      if (t > 5600) return false;
+      var gone = ruin && ruin.rising ? Math.max(0, 1 - (t - (ruin.riseT || (ruin.riseT = t))) / 500) : 1;
+      if (gone <= 0) return false;
+      var f = Math.floor(t / T);
+      if (f !== cel) {
+        cel = f;
+        if (!dome && t >= t1) {
+          dome = true;
+          /* the dome: fast out of the hit, braking hard, thinning as it spreads */
+          for (var i = 0, nd = phone ? 14 : 30; i < nd; i++) { var a = rand(0, TAU), v = rand(14, 42); add(px + Math.cos(a) * 16, py + Math.sin(a) * 10, Math.cos(a) * v, Math.sin(a) * v * .72 - rand(0, 3), rand(12, 28), rand(1500, 2600)); }
+          for (i = 0; i < (phone ? 8 : 16); i++) { var d = i % 2 ? 1 : -1; add(px + d * rand(0, 50), floor - rand(0, 14), d * rand(10, 30), -rand(1, 4), rand(12, 26), rand(1800, 3200)); }
+        }
+        while (ei < events.length && events[ei].t - off <= t) { var e = events[ei++], n = 1 + Math.round(Math.min(3, e.m / 1.5)); for (i = 0; i < n; i++) add(e.x + rand(-12, 12) * e.m, e.y + rand(-4, 4), rand(-1, 1) * (4 + e.m * 2), -rand(.8, 2.6) - e.v / 500, (6 + e.m * 4) * rand(.7, 1.3), rand(1100, 2200)); }
+        puffs = puffs.filter(function (p) {
+          p.age += T; if (p.age > p.life) return false;
+          p.x += p.vx; p.y += p.vy; p.vx *= .87; p.vy = p.vy * .87 + .12; p.r += p.g; p.g *= .93;
+          var u = p.age / p.life; p.a = u < .15 ? u / .15 : 1 - (u - .15) / .85;
+          return true;
+        });
+      }
+      /* three tones: a dark outline, the body, and a highlight on the side facing the strike's
+         light while it lasts, then from above */
+      var lit = Math.max(0, 1 - t / 1400), hr = Math.round(120 + (128 - 120) * (1 - lit)), hg = Math.round(150 + (120 - 150) * (1 - lit)), hb = Math.round(200 + (112 - 200) * (1 - lit));
+      c.globalCompositeOperation = 'source-over';
+      puffs.forEach(function (p) {
+        var a = p.a * gone;
+        c.fillStyle = 'rgba(22,18,18,' + (a * .5).toFixed(3) + ')'; clump(c, p, 0, 0, 1, 1.5);
+        c.fillStyle = 'rgba(72,66,62,' + (a * .52).toFixed(3) + ')'; clump(c, p, 0, 0, 1);
+        var lx = px - p.x, ly = py - p.y, ll = Math.hypot(lx, ly) || 1, ox = (lx / ll * lit) * p.r * .26, oy = (ly / ll * lit - (1 - lit)) * p.r * .26;
+        c.fillStyle = 'rgba(' + hr + ',' + hg + ',' + hb + ',' + (a * (.22 + lit * .15)).toFixed(3) + ')'; clump(c, p, ox, oy, .7);
       });
     });
   }
 
-  function shatter(px, py) {
-    var w = vw(), h = vh(), list = pieces(phone ? 110 : 260), anims = [];
+  /* the scorch where the lightning went in: a burnt, sooty disc with glowing fissures that
+     cool from white through orange to a dull red over a few seconds, then keep a faint ember
+     pulse for as long as the page lies in ruins */
+  function scorch(px, py) {
+    if (reduce) return;
+    var fis = [], n = phone ? 6 : 9, R = phone ? 46 : 68;
+    for (var i = 0; i < n; i++) {
+      var a = i / n * TAU + rand(-.3, .3), l = rand(R * .5, R * 1.3), x = px, y = py, pts = [[x, y]];
+      for (var k = 0; k < 4; k++) { a += rand(-.5, .5); x += Math.cos(a) * l / 4; y += Math.sin(a) * l / 4; pts.push([x, y]); }
+      fis.push(pts);
+    }
+    var spr = sprite('255,150,60'), sprB = sprite('90,160,255');
+    layer(function (c, t) {
+      if (!ruin) return false;
+      /* when the Monarch starts raising the page, the scorch fades under his darkness */
+      var gone = ruin.rising ? Math.max(0, 1 - (t - (ruin.riseT || (ruin.riseT = t))) / 500) : 1;
+      if (gone <= 0) return false;
+      var heat = Math.max(0, 1 - t / 4200), k = heat * heat, pulse = .1 + Math.sin(t / 260) * .05;
+      c.globalCompositeOperation = 'source-over';
+      var g = c.createRadialGradient(px, py, 0, px, py, R);
+      g.addColorStop(0, 'rgba(12,8,8,.72)'); g.addColorStop(.55, 'rgba(16,10,8,.42)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      c.fillStyle = g; c.globalAlpha = Math.min(1, t / 120) * gone; c.beginPath(); c.arc(px, py, R, 0, TAU); c.fill();
+      c.globalCompositeOperation = 'lighter';
+      blob(c, sprB, px, py, R * (.8 + k * 1.2), k * .3 * gone);
+      blob(c, spr, px, py, R * (.6 + k), (k * .8 + pulse * (1 - heat)) * gone);
+      c.strokeStyle = heat > .6 ? '#ffffff' : heat > .3 ? '#ffb060' : '#c04a1c'; c.lineWidth = .8 + heat * 1.6; c.lineCap = 'round'; c.lineJoin = 'round';
+      c.globalAlpha = (.18 + heat * .82 + (1 - heat) * pulse) * gone;
+      c.beginPath();
+      fis.forEach(function (p) { c.moveTo(p[0][0], p[0][1]); for (var j = 1; j < p.length; j++) c.lineTo(p[j][0], p[j][1]); });
+      c.stroke();
+      c.globalAlpha = 1;
+    });
+  }
+
+  /* the flight of one piece of the page, simulated on the cel clock: an impulse away from the
+     hit that falls off with distance and with the piece's mass (a heavy block barely shifts, a
+     word flies), gravity, a pop toward the camera, tumbling that resolves into a resting tilt
+     as it lands, one skip off the rubble line, a slide, rest. Returns stepped keyframes (each
+     drawing held until the next, a smear on the fastest ones), the resting pose and where and
+     when it lands, for the dust */
+  function fling(r, px, py, w, h) {
+    var cx0 = r.left + r.width / 2, cy0 = r.top + r.height / 2;
+    var dx = cx0 - px, dy = cy0 - py, d = Math.max(30, Math.hypot(dx, dy)), ux = dx / d, uy = dy / d;
+    var area = r.width * r.height, big = area > w * h * .08, m = Math.max(.6, Math.min(6, Math.sqrt(area) / 60));
+    var sp = Math.min(2200, (700 + 260000 / (d + 120)) / Math.pow(m, .7)) * rand(.8, 1.15);
+    var vx = ux * sp + rand(-120, 120), vy = uy * sp * .75 - (200 + 380 / Math.sqrt(m)) * rand(.6, 1.2);
+    var wz = rand(90, 520) / m * (Math.random() < .5 ? -1 : 1) * (big ? .25 : 1);
+    var tilt = big ? 22 : 75, rxE = rand(-tilt, tilt), ryE = rand(-tilt, tilt), zE = rand(-220, 60), zPeak = rand(120, 420) / Math.sqrt(m);
+    var TX = big ? 10 : rand(30, 90) / Math.sqrt(m), TY = big ? 8 : rand(30, 90) / Math.sqrt(m), ox = rand(4, 9), oy = rand(4, 9), phx = rand(0, TAU), phy = rand(0, TAU);
+    /* the pile along the bottom of the screen: where its top comes to rest */
+    var floorY = Math.max(0, h - r.height * rand(.25, .75) - rand(0, h * (big ? .1 : .3)) - r.top);
+    var minX = -r.width * .5 - r.left, maxX = w - r.width * .4 - r.left;
+    var x = 0, y = 0, rz = 0, t = 0, DT = CEL / 1000, G = 2600, bounces = 0, rest = false, tL = -1, land = null, path = [];
+    for (var i = 1; i <= 62 && !rest; i++) {
+      t = i * DT;
+      vy += G * DT; vx *= .995;
+      x += vx * DT; y += vy * DT; rz += wz * DT;
+      if (x < minX) { x = minX; vx = -vx * .3; wz *= -.5; }
+      if (x > maxX) { x = maxX; vx = -vx * .3; wz *= -.5; }
+      if (y >= floorY && vy >= 0) {
+        y = floorY;
+        if (tL < 0) { tL = t; land = { t: t, x: cx0 + x, y: cy0 + y, m: m, v: vy }; }
+        if (vy > 260 && bounces < 2) { vy = -vy * rand(.18, .32); vx *= .55; wz *= -.35; bounces++; }
+        else { vy = 0; vx *= .5; wz *= .45; if (Math.abs(vx) < 25 && Math.abs(wz) < 20) rest = true; }
+      }
+      path.push({ t: t, x: x, y: y, rz: rz, sp: Math.hypot(vx, vy), ang: Math.atan2(vy, vx) });
+    }
+    if (tL < 0) tL = t;
+    var dur = Math.round(t * 1000) + CEL, kf = [{ transform: tf(Z0), easing: 'steps(1, end)', offset: 0 }], v = null;
+    path.forEach(function (q) {
+      var u = Math.min(1, q.t / tL), s = u * u * (3 - 2 * u);
+      v = { x: q.x, y: q.y, z: zE * s + zPeak * Math.sin(Math.PI * u), rx: rxE * s + TX * Math.sin(ox * q.t + phx) * (1 - s), ry: ryE * s + TY * Math.sin(oy * q.t + phy) * (1 - s), rz: q.rz };
+      var sm = q.sp > 900 ? Math.min(.7, (q.sp - 900) / 2200) : 0, a = q.ang * 180 / Math.PI;
+      kf.push({ transform: sm ? tfSmear(v, a, sm) : tf(v), easing: 'steps(1, end)', offset: q.t * 1000 / dur });
+    });
+    return { kf: kf, v: v, dur: dur, d: d, land: land };
+  }
+  /* tf() with a stretch along the direction of travel, applied in screen space */
+  function tfSmear(v, ang, s) {
+    return 'perspective(900px) translate3d(' + v.x.toFixed(0) + 'px,' + v.y.toFixed(0) + 'px,' + v.z.toFixed(0) + 'px) rotate(' + ang.toFixed(1) + 'deg) scale(' + (1 + s).toFixed(3) + ',' + (1 - s * .35).toFixed(3) + ') rotate(' + (-ang).toFixed(1) + 'deg) rotateX(' + v.rx.toFixed(1) + 'deg) rotateY(' + v.ry.toFixed(1) + 'deg) rotateZ(' + v.rz.toFixed(1) + 'deg) scale(1)';
+  }
+
+  /* the page bursts, each piece on its own simulated flight, the burst reaching the far
+     pieces a little later; the strike's light flares on the pieces nearest the hit, then
+     they all darken as they fall into the ruin's shadow */
+  function shatter(px, py, burst) {
+    var w = vw(), h = vh(), list = pieces(phone ? 110 : 260), anims = [], landings = [];
     list.forEach(function (p) {
-      var r = p.r, cxp = r.left + r.width / 2, cyp = r.top + r.height / 2;
-      var dx = cxp - px, dy = cyp - py, dist = Math.max(40, Math.hypot(dx, dy)), big = r.width * r.height > w * h * .08;
-      var push = (big ? 60 : 180) + 120000 / (dist + 200);
-      var bx = dx / dist * push + rand(-40, 40), by = dy / dist * push * .6 - rand(40, big ? 60 : 200);
-      /* land in a rubble pile along the bottom of the screen */
-      var endLeft = Math.min(w - r.width * .4, Math.max(-r.width * .5, r.left + dx * rand(.25, .7) + rand(-60, 60)));
-      var endTop = h - r.height * rand(.25, .75) - rand(0, h * (big ? .1 : .3));
-      var ex = endLeft - r.left, ey = endTop - r.top;
-      var rot = (big ? rand(-14, 14) : rand(-170, 170)) * (Math.random() < .5 ? 1 : -1);
-      var tilt = big ? 22 : 75;
-      var vEnd = { x: ex, y: ey, z: rand(-220, 60), rx: rand(-tilt, tilt), ry: rand(-tilt, tilt), rz: rot };
-      var vBlast = { x: bx, y: by, z: rand(120, big ? 200 : 420), rx: vEnd.rx * rand(.8, 1.6), ry: vEnd.ry * rand(.8, 1.6), rz: rot * .45 };
-      var vSettle = { x: ex, y: ey, z: vEnd.z, rx: vEnd.rx + rand(-4, 4), ry: vEnd.ry + rand(-4, 4), rz: rot + rand(-4, 4) };
-      var end = tf(vSettle);
-      var endFilter = 'brightness(.5) saturate(.4) blur(0px)';
-      var delay = Math.min(260, dist / 6) + rand(0, 80);
-      var kf = reduce ? [{ opacity: 1 }, { opacity: 0 }] : [
-        { transform: tf(Z0), filter: 'brightness(1) saturate(1) blur(0px)', easing: 'cubic-bezier(.1,.7,.3,1)' },
-        { transform: tf(vBlast), filter: 'brightness(1.8) saturate(1) blur(1.6px)', offset: .32, easing: 'cubic-bezier(.55,0,.9,.5)' },
-        { transform: tf(vEnd), filter: endFilter, offset: .9, easing: 'ease-out' },
-        { transform: end, filter: endFilter }
-      ];
-      if (phone) kf.forEach(function (k) { delete k.filter; });
-      var a = p.el.animate(kf, { duration: reduce ? 500 : rand(1300, 1900), delay: reduce ? 0 : delay, fill: 'both' });
+      var r = p.r, a, end, vSettle, delay;
+      if (reduce) { vSettle = Z0; end = tf(Z0); a = p.el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'both' }); }
+      else {
+        var f = fling(r, px, py, w, h), kf = f.kf, endFilter = 'brightness(.5) saturate(.4)';
+        vSettle = f.v; end = tf(vSettle);
+        delay = burst + Math.min(140, f.d / 10) + rand(0, 40);
+        kf.push({ transform: end, offset: 1 });
+        if (!phone) {
+          kf.push({ filter: 'brightness(1) saturate(1)', offset: 0 });
+          kf.push({ filter: 'brightness(' + (1.25 + 90 / (f.d + 80)).toFixed(2) + ') saturate(.85)', offset: CEL / f.dur });
+          kf.push({ filter: 'brightness(1.05) saturate(1)', offset: Math.min(.35, 260 / f.dur) });
+          kf.push({ filter: endFilter, offset: 1 });
+          kf.sort(function (x, y) { return x.offset - y.offset; });
+        }
+        a = p.el.animate(kf, { duration: f.dur, delay: delay, fill: 'both' });
+        if (f.land) landings.push({ t: delay + f.land.t * 1000, x: f.land.x, y: f.land.y, m: f.land.m, v: f.land.v });
+      }
       anims.push({ el: p.el, a: a, end: end, v: vSettle, top: r.top, r: r });
     });
     ruin = { anims: anims, px: px, py: py };
     root.classList.add('pw-destroyed');
-    later(1500, function () { ruinScene(px, py); });
+    later(1900, function () { ruinScene(px, py); });
+    return landings;
   }
 
   function ruinScene(px, py) {
-    var r = overlay('pw-ruin'); r.style.setProperty('--px', px + 'px'); r.style.setProperty('--py', py + 'px'); on(r);
-    ruinParts.push(r);
     var cta = el('div', 'pw-ruin-cta',
       '<span class="k">千鳥 · the page was destroyed</span>' +
       '<p>Everything here is rubble. Only the Shadow Monarch can bring it back.</p>' +
