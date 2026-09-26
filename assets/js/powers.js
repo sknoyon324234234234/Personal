@@ -54,15 +54,18 @@
      no file stays silent.
        chidori              the charge, as the power starts
        chidori-hit          the strike, as the page shatters
-       arise                the voice, as the dark falls
+       arise                the shadow spell, as the dark falls
+       arise-voice          a voice saying "Arise", landing on the command
        arise-rise           the fallen page rising back up
        wind                 the gale (loops while the wind blows)
-       kamehameha           the chant: ka... me... ha... me...
+       kamehameha           the energy charging up
+       kamehameha-voice     the full chant, ka... me... ha... me... HAAA (the
+                            beam waits and fires on its final HAAA)
        kamehameha-fire      HAAAA, as the beam fires
        super-saiyan         the scream while powering up
        super-saiyan-burst   the golden burst at the end
      ================================================================== */
-  var AC = null, master = null, muted = store(KEY_MUTE) === '1', clips = {}, loops = {};
+  var AC = null, master = null, muted = store(KEY_MUTE) === '1', clips = {}, loops = {}, durs = {};
   function audio() {
     if (muted) return null;
     if (!AC) {
@@ -91,11 +94,13 @@
       if (clips[n]) return;
       clips[n] = fetch(sfxRoot + m[n]).then(function (r) { if (!r.ok) throw 0; return r.arrayBuffer(); })
         .then(function (b) { return new Promise(function (ok, no) { a.decodeAudioData(b, ok, no); }); })
+        .then(function (buf) { durs[n] = buf.duration; return buf; })
         .catch(function () { return null; });
     });
   }
   /* play a clip some ms from now; a looping clip runs until stopClip(name) */
-  function clip(name, ms, loop) {
+  function clipDur(name) { return durs[name] || 0; }
+  function clip(name, ms, loop, gain) {
     var a = audio();
     if (!a || !sfxMap()[name]) return;
     preload();
@@ -104,7 +109,7 @@
       if (!buf || muted) return;
       if (ms && a.currentTime - at > .5) return;   /* decoded too late to land on its beat */
       var src = a.createBufferSource(), g = a.createGain();
-      src.buffer = buf; src.loop = !!loop;
+      src.buffer = buf; src.loop = !!loop; g.gain.value = gain == null ? 1 : gain;
       src.connect(g); g.connect(master);
       src.start(Math.max(a.currentTime, at));
       if (loop) { stopClip(name, 0); loops[name] = { s: src, g: g }; }
@@ -1046,6 +1051,7 @@
     var w = vw(), h = vh();
     var count = restoring ? ruin.anims.length : 0;
     clip('arise', 0);
+    clip('arise-voice', 700);
     var sh = overlay('pw-shadow'); on(sh);
     /* violet light welling up from the ground */
     var lit = reduce ? null : pageLight('140,80,255');
@@ -1248,9 +1254,14 @@
     var ox = portrait ? w / 2 : w * .14, oy = portrait ? h * .8 : h * .58, ang = portrait ? -Math.PI / 2 : 0;
     var dim = overlay('pw-dim kame'); dim.style.setProperty('--px', ox + 'px'); dim.style.setProperty('--py', oy + 'px'); on(dim);
     var STEP = reduce ? 150 : 520, CHARGE = STEP * 4 + 250, BEAM = reduce ? 600 : 1700;
+    /* with a voice clip, the charge lasts as long as the chant and the beam fires on its final HAAA
+       (about 1.3 s before the clip ends) */
+    var vd = clipDur('kamehameha-voice');
+    if (vd && !reduce) { CHARGE = Math.max(CHARGE, Math.round(vd * 1000 - 1300)); STEP = (CHARGE - 250) / 4; }
     var lit = reduce ? null : pageLight('70,150,255'), litB = reduce ? null : pageLight('110,180,255'), spk = sparkField('90,160,255');
     layer(function (c, t) { spk.draw(c); return t < CHARGE + BEAM + 1600; });
-    clip('kamehameha', 0);
+    clip('kamehameha-voice', 0);
+    clip('kamehameha', Math.max(0, CHARGE - 2350));
     ['か', 'め', 'は', 'め'].forEach(function (ch, i) {
       later(i * STEP, function () {
         var tx = portrait ? w * (.2 + i * .2) : ox + 60 + i * Math.min(130, w * .09);

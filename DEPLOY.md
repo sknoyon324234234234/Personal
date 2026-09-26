@@ -96,10 +96,12 @@ these names (mp3, m4a, ogg, wav or webm), then run `node tools/version-assets.js
 | --- | --- |
 | `chidori` | as Chidori starts charging |
 | `chidori-hit` | when it strikes and the page shatters |
-| `arise` | the voice, as the dark falls |
+| `arise` | the shadow spell, as the dark falls |
+| `arise-voice` | a voice saying "Arise", landing on the command |
 | `arise-rise` | when the fallen page rises back up |
 | `wind` | loops while the wind blows |
-| `kamehameha` | the chant, ka... me... ha... me... |
+| `kamehameha` | the energy charging up |
+| `kamehameha-voice` | the full chant; the beam fires on its final HAAA (about 1.3 s before the clip ends) |
 | `kamehameha-fire` | HAAAA, as the beam fires |
 | `super-saiyan` | the scream while powering up |
 | `super-saiyan-burst` | the golden burst at the end |
