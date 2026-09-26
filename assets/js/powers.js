@@ -998,3 +998,314 @@
         c.moveTo(x2 + rr, y2); c.arc(x2, y2, rr, 0, TAU);
       }
       c.fill();
+    }
+    layer(function (c, t) {
+      if (t > 5600) return false;
+      var gone = ruin && ruin.rising ? Math.max(0, 1 - (t - (ruin.riseT || (ruin.riseT = t))) / 500) : 1;
+      if (gone <= 0) return false;
+      var f = Math.floor(t / T);
+      if (f !== cel) {
+        cel = f;
+        if (!dome && t >= t1) {
+          dome = true;
+          /* the dome: fast out of the hit, braking hard, thinning as it spreads */
+          for (var i = 0, nd = phone ? 14 : 30; i < nd; i++) { var a = rand(0, TAU), v = rand(14, 42); add(px + Math.cos(a) * 16, py + Math.sin(a) * 10, Math.cos(a) * v, Math.sin(a) * v * .72 - rand(0, 3), rand(12, 28), rand(1500, 2600)); }
+          for (i = 0; i < (phone ? 8 : 16); i++) { var d = i % 2 ? 1 : -1; add(px + d * rand(0, 50), floor - rand(0, 14), d * rand(10, 30), -rand(1, 4), rand(12, 26), rand(1800, 3200)); }
+        }
+        while (ei < events.length && events[ei].t - off <= t) { var e = events[ei++], n = 1 + Math.round(Math.min(3, e.m / 1.5)); for (i = 0; i < n; i++) add(e.x + rand(-12, 12) * e.m, e.y + rand(-4, 4), rand(-1, 1) * (4 + e.m * 2), -rand(.8, 2.6) - e.v / 500, (6 + e.m * 4) * rand(.7, 1.3), rand(1100, 2200)); }
+        puffs = puffs.filter(function (p) {
+          p.age += T; if (p.age > p.life) return false;
+          p.x += p.vx; p.y += p.vy; p.vx *= .87; p.vy = p.vy * .87 + .12; p.r += p.g; p.g *= .93;
+          var u = p.age / p.life; p.a = u < .15 ? u / .15 : 1 - (u - .15) / .85;
+          return true;
+        });
+      }
+      /* three tones: a dark outline, the body, and a highlight on the side facing the strike's
+         light while it lasts, then from above */
+      var lit = Math.max(0, 1 - t / 1400), hr = Math.round(120 + (128 - 120) * (1 - lit)), hg = Math.round(150 + (120 - 150) * (1 - lit)), hb = Math.round(200 + (112 - 200) * (1 - lit));
+      c.globalCompositeOperation = 'source-over';
+      puffs.forEach(function (p) {
+        var a = p.a * gone;
+        c.fillStyle = 'rgba(22,18,18,' + (a * .5).toFixed(3) + ')'; clump(c, p, 0, 0, 1, 1.5);
+        c.fillStyle = 'rgba(72,66,62,' + (a * .52).toFixed(3) + ')'; clump(c, p, 0, 0, 1);
+        var lx = px - p.x, ly = py - p.y, ll = Math.hypot(lx, ly) || 1, ox = (lx / ll * lit) * p.r * .26, oy = (ly / ll * lit - (1 - lit)) * p.r * .26;
+        c.fillStyle = 'rgba(' + hr + ',' + hg + ',' + hb + ',' + (a * (.22 + lit * .15)).toFixed(3) + ')'; clump(c, p, ox, oy, .7);
+      });
+    });
+  }
+
+  /* the scorch where the lightning went in: a burnt, sooty disc with glowing fissures that
+     cool from white through orange to a dull red over a few seconds, then keep a faint ember
+     pulse for as long as the page lies in ruins */
+  function scorch(px, py) {
+    if (reduce) return;
+    var fis = [], n = phone ? 6 : 9, R = phone ? 46 : 68;
+    for (var i = 0; i < n; i++) {
+      var a = i / n * TAU + rand(-.3, .3), l = rand(R * .5, R * 1.3), x = px, y = py, pts = [[x, y]];
+      for (var k = 0; k < 4; k++) { a += rand(-.5, .5); x += Math.cos(a) * l / 4; y += Math.sin(a) * l / 4; pts.push([x, y]); }
+      fis.push(pts);
+    }
+    var spr = sprite('255,150,60'), sprB = sprite('90,160,255');
+    layer(function (c, t) {
+      if (!ruin) return false;
+      /* when the Monarch starts raising the page, the scorch fades under his darkness */
+      var gone = ruin.rising ? Math.max(0, 1 - (t - (ruin.riseT || (ruin.riseT = t))) / 500) : 1;
+      if (gone <= 0) return false;
+      var heat = Math.max(0, 1 - t / 4200), k = heat * heat, pulse = .1 + Math.sin(t / 260) * .05;
+      c.globalCompositeOperation = 'source-over';
+      var g = c.createRadialGradient(px, py, 0, px, py, R);
+      g.addColorStop(0, 'rgba(12,8,8,.72)'); g.addColorStop(.55, 'rgba(16,10,8,.42)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      c.fillStyle = g; c.globalAlpha = Math.min(1, t / 120) * gone; c.beginPath(); c.arc(px, py, R, 0, TAU); c.fill();
+      c.globalCompositeOperation = 'lighter';
+      blob(c, sprB, px, py, R * (.8 + k * 1.2), k * .3 * gone);
+      blob(c, spr, px, py, R * (.6 + k), (k * .8 + pulse * (1 - heat)) * gone);
+      c.strokeStyle = heat > .6 ? '#ffffff' : heat > .3 ? '#ffb060' : '#c04a1c'; c.lineWidth = .8 + heat * 1.6; c.lineCap = 'round'; c.lineJoin = 'round';
+      c.globalAlpha = (.18 + heat * .82 + (1 - heat) * pulse) * gone;
+      c.beginPath();
+      fis.forEach(function (p) { c.moveTo(p[0][0], p[0][1]); for (var j = 1; j < p.length; j++) c.lineTo(p[j][0], p[j][1]); });
+      c.stroke();
+      c.globalAlpha = 1;
+    });
+  }
+
+  /* the flight of one piece of the page, simulated on the cel clock: an impulse away from the
+     hit that falls off with distance and with the piece's mass (a heavy block barely shifts, a
+     word flies), gravity, a pop toward the camera, tumbling that resolves into a resting tilt
+     as it lands, one skip off the rubble line, a slide, rest. Returns stepped keyframes (each
+     drawing held until the next, a smear on the fastest ones), the resting pose and where and
+     when it lands, for the dust */
+  function fling(r, px, py, w, h) {
+    var cx0 = r.left + r.width / 2, cy0 = r.top + r.height / 2;
+    var dx = cx0 - px, dy = cy0 - py, d = Math.max(30, Math.hypot(dx, dy)), ux = dx / d, uy = dy / d;
+    var area = r.width * r.height, big = area > w * h * .08, m = Math.max(.6, Math.min(6, Math.sqrt(area) / 60));
+    var sp = Math.min(2200, (700 + 260000 / (d + 120)) / Math.pow(m, .7)) * rand(.8, 1.15);
+    var vx = ux * sp + rand(-120, 120), vy = uy * sp * .75 - (200 + 380 / Math.sqrt(m)) * rand(.6, 1.2);
+    var wz = rand(90, 520) / m * (Math.random() < .5 ? -1 : 1) * (big ? .25 : 1);
+    var tilt = big ? 22 : 75, rxE = rand(-tilt, tilt), ryE = rand(-tilt, tilt), zE = rand(-220, 60), zPeak = rand(120, 420) / Math.sqrt(m);
+    var TX = big ? 10 : rand(30, 90) / Math.sqrt(m), TY = big ? 8 : rand(30, 90) / Math.sqrt(m), ox = rand(4, 9), oy = rand(4, 9), phx = rand(0, TAU), phy = rand(0, TAU);
+    /* the pile along the bottom of the screen: where its top comes to rest */
+    var floorY = Math.max(0, h - r.height * rand(.25, .75) - rand(0, h * (big ? .1 : .3)) - r.top);
+    var minX = -r.width * .5 - r.left, maxX = w - r.width * .4 - r.left;
+    var x = 0, y = 0, rz = 0, t = 0, DT = CEL / 1000, G = 2600, bounces = 0, rest = false, tL = -1, land = null, path = [];
+    for (var i = 1; i <= 62 && !rest; i++) {
+      t = i * DT;
+      vy += G * DT; vx *= .995;
+      x += vx * DT; y += vy * DT; rz += wz * DT;
+      if (x < minX) { x = minX; vx = -vx * .3; wz *= -.5; }
+      if (x > maxX) { x = maxX; vx = -vx * .3; wz *= -.5; }
+      if (y >= floorY && vy >= 0) {
+        y = floorY;
+        if (tL < 0) { tL = t; land = { t: t, x: cx0 + x, y: cy0 + y, m: m, v: vy }; }
+        if (vy > 260 && bounces < 2) { vy = -vy * rand(.18, .32); vx *= .55; wz *= -.35; bounces++; }
+        else { vy = 0; vx *= .5; wz *= .45; if (Math.abs(vx) < 25 && Math.abs(wz) < 20) rest = true; }
+      }
+      path.push({ t: t, x: x, y: y, rz: rz, sp: Math.hypot(vx, vy), ang: Math.atan2(vy, vx) });
+    }
+    if (tL < 0) tL = t;
+    var dur = Math.round(t * 1000) + CEL, kf = [{ transform: tf(Z0), easing: 'steps(1, end)', offset: 0 }], v = null;
+    path.forEach(function (q) {
+      var u = Math.min(1, q.t / tL), s = u * u * (3 - 2 * u);
+      v = { x: q.x, y: q.y, z: zE * s + zPeak * Math.sin(Math.PI * u), rx: rxE * s + TX * Math.sin(ox * q.t + phx) * (1 - s), ry: ryE * s + TY * Math.sin(oy * q.t + phy) * (1 - s), rz: q.rz };
+      var sm = q.sp > 900 ? Math.min(.7, (q.sp - 900) / 2200) : 0, a = q.ang * 180 / Math.PI;
+      kf.push({ transform: sm ? tfSmear(v, a, sm) : tf(v), easing: 'steps(1, end)', offset: q.t * 1000 / dur });
+    });
+    return { kf: kf, v: v, dur: dur, d: d, land: land };
+  }
+  /* tf() with a stretch along the direction of travel, applied in screen space */
+  function tfSmear(v, ang, s) {
+    return 'perspective(900px) translate3d(' + v.x.toFixed(0) + 'px,' + v.y.toFixed(0) + 'px,' + v.z.toFixed(0) + 'px) rotate(' + ang.toFixed(1) + 'deg) scale(' + (1 + s).toFixed(3) + ',' + (1 - s * .35).toFixed(3) + ') rotate(' + (-ang).toFixed(1) + 'deg) rotateX(' + v.rx.toFixed(1) + 'deg) rotateY(' + v.ry.toFixed(1) + 'deg) rotateZ(' + v.rz.toFixed(1) + 'deg) scale(1)';
+  }
+
+  /* the page bursts, each piece on its own simulated flight, the burst reaching the far
+     pieces a little later; the strike's light flares on the pieces nearest the hit, then
+     they all darken as they fall into the ruin's shadow */
+  function shatter(px, py, burst) {
+    var w = vw(), h = vh(), list = pieces(phone ? 110 : 260), anims = [], landings = [];
+    list.forEach(function (p) {
+      var r = p.r, a, end, vSettle, delay;
+      if (reduce) { vSettle = Z0; end = tf(Z0); a = p.el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'both' }); }
+      else {
+        var f = fling(r, px, py, w, h), kf = f.kf, endFilter = 'brightness(.5) saturate(.4)';
+        vSettle = f.v; end = tf(vSettle);
+        delay = burst + Math.min(140, f.d / 10) + rand(0, 40);
+        kf.push({ transform: end, offset: 1 });
+        if (!phone) {
+          kf.push({ filter: 'brightness(1) saturate(1)', offset: 0 });
+          kf.push({ filter: 'brightness(' + (1.25 + 90 / (f.d + 80)).toFixed(2) + ') saturate(.85)', offset: CEL / f.dur });
+          kf.push({ filter: 'brightness(1.05) saturate(1)', offset: Math.min(.35, 260 / f.dur) });
+          kf.push({ filter: endFilter, offset: 1 });
+          kf.sort(function (x, y) { return x.offset - y.offset; });
+        }
+        a = p.el.animate(kf, { duration: f.dur, delay: delay, fill: 'both' });
+        if (f.land) landings.push({ t: delay + f.land.t * 1000, x: f.land.x, y: f.land.y, m: f.land.m, v: f.land.v });
+      }
+      anims.push({ el: p.el, a: a, end: end, v: vSettle, top: r.top, r: r });
+    });
+    ruin = { anims: anims, px: px, py: py };
+    root.classList.add('pw-destroyed');
+    later(1900, function () { ruinScene(px, py); });
+    return landings;
+  }
+
+  function ruinScene(px, py) {
+    var cta = el('div', 'pw-ruin-cta',
+      '<span class="k">千鳥 · the page was destroyed</span>' +
+      '<p>Everything here is rubble. Only the Shadow Monarch can bring it back.</p>' +
+      '<button type="button" class="pw-arise-btn">ARISE<small>起きろ · raise it again</small></button>' +
+      '<span class="pw-hint">or press Esc</span>');
+    cta.setAttribute('role', 'dialog'); cta.setAttribute('aria-label', 'The page was destroyed');
+    document.body.appendChild(cta); on(cta);
+    cta.querySelector('button').addEventListener('click', arise);
+    setTimeout(function () { try { cta.querySelector('button').focus({ preventScroll: true }); } catch (e) {} }, 400);
+    ruin.cta = cta;
+    embers();
+    setBusy(false); paint();
+  }
+
+  /* smoke, embers and leftover crackle while the page lies in ruins */
+  function embers() {
+    var list = [], n = phone ? 28 : 64;
+    var zap = flicker(function () { var a = rand(0, TAU), l = rand(50, 140); return makeBolt(ruin.px, ruin.py, ruin.px + Math.cos(a) * l, ruin.py + Math.sin(a) * l, 1, 1, .1); }, 90);
+    function newEmber(any) { return { x: rand(0, vw()), y: any ? rand(0, vh()) : vh() + 10, v: rand(.3, 1.3), s: rand(1, 3), w: rand(0, 6), blue: Math.random() < .35 }; }
+    for (var i = 0; i < n; i++) list.push(newEmber(true));
+    var zapping = 0;
+    layer(function (c, t, now) {
+      if (!ruin || ruin.rising) return false;
+      c.globalCompositeOperation = 'lighter';
+      list.forEach(function (e, i) {
+        e.y -= e.v; e.x += Math.sin(t / 700 + e.w) * .5;
+        if (e.y < -10) list[i] = newEmber(false);
+        c.globalAlpha = .5 + Math.sin(t / 200 + e.w) * .3;
+        c.fillStyle = e.blue ? '#7cc4ff' : '#ff8a3a';
+        c.fillRect(e.x, e.y, e.s, e.s);
+      });
+      if (!reduce) {
+        if (now > zapping && Math.random() < .02) zapping = now + rand(120, 300);
+        if (now < zapping) drawBolt(c, zap(now), '#5fb4ff', .8);
+      }
+    });
+  }
+
+  /* ==================================================================
+     起きろ ARISE — darkness, the word, shadow soldiers rise from the
+     ground, and the rubble rises with them back into place
+     ================================================================== */
+
+  /* ---------- cel shading: three flat tones and a hard-edged step ----------
+     The Monarch and the knights are drawn like anime cels: an ink-black fill,
+     one violet mid-tone where the seal's light catches the form, a thin white
+     rim on the lit edge, a thick outline, and a hard ground shadow cast away
+     from the seal. There are no gradients: the mid-tone is the shape minus
+     itself pushed away from the light, so the terminator wraps round every
+     curve like a painted one. Figures further back are mixed toward the fog. */
+  var TONE = { ink: [5, 2, 12], mid: [82, 42, 190], rim: [240, 232, 255], line: [0, 0, 0], fog: [70, 44, 120] };
+  function mixc(a, b, k) { return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * k) + ',' + Math.round(a[1] + (b[1] - a[1]) * k) + ',' + Math.round(a[2] + (b[2] - a[2]) * k) + ')'; }
+  function tones(dim) { var k = 1 - dim; return { ink: mixc(TONE.ink, TONE.fog, k * .8), mid: mixc(TONE.mid, TONE.fog, k * .7), rim: mixc(TONE.rim, TONE.fog, k * .9), line: mixc(TONE.line, TONE.fog, k * .6) }; }
+  /* paint one part of a figure: path(c) traces it in screen pixels, (lx, ly)
+     points at the light, band is the width of the mid-tone step, ow the
+     outline; lod 0 = full, 1 = no rim, 2 = flat ink (the far ranks) */
+  function paintCel(c, path, lx, ly, tn, band, ow, lod) {
+    c.beginPath(); path(c);
+    if (lod >= 2) { c.fillStyle = tn.ink; c.fill(); }
+    else {
+      c.save(); c.clip();
+      var rim = ow * .5 + 2, mid = ow * .5 + band;
+      c.fillStyle = lod ? tn.mid : tn.rim; c.fill();
+      if (!lod) { c.translate(-lx * rim, -ly * rim); c.fillStyle = tn.mid; c.beginPath(); path(c); c.fill(); c.translate(lx * rim, ly * rim); }
+      c.translate(-lx * mid, -ly * mid); c.fillStyle = tn.ink; c.beginPath(); path(c); c.fill();
+      c.restore();
+    }
+    c.beginPath(); path(c);
+    c.lineWidth = ow; c.strokeStyle = tn.line; c.lineJoin = 'round'; c.lineCap = 'round'; c.stroke();
+  }
+  /* a scratch canvas the size of the effect canvas: figures are drawn on to it
+     opaque, then composited once with alpha, so overlapping parts never show
+     through each other while a figure fades or casts its shadow */
+  var celBuf = null, celBx = null;
+  function celBuffer() {
+    if (!celBuf) { celBuf = document.createElement('canvas'); celBx = celBuf.getContext('2d'); }
+    if (celBuf.width !== cv.width || celBuf.height !== cv.height) { celBuf.width = cv.width; celBuf.height = cv.height; }
+    celBx.setTransform(DPR, 0, 0, DPR, 0, 0); celBx.clearRect(0, 0, W, H);
+    return celBx;
+  }
+  function composite(c, alpha) { if (alpha <= 0) return; c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = Math.min(1, alpha); c.drawImage(celBuf, 0, 0); c.restore(); }
+  /* path builders in figure space: units of the figure's size, feet at the
+     origin, y up; polyPath turns them into pixels */
+  function capsule(a, b, wa, wb) {
+    var dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, nx = -dy / l, ny = dx / l, ex = dx / l * .04, ey = dy / l * .04;
+    return [[a[0] - ex + nx * wa, a[1] - ey + ny * wa], [b[0] + ex + nx * wb, b[1] + ey + ny * wb], [b[0] + ex - nx * wb, b[1] + ey - ny * wb], [a[0] - ex - nx * wa, a[1] - ey - ny * wa]];
+  }
+  function polyPath(pts, S) { return function (c) { for (var i = 0; i < pts.length; i++) { if (i) c.lineTo(pts[i][0] * S, -pts[i][1] * S); else c.moveTo(pts[i][0] * S, -pts[i][1] * S); } c.closePath(); }; }
+  function discPath(x, y, r, S) { return function (c) { c.moveTo((x + r) * S, -y * S); c.arc(x * S, -y * S, r * S, 0, TAU); c.closePath(); }; }
+  function lerpPose(a, b, k, out) { for (var key in b) out[key] = a[key] + (b[key] - a[key]) * k; return out; }
+  var EASE = {
+    out: function (t) { return 1 - Math.pow(1 - t, 3); },
+    inq: function (t) { return t * t; },
+    back: function (t) { var s = 1.35; t -= 1; return 1 + t * t * ((s + 1) * t + s); },
+    land: function (t) { return t < .7 ? 1.06 * (1 - Math.pow(1 - t / .7, 3)) : 1.06 - .06 * ((t - .7) / .3); }
+  };
+  /* the pose rig: a figure holds its current pose and a queue of changes, each
+     with its own start, length and ease; a change starts from whatever the
+     blend is at that moment, so an interruption never pops. Key drawings,
+     with the in-betweens computed. */
+  function rig(pose) {
+    var cur = {}, from = {}, to = null, t0 = 0, dur = 1, ease = EASE.out, queue = [];
+    for (var k in pose) cur[k] = from[k] = pose[k];
+    return {
+      pose: cur,
+      to: function (p, at, ms, e) { queue.push({ p: p, at: at, ms: ms, e: e || EASE.out }); },
+      step: function (now) {
+        queue.sort(function (a, b) { return a.at - b.at; });
+        while (queue.length && queue[0].at <= now) { var q = queue.shift(); for (var k2 in cur) from[k2] = cur[k2]; to = q.p; t0 = q.at; dur = q.ms; ease = q.e; }
+        if (to) lerpPose(from, to, ease(Math.min(1, (now - t0) / dur)), cur);
+        return cur;
+      }
+    };
+  }
+  /* draws a figure's parts, back to front, at s.x / s.base (sunk by s.sink
+     while it comes out of the ground, scaled by s.sx / s.sy on a smear or squash drawing) */
+  function drawFigure(c, s, parts, lx, ly, tn, lod) {
+    var S = s.size, ow = Math.max(1.5, S * .018), band = S * .13;
+    c.save(); c.translate(s.x, s.base + (s.sink || 0)); c.scale(s.sx || 1, s.sy || 1);
+    parts.forEach(function (pt) {
+      if (pt[1] === 'cel') paintCel(c, pt[0], lx, ly, tn, band * pt[2], ow, lod);
+      else if (pt[1] === 'ink') { c.beginPath(); pt[0](c); c.fillStyle = tn.ink; c.fill(); c.lineWidth = ow; c.strokeStyle = tn.line; c.lineJoin = 'round'; c.stroke(); }
+      else if (pt[1] === 'hole') { c.beginPath(); pt[0](c); c.fillStyle = tn.ink; c.fill(); }
+      else if (pt[1] === 'edge') { if (lod < 2) { c.beginPath(); pt[0](c); c.lineWidth = ow * .6; c.strokeStyle = tn.mid; c.lineJoin = 'round'; c.stroke(); } }
+      else if (lod < 2) { c.beginPath(); pt[0](c); c.lineWidth = ow * .7; c.strokeStyle = tn.line; c.lineJoin = 'round'; c.lineCap = 'round'; c.stroke(); }
+    });
+    c.restore();
+  }
+  /* the figure's silhouette flattened on to the ground and sheared away from
+     the seal: a hard cast shadow, drawn into the buffer so parts never stack */
+  function castShadow(b, s, parts, w) {
+    var k = (s.x - w / 2) / (w / 2);
+    b.save(); b.translate(s.x, s.base); b.transform(s.sx || 1, 0, -k * .9, .14 * (s.sy || 1), 0, 0); b.translate(0, s.sink || 0);
+    b.fillStyle = '#000';
+    parts.forEach(function (pt) { if (pt[1] !== 'line') { b.beginPath(); pt[0](b); b.fill(); } });
+    b.restore();
+    b.beginPath(); b.ellipse(s.x, s.base, s.size * .5, s.size * .06, 0, 0, TAU); b.fill();
+  }
+  /* which way the seal's light falls on a figure: from the seal's centre,
+     which sits low in the middle of the screen, up at the figure's chest */
+  function sealLight(s, chestY) {
+    var dx = vw() / 2 - s.x, dy = s.base + 40 - (s.base - chestY * s.size), l = Math.hypot(dx, dy) || 1;
+    return [dx / l, dy / l];
+  }
+
+  /* ---------- the knight: pose keyframes ----------
+     Joints in units of the knight's size, feet at the origin, y up: hips h,
+     knees kl/kr, feet fl/fr, chest c, neck n, head hd, shoulders sl/sr,
+     elbows el/er, hands hl/hr; bow = head pitch, shrug, spread and flare for
+     the cloak, sw = where the greatsword stands, grip/gripR = a hand on it. */
+  var KP = {
+    stand: { hx: 0, hy: 1, klx: .17, kly: .5, flx: .2, fly: 0, krx: -.17, kry: .5, frx: -.22, fry: 0, cx: 0, cy: 1.5, nx: 0, ny: 1.82, hdx: 0, hdy: 2.06, bow: 0, slx: .4, sly: 1.74, srx: -.4, sry: 1.74, shrug: .05, elx: .5, ely: 1.34, hlx: .5, hly: .98, erx: -.5, ery: 1.34, hrx: -.5, hry: .98, spread: 1, flare: 0, swx: .3, swy: 0, grip: 1, gripR: 1 },
+    rise: { hx: 0, hy: .78, klx: .3, kly: .4, flx: .34, fly: 0, krx: -.3, kry: .4, frx: -.36, fry: 0, cx: 0, cy: 1.22, nx: 0, ny: 1.52, hdx: 0, hdy: 1.72, bow: .9, slx: .42, sly: 1.44, srx: -.42, sry: 1.44, shrug: .8, elx: .58, ely: 1.08, hlx: .5, hly: .72, erx: -.58, ery: 1.08, hrx: -.5, hry: .72, spread: 1.35, flare: 1, swx: .3, swy: 0, grip: 0, gripR: 0 },
+    brace: { hx: 0, hy: .82, klx: .33, kly: .43, flx: .42, fly: 0, krx: -.33, kry: .43, frx: -.44, fry: 0, cx: 0, cy: 1.3, nx: 0, ny: 1.62, hdx: 0, hdy: 1.84, bow: .35, slx: .45, sly: 1.54, srx: -.45, sry: 1.54, shrug: .5, elx: .74, ely: 1.32, hlx: .94, hly: 1.08, erx: -.74, ery: 1.32, hrx: -.94, hry: 1.08, spread: 1.45, flare: 1, swx: .3, swy: 0, grip: 0, gripR: 0 },
+    saluteAnt: { hx: 0, hy: .94, klx: .2, kly: .47, flx: .24, fly: 0, krx: -.2, kry: .47, frx: -.26, fry: 0, cx: 0, cy: 1.43, nx: 0, ny: 1.74, hdx: 0, hdy: 1.97, bow: .2, slx: .41, sly: 1.66, srx: -.41, sry: 1.66, shrug: .3, elx: .5, ely: 1.28, hlx: .48, hly: .92, erx: -.54, ery: 1.24, hrx: -.56, hry: .88, spread: 1.1, flare: .2, swx: .3, swy: 0, grip: 1, gripR: 0 },
+    salute: { hx: 0, hy: 1.02, klx: .17, kly: .51, flx: .2, fly: 0, krx: -.17, kry: .51, frx: -.22, fry: 0, cx: 0, cy: 1.53, nx: 0, ny: 1.86, hdx: 0, hdy: 2.1, bow: -.15, slx: .42, sly: 1.77, srx: -.42, sry: 1.77, shrug: .2, elx: .47, ely: 1.36, hlx: .47, hly: .98, erx: -.66, ery: 1.52, hrx: -.1, hry: 1.5, spread: 1.05, flare: .3, swx: .34, swy: .3, grip: 1, gripR: 0 },
+    kneelAnt: { hx: 0, hy: 1.05, klx: .16, kly: .53, flx: .19, fly: 0, krx: -.16, kry: .53, frx: -.21, fry: 0, cx: 0, cy: 1.55, nx: 0, ny: 1.88, hdx: 0, hdy: 2.12, bow: -.05, slx: .41, sly: 1.8, srx: -.41, sry: 1.8, shrug: .35, elx: .5, ely: 1.4, hlx: .5, hly: 1.04, erx: -.5, ery: 1.4, hrx: -.5, hry: 1.04, spread: 1.1, flare: .4, swx: .32, swy: 0, grip: 1, gripR: 1 },
+    kneel: { hx: -.05, hy: .56, klx: .36, kly: .56, flx: .44, fly: 0, krx: -.22, kry: .03, frx: -.64, fry: .04, cx: .04, cy: 1, nx: .07, ny: 1.3, hdx: .1, hdy: 1.5, bow: .75, slx: .46, sly: 1.24, srx: -.32, sry: 1.24, shrug: .1, elx: .68, ely: .96, hlx: .52, hly: .64, erx: -.38, ery: .78, hrx: -.3, hry: .06, spread: 1.15, flare: .15, swx: .36, swy: 0, grip: 1, gripR: 1 }
+  };
+  /* every part of a knight in its pose, back to front, as [path, kind];
+     kind: 'cel' shaded, 'ink' flat with an outline, 'line' drawn on top */
