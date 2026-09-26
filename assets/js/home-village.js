@@ -1,8 +1,8 @@
 /* =====================================================================
-   XIRAIYA — home: the Hidden Village (3D), and the roster
+   XIRAIYA — home: the Hidden Village (3D), 
    The village is a small three.js scene loaded only when it scrolls near.
    Characters are cut-out billboards that always turn to face the camera;
-   wanted posters of the crew hang on notice boards. Without WebGL (or with reduced
+   each girl stands in her own corner of the village. Without WebGL (or with reduced
    motion) a layered still of the crew is shown instead.
    ===================================================================== */
 (function () {
@@ -21,7 +21,7 @@
     { id: 'maid', name: 'Honey', role: 'Tea house keeper', el: 'Light', job: 'Support and AI chat', pow: 90, line: 'Answers every customer in English and Bangla, with a smile.', h: 3.1, pixel: true }
   ];
   /* ------------------------------------------------------------------
-     Character card (shared by the village and the roster)
+     Character card (shared by the village )
      ------------------------------------------------------------------ */
   var card = $('.vl-card');
   function fillCard(c) {
@@ -41,52 +41,6 @@
   }
   if (card) $('.vl-x', card).addEventListener('click', function () { card.hidden = true; });
 
-  /* ------------------------------------------------------------------
-     Roster grid + lightbox
-     ------------------------------------------------------------------ */
-  var grid = $('.rs-grid');
-  var lb = $('.rs-lb');
-  function openLb(src, cap, pixel) {
-    if (!lb) return;
-    var im = $('img', lb);
-    im.src = src; im.alt = cap; im.classList.toggle('px', !!pixel);
-    $('figcaption', lb).textContent = cap;
-    lb.hidden = false;
-    requestAnimationFrame(function () { lb.classList.add('in'); });
-    $('.rs-lb-x', lb).focus({ preventScroll: true });
-  }
-  function closeLb() {
-    if (!lb || lb.hidden) return;
-    lb.classList.remove('in');
-    setTimeout(function () { lb.hidden = true; }, XR.reduce ? 0 : 260);
-  }
-  if (lb) {
-    $('.rs-lb-x', lb).addEventListener('click', closeLb);
-    lb.addEventListener('click', function (e) { if (e.target === lb || e.target.classList.contains('rs-lb-lines')) closeLb(); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLb(); });
-  }
-  if (grid) {
-    grid.innerHTML = CREW.map(function (c, i) {
-      return '<button type="button" class="rs-card" data-i="' + i + '" style="--i:' + i + '">' +
-        '<span class="rs-bg jp" aria-hidden="true">' + ['影', '炎', '闇', '水', '墨', '光'][i] + '</span>' +
-        '<img class="' + (c.pixel ? 'px' : '') + '" src="' + IMG + c.id + '.webp" alt="" loading="lazy" decoding="async">' +
-        '<span class="rs-meta"><small>' + String(i + 1).padStart(2, '0') + ' · ' + c.role + '</small><b>' + c.name + '</b>' +
-        '<span class="rs-job">' + c.job + '</span><span class="rs-pow" aria-label="Power ' + c.pow + '"><i style="--p:' + c.pow + '%"></i></span></span></button>';
-    }).join('');
-    $$('.rs-card', grid).forEach(function (b) {
-      var c = CREW[+b.getAttribute('data-i')];
-      b.setAttribute('aria-label', c.name + ', ' + c.role + '. Open card');
-      b.addEventListener('click', function () { openLb(IMG + c.id + '.webp', c.name + ' · ' + c.role + ' — ' + c.line, c.pixel); });
-      if (XR.fine && !XR.reduce) {
-        b.addEventListener('pointermove', function (e) {
-          var r = b.getBoundingClientRect();
-          b.style.setProperty('--rx', ((e.clientY - r.top) / r.height - .5) * -10 + 'deg');
-          b.style.setProperty('--ry', ((e.clientX - r.left) / r.width - .5) * 12 + 'deg');
-        });
-        b.addEventListener('pointerleave', function () { b.style.removeProperty('--rx'); b.style.removeProperty('--ry'); });
-      }
-    });
-  }
   /* ------------------------------------------------------------------
      The 3D village
      ------------------------------------------------------------------ */
@@ -236,7 +190,7 @@
       void post;
     });
 
-    /* notice boards with wanted posters of the crew */
+    /* notice boards */
     var loader = new T.TextureLoader();
     function tex(src, pixel, cb) {
       var t = loader.load(src, function (tx) { dirty = true; if (cb) cb(tx.image); });
@@ -254,18 +208,17 @@
         var w = 1.05, h = 1.55;
         var paper = new T.Mesh(new T.PlaneGeometry(w, h), mat('#efe4cc', { flatShading: false }));
         paper.position.set(-1.2 + k * 1.2, 2.6, .06); paper.rotation.z = (k - 1) * .05; g.add(paper);
-        var pp = new T.Mesh(new T.PlaneGeometry(w * .86, h * .86), new T.MeshStandardMaterial({ map: tex(IMG + sk + '.webp', sk !== 'albedo' && sk !== 'shade'), roughness: 1, transparent: true, alphaTest: .4 }));
-        pp.position.set(-1.2 + k * 1.2, 2.6, .075); pp.rotation.z = (k - 1) * .05; g.add(pp);
       });
     }
-    board(-7.2, 4.6, .9, ['albedo', 'blaze', 'aqua']);
-    board(7.4, 4.2, -.9, ['shade', 'noir', 'maid']);
+    board(-7.2, 4.6, .9, [0, 1, 2]);
+    board(7.4, 4.2, -.9, [0, 1, 2]);
 
     /* the crew as billboards */
     var people = [], shadowM = new T.MeshBasicMaterial({ color: '#000', transparent: true, opacity: .35, depthWrite: false });
     CREW.forEach(function (c, i) {
-      var ang = Math.PI * .5 + (i - (CREW.length - 1) / 2) * .62, R = i % 2 ? 4.2 : 5.6;
-      var g = new T.Group(); g.position.set(Math.cos(ang) * R, 0, Math.sin(ang) * R - 1.2); scene.add(g);
+      // each girl has her own corner of the village, spread all the way round
+      var ang = Math.PI * .5 + .52 + i / CREW.length * Math.PI * 2, R = 11.2;
+      var g = new T.Group(); g.position.set(Math.cos(ang) * R, 0, Math.sin(ang) * R); scene.add(g);
       var me = null;
       var t = tex(IMG + c.id + '.webp', c.pixel, function (im) { if (im && im.width) me.scale.x = c.h * im.width / im.height; });
       me = new T.Mesh(new T.PlaneGeometry(1, 1), new T.MeshBasicMaterial({ map: t, alphaTest: .45, side: T.DoubleSide, transparent: true }));
