@@ -1481,7 +1481,7 @@
      salute, and lowers it to receive the kneel. The army's salute and kneel
      reach him through cine.saluteT / cine.kneelT, which legion() sets. */
   function monarch(cine) {
-    var w = vw(), h = vh(), S = phone ? 118 : 172, x0 = w / 2, t0 = 0, fade = 1, fx = [], zap = null, zapT = 0, surge = 0, push = 0, cued = 0, dn = -1, parts = null, lyr;
+    var w = vw(), h = vh(), S = phone ? 118 : 172, x0 = w / 2, t0 = 0, rose = 0, fade = 1, fx = [], zap = null, zapT = 0, surge = 0, push = 0, cued = 0, dn = -1, parts = null, lyr;
     var sprV = sprite('140,80,255'), sprD = sprite('6,2,14'), sprE = sprite('175,232,255', true);
     var fig = { x: x0, base: h + 6, size: S, dim: 1, ph: 0, o: 1, lod: 0, pose: MP.rise }, R = rig(MP.rise);
     /* the command lands on the first hit of the drop: by the cue sheet, that long after the word */
@@ -1491,9 +1491,12 @@
       if (cine.ending && fade <= 0) return false;
       if (!t0) return;
       surge *= .94; push *= .88;
-      /* the army's cues reach him here: the hand up to the sky for the salute, down to receive the kneel */
-      if (cine.saluteT && cued < 1) { cued = 1; R.to(MP.cmdAnt, t, 170, EASE.inq); R.to(MP.salute, t + 170, 220, EASE.back); }
-      if (cine.kneelT && cued < 2) { cued = 2; R.to(MP.rest, t + 200, 700); }
+      /* the cues, in layer time so a drawing never skips: the command is timed from the word by the
+         clock on the wall (a hit-stop between the two must not delay it), the army's salute and
+         kneel reach him through cine; the hand goes up to the sky, then down to receive the kneel */
+      if (!cued && now >= rose + DROP0 - 260) { cued = 1; R.to(MP.cmdAnt, t, 240, EASE.inq); R.to(MP.command, t + 240, 200, EASE.back); }
+      if (cine.saluteT && cued < 2) { cued = 2; R.to(MP.cmdAnt, t, 170, EASE.inq); R.to(MP.salute, t + 170, 220, EASE.back); }
+      if (cine.kneelT && cued < 3) { cued = 3; R.to(MP.rest, t + 200, 700); }
       /* on twos and threes from the beat he rose on: smear drawings, a squash, then a hard hold before the coat streams */
       var d = cel(t - t0), p = pose(LORD, d), rise = p[2];
       var H = S * 2.7, top = fig.base - rise * H, x = x0 + Math.sin(t / 1300) * 2;
@@ -1541,9 +1544,8 @@
     });
     return {
       rise: function () {
-        t0 = Math.max(1, performance.now() - lyr.t0); surge = 1.3;
+        rose = performance.now(); t0 = Math.max(1, rose - lyr.t0); surge = 1.3;
         R.to(MP.stand, t0 + CEL * 5, 600);
-        R.to(MP.cmdAnt, t0 + DROP0 - 260, 240, EASE.inq); R.to(MP.command, t0 + DROP0 - 20, 200, EASE.back);
       },
       surge: function (k) { surge = Math.max(surge, k); if (k >= 1.05) { push = 1; dn = -1; } }
     };
