@@ -1122,6 +1122,41 @@
     return m && m[key] != null ? m[key] : def;
   }
 
+  /* the cel clock: the Monarch and the knights are drawn on twos and threes,
+     like hand-drawn animation, while particles, fog and the camera keep
+     running at 60. A drawing is held for 2 frames of 24 (83 ms), every
+     fourth one for 3, and a figure's count starts on the beat that spawned
+     it, so every new drawing lands on the music. cel(ms) says which drawing
+     (0, 1, 2...) is up `ms` after that beat, and when it went up. */
+  var CEL = 1000 / 24, HOLDS = [2, 2, 2, 3], CYCLE = 9;
+  function cel(ms) {
+    if (!(ms > 0)) return { n: 0, at: 0 };
+    var f = Math.floor(ms / CEL), c = Math.floor(f / CYCLE), r = f - c * CYCLE, n = 0, at = 0;
+    while (n < HOLDS.length - 1 && at + HOLDS[n] <= r) at += HOLDS[n++];
+    return { n: c * HOLDS.length + n, at: (c * CYCLE + at) * CEL };
+  }
+  /* how a figure erupts from the ground, drawing by drawing, as [width,
+     height, rise]: smear frames stretched tall and thin that streak up past
+     its full height, a squash frame as it lands, then the last pose is held
+     hard for HOLD drawings before it starts to breathe (on twos, IDLE ms of
+     sway per drawing) */
+  var KNIGHT = [[.55, 1.55, .9], [.82, 1.18, 1], [1.1, .92, 1], [1, 1, 1]];
+  var LORD = [[.7, 1.3, .5], [.8, 1.22, .82], [.9, 1.08, 1], [1.06, .95, 1], [1, 1, 1]];
+  var HOLD = 6, IDLE = 90;
+  function pose(seq, d) { return seq[Math.min(d.n, seq.length - 1)]; }
+  function idle(seq, d) { return Math.max(0, d.n - (seq.length - 1) - HOLD) * IDLE; }
+  /* speed lines under a smear frame, the same ones for as long as the drawing is held */
+  function streaks(c, s, n) {
+    var rr = seeded((s.ph * 1e4 | 0) + n), i;
+    c.save(); c.globalCompositeOperation = 'lighter'; c.strokeStyle = '#b28cff'; c.lineCap = 'round';
+    for (i = 0; i < 5; i++) {
+      var sx = s.x + (rr() - .5) * s.size * 1.1, len = s.size * (1.2 + rr() * 1.4) * (n ? .6 : 1), yb = s.base - rr() * s.size * .3;
+      c.globalAlpha = (n ? .25 : .45) * s.o; c.lineWidth = 1 + rr() * 2.5;
+      c.beginPath(); c.moveTo(sx, yb); c.lineTo(sx + (rr() - .5) * 8, yb - len); c.stroke();
+    }
+    c.restore();
+  }
+
   /* the shadow army: a front line of knights that erupt on the drop, and two
      ranks behind them (smaller, dimmer, standing higher up in the fog) that
      rise on the accents; all their eyes pulse with the music */
@@ -1135,18 +1170,24 @@
     [[phone ? 5 : 10, .62, h - (phone ? 40 : 62), .72], [phone ? 6 : 13, .44, h - (phone ? 72 : 112), .5]].forEach(function (rk, ri) {
       for (j = 0; j < rk[0]; j++) ranks.push({ x: (j + .5) / rk[0] * w + rand(-20, 20), size: rand(.9, 1.08) * (phone ? 96 : 138) * rk[1], base: rk[2], dim: rk[3], rise: 0, o: 0, ph: rand(0, 6), sword: Math.random() < .3, t0: 0, eye: 1, rank: ri });
     });
-    var spk = sparkField('150,100,255');
+    var spk = sparkField('150,100,255'), lyr;
     function eyeY(s) { return s.base + 10 - s.rise * s.size * 2.3 + s.size * .17 * 1.3; }
+    /* layer time now: the cel clocks run on it, so a hit-stop holds them too */
+    function lnow() { return Math.max(1, performance.now() - lyr.t0); }
     function draw(c, t, now, s, k) {
-      if (!s.t0 || now < s.t0) return;
-      var r = Math.min(1, (now - s.t0) / (s.rank == null ? 650 : 900));
-      s.rise = (1 - Math.pow(1 - r, 4)) * (1 - .22 * (1 - Math.pow(1 - k, 3)));
+      if (!s.t0 || t < s.t0) return;
+      /* on twos and threes: the pose only changes with the drawing, never between */
+      var d = cel(t - s.t0), p = pose(KNIGHT, d);
+      s.rise = p[2] * (1 - .22 * (1 - Math.pow(1 - k, 3)));
       s.o = fade * s.dim; s.eye = 1 + (s.eye - 1) * .9;
-      soldier(c, s, t);
+      if (d.n < 2) streaks(c, s, d.n);
+      c.save(); c.translate(s.x, s.base); c.scale(p[0], p[1]); c.translate(-s.x, -s.base);
+      soldier(c, s, s.t0 + idle(KNIGHT, d));
+      c.restore();
     }
-    layer(function (c, t, now) {
+    lyr = layer(function (c, t, now) {
       if (cine.ending) fade = Math.max(0, fade - .025);
-      var k = kneelT ? Math.min(1, (now - kneelT) / 900) : 0;
+      var k = kneelT ? Math.min(1, cel(t - kneelT).at / 400) : 0;
       spk.draw(c);
       /* back to front: the far rank, the near rank, then the front line */
       for (var ri = 1; ri >= 0; ri--) ranks.forEach(function (s) { if (s.rank === ri) draw(c, t, now, s, k); });
@@ -1157,7 +1198,7 @@
       spawn: function (wave, waves) {
         var per = Math.ceil(n / waves);
         list.slice(wave * per, wave * per + per).forEach(function (s) {
-          s.t0 = performance.now(); s.eye = 2.2;
+          s.t0 = lnow(); s.eye = 2.2;
           shockwave(s.x, h, '#9a6bff', s.size * 2.4, 700);
           spk.burst(s.x, h - 4, phone ? 10 : 22, 13, -Math.PI / 2, .9, 3);
           later(480, function () { if (!cine.dead) lensFlare(s.x, eyeY(s), '120,220,255', 800, .4); });
@@ -1165,8 +1206,9 @@
       },
       /* a whole rank rises out of the fog, rippling outward from the middle */
       rank: function (ri) {
-        var now = performance.now();
-        ranks.forEach(function (s) { if (s.rank === ri) { s.t0 = now + Math.abs(s.x - w / 2) / w * 700 + rand(0, 120); s.eye = 1.8; } });
+        var now = lnow();
+        /* the ripple outward is snapped to the cel grid, so the rank changes drawings together */
+        ranks.forEach(function (s) { if (s.rank === ri) { s.t0 = now + Math.round((Math.abs(s.x - w / 2) / w * 700 + rand(0, 120)) / (CEL * 2)) * CEL * 2; s.eye = 1.8; } });
       },
       pulse: function (k) { list.concat(ranks).forEach(function (s) { s.eye = Math.max(s.eye, k || 1.5); }); },
       salute: function () {
@@ -1177,7 +1219,7 @@
         });
         ranks.forEach(function (s) { s.eye = 2.4; });
       },
-      kneel: function () { kneelT = performance.now(); }
+      kneel: function () { kneelT = lnow(); }
     };
   }
 
@@ -1185,15 +1227,16 @@
      command, coat streaming, eyes burning, wrapped in a violet-black aura;
      purple lightning crackles around him when the music surges */
   function monarch(cine) {
-    var w = vw(), h = vh(), S = phone ? 118 : 172, x0 = w / 2, t0 = 0, fade = 1, fx = [], zap = null, zapT = 0, surge = 0;
+    var w = vw(), h = vh(), S = phone ? 118 : 172, x0 = w / 2, t0 = 0, fade = 1, fx = [], zap = null, zapT = 0, surge = 0, lyr;
     var sprV = sprite('140,80,255'), sprD = sprite('6,2,14'), sprE = sprite('175,232,255', true);
-    layer(function (c, t, now) {
+    lyr = layer(function (c, t, now) {
       if (cine.ending) fade = Math.max(0, fade - .025);
       if (cine.ending && fade <= 0) return false;
       if (!t0) return;
       surge *= .94;
-      var r = Math.min(1, (now - t0) / 1200), rise = 1 - Math.pow(1 - r, 3);
-      var foot = h + 8, H = S * 2.7, top = foot - rise * H, x = x0 + Math.sin(t / 1300) * 2;
+      /* on twos and threes from the beat he rose on: smear frames, a squash, then a hard hold before the coat streams */
+      var d = cel(t - t0), p = pose(LORD, d), tq = t0 + idle(LORD, d), rise = p[2];
+      var foot = h + 8, H = S * 2.7, top = foot - rise * H, x = x0 + Math.sin(tq / 1300) * 2;
       /* the aura: violet flames and black smoke boiling up off him */
       for (var k = 0; k < (phone ? 3 : 6); k++) {
         var a = rand(-1, 1);
@@ -1210,6 +1253,7 @@
       });
       /* the silhouette: hood, high collar, broad shoulders, a long coat whose tails stream */
       c.globalCompositeOperation = 'source-over';
+      c.save(); c.translate(x0, foot); c.scale(p[0], p[1]); c.translate(-x0, -foot);   /* the smear frames */
       var hw = S * .11, headY = top + S * .16, shY = top + S * .42, shW = S * .34, hemW = S * .62, q, yy;
       var g = c.createLinearGradient(0, top, 0, foot);
       g.addColorStop(0, 'rgba(4,2,10,' + fade + ')'); g.addColorStop(.7, 'rgba(8,3,20,' + (.95 * fade) + ')'); g.addColorStop(1, 'rgba(20,8,50,' + (.3 * fade) + ')');
@@ -1219,8 +1263,8 @@
       c.quadraticCurveTo(x + hw * 1.35, top - hw * .2, x + hw * 1.05, headY + hw * .9);
       c.lineTo(x + shW * .55, shY - S * .05); c.quadraticCurveTo(x + shW, shY - S * .04, x + shW * 1.05, shY + S * .08);
       c.lineTo(x + shW * 1.1, shY + S * .75); c.lineTo(x + shW * .92, shY + S * .78);
-      for (q = 0; q <= 8; q++) { yy = shY + S * .5 + q / 8 * (foot - shY - S * .5); c.lineTo(x + shW * .9 + (hemW - shW * .9) * (q / 8) + Math.sin(t / 240 + q * .9) * 9 * (q / 8), yy); }
-      for (q = 8; q >= 0; q--) { yy = shY + S * .5 + q / 8 * (foot - shY - S * .5); c.lineTo(x - shW * .9 - (hemW - shW * .9) * (q / 8) + Math.sin(t / 230 + q * .9 + 2) * 9 * (q / 8), yy); }
+      for (q = 0; q <= 8; q++) { yy = shY + S * .5 + q / 8 * (foot - shY - S * .5); c.lineTo(x + shW * .9 + (hemW - shW * .9) * (q / 8) + Math.sin(tq / 240 + q * .9) * 9 * (q / 8), yy); }
+      for (q = 8; q >= 0; q--) { yy = shY + S * .5 + q / 8 * (foot - shY - S * .5); c.lineTo(x - shW * .9 - (hemW - shW * .9) * (q / 8) + Math.sin(tq / 230 + q * .9 + 2) * 9 * (q / 8), yy); }
       c.lineTo(x - shW * .92, shY + S * .78); c.lineTo(x - shW * 1.1, shY + S * .75);
       c.lineTo(x - shW * 1.05, shY + S * .08); c.quadraticCurveTo(x - shW, shY - S * .04, x - shW * .55, shY - S * .05);
       c.closePath(); c.fill();
@@ -1229,10 +1273,11 @@
       c.strokeStyle = edge; c.lineWidth = 1.6; c.stroke();
       /* the eyes */
       c.globalCompositeOperation = 'lighter';
-      var ey = headY + hw * .15, eb = (.8 + Math.sin(t / 110) * .2 + surge) * fade * rise;
+      var ey = headY + hw * .15, eb = (.8 + Math.sin(tq / 110) * .2 + surge) * fade * rise;
       blob(c, sprE, x - hw * .38, ey, hw * .55 * (1 + surge), eb); blob(c, sprE, x + hw * .38, ey, hw * .55 * (1 + surge), eb);
       c.fillStyle = '#e6f6ff'; c.globalAlpha = Math.min(1, eb);
       c.fillRect(x - hw * .55, ey - 1, hw * .32, 2); c.fillRect(x + hw * .23, ey - 1, hw * .32, 2);
+      c.restore();   /* the lightning below stays at 60 and unstretched */
       /* purple lightning when the music surges */
       if (surge > .3 && now > zapT) {
         zapT = now + rand(40, 90);
@@ -1244,7 +1289,7 @@
       c.globalAlpha = 1;
     });
     return {
-      rise: function () { t0 = performance.now(); surge = 1.3; },
+      rise: function () { t0 = Math.max(1, performance.now() - lyr.t0); surge = 1.3; },
       surge: function (k) { surge = Math.max(surge, k); }
     };
   }
