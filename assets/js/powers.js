@@ -1307,3 +1307,208 @@
     kneelAnt: { hx: 0, hy: 1.05, klx: .16, kly: .53, flx: .19, fly: 0, krx: -.16, kry: .53, frx: -.21, fry: 0, cx: 0, cy: 1.55, nx: 0, ny: 1.88, hdx: 0, hdy: 2.12, bow: -.05, slx: .41, sly: 1.8, srx: -.41, sry: 1.8, shrug: .35, elx: .5, ely: 1.4, hlx: .5, hly: 1.04, erx: -.5, ery: 1.4, hrx: -.5, hry: 1.04, spread: 1.1, flare: .4, swx: .32, swy: 0, grip: 1, gripR: 1 },
     kneel: { hx: -.05, hy: .56, klx: .36, kly: .56, flx: .44, fly: 0, krx: -.22, kry: .03, frx: -.64, fry: .04, cx: .04, cy: 1, nx: .07, ny: 1.3, hdx: .1, hdy: 1.5, bow: .75, slx: .46, sly: 1.24, srx: -.32, sry: 1.24, shrug: .1, elx: .68, ely: .96, hlx: .52, hly: .64, erx: -.38, ery: .78, hrx: -.3, hry: .06, spread: 1.15, flare: .15, swx: .36, swy: 0, grip: 1, gripR: 1 }
   };
+  /* every part of a knight in its pose, back to front, as [path, kind];
+     kind: 'cel' shaded, 'ink' flat with an outline, 'line' drawn on top */
+  function knightParts(s, t, p) {
+    var S = s.size, ph = s.ph, parts = [], k, hl = [p.hlx, p.hly], hr = [p.hrx, p.hry], el = [p.elx, p.ely], er = [p.erx, p.ery];
+    var sw = [p.swx, p.swy], pom = [sw[0], sw[1] + 1.37];
+    function add(fn, kind, bs) { parts.push([fn, kind, bs || 1]); }
+    if (s.sword) {
+      /* a hand on the greatsword's pommel pulls that arm with it */
+      if (p.grip > 0) { hl = [hl[0] + (pom[0] - .05 - hl[0]) * p.grip, hl[1] + (pom[1] - .06 - hl[1]) * p.grip]; el = [el[0] + ((p.slx + hl[0]) / 2 + .16 - el[0]) * p.grip, el[1] + ((p.sly + hl[1]) / 2 - .02 - el[1]) * p.grip]; }
+      if (p.gripR > 0) { hr = [hr[0] + (pom[0] + .06 - hr[0]) * p.gripR, hr[1] + (pom[1] - .16 - hr[1]) * p.gripR]; er = [er[0] + ((p.srx + hr[0]) / 2 - .14 - er[0]) * p.gripR, er[1] + ((p.sry + hr[1]) / 2 - .04 - er[1]) * p.gripR]; }
+    }
+    /* the cloak: hangs from the shoulders, its ragged hem swaying in the seal's draught */
+    var cl = [[p.slx - .04, p.sly + .04], [p.slx + .16 * p.spread + .1 * p.flare, p.sly - .5], [p.hx + .5 * p.spread + .18 * p.flare, .5 + .2 * p.flare]];
+    for (k = 0; k <= 6; k++) cl.push([p.hx + (.55 - k / 6 * 1.1) * p.spread + Math.sin(t / 160 + k * 1.3 + ph) * .05, (k % 2 ? .02 : .13) + Math.abs(k - 3) / 3 * .2 * p.flare]);
+    cl.push([p.hx - .5 * p.spread - .18 * p.flare, .5 + .2 * p.flare], [p.srx - .16 * p.spread - .1 * p.flare, p.sry - .5], [p.srx + .04, p.sry + .04]);
+    add(polyPath(cl, S), 'cel', 1.3);
+    /* legs: thigh, shin, foot */
+    var hipL = [p.hx + .1, p.hy - .02], hipR = [p.hx - .1, p.hy - .02], kl = [p.klx, p.kly], kr = [p.krx, p.kry], fl = [p.flx, p.fly], fr = [p.frx, p.fry];
+    add(polyPath(capsule(hipR, kr, .19, .15), S), 'cel', .55); add(polyPath(capsule(kr, fr, .15, .11), S), 'cel', .45);
+    add(polyPath([[fr[0] + .12, fr[1] + .02], [fr[0] - .16, fr[1] + .02], [fr[0] - .14, fr[1] + .14], [fr[0] + .1, fr[1] + .16]], S), 'ink');
+    add(polyPath(capsule(hipL, kl, .19, .15), S), 'cel', .55); add(polyPath(capsule(kl, fl, .15, .11), S), 'cel', .45);
+    add(polyPath([[fl[0] - .12, fl[1] + .02], [fl[0] + .16, fl[1] + .02], [fl[0] + .14, fl[1] + .14], [fl[0] - .1, fl[1] + .16]], S), 'ink');
+    /* torso, the chest plate and the belt */
+    add(polyPath([[p.hx - .25, p.hy - .04], [p.hx + .25, p.hy - .04], [p.hx + .22, p.hy + .14], [p.cx + .32, p.cy], [p.slx - .02, p.sly + .02], [p.srx + .02, p.sry + .02], [p.cx - .32, p.cy], [p.hx - .22, p.hy + .14]], S), 'cel');
+    add(function (c) { c.moveTo((p.cx - .2) * S, -(p.cy + .1) * S); c.lineTo(p.cx * S, -(p.cy - .08) * S); c.lineTo((p.cx + .2) * S, -(p.cy + .1) * S); }, 'line');
+    add(function (c) { c.moveTo((p.hx - .22) * S, -(p.hy + .1) * S); c.lineTo((p.hx + .22) * S, -(p.hy + .1) * S); }, 'line');
+    /* the greatsword, planted or raised, behind the hands that hold it */
+    if (s.sword) {
+      add(polyPath([[sw[0] - .035, sw[1]], [sw[0] + .035, sw[1]], [sw[0] + .05, sw[1] + 1.05], [sw[0] - .05, sw[1] + 1.05]], S), 'cel', .3);
+      add(function (c) { c.moveTo(sw[0] * S, -(sw[1] + .12) * S); c.lineTo(sw[0] * S, -(sw[1] + .98) * S); }, 'line');
+      add(polyPath([[sw[0] - .18, sw[1] + 1.04], [sw[0] + .18, sw[1] + 1.04], [sw[0] + .14, sw[1] + 1.12], [sw[0] - .14, sw[1] + 1.12]], S), 'cel', .4);
+      add(polyPath(capsule([sw[0], sw[1] + 1.1], [sw[0], sw[1] + 1.33], .05, .045), S), 'cel', .3);
+      add(discPath(pom[0], pom[1], .06, S), 'cel', .4);
+    }
+    /* arms: the left, then the right in front of it (it salutes) */
+    add(polyPath(capsule([p.slx, p.sly - .04], el, .16, .12), S), 'cel', .5); add(polyPath(capsule(el, hl, .12, .1), S), 'cel', .4); add(discPath(hl[0], hl[1], .085, S), 'cel', .45);
+    add(polyPath(capsule([p.srx, p.sry - .04], er, .16, .12), S), 'cel', .5); add(polyPath(capsule(er, hr, .12, .1), S), 'cel', .4); add(discPath(hr[0], hr[1], .085, S), 'cel', .45);
+    /* spiked pauldrons */
+    var sh = p.shrug;
+    add(polyPath([[p.slx - .28, p.sly + .06 + sh * .05], [p.slx + .02, p.sly + .22 + sh * .08], [p.slx + .12, p.sly + .06], [p.slx + .25, p.sly + .3 + sh * .1], [p.slx + .3, p.sly + .02], [p.slx + .44, p.sly + .12], [p.slx + .3, p.sly - .15], [p.slx - .05, p.sly - .17]], S), 'cel', .75);
+    add(polyPath([[p.srx + .28, p.sry + .06 + sh * .05], [p.srx - .02, p.sry + .22 + sh * .08], [p.srx - .12, p.sry + .06], [p.srx - .25, p.sry + .3 + sh * .1], [p.srx - .3, p.sry + .02], [p.srx - .44, p.sry + .12], [p.srx - .3, p.sry - .15], [p.srx + .05, p.sry - .17]], S), 'cel', .75);
+    /* the horned helmet; a bow tips it forward and drops the horns */
+    var hx = p.hdx + p.bow * .04, hy = p.hdy - p.bow * .05, hb = p.bow * .15;
+    add(function (c) {
+      c.moveTo((hx - .19) * S, -(hy - .18) * S); c.lineTo((hx - .21) * S, -(hy + .02) * S);
+      c.quadraticCurveTo((hx - .36) * S, -(hy + .18) * S, (hx - .3) * S, -(hy + .5 - hb) * S);
+      c.quadraticCurveTo((hx - .22) * S, -(hy + .22) * S, (hx - .13) * S, -(hy + .24) * S);
+      c.lineTo(hx * S, -(hy + .32 - hb * .5) * S); c.lineTo((hx + .13) * S, -(hy + .24) * S);
+      c.quadraticCurveTo((hx + .22) * S, -(hy + .22) * S, (hx + .3) * S, -(hy + .5 - hb) * S);
+      c.quadraticCurveTo((hx + .36) * S, -(hy + .18) * S, (hx + .21) * S, -(hy + .02) * S);
+      c.lineTo((hx + .19) * S, -(hy - .18) * S); c.lineTo((hx + .1) * S, -(hy - .25) * S); c.lineTo((hx - .1) * S, -(hy - .25) * S); c.closePath();
+    }, 'cel', .8);
+    add(function (c) { c.moveTo((hx - .17) * S, -(hy - .02 - p.bow * .03) * S); c.lineTo((hx + .17) * S, -(hy - .02 - p.bow * .03) * S); }, 'line');
+    s.eyeX = s.x + hx * S * (s.sx || 1); s.eyeY = s.base + (s.sink || 0) - (hy - .02 - p.bow * .03) * S * (s.sy || 1);
+    return parts;
+  }
+  /* burning eyes and their violet halo, added with light on top of the helmet */
+  function knightEyes(c, s, t) {
+    var S = s.size, eb = s.eye || 1, x = s.eyeX, y = s.eyeY, hr = S * .17;
+    c.save(); c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(1, s.o * (.85 + Math.sin(t / 90 + s.ph) * .15) * eb);
+    c.fillStyle = '#b9f0ff';
+    c.beginPath(); c.ellipse(x - hr * .42, y, hr * .3, hr * .07, -.3, 0, TAU); c.ellipse(x + hr * .42, y, hr * .3, hr * .07, .3, 0, TAU); c.fill();
+    c.globalAlpha = Math.min(1, s.o * .25 * eb); c.fillStyle = '#7b3fff'; c.beginPath(); c.ellipse(x, y, hr * 1.2 * (1 + (eb - 1) * .5), hr * .5 * (1 + (eb - 1) * .5), 0, 0, TAU); c.fill();
+    c.restore();
+  }
+  /* one knight in its current pose, cel-shaded and lit from the seal */
+  function soldier(c, s, parts) {
+    var L = sealLight(s, s.pose.cy);
+    drawFigure(c, s, parts, L[0], L[1], tones(s.dim), s.lod || 0);
+  }
+
+
+  /* Solo Leveling style System window */
+  function sysWindow(title, lines, opt) {
+    opt = opt || {};
+    var box = el('div', 'pw-sys', '<div class="pw-sys-h"><i aria-hidden="true">!</i><b>' + title + '</b></div>' +
+      '<div class="pw-sys-b">' + lines.map(function (l) { return '<p>' + l + '</p>'; }).join('') + '</div>' +
+      (opt.bar ? '<div class="pw-sys-bar"><span></span></div><div class="pw-sys-n">0%</div>' : ''));
+    box.setAttribute('role', 'status');
+    document.body.appendChild(box); on(box);
+    box.progress = function (p) {
+      var bar = box.querySelector('.pw-sys-bar span'), n = box.querySelector('.pw-sys-n');
+      if (bar) bar.style.width = (p * 100).toFixed(0) + '%';
+      if (n) n.textContent = (p * 100).toFixed(0) + '%';
+    };
+    box.close = function (ms) { later(ms || 0, function () { drop(box, 500); }); };
+    return box;
+  }
+
+  /* souls torn out of each fallen piece: black-violet smoke streams that
+     spiral upward, with a bright soul spark at the head of each stream */
+  function extractSouls(rects, dur) {
+    var streams = [], max = phone ? 40 : 110;
+    rects.slice(0, max).forEach(function (r, i) {
+      var x = r.left + r.width / 2, y = r.top + r.height / 2;
+      streams.push({ x: x, y: y, x0: x, y0: y, vy: rand(1.6, 3.4), sw: rand(.02, .05), ph: rand(0, 6), amp: rand(8, 26), at: rand(0, dur * .5), trail: [], smoke: [] });
+    });
+    layer(function (c, t) {
+      if (t > dur + 900) return false;
+      var fade = t > dur ? 1 - (t - dur) / 900 : 1;
+      streams.forEach(function (s) {
+        if (t < s.at) return;
+        var lt = t - s.at;
+        s.y -= s.vy * (1 + lt / 900); s.x = s.x0 + Math.sin(lt * s.sw * .12 + s.ph) * s.amp * (1 + lt / 700);
+        s.trail.push([s.x, s.y]); if (s.trail.length > 18) s.trail.shift();
+        if (Math.random() < .5) s.smoke.push({ x: s.x0 + rand(-20, 20), y: s.y0 + rand(-10, 10), r: rand(8, 22), l: 1, v: rand(.6, 1.6) });
+        /* smoke boiling off the body */
+        s.smoke = s.smoke.filter(function (m) {
+          m.y -= m.v; m.r *= 1.02; m.l -= .02;
+          c.globalCompositeOperation = 'source-over';
+          c.globalAlpha = m.l * .5 * fade; c.fillStyle = '#0b0418';
+          c.beginPath(); c.arc(m.x, m.y, m.r, 0, TAU); c.fill();
+          return m.l > 0;
+        });
+        /* the soul stream */
+        c.globalCompositeOperation = 'lighter';
+        c.lineCap = 'round';
+        for (var i = 1; i < s.trail.length; i++) {
+          var k = i / s.trail.length;
+          c.globalAlpha = k * .75 * fade; c.strokeStyle = k > .8 ? '#d9c8ff' : '#7b3fff'; c.lineWidth = 1 + k * 3.5;
+          c.beginPath(); c.moveTo(s.trail[i - 1][0], s.trail[i - 1][1]); c.lineTo(s.trail[i][0], s.trail[i][1]); c.stroke();
+        }
+        var g = c.createRadialGradient(s.x, s.y, 0, s.x, s.y, 12);
+        g.addColorStop(0, 'rgba(235,225,255,' + fade + ')'); g.addColorStop(1, 'rgba(120,60,255,0)');
+        c.globalAlpha = 1; c.fillStyle = g; c.beginPath(); c.arc(s.x, s.y, 12, 0, TAU); c.fill();
+      });
+    });
+  }
+
+  /* a violet scanline that passes down the screen and wakes everything */
+  function awakenSweep(ms) {
+    layer(function (c, t) {
+      if (t > ms) return false;
+      var y = (t / ms) * (vh() + 120) - 60, w = vw();
+      c.globalCompositeOperation = 'lighter';
+      var g = c.createLinearGradient(0, y - 60, 0, y + 8);
+      g.addColorStop(0, 'rgba(120,60,255,0)'); g.addColorStop(.85, 'rgba(150,100,255,.45)'); g.addColorStop(1, 'rgba(230,220,255,.9)');
+      c.fillStyle = g; c.fillRect(0, y - 60, w, 68);
+      c.fillStyle = '#fff'; c.globalAlpha = .9; c.fillRect(0, y + 6, w, 2);
+    });
+  }
+
+  /* ==================================================================
+     起きろ ARISE — a cinematic shadow extraction, cut to the music.
+     Every beat comes from the cue sheet (assets/sfx/marks.json): where
+     the word lands inside the voice clip, and the theme's drop, beat
+     grid and accents. Without marks it uses the same timings.
+       · darkness falls, the System counts the fallen, the seal opens
+       · "ARISE": the command lands on the word with impact frames
+       · the camera leans in on the word (speed lines on the seal), freezes
+         black-and-white on the drop's first hit and kicks out on its second
+       · the theme starts as the word ends; souls tear out of the rubble
+       · on each hit of the drop a wave of shadow knights erupts
+       · the page rebuilds on the beat, bottom to top, fed by soul light
+       · the knights salute, a violet sweep wakes the page, they kneel
+       · the SHADOW ARMY title card, then it all fades with the music
+     Skip (the button or Esc) jumps to the end.
+     ================================================================== */
+  function mark(name, key, def) {
+    var m = window.XR_SFX && window.XR_SFX.marks && window.XR_SFX.marks[name];
+    return m && m[key] != null ? m[key] : def;
+  }
+
+  /* the cel clock: the Monarch and the knights are drawn on twos and threes,
+     like hand-drawn animation, while particles, fog and the camera keep
+     running at 60. A drawing is held for 2 frames of 24 (83 ms), every
+     fourth one for 3, and a figure's count starts on the beat that spawned
+     it, so every new drawing lands on the music. cel(ms) says which drawing
+     (0, 1, 2...) is up `ms` after that beat, and when it went up. */
+  var CEL = 1000 / 24, HOLDS = [2, 2, 2, 3], CYCLE = 9;
+  function cel(ms) {
+    if (!(ms > 0)) return { n: 0, at: 0 };
+    var f = Math.floor(ms / CEL), c = Math.floor(f / CYCLE), r = f - c * CYCLE, n = 0, at = 0;
+    while (n < HOLDS.length - 1 && at + HOLDS[n] <= r) at += HOLDS[n++];
+    return { n: c * HOLDS.length + n, at: (c * CYCLE + at) * CEL };
+  }
+  /* how a figure erupts from the ground, drawing by drawing, as [width,
+     height, rise]: smear frames stretched tall and thin that streak up past
+     its full height, a squash frame as it lands, then the last pose is held
+     hard for HOLD drawings before it starts to breathe (on twos, IDLE ms of
+     sway per drawing) */
+  var KNIGHT = [[.55, 1.55, .9], [.82, 1.18, 1], [1.1, .92, 1], [1, 1, 1]];
+  var LORD = [[.7, 1.3, .5], [.8, 1.22, .82], [.9, 1.08, 1], [1.06, .95, 1], [1, 1, 1]];
+  var HOLD = 6, IDLE = 90;
+  function pose(seq, d) { return seq[Math.min(d.n, seq.length - 1)]; }
+  function idle(seq, d) { return Math.max(0, d.n - (seq.length - 1) - HOLD) * IDLE; }
+  /* speed lines under a smear frame, the same ones for as long as the drawing is held */
+  function streaks(c, s, n) {
+    var rr = seeded((s.ph * 1e4 | 0) + n), i;
+    c.save(); c.globalCompositeOperation = 'lighter'; c.strokeStyle = '#b28cff'; c.lineCap = 'round';
+    for (i = 0; i < 5; i++) {
+      var sx = s.x + (rr() - .5) * s.size * 1.1, len = s.size * (1.2 + rr() * 1.4) * (n ? .6 : 1), yb = s.base - rr() * s.size * .3;
+      c.globalAlpha = (n ? .25 : .45) * s.o; c.lineWidth = 1 + rr() * 2.5;
+      c.beginPath(); c.moveTo(sx, yb); c.lineTo(sx + (rr() - .5) * 8, yb - len); c.stroke();
+    }
+    c.restore();
+  }
+
+  /* the shadow army: a front line of knights that erupt on the drop, and two
+     ranks behind them (smaller, dimmer, standing higher up in the fog) that
+     rise on the accents; all their eyes pulse with the music. Every knight is
+     a cel-shaded figure on a pose rig, drawn on the cel clock: it erupts
+     hunched (rise), lands low (brace), snaps upright, salutes with a fist to
+     the chest, and goes down on one knee, each change with its anticipation,
+     snap and hold, sampled once per drawing so a key reads on a held frame. */
