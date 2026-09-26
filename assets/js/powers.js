@@ -1292,7 +1292,7 @@
       fog.forEach(function (f) { blob(c, sprV, f.x, f.y + 24, f.r * .8, .1 * fade); });
       /* ripples out across the ground from the seal, on the beat */
       rings = rings.filter(function (rg) {
-        var k2 = Math.max(0, (now - rg.t) / 1400);   /* a ring pushed by a timer can be newer than this frame's timestamp: never a negative radius */
+        var k2 = (now - rg.t) / 1400;
         if (k2 >= 1) return false;
         var e2 = 1 - Math.pow(1 - k2, 3), rx = e2 * w * .6 + 20;
         c.strokeStyle = 'rgba(170,120,255,1)'; c.globalAlpha = (1 - k2) * .55 * rg.k * fade; c.lineWidth = 2;
