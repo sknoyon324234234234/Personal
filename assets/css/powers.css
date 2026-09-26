@@ -59,7 +59,7 @@ html.pw-mono .pw-bars::before, html.pw-mono .pw-bars::after { background: #fff; 
 .pw-dim { position: fixed; inset: 0; z-index: 580; pointer-events: none; opacity: 0; transition: opacity .5s; background: radial-gradient(ellipse at var(--px, 50%) var(--py, 60%), rgba(20, 40, 90, .25), rgba(3, 5, 14, .86) 70%); }
 .pw-dim.on { opacity: 1; }
 .pw-dim.kame { background: radial-gradient(ellipse at var(--px, 50%) var(--py, 60%), rgba(30, 90, 200, .3), rgba(2, 6, 20, .82) 70%); }
-.pw-dim.ssj { background: radial-gradient(ellipse at 50% 60%, rgba(255, 190, 30, .3), rgba(20, 12, 0, .8) 72%); }
+.pw-dim.ssj { background: radial-gradient(ellipse at 50% 100%, rgba(255, 190, 30, .34), rgba(20, 12, 0, .8) 72%); }
 .pw-flash { position: fixed; inset: 0; z-index: 610; pointer-events: none; background: #fff; opacity: 0; }
 .pw-sfx {
   position: fixed; z-index: 605; pointer-events: none; white-space: nowrap; transform: translate(-50%, -50%);
