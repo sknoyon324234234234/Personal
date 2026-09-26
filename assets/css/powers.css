@@ -29,6 +29,7 @@
 }
 .pw-dock.open .pw-item { opacity: 1; transform: none; pointer-events: auto; visibility: visible; transition-delay: calc(var(--i) * 45ms), calc(var(--i) * 45ms), 0s, 0s; }
 .pw-item:hover { filter: brightness(1.25); }
+.pw-item.pw-ready { animation: pwAriseBeat 1.8s ease-in-out infinite; }
 .pw-item[disabled] { opacity: .45 !important; cursor: not-allowed; filter: grayscale(.6); }
 .pw-item b { width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--pw-c, #8fd3ff); color: #0d0a14; font: 800 17px/1 var(--font-jp, serif); }
 .pw-item small { display: block; margin-top: 2px; font: 500 10.5px/1 var(--font-mono, monospace); letter-spacing: .06em; color: rgba(245, 236, 216, .65); }
@@ -40,6 +41,13 @@
 
 /* ---------- effect layers ---------- */
 .pw-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 590; pointer-events: none; }
+/* bloom: a low-res copy of the effect canvas, blurred and screened on top */
+.pw-glow { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 591; pointer-events: none; filter: blur(14px) saturate(1.5) brightness(1.5); mix-blend-mode: screen; }
+/* impact frames: a manga negative of the whole page, and solid frames */
+.pw-ink { position: fixed; inset: 0; z-index: 588; pointer-events: none; opacity: 0; background: #000; }
+html.pw-neg body > *:not(.pw-canvas):not(.pw-glow):not(.pw-sfx):not(.pw-flash):not(.pw-ink):not(.pw-dock) { filter: invert(1) grayscale(1) contrast(3); }
+html.pw-neg.pw-neg-violet body > *:not(.pw-canvas):not(.pw-glow):not(.pw-sfx):not(.pw-flash):not(.pw-ink):not(.pw-dock) { filter: invert(1) grayscale(1) contrast(3) sepia(1) hue-rotate(215deg) saturate(4); }
+html.pw-neg.pw-neg-gold body > *:not(.pw-canvas):not(.pw-glow):not(.pw-sfx):not(.pw-flash):not(.pw-ink):not(.pw-dock) { filter: invert(1) grayscale(1) contrast(3) sepia(1) saturate(5); }
 .pw-dim { position: fixed; inset: 0; z-index: 580; pointer-events: none; opacity: 0; transition: opacity .5s; background: radial-gradient(ellipse at var(--px, 50%) var(--py, 60%), rgba(20, 40, 90, .25), rgba(3, 5, 14, .86) 70%); }
 .pw-dim.on { opacity: 1; }
 .pw-dim.kame { background: radial-gradient(ellipse at var(--px, 50%) var(--py, 60%), rgba(30, 90, 200, .3), rgba(2, 6, 20, .82) 70%); }
@@ -138,6 +146,7 @@ html.pw-ssj .pw-toggle { border-color: #ffd35a; box-shadow: 0 0 0 3px rgba(10, 8
 }
 
 @media (max-width: 760px) {
+  .pw-glow { filter: blur(8px) saturate(1.4) brightness(1.4); }
   .pw-dock { right: 8px; top: 44%; }
   .pw-toggle { width: 48px; height: 48px; font-size: 21px; }
   .pw-item { font-size: 13px; }
