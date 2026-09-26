@@ -17,8 +17,8 @@ mark (3300 ms after Chidori is called, from assets/sfx/marks.json).
 - impact.jpg          the strike, every second frame, +0 .. +400 ms, before over after
 - break.jpg           the break, every third frame, +417 .. +1400 ms, before over after
 - settle.jpg          the rubble settling and the ruin, +1400 .. +5700 ms, before over after
-- after-impact-frame.jpg  a held negative impact frame (+50 ms), cracks racing out under the bolt
+- impact-fr.jpg          a held negative impact frame (+50 ms), cracks racing out under the bolt
 - after-burst.jpg     the burst, +433 ms: bolts to every edge, the ring, the page pieces leaving
 - after-dust.jpg      +683 ms: the dust dome lit by the strike, the scorch, the pieces in flight
-- after-settling.jpg  +2000 ms: rubble down, dust hanging, the scorch cooling
-- before-break.jpg / before-settling.jpg  the same two moments in the old cut
+- settling.jpg        +2000 ms: rubble down, dust hanging, the scorch cooling
+- old-break.jpg / old-settle.jpg  the same two moments in the old cut
