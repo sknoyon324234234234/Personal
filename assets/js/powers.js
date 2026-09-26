@@ -448,3 +448,161 @@
     return {
       el: o,
       at: function (x, y, r, a) {
+        var k = x.toFixed(0) + ',' + y.toFixed(0) + ',' + r.toFixed(0) + ',' + a.toFixed(2);
+        if (k === last) return;
+        last = k;
+        o.style.setProperty('--lx', x.toFixed(0) + 'px'); o.style.setProperty('--ly', y.toFixed(0) + 'px');
+        o.style.setProperty('--lr', Math.max(1, r).toFixed(0) + 'px'); o.style.opacity = Math.max(0, Math.min(1, a)).toFixed(2);
+      },
+      band: function (css, a) { o.style.background = css; o.style.opacity = Math.max(0, Math.min(1, a)).toFixed(2); },
+      off: function (ms) { o.style.transition = 'opacity ' + (ms || 500) + 'ms'; o.style.opacity = 0; setTimeout(function () { o.remove(); }, (ms || 500) + 50); }
+    };
+  }
+  /* soft round sprites, rendered once per colour: far cheaper than a
+     new radial gradient for every particle */
+  var sprites = {};
+  function sprite(rgb, hard) {
+    var key = rgb + (hard ? 'h' : '');
+    if (sprites[key]) return sprites[key];
+    var s = document.createElement('canvas'), x = s.getContext('2d');
+    s.width = s.height = 64;
+    var g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+    if (hard) { g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.25, 'rgba(' + rgb + ',1)'); g.addColorStop(1, 'rgba(' + rgb + ',0)'); }
+    else { g.addColorStop(0, 'rgba(' + rgb + ',1)'); g.addColorStop(.45, 'rgba(' + rgb + ',.45)'); g.addColorStop(1, 'rgba(' + rgb + ',0)'); }
+    x.fillStyle = g; x.fillRect(0, 0, 64, 64);
+    return (sprites[key] = s);
+  }
+  function blob(c, spr, x, y, r, a) { if (a <= 0 || r <= 0) return; c.globalAlpha = Math.min(1, a); c.drawImage(spr, x - r, y - r, r * 2, r * 2); }
+  /* sparks: hot streaks with gravity and drag that cool from white to
+     their colour, bounce and skid along the floor, then die */
+  function sparkField(rgb, floorY) {
+    var list = [], col = rgb.split(',').map(Number);
+    return {
+      burst: function (x, y, n, sp, dir, spread, up) {
+        for (var i = 0; i < n; i++) {
+          var a = (dir == null ? rand(0, TAU) : dir + rand(-(spread || .6), spread || .6)), v = rand(.3, 1) * (sp || 9);
+          list.push({ x: x, y: y, px: x, py: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - (up || 0), l: rand(.6, 1), heat: 1 });
+        }
+      },
+      draw: function (c) {
+        var fy = floorY == null ? vh() - 4 : floorY();
+        c.globalCompositeOperation = 'lighter'; c.lineCap = 'round';
+        list = list.filter(function (s) {
+          s.px = s.x; s.py = s.y;
+          s.vy += .38; s.vx *= .985; s.vy *= .985;
+          s.x += s.vx; s.y += s.vy;
+          if (s.y > fy) { s.y = fy; s.vy *= -.32; s.vx *= .72; s.l -= .08; }
+          s.heat = Math.max(0, s.heat - .045); s.l -= .016;
+          if (s.l <= 0) return false;
+          var hh = s.heat, r = Math.round(col[0] + (255 - col[0]) * hh), g = Math.round(col[1] + (255 - col[1]) * hh), b = Math.round(col[2] + (255 - col[2]) * hh);
+          c.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')'; c.globalAlpha = Math.min(1, s.l * 1.6);
+          c.lineWidth = .8 + hh * 1.8;
+          c.beginPath(); c.moveTo(s.px - s.vx * .6, s.py - s.vy * .6); c.lineTo(s.x, s.y); c.stroke();
+          return true;
+        });
+        c.globalAlpha = 1;
+        return list.length;
+      }
+    };
+  }
+  /* ionised afterglow: every strike leaves a violet ghost of its path
+     that fades out, like the retina after a real lightning flash */
+  var ions = [], ionOn = false;
+  function ion(segs, w) {
+    ions.push({ segs: segs, t: performance.now(), w: w || 1 });
+    if (ionOn) return;
+    ionOn = true;
+    layer(function (c, t, now) {
+      ions = ions.filter(function (i) { return now - i.t < 260; });
+      if (!ions.length) { ionOn = false; return false; }
+      c.globalCompositeOperation = 'lighter'; c.lineJoin = 'round'; c.lineCap = 'round';
+      ions.forEach(function (i) {
+        var k = 1 - (now - i.t) / 260;
+        c.strokeStyle = 'rgba(130,110,255,1)'; c.globalAlpha = .22 * k * k;
+        i.segs.forEach(function (s) {
+          c.lineWidth = s.w * 9 * i.w; c.beginPath(); c.moveTo(s.p[0][0], s.p[0][1]);
+          for (var j = 1; j < s.p.length; j++) c.lineTo(s.p[j][0], s.p[j][1]);
+          c.stroke();
+        });
+      });
+      c.globalAlpha = 1;
+    });
+  }
+  /* smooth value noise for flames, plasma edges and wind */
+  function noise1(x) { var i = Math.floor(x), f = x - i, u = f * f * (3 - 2 * f); function h(n) { var s = Math.sin(n * 127.1) * 43758.5453; return s - Math.floor(s); } return h(i) * (1 - u) + h(i + 1) * u; }
+  function noise2(x, y) { return noise1(x + noise1(y * 1.7) * 4.3); }
+
+  function flash(color, ms, peak) {
+    var f = overlay('pw-flash'); f.style.background = color || '#fff';
+    var a = f.animate([{ opacity: 0 }, { opacity: peak == null ? .95 : peak, offset: .1 }, { opacity: 0 }], { duration: ms || 500, easing: 'ease-out' });
+    a.onfinish = function () { f.remove(); };
+  }
+  /* anime impact frames: the whole screen flips to a negative, then a
+     solid frame where only the energy shows, then negative again */
+  function impact(seq, tint) {
+    if (reduce) { flash('#fff', 300, .6); return; }
+    var ink = overlay('pw-ink'), i = 0;
+    root.classList.toggle('pw-neg-violet', tint === 'violet');
+    root.classList.toggle('pw-neg-gold', tint === 'gold');
+    (function step() {
+      root.classList.remove('pw-neg'); ink.style.opacity = 0;
+      var s = seq[i++], kind = s && s.length && typeof s !== 'string' ? s[0] : s, ms = s && typeof s !== 'string' ? s[1] : 55;   /* a step is 'neg' | 'black' | 'white', or [kind, ms] */
+      if (!s) { ink.remove(); root.classList.remove('pw-neg-violet', 'pw-neg-gold'); return; }
+      if (kind === 'neg') root.classList.add('pw-neg');
+      else { ink.style.background = kind === 'white' ? '#fff' : '#000'; ink.style.opacity = 1; }
+      setTimeout(step, ms);
+    })();
+  }
+
+  /* ==================================================================
+     Pieces of the page: visible blocks small enough to fly as one
+     ================================================================== */
+  var ATOM = /^(IMG|SVG|CANVAS|VIDEO|PICTURE|IFRAME|BUTTON|A|INPUT|TEXTAREA|SELECT|H1|H2|H3|H4|H5|H6|P|LI|LABEL|DT|DD|BLOCKQUOTE|FIGURE|PRE|CODE|SPAN|B|STRONG|EM|SMALL|I)$/;
+  var SKIP = /^(SCRIPT|STYLE|TEMPLATE|NOSCRIPT|LINK|META|BR|DEFS)$/;
+  /* our own layers (including SVG ones, whose className is not a string) never fly as rubble */
+  function isOurs(n) { var c = n.getAttribute && n.getAttribute('class'); return !!c && /(^|\s)(pw-|toasts|curtain|loader|skip|grain|progress)/.test(c); }
+  function hasSkin(cs) {
+    return (cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && cs.backgroundColor !== 'transparent') ||
+      cs.backgroundImage !== 'none' || parseFloat(cs.borderTopWidth) > 0 || cs.boxShadow !== 'none';
+  }
+  function pieces(max) {
+    var outl = [], w = vw(), h = vh(), area = w * h;
+    function walk(n) {
+      if (outl.length >= max || n.nodeType !== 1 || SKIP.test(n.tagName.toUpperCase()) || isOurs(n)) return;
+      var cs = getComputedStyle(n);
+      if (cs.display === 'none' || cs.visibility === 'hidden') return;
+      if (cs.display === 'contents') { kids(n); return; }
+      var r = n.getBoundingClientRect();
+      if (r.width < 4 || r.height < 4 || r.bottom < 0 || r.top > h || r.right < 0 || r.left > w) return;
+      var a = r.width * r.height, tag = n.tagName.toUpperCase();
+      if (tag === 'SVG' && r.height > h * 2) return; /* page-long decorative layers stay put */
+      var small = a < area * .05, atom = ATOM.test(tag) && a < area * .3, card = hasSkin(cs) && a < area * .16;
+      if (small || atom || card || tag === 'SVG' || !n.children.length) { outl.push({ el: n, r: r }); return; }
+      kids(n);
+    }
+    function kids(n) { for (var i = 0; i < n.children.length; i++) walk(n.children[i]); }
+    kids(document.body);
+    return outl;
+  }
+
+  /* ==================================================================
+     Scroll lock (native, the site's wheel inertia and keys)
+     ================================================================== */
+  function block(e) { e.preventDefault(); e.stopImmediatePropagation(); }
+  function blockKeys(e) {
+    if (e.key === 'Escape' && ruin && !busy) { e.preventDefault(); arise(); return; }
+    if (/^(ArrowUp|ArrowDown|PageUp|PageDown|Home|End| )$/.test(e.key) && !(e.target.closest && e.target.closest('.pw-dock, .pw-ruin-cta'))) block(e);
+  }
+  /* the page is held still by blocking scroll input and undoing any stray scroll, never with
+     overflow: hidden, which breaks position: sticky and made pinned sections jump away */
+  var lockPos = null;
+  function holdScroll() { if (lockPos && (window.scrollX !== lockPos[0] || window.scrollY !== lockPos[1])) window.scrollTo({ left: lockPos[0], top: lockPos[1], behavior: 'instant' }); }
+  function lock(onOff) {
+    root.classList.toggle('pw-locked', onOff);
+    lockPos = onOff ? [window.scrollX, window.scrollY] : null;
+    var fn = onOff ? 'addEventListener' : 'removeEventListener';
+    window[fn]('scroll', holdScroll, { passive: true });
+    window[fn]('wheel', block, { capture: true, passive: false });
+    window[fn]('touchmove', block, { capture: true, passive: false });
+    window[fn]('keydown', blockKeys, true);
+  }
