@@ -1,898 +1,223 @@
-(() => {
-  "use strict";
-
-  if (window.__XIRAIYA_POWERS_LOADED__) return;
-  window.__XIRAIYA_POWERS_LOADED__ = true;
-
-  const root = document.documentElement;
-  const body = document.body;
-
-  const reducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  ).matches;
-
-  const state = {
-    open: false,
-    busy: false,
-    wind: false,
-    ssj: false
-  };
-
-  function make(tag, className, parent = body) {
-    const node = document.createElement(tag);
-
-    if (className) {
-      node.className = className;
-    }
-
-    parent.appendChild(node);
-    return node;
-  }
-
-  function later(ms, fn) {
-    return window.setTimeout(fn, reducedMotion ? 0 : ms);
-  }
-
-  /* =========================================================
-     EFFECT LAYERS
-     ========================================================= */
-
-  const canvas = make("canvas", "pw-canvas");
-  const ctx = canvas.getContext("2d");
-
-  const dim = make("div", "pw-dim");
-  const flash = make("div", "pw-flash");
-  const aura = make("div", "pw-aura");
-  const shadow = make("div", "pw-shadow");
-  const bars = make("div", "pw-bars");
-
-  const system = make("div", "pw-sys");
-
-  system.innerHTML = `
-    <div class="pw-sys-h">
-      <i>!</i>
-      <b>SYSTEM</b>
-    </div>
-
-    <p>
-      <em>Power sequence activated.</em><br>
-      Synchronizing energy...
-    </p>
-
-    <div class="pw-sys-bar">
-      <span></span>
-    </div>
-
-    <div class="pw-sys-n">
-      0%
-    </div>
-  `;
-
-  const seal = make("div", "pw-seal");
-
-  seal.innerHTML = `
-    <svg viewBox="0 0 500 500" aria-hidden="true">
-      <circle
-        cx="250"
-        cy="250"
-        r="190"
-        fill="none"
-        stroke="#9a6bff"
-        stroke-width="3"
-      />
-
-      <circle
-        cx="250"
-        cy="250"
-        r="145"
-        fill="none"
-        stroke="#5fd0ff"
-        stroke-width="2"
-        stroke-dasharray="12 8"
-      />
-
-      <polygon
-        points="
-          250,80
-          290,195
-          410,195
-          312,265
-          350,380
-          250,310
-          150,380
-          188,265
-          90,195
-          210,195
-        "
-        fill="none"
-        stroke="#b99cff"
-        stroke-width="3"
-      />
-
-      <circle
-        cx="250"
-        cy="250"
-        r="42"
-        fill="none"
-        stroke="#ffffff"
-        stroke-width="2"
-      />
-    </svg>
-  `;
-
-  const title = make("div", "pw-title");
-
-  title.innerHTML = `
-    <div class="pw-title-k">影</div>
-
-    <small>起きろ</small>
-
-    <b>ARISE</b>
-
-    <i></i>
-
-    <span>
-      SHADOW <em>MONARCH</em>
-    </span>
-  `;
-
-  /* =========================================================
-     CANVAS
-     ========================================================= */
-
-  let DPR = 1;
-  let W = 0;
-  let H = 0;
-
-  function resizeCanvas() {
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
-
-    W = window.innerWidth;
-    H = window.innerHeight;
-
-    canvas.width = Math.round(W * DPR);
-    canvas.height = Math.round(H * DPR);
-
-    canvas.style.width = W + "px";
-    canvas.style.height = H + "px";
-
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  }
-
-  resizeCanvas();
-
-  window.addEventListener("resize", resizeCanvas);
-
-  function clearCanvas() {
-    ctx.clearRect(0, 0, W, H);
-  }
-
-  function animate(ms, draw, done) {
-    const start = performance.now();
-
-    function frame(now) {
-      const progress = Math.min(1, (now - start) / ms);
-
-      clearCanvas();
-
-      draw(progress, now);
-
-      if (progress < 1) {
-        requestAnimationFrame(frame);
-      } else {
-        clearCanvas();
-
-        if (done) done();
-      }
-    }
-
-    requestAnimationFrame(frame);
-  }
-
-  /* =========================================================
-     FLASH
-     ========================================================= */
-
-  function screenFlash(color = "#fff", strength = 0.9) {
-    flash.style.background = color;
-    flash.style.opacity = String(strength);
-
-    later(60, () => {
-      flash.style.transition = "opacity .35s";
-      flash.style.opacity = "0";
-    });
-  }
-
-  /* =========================================================
-     LIGHTNING
-     ========================================================= */
-
-  function drawBolt(x1, y1, x2, y2, width, color) {
-    const segments = 18;
-
-    const dx = (x2 - x1) / segments;
-    const dy = (y2 - y1) / segments;
-
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-
-    for (let i = 1; i < segments; i++) {
-      const x =
-        x1 +
-        dx * i +
-        (Math.random() - 0.5) * 28;
-
-      const y =
-        y1 +
-        dy * i +
-        (Math.random() - 0.5) * 28;
-
-      ctx.lineTo(x, y);
-    }
-
-    ctx.lineTo(x2, y2);
-
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.stroke();
-  }
-
-  /* =========================================================
-     CHIDORI
-     ========================================================= */
-
-  function chidori() {
-    if (state.busy) return;
-
-    state.busy = true;
-
-    dim.classList.add("on");
-
-    const cx = W * 0.5;
-    const cy = H * 0.55;
-
-    screenFlash("#dff6ff", 0.8);
-
-    animate(
-      reducedMotion ? 150 : 1450,
-
-      (p, now) => {
-        const pulse =
-          0.75 +
-          Math.sin(now / 50) * 0.25;
-
-        const radius =
-          30 +
-          p * Math.min(W, H) * 0.13;
-
-        ctx.save();
-
-        ctx.globalCompositeOperation = "lighter";
-
-        const glow = ctx.createRadialGradient(
-          cx,
-          cy,
-          0,
-          cx,
-          cy,
-          radius
-        );
-
-        glow.addColorStop(
-          0,
-          `rgba(255,255,255,${0.95 * pulse})`
-        );
-
-        glow.addColorStop(
-          0.25,
-          `rgba(110,210,255,${0.8 * pulse})`
-        );
-
-        glow.addColorStop(
-          1,
-          "rgba(40,120,255,0)"
-        );
-
-        ctx.fillStyle = glow;
-
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        for (let i = 0; i < 13; i++) {
-          const angle =
-            Math.random() * Math.PI * 2;
-
-          const len =
-            radius *
-            (1.2 + Math.random() * 2.3);
-
-          const tx =
-            cx + Math.cos(angle) * len;
-
-          const ty =
-            cy + Math.sin(angle) * len;
-
-          drawBolt(
-            cx,
-            cy,
-            tx,
-            ty,
-            1 + Math.random() * 3,
-            Math.random() > 0.5
-              ? "#bdeeff"
-              : "#459cff"
-          );
-        }
-
-        ctx.restore();
-      },
-
-      () => {
-        dim.classList.remove("on");
-        state.busy = false;
-      }
-    );
-  }
-
-  /* =========================================================
-     KAMEHAMEHA
-     ========================================================= */
-
-  function kamehameha() {
-    if (state.busy) return;
-
-    state.busy = true;
-
-    dim.classList.add("on", "kame");
-
-    const startX = W * 0.12;
-    const y = H * 0.55;
-
-    screenFlash("#c8e9ff", 0.65);
-
-    animate(
-      reducedMotion ? 150 : 1700,
-
-      (p, now) => {
-        const endX =
-          startX +
-          W * 0.82 * Math.min(1, p * 1.8);
-
-        const beamWidth =
-          18 +
-          Math.sin(now / 45) * 5 +
-          p * 26;
-
-        ctx.save();
-
-        ctx.globalCompositeOperation = "lighter";
-
-        ctx.strokeStyle =
-          "rgba(70,150,255,.35)";
-
-        ctx.lineWidth = beamWidth * 2.2;
-
-        ctx.beginPath();
-        ctx.moveTo(startX, y);
-        ctx.lineTo(endX, y);
-        ctx.stroke();
-
-        ctx.strokeStyle = "#64baff";
-        ctx.lineWidth = beamWidth;
-
-        ctx.beginPath();
-        ctx.moveTo(startX, y);
-        ctx.lineTo(endX, y);
-        ctx.stroke();
-
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = beamWidth * 0.34;
-
-        ctx.beginPath();
-        ctx.moveTo(startX, y);
-        ctx.lineTo(endX, y);
-        ctx.stroke();
-
-        ctx.beginPath();
-
-        ctx.arc(
-          endX,
-          y,
-          beamWidth * 1.1,
-          0,
-          Math.PI * 2
-        );
-
-        ctx.fillStyle =
-          "rgba(185,225,255,.8)";
-
-        ctx.fill();
-
-        ctx.restore();
-      },
-
-      () => {
-        dim.classList.remove("on", "kame");
-        state.busy = false;
-      }
-    );
-  }
-
-  /* =========================================================
-     WIND
-     ========================================================= */
-
-  function toggleWind(button) {
-    state.wind = !state.wind;
-
-    root.classList.toggle(
-      "pw-windy",
-      state.wind
-    );
-
-    button.setAttribute(
-      "aria-pressed",
-      String(state.wind)
-    );
-  }
-
-  /* =========================================================
-     SUPER SAIYAN
-     ========================================================= */
-
-  function toggleSaiyan(button) {
-    state.ssj = !state.ssj;
-
-    root.classList.toggle(
-      "pw-ssj",
-      state.ssj
-    );
-
-    aura.classList.toggle(
-      "on",
-      state.ssj
-    );
-
-    dim.classList.toggle(
-      "ssj",
-      state.ssj
-    );
-
-    button.setAttribute(
-      "aria-pressed",
-      String(state.ssj)
-    );
-
-    if (state.ssj) {
-      screenFlash("#fff1a8", 0.55);
-    }
-  }
-
-  /* =========================================================
-     SYSTEM WINDOW
-     ========================================================= */
-
-  function systemProgress() {
-    const bar =
-      system.querySelector(
-        ".pw-sys-bar span"
-      );
-
-    const number =
-      system.querySelector(
-        ".pw-sys-n"
-      );
-
-    let start = 0;
-
-    function update(now) {
-      if (!start) start = now;
-
-      const p = Math.min(
-        1,
-        (now - start) / 1200
-      );
-
-      const value =
-        Math.round(p * 100);
-
-      bar.style.width =
-        value + "%";
-
-      number.textContent =
-        value + "%";
-
-      if (p < 1) {
-        requestAnimationFrame(update);
-      }
-    }
-
-    requestAnimationFrame(update);
-  }
-
-  /* =========================================================
-     ARISE
-     ========================================================= */
-
-  function arise() {
-    if (state.busy) return;
-
-    state.busy = true;
-
-    shadow.classList.add("on");
-    bars.classList.add("on");
-    seal.classList.add("on");
-    system.classList.add("on");
-
-    systemProgress();
-
-    root.classList.add(
-      "pw-neg",
-      "pw-neg-violet"
-    );
-
-    screenFlash("#cbb8ff", 0.45);
-
-    later(450, () => {
-      root.classList.remove(
-        "pw-neg",
-        "pw-neg-violet"
-      );
-    });
-
-    later(650, () => {
-      title.classList.add("on");
-    });
-
-    animate(
-      reducedMotion ? 200 : 2400,
-
-      (p, now) => {
-        ctx.save();
-
-        ctx.globalCompositeOperation =
-          "lighter";
-
-        const baseY =
-          H * 0.92;
-
-        for (let i = 0; i < 34; i++) {
-          const phase =
-            i * 0.47;
-
-          const x =
-            W *
-            (0.05 +
-              ((i * 0.071) % 0.9));
-
-          const height =
-            20 +
-            150 *
-              Math.max(
-                0,
-                Math.sin(
-                  p * Math.PI -
-                    phase * 0.08
-                )
-              );
-
-          const wobble =
-            Math.sin(
-              now / 180 + i
-            ) * 5;
-
-          ctx.strokeStyle =
-            `rgba(145,90,255,${
-              0.18 +
-              p * 0.45
-            })`;
-
-          ctx.lineWidth =
-            2 + (i % 3);
-
-          ctx.beginPath();
-
-          ctx.moveTo(
-            x,
-            baseY
-          );
-
-          ctx.lineTo(
-            x + wobble,
-            baseY - height
-          );
-
-          ctx.stroke();
-        }
-
-        const gradient =
-          ctx.createRadialGradient(
-            W / 2,
-            H * 0.88,
-            0,
-            W / 2,
-            H * 0.88,
-            Math.min(W, H) * 0.45
-          );
-
-        gradient.addColorStop(
-          0,
-          `rgba(130,60,255,${
-            0.35 * p
-          })`
-        );
-
-        gradient.addColorStop(
-          1,
-          "rgba(80,20,180,0)"
-        );
-
-        ctx.fillStyle = gradient;
-
-        ctx.fillRect(
-          0,
-          0,
-          W,
-          H
-        );
-
-        ctx.restore();
-      },
-
-      () => {}
-    );
-
-    later(3000, () => {
-      system.classList.remove("on");
-    });
-
-    later(3600, () => {
-      title.classList.remove("on");
-      bars.classList.remove("on");
-      seal.classList.remove("on");
-
-      shadow.classList.add("thin");
-    });
-
-    later(4300, () => {
-      shadow.classList.remove(
-        "on",
-        "thin"
-      );
-
-      clearCanvas();
-      state.busy = false;
-    });
-  }
-
-  /* =========================================================
-     POWER DOCK
-     ========================================================= */
-
-  const dock = make("aside", "pw-dock");
-
-  dock.setAttribute(
-    "aria-label",
-    "Anime powers"
-  );
-
-  const toggle =
-    document.createElement("button");
-
-  toggle.type = "button";
-  toggle.className = "pw-toggle";
-
-  toggle.setAttribute(
-    "aria-label",
-    "Open powers"
-  );
-
-  toggle.setAttribute(
-    "aria-expanded",
-    "false"
-  );
-
-  toggle.innerHTML =
-    "<span>⚡</span>";
-
-  dock.appendChild(toggle);
-
-  const list =
-    document.createElement("div");
-
-  list.className = "pw-list";
-
-  dock.appendChild(list);
-
-  const powers = [
-    {
-      id: "chidori",
-      icon: "雷",
-      title: "Chidori",
-      sub: "Lightning Blade",
-      color: "#59c8ff"
-    },
-
-    {
-      id: "wind",
-      icon: "風",
-      title: "Wind",
-      sub: "Gale Mode",
-      color: "#7fe7cf"
-    },
-
-    {
-      id: "kame",
-      icon: "波",
-      title: "Kamehameha",
-      sub: "Energy Wave",
-      color: "#4ba4ff"
-    },
-
-    {
-      id: "ssj",
-      icon: "超",
-      title: "Super Saiyan",
-      sub: "Golden Aura",
-      color: "#ffd35a"
-    },
-
-    {
-      id: "arise",
-      icon: "影",
-      title: "Arise",
-      sub: "Shadow Monarch",
-      color: "#9a6bff"
-    }
-  ];
-
-  const buttons = {};
-
-  powers.forEach((power, index) => {
-    const button =
-      document.createElement("button");
-
-    button.type = "button";
-
-    button.className =
-      "pw-item";
-
-    button.style.setProperty(
-      "--pw-c",
-      power.color
-    );
-
-    button.style.setProperty(
-      "--i",
-      index
-    );
-
-    button.dataset.power =
-      power.id;
-
-    button.setAttribute(
-      "aria-pressed",
-      "false"
-    );
-
-    button.innerHTML = `
-      <b>${power.icon}</b>
-
-      <span>
-        ${power.title}
-
-        <small>
-          ${power.sub}
-        </small>
-      </span>
-    `;
-
-    list.appendChild(button);
-
-    buttons[power.id] =
-      button;
-  });
-
-  toggle.addEventListener(
-    "click",
-    () => {
-      state.open =
-        !state.open;
-
-      dock.classList.toggle(
-        "open",
-        state.open
-      );
-
-      toggle.setAttribute(
-        "aria-expanded",
-        String(state.open)
-      );
-    }
-  );
-
-  list.addEventListener(
-    "click",
-    (event) => {
-      const button =
-        event.target.closest(
-          ".pw-item"
-        );
-
-      if (!button) return;
-
-      const power =
-        button.dataset.power;
-
-      switch (power) {
-        case "chidori":
-          chidori();
-          break;
-
-        case "wind":
-          toggleWind(button);
-          break;
-
-        case "kame":
-          kamehameha();
-          break;
-
-        case "ssj":
-          toggleSaiyan(button);
-          break;
-
-        case "arise":
-          arise();
-          break;
-      }
-    }
-  );
-
-  window.addEventListener(
-    "keydown",
-    event => {
-      if (event.key !== "Escape")
-        return;
-
-      state.open = false;
-
-      dock.classList.remove("open");
-
-      toggle.setAttribute(
-        "aria-expanded",
-        "false"
-      );
-    }
-  );
-
-  /* =========================================================
-     OPTIONAL GLOBAL API
-     ========================================================= */
-
-  window.XIRAIYA_POWERS = {
-    chidori,
-    kamehameha,
-    arise,
-
-    wind(on) {
-      if (
-        typeof on === "boolean" &&
-        on !== state.wind
-      ) {
-        toggleWind(buttons.wind);
-      }
-    },
-
-    superSaiyan(on) {
-      if (
-        typeof on === "boolean" &&
-        on !== state.ssj
-      ) {
-        toggleSaiyan(buttons.ssj);
-      }
-    }
-  };
-})();
+/* =====================================================================
+XIRAIYA — power dock: Chidori, Wind, Kamehameha, Super Saiyan, Arise.
+Loaded by assets/js/powers.js on every page.
+===================================================================== */
+
+/* ---------- dock ---------- */
+.pw-dock { position: fixed; right: 14px; top: 50%; z-index: 140; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; transform: translateY(-50%); font-family: var(--font-body, system-ui, sans-serif); pointer-events: none; }
+.pw-toggle { pointer-events: auto; }
+.pw-toggle {
+position: relative; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+background: radial-gradient(circle at 35% 30%, #3a2a55, #0d0a14 70%); color: #fff3dd;
+border: 2px solid #8fd3ff; box-shadow: 0 0 0 3px rgba(10, 8, 20, .55), 0 0 22px rgba(90, 170, 255, .55), 0 14px 30px -12px rgba(0, 0, 0, .7);
+font: 800 24px/1 var(--font-jp, serif); -webkit-tap-highlight-color: transparent; transition: transform .35s cubic-bezier(.34, 1.56, .64, 1);
+}
+.pw-toggle::before { content: ''; position: absolute; inset: -7px; border-radius: 50%; border: 1.5px dashed rgba(143, 211, 255, .6); animation: pwSpin 9s linear infinite; }
+.pw-toggle::after { content: 'POWERS'; position: absolute; top: 100%; margin-top: 6px; font: 700 9px/1 var(--font-mono, monospace); letter-spacing: .18em; color: #8fd3ff; text-shadow: 0 1px 2px #000; }
+.pw-toggle { transform: scale(1.07) rotate(-6deg); }
+.pw-toggle, .pw-item, .pw-arise-btn { outline: 3px solid #ffd35a; outline-offset: 3px; }
+.pw-toggle span { display: block; transition: transform .45s cubic-bezier(.34, 1.56, .64, 1); }
+.pw-dock.open .pw-toggle span { transform: rotate(180deg) scale(.9); }
+.pw-list { display: grid; gap: 8px; justify-items: end; pointer-events: none; }
+.pw-dock.open .pw-list { pointer-events: auto; }
+.pw-item {
+display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 5px 16px 5px 5px; border-radius: 999px; cursor: pointer;
+background: rgba(12, 9, 18, .92); color: #f5ecd8; border: 1.5px solid var(--pw-c, #8fd3ff);
+box-shadow: 0 0 16px -4px var(--pw-c, #8fd3ff), 0 10px 24px -12px rgba(0, 0, 0, .8);
+font: 700 13.5px/1.1 var(--font-body, sans-serif); text-align: left; -webkit-tap-highlight-color: transparent;
+opacity: 0; transform: translateX(24px) scale(.9); pointer-events: none; visibility: hidden;
+transition: opacity .3s, transform .45s cubic-bezier(.34, 1.56, .64, 1), visibility 0s .45s, filter .2s;
+}
+.pw-dock.open .pw-item { opacity: 1; transform: none; pointer-events: auto; visibility: visible; transition-delay: calc(var(--i) * 45ms), calc(var(--i) * 45ms), 0s, 0s; }
+.pw-item { filter: brightness(1.25); }
+.pw-item.pw-ready { animation: pwAriseBeat 1.8s ease-in-out infinite; }
+.pw-item[disabled] { opacity: .45 !important; cursor: not-allowed; filter: grayscale(.6); }
+.pw-item b { width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--pw-c, #8fd3ff); color: #0d0a14; font: 800 17px/1 var(--font-jp, serif); }
+.pw-item small { display: block; margin-top: 2px; font: 500 10.5px/1 var(--font-mono, monospace); letter-spacing: .06em; color: rgba(245, 236, 216, .65); }
+.pw-item[aria-pressed="true"] { background: var(--pw-c); color: #140d02; }
+.pw-item[aria-pressed="true"] small { color: rgba(20, 13, 2, .7); }
+.pw-item[aria-pressed="true"] b { background: #140d02; color: var(--pw-c); }
+.pw-mute { min-height: 36px; padding: 5px 12px; font-size: 11.5px; --pw-c: #6b6480; }
+.pw-busy .pw-item(.pw-mute) { filter: grayscale(.7) brightness(.7); pointer-events: none; }
+
+html.pw-neg body > *(.pw-canvas)(.pw-glow)(.pw-bloom)(.pw-light)(.pw-sfx)(.pw-flash)(.pw-ink)(.pw-dock) { filter: invert(1) grayscale(1) contrast(3); }
+html.pw-neg.pw-neg-violet body > *(.pw-canvas)(.pw-glow)(.pw-bloom)(.pw-light)(.pw-sfx)(.pw-flash)(.pw-ink)(.pw-dock) { filter: invert(1) grayscale(1) contrast(3) sepia(1) hue-rotate(215deg) saturate(4); }
+html.pw-neg.pw-neg-gold body > (.pw-canvas)(.pw-glow)(.pw-bloom)(.pw-light)(.pw-sfx)(.pw-flash)(.pw-ink)(.pw-dock) { filter: invert(1) grayscale(1) contrast(3) sepia(1) saturate(5); }
+/ the drop's freeze frame: one held black-and-white negative, effects included, with no bloom /
+html.pw-mono .pw-canvas, html.pw-mono .pw-light { filter: grayscale(1) contrast(1.25); }
+html.pw-mono .pw-glow, html.pw-mono .pw-bloom { opacity: 0; }
+html.pw-mono .pw-bars::before, html.pw-mono .pw-bars::after { background: #fff; }   / inverted with the page, so the bars stay black */
+
+main
+.pw-dim { position: fixed; inset: 0; z-index: 580; pointer-events: none; opacity: 0; transition: opacity .5s; background: radial-gradient(ellipse at var(--px, 50%) var(--py, 60%), rgba(20, 40, 90, .25), rgba(3, 5, 14, .86) 70%); }
+.pw-dim.on { opacity: 1; }
+.pw-dim.kame { background: radial-gradient(ellipse at var(--px, 50%) var(--py, 60%), rgba(30, 90, 200, .3), rgba(2, 6, 20, .82) 70%); }
+.pw-dim.ssj { background: radial-gradient(ellipse at 50% 100%, rgba(255, 190, 30, .34), rgba(20, 12, 0, .8) 72%); }
+.pw-flash { position: fixed; inset: 0; z-index: 610; pointer-events: none; background: #fff; opacity: 0; }
+.pw-sfx {
+position: fixed; z-index: 605; pointer-events: none; white-space: nowrap; transform: translate(-50%, -50%);
+font: 800 clamp(40px, 9vw, 120px)/1 var(--font-jp, serif); color: #fff; letter-spacing: .02em;
+-webkit-text-stroke: 4px #07060b; paint-order: stroke fill; text-shadow: 5px 5px 0 var(--pw-s, #3aa0ff);
+}
+.pw-sfx.sm { font-size: clamp(22px, 4.2vw, 48px); -webkit-text-stroke-width: 3px; text-shadow: 3px 3px 0 var(--pw-s, #3aa0ff); }
+.pw-sfx.xl { font-size: clamp(56px, 15vw, 210px); }
+.pw-sfx .en { display: block; margin-top: .25em; font: 700 .2em/1 var(--font-mono, monospace); letter-spacing: .4em; -webkit-text-stroke: 0; text-shadow: 0 2px 6px #000; text-align: center; }
+.pw-cracks { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 585; pointer-events: none; }
+.pw-cracks path { stroke-linecap: round; stroke-linejoin: round; }
+.pw-crack-glow { filter: drop-shadow(0 0 3px #4aa8ff) drop-shadow(0 0 8px rgba(74,168,255,.6)); }
+.pw-shard { z-index: 586; overflow: visible; }
+@media (max-width: 760px) { .pw-crack-glow { filter: none; } }
+
+/* ---------- destroyed page ---------- */
+html.pw-locked, html.pw-locked body { overscroll-behavior: none; }
+.pw-ruin {
+position: fixed; inset: 0; z-index: 575; pointer-events: none; opacity: 0; transition: opacity 1.2s;
+background:
+radial-gradient(ellipse at var(--px, 50%) var(--py, 60%), rgba(120, 180, 255, .16), transparent 34%),
+radial-gradient(ellipse at 50% 120%, rgba(255, 90, 30, .22), transparent 55%),
+linear-gradient(rgba(6, 5, 10, .55), rgba(6, 5, 10, .78));
+}
+.pw-ruin.on { opacity: 1; }
+.pw-ruin-cta {
+position: fixed; left: 50%; top: 42%; z-index: 600; display: grid; justify-items: center; gap: 14px; width: min(92vw, 460px);
+transform: translate(-50%, -50%); text-align: center; color: #efe4cc; opacity: 0; transition: opacity .8s .3s, transform .8s .3s cubic-bezier(.16, 1, .3, 1);
+}
+.pw-ruin-cta.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.pw-ruin-cta p { margin: 0; font: 600 15px/1.5 var(--font-body, sans-serif); text-shadow: 0 2px 10px #000; }
+.pw-ruin-cta .k { font: 700 11px/1 var(--font-mono, monospace); letter-spacing: .3em; color: #8fd3ff; text-transform: uppercase; }
+.pw-arise-btn {
+position: relative; min-width: 220px; min-height: 64px; padding: 0 34px; border-radius: 6px; cursor: pointer;
+background: linear-gradient(180deg, #2a1650, #0c0618); color: #e8dcff; border: 2px solid #9a6bff;
+font: 800 30px/1 var(--font-display, serif); letter-spacing: .32em; text-indent: .32em;
+box-shadow: 0 0 30px rgba(140, 90, 255, .6), inset 0 0 20px rgba(140, 90, 255, .35); animation: pwAriseBeat 1.8s ease-in-out infinite;
+}
+.pw-arise-btn small { display: block; margin-top: 6px; font: 600 11px/1 var(--font-mono, monospace); letter-spacing: .2em; text-indent: 0; color: #b99cff; }
+.pw-hint { font: 500 11.5px/1 var(--font-mono, monospace); color: rgba(239, 228, 204, .6); }
+
+/* ---------- arise ---------- */
+.pw-shadow { position: fixed; inset: 0; z-index: 582; pointer-events: none; opacity: 0; transition: opacity .7s;
+background: radial-gradient(ellipse at 50% 100%, rgba(110, 50, 230, .45), transparent 60%), radial-gradient(ellipse at 50% 45%, transparent 20%, rgba(4, 2, 10, .92) 75%); }
+.pw-shadow.on { opacity: 1; }
+.pw-shadow.thin { opacity: .55; }
+.pw-seal { position: fixed; left: 50%; bottom: -12vmin; z-index: 586; width: 90vmin; height: 90vmin; margin-left: -45vmin; pointer-events: none; opacity: 0; transform: perspective(700px) rotateX(68deg) scale(.4); transition: opacity .6s, transform 1.4s cubic-bezier(.16, 1, .3, 1); }
+.pw-seal.on { opacity: .9; transform: perspective(700px) rotateX(68deg) scale(1); }
+.pw-seal svg { width: 100%; height: 100%; animation: pwSpin 7s linear infinite; filter: drop-shadow(0 0 10px #9a6bff); }
+.pw-arise-word { --pw-s: #6a2cff; color: #ece2ff; letter-spacing: .12em; animation: pwGlitch .18s steps(2) infinite; }
+.pw-arise-word .en { color: #b99cff; }
+
+/* ---------- wind ---------- */
+html.pw-windy main h1, html.pw-windy main h2, html.pw-windy main h3,
+html.pw-windy main img, html.pw-windy main .btn, html.pw-windy main .card, html.pw-windy .hero-mascot {
+animation: pwSway 1.1s ease-in-out infinite alternate; animation-delay: calc(var(--pw-d, 0) * 1s);
+}
+html.pw-windy main p { animation: pwSway 1.4s ease-in-out infinite alternate; }
+
+/* ---------- super saiyan ---------- */
+html.pw-ssj { --red: #e3a000; --red-2: #ffc83a; --red-deep: #9a6700; --grad: linear-gradient(100deg, #ff9f00, #ffe066 55%, #ffb300); --grad-warm: linear-gradient(115deg, #ffe066, #ff9f00); }
+html.pw-ssj h1, html.pw-ssj .hero-name, html.pw-ssj .page-hero h1 { text-shadow: 0 0 18px rgba(255, 200, 40, .55), 0 0 42px rgba(255, 150, 0, .3); }
+html.pw-ssj .m-crown, html.pw-ssj .m-tail, html.pw-ssj .m-lock { filter: sepia(1) saturate(7) hue-rotate(-8deg) brightness(1.25) drop-shadow(0 0 6px rgba(255, 210, 60, .9)); }
+html.pw-ssj .hero-mascot img, html.pw-ssj .hero-mascot svg { filter: drop-shadow(0 0 14px rgba(255, 205, 50, .85)) drop-shadow(0 0 40px rgba(255, 160, 0, .45)); }
+html.pw-ssj .pw-toggle { border-color: #ffd35a; box-shadow: 0 0 0 3px rgba(10, 8, 20, .55), 0 0 26px rgba(255, 200, 40, .8); }
+.pw-aura { position: fixed; inset: 0; z-index: 70; pointer-events: none; opacity: 0; transition: opacity 1s;
+box-shadow: inset 0 0 70px rgba(255, 196, 30, .38), inset 0 0 160px rgba(255, 150, 0, .16); animation: pwAura 1.6s ease-in-out infinite alternate; }
+.pw-aura.on { opacity: 1; }
+.pw-aura::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 36vh;
+background:
+radial-gradient(ellipse 6% 60% at 10% 100%, rgba(255, 220, 90, .5), transparent 70%),
+radial-gradient(ellipse 5% 70% at 30% 100%, rgba(255, 190, 40, .45), transparent 70%),
+radial-gradient(ellipse 7% 55% at 52% 100%, rgba(255, 230, 120, .45), transparent 70%),
+radial-gradient(ellipse 5% 75% at 73% 100%, rgba(255, 180, 30, .45), transparent 70%),
+radial-gradient(ellipse 6% 60% at 92% 100%, rgba(255, 215, 80, .5), transparent 70%);
+animation: pwFlame .5s steps(3) infinite alternate; transform-origin: bottom; }
+.pw-aura::after { content: ''; position: absolute; inset: 0; opacity: 0;
+background: no-repeat url("data/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 120'%3E%3Cpath d='M34 0 14 52h14L10 120 50 44H34L46 0Z' fill='%23fff6c8' stroke='%23ffd13a' stroke-width='2'/%3E%3C/svg%3E");
+background-size: 34px 68px; animation: pwSpark 2.6s steps(1) infinite; }
+
+@keyframes pwSpin { to { transform: rotate(360deg); } }
+@keyframes pwAriseBeat { 50% { box-shadow: 0 0 50px rgba(140, 90, 255, .9), inset 0 0 26px rgba(140, 90, 255, .5); } }
+@keyframes pwGlitch { 0% { text-shadow: 4px 0 0 #6a2cff, -4px 0 0 #1ad6ff; } 100% { text-shadow: -3px 1px 0 #6a2cff, 3px -1px 0 #1ad6ff; } }
+@keyframes pwSway { from { translate: -2px 0; rotate: -.6deg; } to { translate: 5px -1px; rotate: .8deg; } }
+@keyframes pwAura { to { box-shadow: inset 0 0 100px rgba(255, 200, 40, .5), inset 0 0 220px rgba(255, 150, 0, .22); } }
+@keyframes pwFlame { from { transform: scaleY(.85) skewX(-2deg); } to { transform: scaleY(1.12) skewX(2deg); } }
+@keyframes pwSpark {
+0%, 100% { opacity: 0; }
+8% { opacity: 1; background-position: 6% 72%; }
+12% { opacity: 0; }
+40% { opacity: 1; background-position: 94% 40%; }
+44% { opacity: 0; }
+70% { opacity: 1; background-position: 20% 18%; }
+73% { opacity: 0; }
+}
+
+@media (max-width: 760px) {
+.pw-glow { filter: blur(8px) saturate(1.4) brightness(1.4); }
+.pw-dock { right: 10px; top: auto; transform: none; bottom: calc(var(--tabbar-h, 0px) + env(safe-area-inset-bottom, 0px) + 26px); max-height: calc(100vh - 120px); }
+.pw-toggle { width: 42px; height: 42px; font-size: 18px; }
+.pw-toggle::after { font-size: 8px; margin-top: 5px; }
+.pw-item { font-size: 13px; }
+.pw-aura { box-shadow: inset 0 0 40px rgba(255, 196, 30, .38); }
+}
+@media (prefers-reduced-motion: reduce) {
+.pw-toggle::before, .pw-seal svg, .pw-arise-word, .pw-arise-btn, .pw-aura, .pw-aura::before, .pw-aura::after { animation: none; }
+html.pw-windy * { animation: none !important; }
+}
+@media print { .pw-dock, .pw-aura { display: none; } }
+
+/* ---------- Solo Leveling style System window ---------- */
+.pw-sys {
+position: fixed; left: 50%; top: max(84px, 12vh); z-index: 606; width: min(90vw, 400px); padding: 14px 18px 16px;
+transform: translateX(-50%) scaleY(.02); opacity: 0; transform-origin: center;
+background: linear-gradient(180deg, rgba(8, 22, 44, .9), rgba(4, 12, 28, .92)); color: #d8f1ff;
+border: 1px solid #5fd0ff; border-radius: 4px;
+box-shadow: 0 0 0 1px rgba(95, 208, 255, .25), 0 0 24px rgba(60, 170, 255, .55), inset 0 0 22px rgba(60, 170, 255, .25);
+font: 500 13.5px/1.55 var(--font-mono, ui-monospace, monospace); letter-spacing: .02em; text-shadow: 0 0 8px rgba(95, 208, 255, .6);
+transition: transform .45s cubic-bezier(.16, 1, .3, 1), opacity .25s;
+}
+.pw-sys.on { transform: translateX(-50%) scaleY(1); opacity: 1; }
+.pw-sys::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(95, 208, 255, .06) 0 1px, transparent 1px 3px); }
+.pw-sys-h { display: flex; align-items: center; gap: 10px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid rgba(95, 208, 255, .45); }
+.pw-sys-h i { width: 22px; height: 22px; display: grid; place-items: center; border: 1.5px solid #5fd0ff; border-radius: 50%; font: 800 13px/1 var(--font-mono, monospace); font-style: normal; }
+.pw-sys-h b { font-weight: 700; letter-spacing: .3em; }
+.pw-sys p { margin: 0; }
+.pw-sys em { font-style: normal; color: #fff; font-weight: 700; }
+.pw-sys-bar { height: 6px; margin-top: 10px; border: 1px solid rgba(95, 208, 255, .6); border-radius: 3px; overflow: hidden; }
+.pw-sys-bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #3aa0ff, #b98cff); box-shadow: 0 0 10px #5fd0ff; }
+.pw-sys-n { margin-top: 4px; text-align: right; font-size: 11.5px; opacity: .8; }
+@media (prefers-reduced-motion: reduce) { .pw-sys { transition: opacity .2s; } }
+@media (max-width: 760px) { .pw-sys { top: auto; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); font-size: 12.5px; } }
+
+/* ---------- cinematic tools ---------- */
+.pw-bars { position: fixed; inset: 0; z-index: 603; pointer-events: none; }
+.pw-bars::before, .pw-bars::after { content: ''; position: absolute; left: 0; right: 0; height: 9vh; background: #000; transition: transform .6s cubic-bezier(.7, 0, .2, 1); }
+.pw-bars::before { top: 0; transform: translateY(-100%); }
+.pw-bars::after { bottom: 0; transform: translateY(100%); }
+.pw-bars.on::before, .pw-bars.on::after { transform: none; }
+html.pw-chroma body > main, html.pw-chroma body > .site-header, html.pw-chroma body > footer { filter: drop-shadow(5px 0 0 rgba(255, 0, 70, .55)) drop-shadow(-5px 0 0 rgba(0, 220, 255, .55)); }
+@media (max-width: 760px) { .pw-bars::before, .pw-bars::after { height: 7vh; } }
+
+/* Arise: the closing title card and the skip button /
+.pw-title { position: fixed; left: 0; top: 42%; z-index: 600; width: 100vw; padding: 7vh 0; transform: translateY(-50%); text-align: center; color: #efe6ff; pointer-events: none; opacity: 0; transition: opacity .9s; }
+.pw-title.on { opacity: 1; }
+/ a dark band behind the card so it reads over the page as it wakes /
+.pw-title::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(60% 50% at 50% 50%, rgba(6, 2, 16, .82), rgba(6, 2, 16, .55) 55%, transparent 80%); }
+.pw-title small { display: block; font: 600 13px/1 var(--font-jp, serif); letter-spacing: .5em; text-indent: .5em; color: #b99cff; opacity: 0; transform: translateY(8px); transition: opacity .8s .2s, transform .8s .2s; }
+.pw-title b { display: block; margin: 16px 0 14px; font: 800 clamp(30px, 6.2vw, 86px)/1 var(--font-display, serif); letter-spacing: .6em; text-indent: .6em; white-space: nowrap; color: #f6f1ff;
+text-shadow: 0 0 22px rgba(150, 90, 255, .95), 0 0 64px rgba(110, 50, 255, .65); clip-path: inset(0 50% 0 50%); transition: clip-path 1.1s cubic-bezier(.16, 1, .3, 1) .1s, letter-spacing 2.6s cubic-bezier(.16, 1, .3, 1), text-indent 2.6s cubic-bezier(.16, 1, .3, 1); }
+.pw-title i { display: block; width: 0; height: 1px; margin: 0 auto 16px; background: linear-gradient(90deg, transparent, #b99cff, transparent); transition: width 1.4s cubic-bezier(.16, 1, .3, 1) .5s; }
+.pw-title span { display: block; font: 600 12px/1.6 var(--font-mono, monospace); letter-spacing: .3em; text-transform: uppercase; color: #8fd3ff; opacity: 0; transition: opacity .9s 1s; }
+.pw-title em { font-style: normal; color: #fff; }
+.pw-title.on small, .pw-title.on span { opacity: 1; transform: none; }
+.pw-title.on b { clip-path: inset(0 0 0 0); letter-spacing: .22em; text-indent: .22em; }
+.pw-title.on i { width: min(520px, 70vw); }
+.pw-skip { position: fixed; right: 20px; bottom: 20px; z-index: 601; padding: 10px 18px; border: 1px solid rgba(185, 156, 255, .5); border-radius: 99px; background: rgba(12, 6, 24, .72); color: #e6dcff; font: 600 12px/1 var(--font-mono, monospace); letter-spacing: .22em; text-transform: uppercase; cursor: pointer; opacity: 0; transition: opacity .5s, background .2s; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.pw-skip.on { opacity: 1; }
+.pw-skip, .pw-skip { background: rgba(110, 50, 255, .55); outline: none; box-shadow: 0 0 0 2px #b99cff; }
+@media (max-width: 760px) {
+.pw-title b { letter-spacing: .3em; text-indent: .3em; }
+.pw-title.on b { letter-spacing: .1em; text-indent: .1em; }
+.pw-title small, .pw-title span { letter-spacing: .2em; font-size: 11px; }
+.pw-skip { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); right: 14px; }
+}
+/ the huge faint 影 behind the title card */
+.pw-title-k { position: absolute; left: 50%; top: 50%; z-index: -1; transform: translate(-50%, -50%) scale(1.25); font: 900 min(58vh, 70vw)/1 var(--font-jp, serif); color: rgba(150, 90, 255, .13); text-decoration: none; opacity: 0; transition: opacity 1.2s, transform 3.2s cubic-bezier(.16, 1, .3, 1); }
+.pw-title.on .pw-title-k { opacity: 1; transform: translate(-50%, -50%) scale(1); }
