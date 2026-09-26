@@ -98,20 +98,23 @@
         .catch(function () { return null; });
     });
   }
-  /* play a clip some ms from now; a looping clip runs until stopClip(name) */
+  /* play a clip some ms from now, or cut in `off` seconds into it; a looping clip runs until stopClip(name) */
   function clipDur(name) { return durs[name] || 0; }
-  function clip(name, ms, loop, gain, keep) {
+  function clip(name, ms, loop, gain, keep, off) {
     var a = audio();
     if (!a || !sfxMap()[name]) return;
     preload();
     var at = a.currentTime + (ms || 0) / 1000;
     clips[name].then(function (buf) {
       if (!buf || muted) return;
-      if (ms && a.currentTime - at > .5) return;   /* decoded too late to land on its beat */
-      var src = a.createBufferSource(), g = a.createGain();
-      src.buffer = buf; src.loop = !!loop; g.gain.value = gain == null ? 1 : gain;
+      var late = Math.max(0, a.currentTime - at);
+      if ((ms || off) && late > .5) return;   /* decoded too late to land on its beat */
+      var src = a.createBufferSource(), g = a.createGain(), gv = gain == null ? 1 : gain, t0 = Math.max(a.currentTime, at);
+      src.buffer = buf; src.loop = !!loop; g.gain.value = gv;
       src.connect(g); g.connect(master);
-      src.start(Math.max(a.currentTime, at));
+      /* a cut-in starts as far in again as it decoded late, so its beats still land, and ramps up so it never clicks */
+      if (off) { g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(gv, t0 + .012); src.start(t0, off + late); }
+      else src.start(t0);
       if (loop || keep) { stopClip(name, 0); loops[name] = { s: src, g: g }; }
     });
   }
@@ -269,6 +272,17 @@
     }
     c.fill(); c.globalAlpha = 1;
   }
+  /* manga speed lines: parallel streaks trailing along the line of action, bunched around it */
+  function speedLines(c, x, y, ang, color, n, alpha, rnd) {
+    var R = Math.hypot(W, H), rr = rnd || Math.random, ca = Math.cos(ang), sa = Math.sin(ang);
+    c.fillStyle = color; c.globalAlpha = alpha; c.beginPath();
+    for (var i = 0; i < n; i++) {
+      var u = rr() * 2 - 1, off = u * u * u * H * .9 + u * 24, b0 = -R * .1 + rr() * R * .2, b1 = b0 + R * (.2 + rr() * .5), th = .6 + rr() * 2.4;
+      var px = x - sa * off, py = y + ca * off, ax = px - ca * b0, ay = py - sa * b0;
+      c.moveTo(ax - sa * th, ay + ca * th); c.lineTo(ax + sa * th, ay - ca * th); c.lineTo(px - ca * b1, py - sa * b1);
+    }
+    c.fill(); c.globalAlpha = 1;
+  }
   /* ---------- shockwave rings ---------- */
   function shockwave(x, y, color, max, ms) {
     layer(function (c, t) {
@@ -377,10 +391,10 @@
       t.animate(frames, { duration: ms, easing: 'linear', composite: 'add' }).finished.then(done, done);
     });
   }
-  /* cinematic letterbox bars */
+  /* cinematic letterbox bars; fast ones slam in */
   var bars = null;
-  function letterbox(onOff) {
-    if (onOff) { if (!bars) { bars = overlay('pw-bars'); on(bars); } }
+  function letterbox(onOff, fast) {
+    if (onOff) { if (!bars) { bars = overlay('pw-bars' + (fast ? ' fast' : '')); on(bars); } }
     else if (bars) { drop(bars, 600); bars = null; }
   }
   /* hit-stop: the whole world freezes for a few frames on impact */
@@ -553,6 +567,39 @@
       setTimeout(step, ms);
     })();
   }
+  /* a broken-signal glitch: the page jumps sideways in held frames while bands of the effect
+     canvas tear loose and slide, the way a TV drops the picture for a moment */
+  function glitch(ms, power) {
+    if (reduce) return;
+    var n = Math.max(2, Math.round(ms / CEL)), kf = [], hh = vh(), bands = [], sum = 0;
+    for (var i = 0; i < n; i++) kf.push({ transform: 'translate(' + (rand(-1, 1) * 14 * power * (1 - i / n)).toFixed(1) + 'px,0px)', easing: 'steps(1, end)' });
+    kf.push({ transform: 'translate(0px,0px)' });
+    shakeTargets().forEach(function (t) { t.animate(kf, { duration: ms, composite: 'add' }); });
+    while (sum < hh * (phone ? .16 : .24)) { var bh = rand(8, phone ? 30 : 56); bands.push({ y: rand(0, hh - bh), h: bh, dx: rand(-1, 1) * 40 * power }); sum += bh; }
+    layer(function (c, t) {
+      if (t > ms) return false;
+      /* the bands are redrawn once, halfway: torn on twos, not smeared */
+      if (t > ms / 2 && !bands.re) { bands.re = 1; bands.forEach(function (b) { b.dx *= -.6; b.y = rand(0, hh - b.h); }); }
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      bands.forEach(function (b) { c.drawImage(cv, 0, b.y * DPR, cv.width, b.h * DPR, b.dx * DPR, b.y * DPR, cv.width, b.h * DPR); });
+    });
+  }
+  /* TV static: a grey noise tile, drawn once, jumping about on every drawing */
+  var noiseUrl = null;
+  function staticBurst(ms, a) {
+    if (reduce) return;
+    if (!noiseUrl) {
+      var s = document.createElement('canvas'), x = s.getContext('2d'), d;
+      s.width = s.height = 128; d = x.createImageData(128, 128);
+      for (var i = 0; i < d.data.length; i += 4) { var v = Math.random() * 255 | 0; d.data[i] = d.data[i + 1] = v; d.data[i + 2] = Math.min(255, v * 1.15); d.data[i + 3] = 255; }
+      x.putImageData(d, 0, 0); noiseUrl = 'url(' + s.toDataURL() + ')';
+    }
+    var o = overlay('pw-static'), n = Math.max(2, Math.round(ms / CEL)), kf = [];
+    o.style.backgroundImage = noiseUrl;
+    for (i = 0; i < n; i++) kf.push({ backgroundPosition: (rand(0, 128) | 0) + 'px ' + (rand(0, 128) | 0) + 'px', opacity: a * (i % 2 ? .7 : 1), easing: 'steps(1, end)' });
+    kf.push({ backgroundPosition: '0px 0px', opacity: 0 });
+    o.animate(kf, { duration: ms }).onfinish = function () { o.remove(); };
+  }
 
   /* ==================================================================
      Pieces of the page: visible blocks small enough to fly as one
@@ -568,7 +615,8 @@
   function pieces(max) {
     var outl = [], w = vw(), h = vh(), area = w * h;
     function walk(n) {
-      if (outl.length >= max || n.nodeType !== 1 || SKIP.test(n.tagName.toUpperCase()) || isOurs(n)) return;
+      /* a piece the charge already tore off is flying on its own */
+      if (outl.length >= max || n.nodeType !== 1 || n.__pwTorn || SKIP.test(n.tagName.toUpperCase()) || isOurs(n)) return;
       var cs = getComputedStyle(n);
       if (cs.display === 'none' || cs.visibility === 'hidden') return;
       if (cs.display === 'contents') { kids(n); return; }
@@ -616,67 +664,132 @@
     setBusy(true); closeDock();
     var w = vw(), h = vh(), floor = h * .93;
     var sx = w * (phone ? .22 : .16), sy = h * .8, ex = w / 2, ey = h * (phone ? .56 : .58);
-    /* timing from the clip (assets/sfx/marks.json): the strike, and the surges
-       (its strongest onsets) where the lightning flares */
-    var DASH = reduce ? 1 : 460, CHARGE = reduce ? 500 : Math.max(900, mark('chidori', 'strike', 1.77) * 1000 - DASH), HIT = CHARGE + DASH;
-    var SURGE = mark('chidori', 'surges', [.84, 1.02, 2.04]).map(function (s) { return s * 1000; }).filter(function (s) { return s < CHARGE - 150; });
-    var BIRTH = SURGE.length ? SURGE[0] : CHARGE * .3;
-    lock(true); letterbox(true);
-    var dim = overlay('pw-dim'); dim.style.setProperty('--px', sx + 'px'); dim.style.setProperty('--py', sy + 'px'); on(dim);
+    /* timing from the clip (assets/sfx/marks.json). The clip is cut in partway, so its strike
+       lands 1.35 s after the click: the orb ignites on the thump, surges on two crackle peaks,
+       holds a wind-up, flash-steps in, strikes, and the clip's low echo stutters the rubble */
+    var STRIKE = mark('chidori', 'strike', 3.3), HIT = reduce ? 501 : Math.round(Math.min(1350, STRIKE * 1000));
+    var OFF = reduce ? 0 : Math.max(0, STRIKE - HIT / 1000), DASH = reduce ? 1 : 260, WIND = reduce ? 0 : 120, CHARGE = HIT - DASH;
+    function cue(s) { return Math.round((s - OFF) * 1000); }
+    function inCharge(s) { return s >= 0 && s < CHARGE - WIND - 60; }
+    var IGN = mark('chidori', 'surges', [.84, 1.02, 2.04]).map(cue).filter(inCharge)[0];
+    if (IGN == null) IGN = reduce ? 100 : 90;
+    var ACC = reduce ? [] : mark('chidori', 'crackle', [2.37, 2.7]).map(cue).filter(function (s) { return inCharge(s) && s > IGN + 150; });
+    var ECHO = cue(mark('chidori', 'echo', 3.58)) - HIT;
+    lock(true); letterbox(true, true);
+    var dim = overlay('pw-dim'); dim.style.transition = 'opacity .12s'; dim.style.setProperty('--px', sx + 'px'); dim.style.setProperty('--py', sy + 'px'); on(dim);
     var lit = reduce ? null : pageLight('90,160,255'), spk = sparkField('70,150,255', function () { return floor; });
     layer(function (c, t) { spk.draw(c); return t < HIT + 3200; });
-    camera(sx, sy, 1.09, CHARGE, 'cubic-bezier(.3,0,.2,1)');
-    clip('chidori', 0);
+    /* the camera snaps onto the hand, creeps in faster and faster, then breathes out for the wind-up */
+    camera(sx, sy, 1.12, 120, 'cubic-bezier(.2,.9,.1,1)');
+    later(130, function () { camera(sx, sy, 1.18, Math.max(100, CHARGE - WIND - 130), 'cubic-bezier(.5,0,.9,.4)'); });
+    later(CHARGE - WIND, function () { camera(sx, sy, 1.13, Math.max(1, WIND), 'cubic-bezier(.2,.8,.2,1)'); if (!reduce) lensFlare(ex, ey, '150,200,255', 180, .5); });
+    clip('chidori', 0, false, 1, false, OFF);
 
-    /* things near the hand the lightning can jump to */
-    var near = [];
+    /* things near the hand the lightning can jump to, and the small ones it can tear off */
+    var near = [], cands = [], torn = [];
     Array.prototype.forEach.call(document.querySelectorAll('main h1, main h2, main h3, main .btn, main img, main p, main li, main a, main .card'), function (e) {
       if (near.length >= 30) return;
       var r = e.getBoundingClientRect();
       if (r.width < 10 || r.height < 6 || r.bottom < 0 || r.top > h) return;
       var nx = Math.max(r.left, Math.min(sx, r.right)), ny = Math.max(r.top, Math.min(sy, r.bottom)), d = Math.hypot(nx - sx, ny - sy);
-      if (d > 50 && d < (phone ? 260 : 430)) near.push({ e: e, r: r });
+      if (d > 50 && d < (phone ? 260 : 430)) { near.push({ e: e, r: r, d: d }); if (r.width * r.height < w * h * .025) cands.push(near[near.length - 1]); }
     });
+    cands.sort(function (a, b) { return a.d - b.d; });
     function edgePoint(r) {
       var k = Math.random();
       return k < .25 ? [rand(r.left, r.right), r.top] : k < .5 ? [rand(r.left, r.right), r.bottom] : k < .75 ? [r.left, rand(r.top, r.bottom)] : [r.right, rand(r.top, r.bottom)];
     }
 
-    var flare = 0, lines = null, linesT = 0, ghosts = [], scar = [], jumpT = 0;
+    var flare = 0, lines = null, linesT = 0, ghosts = [], scar = [], zaps = [], jumpT = 0, slamT = -1e9, ox = sx, oy = sy;
     var arcs = [], tend = [];
     for (var i = 0; i < (phone ? 7 : 12); i++) arcs.push({ b: null, until: 0 });
     for (i = 0; i < (phone ? 6 : 11); i++) tend.push({ b: null, until: 0 });
     function surge(k) { flare = Math.max(flare, k); }
-    SURGE.forEach(function (s, n) {
+
+    /* an arc tears a piece off the page: it flares white, then flies away from the hand,
+       and lies in the rubble with the rest for Arise to raise */
+    function tear() {
+      if (reduce) return;
+      var tg = null;
+      while (cands.length && !tg) { var q = cands.shift(); if (!torn.some(function (p) { return p.el.contains(q.e) || q.e.contains(p.el); })) tg = q; }
+      if (!tg) return;
+      var ep = edgePoint(tg.r), f = fling(tg.r, ox, oy, w, h), kf = f.kf;
+      tg.e.__pwTorn = true;
+      zaps.push({ f: flicker(function () { return makeBolt(ox, oy, ep[0], ep[1], 2.2, 2, .15); }, 45), t: performance.now(), life: 140 });
+      spk.burst(ep[0], ep[1], 18, 11);
+      kf.push({ transform: tf(f.v), offset: 1 });
+      if (!phone) {
+        kf.push({ filter: 'brightness(3) drop-shadow(0 0 10px #6ab8ff)', offset: 0 }, { filter: 'brightness(1)', offset: Math.min(.3, 200 / f.dur) }, { filter: 'brightness(.5) saturate(.4)', offset: 1 });
+        kf.sort(function (a, b) { return a.offset - b.offset; });
+      }
+      torn.push({ el: tg.e, a: tg.e.animate(kf, { duration: f.dur, delay: 50, fill: 'both' }), end: tf(f.v), v: f.v, top: tg.r.top, r: tg.r });
+      sfx(pick(['バキッ', 'ガッ', 'バリッ']), ep[0], ep[1] - 30, { cls: 'sm', color: '#2d8cff', life: 600 });
+    }
+
+    /* the ignition: the orb bursts into being on the thump and the title slams in */
+    later(IGN, function () {
+      surge(1.5); slamT = performance.now();
+      flash('#dff1ff', 120, reduce ? .3 : .45); shake(8, 200); staticBurst(90, .18);
+      spk.burst(sx, sy, 12, 10);
+      sfx('千鳥', w / 2, h * (phone ? .24 : .2), { cls: 'xl', en: 'CHIDORI', color: '#2d8cff', life: reduce ? 1500 : 1100, rot: -6 });
+    });
+    /* the crackle peaks: it surges, and an arc rips a piece off the page */
+    ACC.forEach(function (s, n) {
       later(s, function () {
-        surge(n === 0 ? 1.5 : 1.1);
-        flash('#dff1ff', 200, n === 0 ? .35 : .2);
-        shake(n === 0 ? 6 : 4 + n * 2, 320);
-        if (n === 0) sfx('千鳥', w / 2, h * (phone ? .24 : .2), { cls: 'xl', en: 'CHIDORI', color: '#2d8cff', life: 1700, rot: -6 });
-        if (n === 1) sfx('チチチチチ', w * (phone ? .7 : .72), h * .66, { cls: 'sm', color: '#2d8cff', life: 1100 });
-        if (n === 2) sfx('バチバチ', w * (phone ? .28 : .3), h * .42, { cls: 'sm', color: '#2d8cff', life: 900, rot: 8 });
+        surge(1.2 + n * .15); shake(5 + n * 2, 180 + n * 20); staticBurst(70, .12); tear();
+        if (n === 0) sfx('チチチチチ', w * (phone ? .7 : .72), h * .66, { cls: 'sm', color: '#2d8cff', life: 650 });
+        else sfx('バチバチ', w * (phone ? .28 : .3), h * .42, { cls: 'sm', color: '#2d8cff', life: 550, rot: 8 });
       });
     });
-    if (!SURGE.length) later(250, function () { sfx('千鳥', w / 2, h * (phone ? .24 : .2), { cls: 'xl', en: 'CHIDORI', color: '#2d8cff', life: 1500, rot: -6 }); });
+
+    /* the flash-step: two blinks off the line of the run, each a teleport to a held drawing,
+       then a lunge that only accelerates into the hit */
+    var ang = Math.atan2(ey - sy, ex - sx), ll = Math.hypot(ex - sx, ey - sy) || 1, nx0 = -(ey - sy) / ll, ny0 = (ex - sx) / ll;
+    var P = [[sx + (ex - sx) * .34 + nx0 * 38, sy + (ey - sy) * .34 + ny0 * 38], [sx + (ex - sx) * .68 - nx0 * 30, sy + (ey - sy) * .68 - ny0 * 30]];
+    function blinkTo(n, x0, y0, x1, y1, now) {
+      ghosts.push({ x: x0, y: y0, t: now, held: true });
+      zaps.push({ f: flicker(function () { return makeBolt(x0, y0, x1, y1, 1.6, 1, .15); }, 40), t: now, life: 110 });
+      for (var k = 0; k <= 8; k++) scar.push([x0 + (x1 - x0) * k / 8, floor + rand(-3, 3)]);
+      spk.burst(x1, y1, 16, 12); spk.burst(x1, floor, 10, 14, -Math.PI / 2, .7, 3);
+      shake(5 + n * 2, 150); glitch(90, .6 + n * .3); staticBurst(60, .1);
+      /* the nearest thing on the page flinches as it goes past */
+      var jo = null, jd = 320;
+      near.forEach(function (q) { if (q.e.__pwTorn) return; var d = Math.hypot(q.r.left + q.r.width / 2 - x1, q.r.top + q.r.height / 2 - y1); if (d < jd) { jd = d; jo = q; } });
+      if (jo) try { jo.e.animate([{ transform: 'translate(' + rand(-9, 9).toFixed(0) + 'px,' + rand(-7, 3).toFixed(0) + 'px) rotate(' + rand(-3, 3).toFixed(1) + 'deg)', easing: 'steps(1, end)' }, { transform: 'translate(' + rand(-4, 4).toFixed(0) + 'px,0px)', offset: .5, easing: 'steps(1, end)' }, { transform: 'translate(0px,0px)' }], { duration: 160, composite: 'add' }); } catch (er) {}
+      if (!phone) tear();
+      if (n === 0) sfx('シュン', x1, y1 - 50, { cls: 'sm', color: '#8fd0ff', life: 420, rot: -10 });
+    }
+    /* on timers, not on drawn frames, so a dropped frame never skips a blink */
+    if (!reduce) [0, 1].forEach(function (n) {
+      later(CHARGE + (n ? DASH * .3 : 0), function () {
+        var from = n ? P[0] : [sx - 26, sy + 8];
+        ox = P[n][0]; oy = P[n][1];
+        blinkTo(n, from[0], from[1], P[n][0], P[n][1], performance.now());
+      });
+    });
 
     var sprCore = sprite('225,240,255', true), sprHalo = sprite('70,150,255');
     layer(function (c, t, now) {
       if (t > HIT + 420) return false;
       flare *= .93;
-      var p = Math.min(1, t / CHARGE), born = Math.min(1, Math.max(0, (t - BIRTH) / 260)), bornE = 1 - Math.pow(1 - born, 3);
-      /* the dash: a short pull back, then an explosive, slightly arcing run */
-      var dt = t < CHARGE ? -1 : Math.min(1, (t - CHARGE) / DASH), x = sx, y = sy;
-      if (dt >= 0) {
-        if (dt < .2) { var q = dt / .2; x = sx - 22 * (1 - Math.pow(1 - q, 2)); y = sy + 6 * q; }
-        else { var u = (dt - .2) / .8, e = u < .5 ? 16 * u * u * u * u * u : 1 - Math.pow(-2 * u + 2, 5) / 2; x = sx - 22 + (ex - sx + 22) * e; y = sy + 6 + (ey - sy - 6) * e - Math.sin(Math.PI * e) * 46; }
-      }
-      var fl = Math.random() < .25 + p * .4 ? rand(.5, 1) : rand(.8, .95);   /* the strobe quickens as it charges */
-      if (t < HIT) dim.style.opacity = (.8 + Math.random() * .2 * (.3 + p)).toFixed(2);
+      /* it is born with an overshoot, a pop rather than a swell */
+      var p = Math.min(1, t / CHARGE), born = Math.min(1, Math.max(0, (t - IGN) / 110)), bornE = born >= 1 ? 1 : 1 + 2.7 * Math.pow(born - 1, 3) + 1.7 * Math.pow(born - 1, 2);
+      /* the wind-up leans back against the run and holds dead still; then the blinks and the lunge */
+      var x = sx, y = sy, bi = -1, st = 0, dt = t < CHARGE ? -1 : Math.min(1, (t - CHARGE) / DASH), hold = dt < 0 && t >= CHARGE - WIND;
+      if (hold) { var q = Math.min(1, (t - CHARGE + WIND) / 60); x = sx - 26 * (1 - (1 - q) * (1 - q)); y = sy + 8 * q; }
+      else if (dt >= 0 && dt < .3 && !reduce) { bi = 0; x = P[0][0]; y = P[0][1]; }
+      else if (dt >= 0 && dt < .58 && !reduce) { bi = 1; x = P[1][0]; y = P[1][1]; }
+      else if (dt >= 0) { bi = 2; st = reduce ? 1 : (dt - .58) / .42; var e = st * st * st; x = P[1][0] + (ex - P[1][0]) * e; y = P[1][1] + (ey - P[1][1]) * e; }
+      ox = x; oy = y;
+      var fl = hold ? 1 : Math.random() < .25 + p * .4 ? rand(.5, 1) : rand(.8, .95);   /* the strobe quickens as it charges, and stops for the wind-up */
+      if (t < HIT) dim.style.opacity = hold ? '.97' : (.8 + Math.random() * .2 * (.3 + p)).toFixed(2);
       if (lit && t < HIT) lit.at(x, y, 200 + p * 520 + flare * 160, Math.min(1, (.12 + bornE * .55 + flare * .3) * fl));
-      /* focus lines, redrawn on twos like anime cels, tightening to the peak */
+      /* focus lines on twos, slamming in on the ignition and frozen on one drawing for the wind-up;
+         speed lines along the run for the lunge */
       if (!reduce && born > 0) {
-        if (!lines || now - linesT > 70) { linesT = now; lines = { s: (Math.random() * 1e9) | 0 }; }
-        focusLines(c, x, y, 150 - p * 55, 'rgba(210,235,255,1)', phone ? 40 : 80, (.1 + p * .22) * bornE, seeded(lines.s));
+        if (!lines || (!hold && now - linesT > 70)) { linesT = now; lines = { s: (Math.random() * 1e9) | 0 }; }
+        if (bi < 2) focusLines(c, x, y, (hold ? 70 : 150 - p * 55) + 290 * Math.max(0, 1 - (now - slamT) / 60), 'rgba(210,235,255,1)', phone ? 40 : 80, (.1 + p * .22) * bornE, seeded(lines.s));
+        else speedLines(c, x, y, ang, 'rgba(210,235,255,1)', phone ? 34 : 70, .3);
       }
       c.globalCompositeOperation = 'lighter';
       /* anamorphic streak through the hand */
@@ -685,10 +798,14 @@
         sg.addColorStop(0, 'rgba(80,160,255,0)'); sg.addColorStop(.5, 'rgba(225,242,255,' + Math.min(1, .3 + p * .5 + flare * .2) + ')'); sg.addColorStop(1, 'rgba(80,160,255,0)');
         c.fillStyle = sg; c.fillRect(x - sl, y - 2, sl * 2, 4);
       }
-      /* before it is born: a sputtering point */
+      /* before it is born: a sputtering point; in the lunge it stretches along the run */
       var R = born > 0 ? 8 + bornE * (30 + p * 16) + flare * 10 + Math.sin(t / 22) * 2 : 3 + Math.random() * 3;
-      blob(c, sprHalo, x, y, R * 5.2, (.35 + .4 * bornE) * fl);
-      blob(c, sprCore, x, y, R * 1.6, 1);
+      c.save(); c.translate(x, y);
+      if (st > 0) { c.rotate(ang); c.scale(1 + st * 1.6, 1 - st * .35); }
+      else if (hold) c.scale(1.12, .84);
+      blob(c, sprHalo, 0, 0, R * 5.2, (.35 + .4 * bornE) * fl);
+      blob(c, sprCore, 0, 0, R * 1.6, 1);
+      c.restore();
       /* its light pooling on the ground below */
       c.save(); c.translate(x, floor); c.scale(1, .16); blob(c, sprite('80,150,255'), 0, 0, 110 + p * 230 + flare * 80, (.2 + .5 * bornE) * fl); c.restore();
       if (born <= 0) {
@@ -697,11 +814,11 @@
         return;
       }
       /* the 3D sphere of arcs spinning in the hand */
-      var n = Math.min(arcs.length, 3 + Math.round(p * arcs.length)), SR = 18 + bornE * (phone ? 30 : 44) + flare * 12;
-      var ay = t * .006, ax = .5 + Math.sin(t / 700) * .4;
+      var n = Math.min(arcs.length, 3 + Math.round(p * arcs.length)), SR = 18 + Math.min(1, bornE) * (phone ? 30 : 44) + flare * 12;
+      var ay = t * .012, ax = .5 + Math.sin(t / 500) * .4;
       for (var k = 0; k < n; k++) {
         var A = arcs[k];
-        if (!A.b || now > A.until) { A.b = sphereArc(SR); A.until = now + rand(40, 90); }
+        if (!A.b || now > A.until) { A.b = sphereArc(SR); A.until = now + rand(30, 70); }
         draw3d(c, A.b, x, y, ay, ax, '#4aa8ff', rand(1.1, 1.8));
       }
       /* long tendrils re-striking all around it: the thousand birds */
@@ -711,7 +828,7 @@
         if (!T.b || now > T.until) {
           var ta = rand(0, TAU), tl = rand(55, 120 + p * 200) * (1 + flare * .6);
           T.b = makeBolt(x + Math.cos(ta) * SR * .6, y + Math.sin(ta) * SR * .6, x + Math.cos(ta) * tl, y + Math.sin(ta) * tl * .8, 1, 1, .25);
-          T.until = now + rand(35, 80); ion(T.b, .5);
+          T.until = now + rand(30, 70); ion(T.b, .5);
         }
         drawBolt(c, T.b, '#6ab8ff', .95);
       }
@@ -722,24 +839,34 @@
         if (Math.random() < .5) spk.burst(gb[0].p[gb[0].p.length - 1][0], floor, 3, 8, -Math.PI / 2, 1, 2);
       }
       /* arcs jumping onto the page around it: what they hit flickers */
-      if (!reduce && dt < 0 && near.length && now > jumpT && Math.random() < .08 + p * .18) {
-        jumpT = now + rand(60, 160);
-        var tg = near[(Math.random() * near.length) | 0], ep = edgePoint(tg.r);
-        var jb = makeBolt(x, y, ep[0], ep[1], 1, 1, .15);
-        drawBolt(c, jb, '#8fd0ff', 1); ion(jb, .9);
-        spk.burst(ep[0], ep[1], 5, 7);
-        try { tg.e.animate([{ filter: 'brightness(2.4) drop-shadow(0 0 8px #6ab8ff)' }, { filter: 'none' }], { duration: 220 }); } catch (er) {}
+      if (!reduce && dt < 0 && near.length && now > jumpT && Math.random() < .14 + p * .26) {
+        jumpT = now + rand(40, 110);
+        var tg = near[(Math.random() * near.length) | 0];
+        if (!tg.e.__pwTorn) {
+          var ep = edgePoint(tg.r), jb = makeBolt(x, y, ep[0], ep[1], 1, 1, .15);
+          drawBolt(c, jb, '#8fd0ff', 1); ion(jb, .9);
+          spk.burst(ep[0], ep[1], 5, 7);
+          try { tg.e.animate([{ filter: 'brightness(2.4) drop-shadow(0 0 8px #6ab8ff)' }, { filter: 'none' }], { duration: 220 }); } catch (er) {}
+        }
       }
+      /* the arcs that tear pieces off and the paths the blinks tore through, held a few frames */
+      zaps = zaps.filter(function (z) { if (now - z.t > z.life) return false; drawBolt(c, z.f(now), '#8fd0ff', 1); return true; });
       if (Math.random() < .5 + p * .3) spk.burst(x, y, 1 + Math.round(p * 2), 6 + p * 5);
-      /* the dash: afterimages, speed and a scar gouged into the ground */
-      if (dt >= 0 && dt < 1) {
+      /* the lunge: afterimages, and a scar gouged into the ground */
+      if (bi === 2 && dt < 1) {
         ghosts.push({ x: x, y: y, t: now });
         scar.push([x, floor]);
         spk.burst(x, floor, 6, 14, Math.PI + .45, .45, 2);
         var tb = makeBolt(x, y, x - rand(20, 60), floor + rand(-8, 8), 1.2, 1, .1);
         drawBolt(c, tb, '#4aa8ff', .75); ion(tb, .8);
       }
-      ghosts = ghosts.filter(function (g) { var a = 1 - (now - g.t) / 200; if (a <= 0) return false; blob(c, sprHalo, g.x, g.y, R * 3.5, a * .45); blob(c, sprCore, g.x, g.y, R * 1.1, a * .6); return true; });
+      /* a blink leaves a held afterimage cel that steps out; the lunge's fade */
+      ghosts = ghosts.filter(function (g) {
+        var age = now - g.t, a = g.held ? (age < CEL * 2 ? .8 : age < CEL * 4 ? .4 : 0) : 1 - age / 200;
+        if (a <= 0) return false;
+        blob(c, sprHalo, g.x, g.y, R * 3.5, a * .45); blob(c, sprCore, g.x, g.y, R * 1.1, a * .6);
+        return true;
+      });
     });
 
     /* the scar the dash leaves in the ground, cooling from white to ember */
@@ -757,29 +884,45 @@
       c.globalAlpha = 1;
     });
 
-    later(CHARGE, function () { camera(ex, ey, 1.14, DASH, 'cubic-bezier(.7,0,.3,1)'); surge(.8); });
+    later(CHARGE, function () { camera(ex, ey, 1.22, DASH, 'cubic-bezier(.7,0,.9,.4)'); surge(.8); });
 
-    /* the strike, cut like an anime impact: a hard cut to the wide shot, two white frames,
-       then negative and black impact frames held while the cracks race out across the
-       screen; the world resumes with a tremor, lightning bursting to every edge, and the
-       page breaks up into rubble that falls, tumbles and settles in dust */
-    var FREEZE = 230, BURST = 270;
+    /* the lightning is not spent: it rebounds off the hit and blows out two more spots */
+    var RB = [[w * .82 + rand(-30, 30), h * rand(.24, .38)], [w * .2 + rand(-30, 30), h * rand(.18, .3)]];
+    function rebound(bx, by, n) {
+      var jf = flicker(function () { return makeBolt(ex, ey, bx, by, 3, 2, .12); }, 40);
+      layer(function (c, t, now) { if (t > 150) return false; c.globalCompositeOperation = 'lighter'; drawBolt(c, jf(now), '#8fd0ff', 1 - t / 150); });
+      ion(jf(performance.now()), 1.3);
+      shockwave(bx, by, '#7cc4ff', Math.max(w, h) * .45, 520);
+      cracks(bx, by, { n: phone ? 6 : 9, reach: phone ? 120 : 200, crush: 14, fallers: 0 });
+      scorch(bx, by, .6);
+      glass(bx, by, phone ? 8 : 18);
+      spk.burst(bx, by, phone ? 24 : 50, 18, null, null, 3);
+      quake(phone ? 8 : 14, 600, rand(-1, 1), -1);
+      glitch(110, .8); staticBurst(120, .22);
+      sfx(n ? 'ドンッ' : 'バリィ', bx, by - 60, { cls: 'sm', color: '#6ab8ff', life: 800 });
+    }
+
+    /* the strike, cut like an anime impact: a hard cut to the wide shot, a white frame, then
+       negative and black impact frames held while the cracks race out across the screen; the
+       world resumes with a tremor and a broken signal, lightning bursting to every edge, and
+       the page breaks up into rubble that falls, tumbles and settles in dust */
+    var FREEZE = reduce ? 230 : 160, BURST = reduce ? 270 : 200;
     later(HIT, function () {
       cameraCut();
       hitStop(FREEZE);
       /* impact frames are pure graphics: no soft light, no dim, just the negative page and the bolt */
       if (lit) lit.at(ex, ey, 1, 0);
       dim.style.transition = 'none'; dim.style.opacity = '0';
-      impact([['white', 33], ['neg', 66], ['black', 33], ['neg', 66], ['black', 33]], null);
-      lensFlare(ex, ey, '90,170,255', 700, 1);
-      spk.burst(ex, ey, phone ? 50 : 110, 26, null, null, 4);
+      impact([['white', 33], ['neg', 50], ['black', 33], ['neg', 42]], null);
+      lensFlare(ex, ey, '90,170,255', 700, 1.2);
+      spk.burst(ex, ey, phone ? 60 : 140, 28, null, null, 4);
       /* the strike's light on the page dies down with a guttering flicker, not random jumps */
       if (lit) layer(function (c2, t2) { var k = Math.max(0, 1 - t2 / 1200); lit.at(ex, ey, Math.max(w, h) * (.6 + (1 - k) * .4), k * (.65 + .35 * noise1(t2 / 45))); if (k <= 0) { lit.off(200); return false; } });
-      shockwave(ex, ey, '#7cc4ff', Math.max(w, h) * .9, 700);
+      shockwave(ex, ey, '#7cc4ff', Math.max(w, h) * .9, 600);
       var ring = [], nr = phone ? 12 : 20;
       for (var i = 0; i < nr; i++) ring.push({ b: null, until: 0, a: i / nr * TAU });
-      /* fewer, bolder bolts to the edges, each drawing held for four frames */
-      var edges = [], ne = phone ? 5 : 7;
+      /* bold bolts to the edges, each drawing held for four frames */
+      var edges = [], ne = phone ? 6 : 9;
       for (i = 0; i < ne; i++) {
         var a = (i / ne) * TAU + rand(-.25, .25);
         edges.push(flicker((function (aa) { return function () { return makeBolt(ex, ey, ex + Math.cos(aa) * Math.max(w, h), ey + Math.sin(aa) * Math.max(w, h), 3, 2, .07); }; })(a), 66));
@@ -800,24 +943,27 @@
         });
       });
       cracks(ex, ey);
-      var landings = shatter(ex, ey, BURST);
-      scorch(ex, ey);
+      var landings = shatter(ex, ey, BURST, torn);
+      scorch(ex, ey, 1.3);
       dust(ex, ey, floor, landings, FREEZE, BURST);
-      /* the frozen frames end: the camera kicks away from the hit and rings down */
+      /* the frozen frames end: the camera kicks away from the hit and rings down, the signal breaks */
       var kx = w / 2 - ex, ky = h / 2 - ey, kl = Math.hypot(kx, ky);
       later(FREEZE, function () {
-        quake(phone ? 16 : 26, 1100, kl > 1 ? kx / kl : 0, kl > 1 ? ky / kl : -1);
-        chroma(400);
+        quake(phone ? 18 : 30, 1000, kl > 1 ? kx / kl : 0, kl > 1 ? ky / kl : -1);
+        chroma(400); glitch(130, 1); staticBurst(140, .25);
         glass(ex, ey);
         var r = overlay('pw-ruin'); r.style.setProperty('--px', ex + 'px'); r.style.setProperty('--py', ey + 'px'); r.style.transition = 'opacity .7s'; on(r);
         ruinParts.push(r);
       });
+      /* the low echo in the clip: one more held black frame that stops the rubble mid-flight */
+      if (!reduce && ECHO > FREEZE + 40) later(ECHO, function () { impact([['black', 42]], null); if (!phone) hitStop(48); });
+      if (!reduce) (phone ? RB.slice(0, 1) : RB).forEach(function (b, n) { later(FREEZE + 170 + n * 230, function () { rebound(b[0], b[1], n); }); });
       /* the heaviest pieces landing thump the ground */
       landings.filter(function (l) { return l.m > 2.4; }).slice(0, 3).forEach(function (l) { later(l.t, function () { quake(phone ? 2 : 4, 280, 0, 1); }); });
-      later(300, function () { sfx('ピシャアアン', ex - (phone ? 40 : 190), ey - 70, { color: '#6ab8ff', life: 1200, rot: -12 }); });
+      later(240, function () { sfx('ピシャアアン', ex - (phone ? 40 : 190), ey - 70, { color: '#6ab8ff', life: 1200, rot: -12 }); });
     });
-    later(HIT + 600, function () { drop(dim, 100); });
-    later(HIT + 2000, function () { letterbox(false); });
+    later(HIT + 500, function () { drop(dim, 100); });
+    later(HIT + 1500, function () { letterbox(false); });
   }
 
   var ruinParts = [];
@@ -825,9 +971,10 @@
      run out from the hit, short straight cracks join some of them (never a
      full ring), each piece catches the light a little differently, the
      impact point is crushed white, and a few shards drop out of the screen */
-  function cracks(px, py) {
+  function cracks(px, py, o) {
+    o = o || {};
     var w = vw(), h = vh(), NS = 'http://www.w3.org/2000/svg';
-    var maxR = Math.hypot(Math.max(px, w - px), Math.max(py, h - py)) + 60, crush = phone ? 20 : 30;
+    var maxR = o.reach || Math.hypot(Math.max(px, w - px), Math.max(py, h - py)) + 60, crush = o.crush || (phone ? 20 : 30);
     function f(q) { return q[0].toFixed(1) + ' ' + q[1].toFixed(1); }
     function ray(th) {
       var p = [[px, py]], s = [0], a = th, x = px, y = py, len = 0;
@@ -844,14 +991,14 @@
       out.push(at(R, d1));
       return out;
     }
-    var n = phone ? 9 : 14, rays = [], i, k;
+    var n = o.n || (phone ? 11 : 20), rays = [], i, k, maxFall = o.fallers != null ? o.fallers : phone ? 4 : 10;
     for (i = 0; i < n; i++) rays.push(ray((i + rand(-.3, .3)) / n * TAU));
     var lines = '', near = '', shards = '', fallers = [];
     rays.forEach(function (R) {
       lines += 'M' + span(R, crush * .8, maxR).map(f).join('L');
       near += 'M' + span(R, crush * .8, maxR * .2).map(f).join('L');
       /* the odd Y-fork: a straight branch off the main crack */
-      if (Math.random() < .45) {
+      if (Math.random() < .7) {
         var d = maxR * rand(.2, .55), o = at(R, d), q = at(R, d + 10), ang = Math.atan2(q[1] - o[1], q[0] - o[0]) + rand(.25, .55) * (Math.random() < .5 ? 1 : -1), l = rand(90, 260);
         var m = [o[0] + Math.cos(ang) * l * .5, o[1] + Math.sin(ang) * l * .5], e = [m[0] + Math.cos(ang + rand(-.1, .1)) * l * .5, m[1] + Math.sin(ang + rand(-.1, .1)) * l * .5];
         lines += 'M' + [o, m, e].map(f).join('L');
@@ -870,7 +1017,7 @@
       }
       for (k = 0; k < cuts.length - 1; k++) {
         var poly = span(A, cuts[k][0], cuts[k + 1][0]).concat(span(B, cuts[k][1], cuts[k + 1][1]).reverse()), d = 'M' + poly.map(f).join('L') + 'Z';
-        var falls = k < 2 && cuts[k + 1][0] < maxR * .45 && fallers.length < (phone ? 3 : 6) && Math.random() < .5;
+        var falls = k < 2 && cuts[k + 1][0] < maxR * .45 && fallers.length < maxFall && Math.random() < .5;
         if (falls) { fallers.push({ d: d, poly: poly }); shards += '<path d="' + d + '" fill="rgba(0,0,0,.72)"/>'; }
         else shards += '<path d="' + d + '" fill="' + (Math.random() < .72 ? 'rgba(255,255,255,' + rand(.012, .06).toFixed(3) : 'rgba(8,12,28,' + rand(.05, .15).toFixed(3)) + ')"/>';
       }
@@ -937,8 +1084,9 @@
   /* glass shards spat out of the hit: small ones fly fastest, all tumble, fall, skip once
      off the rubble line and come to rest; drawn on the cel clock, lit on the side that
      faces the hit while its light lasts */
-  function glass(px, py) {
-    var shards = [], n = phone ? 18 : 32, floor = vh() * .93, W2 = vw(), cel = -1, DT = CEL / 1000;
+  function glass(px, py, count) {
+    if (reduce) return;
+    var shards = [], n = count || (phone ? 26 : 56), floor = vh() * .93, W2 = vw(), cel = -1, DT = CEL / 1000;
     for (var i = 0; i < n; i++) {
       var a = rand(0, TAU), s = rand(8, phone ? 34 : 54), sp = rand(300, 1400) * (1.3 - s / 60);
       shards.push({ x: px, y: py, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - rand(100, 500), r: rand(0, 6), vr: rand(-9, 9), s: s, down: false,
@@ -1037,9 +1185,10 @@
   /* the scorch where the lightning went in: a burnt, sooty disc with glowing fissures that
      cool from white through orange to a dull red over a few seconds, then keep a faint ember
      pulse for as long as the page lies in ruins */
-  function scorch(px, py) {
+  function scorch(px, py, k) {
     if (reduce) return;
-    var fis = [], n = phone ? 6 : 9, R = phone ? 46 : 68;
+    k = k || 1;
+    var fis = [], n = Math.round((phone ? 6 : 9) * Math.min(1.4, Math.max(.7, k))), R = (phone ? 46 : 68) * k;
     for (var i = 0; i < n; i++) {
       var a = i / n * TAU + rand(-.3, .3), l = rand(R * .5, R * 1.3), x = px, y = py, pts = [[x, y]];
       for (var k = 0; k < 4; k++) { a += rand(-.5, .5); x += Math.cos(a) * l / 4; y += Math.sin(a) * l / 4; pts.push([x, y]); }
@@ -1078,15 +1227,16 @@
     var cx0 = r.left + r.width / 2, cy0 = r.top + r.height / 2;
     var dx = cx0 - px, dy = cy0 - py, d = Math.max(30, Math.hypot(dx, dy)), ux = dx / d, uy = dy / d;
     var area = r.width * r.height, big = area > w * h * .08, m = Math.max(.6, Math.min(6, Math.sqrt(area) / 60));
-    var sp = Math.min(2200, (700 + 260000 / (d + 120)) / Math.pow(m, .7)) * rand(.8, 1.15);
-    var vx = ux * sp + rand(-120, 120), vy = uy * sp * .75 - (200 + 380 / Math.sqrt(m)) * rand(.6, 1.2);
-    var wz = rand(90, 520) / m * (Math.random() < .5 ? -1 : 1) * (big ? .25 : 1);
+    /* K plays the whole flight faster: speeds times K, gravity times K squared, the same arcs */
+    var K = reduce ? 1 : 1.2, sp = Math.min(2200, (700 + 260000 / (d + 120)) / Math.pow(m, .7)) * rand(.8, 1.15) * K;
+    var vx = ux * sp + rand(-120, 120), vy = uy * sp * .75 - (200 + 380 / Math.sqrt(m)) * rand(.6, 1.2) * K;
+    var wz = rand(90, 520) / m * (Math.random() < .5 ? -1 : 1) * (big ? .25 : 1) * K;
     var tilt = big ? 22 : 75, rxE = rand(-tilt, tilt), ryE = rand(-tilt, tilt), zE = rand(-220, 60), zPeak = rand(120, 420) / Math.sqrt(m);
-    var TX = big ? 10 : rand(30, 90) / Math.sqrt(m), TY = big ? 8 : rand(30, 90) / Math.sqrt(m), ox = rand(4, 9), oy = rand(4, 9), phx = rand(0, TAU), phy = rand(0, TAU);
+    var TX = big ? 10 : rand(30, 90) / Math.sqrt(m), TY = big ? 8 : rand(30, 90) / Math.sqrt(m), ox = rand(4, 9) * K, oy = rand(4, 9) * K, phx = rand(0, TAU), phy = rand(0, TAU);
     /* the pile along the bottom of the screen: where its top comes to rest */
     var floorY = Math.max(0, h - r.height * rand(.25, .75) - rand(0, h * (big ? .1 : .3)) - r.top);
     var minX = -r.width * .5 - r.left, maxX = w - r.width * .4 - r.left;
-    var x = 0, y = 0, rz = 0, t = 0, DT = CEL / 1000, G = 2600, bounces = 0, rest = false, tL = -1, land = null, path = [];
+    var x = 0, y = 0, rz = 0, t = 0, DT = CEL / 1000, G = 2600 * K * K, bounces = 0, rest = false, tL = -1, land = null, path = [];
     for (var i = 1; i <= 62 && !rest; i++) {
       t = i * DT;
       vy += G * DT; vx *= .995;
@@ -1119,8 +1269,10 @@
   /* the page bursts, each piece on its own simulated flight, the burst reaching the far
      pieces a little later; the strike's light flares on the pieces nearest the hit, then
      they all darken as they fall into the ruin's shadow */
-  function shatter(px, py, burst) {
-    var w = vw(), h = vh(), list = pieces(phone ? 110 : 260), anims = [], landings = [];
+  function shatter(px, py, burst, torn) {
+    var w = vw(), h = vh(), list = pieces(phone ? 130 : 320), anims = (torn || []).slice(), landings = [];
+    /* the pieces the charge tore off lie in the rubble with the rest */
+    anims.forEach(function (p) { p.el.__pwTorn = null; });
     list.forEach(function (p) {
       var r = p.r, a, end, vSettle, delay;
       if (reduce) { vSettle = Z0; end = tf(Z0); a = p.el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'both' }); }
@@ -1143,7 +1295,7 @@
     });
     ruin = { anims: anims, px: px, py: py };
     root.classList.add('pw-destroyed');
-    later(1900, function () { ruinScene(px, py); });
+    later(1500, function () { ruinScene(px, py); });
     return landings;
   }
 

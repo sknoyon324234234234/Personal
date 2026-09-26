@@ -199,6 +199,9 @@ html.pw-ssj .pw-toggle { border-color: #ffd35a; box-shadow: 0 0 0 3px rgba(10, 8
 .pw-bars::before { top: 0; transform: translateY(-100%); }
 .pw-bars::after { bottom: 0; transform: translateY(100%); }
 .pw-bars.on::before, .pw-bars.on::after { transform: none; }
+.pw-bars.fast::before, .pw-bars.fast::after { transition-duration: .2s; transition-timing-function: cubic-bezier(.2, .9, .1, 1); }
+/* TV static in a glitch: a grey noise tile over the page, under the lightning */
+.pw-static { position: fixed; inset: 0; z-index: 589; pointer-events: none; opacity: 0; background-size: 128px 128px; image-rendering: pixelated; }
 html.pw-chroma body > main, html.pw-chroma body > .site-header, html.pw-chroma body > footer { filter: drop-shadow(5px 0 0 rgba(255, 0, 70, .55)) drop-shadow(-5px 0 0 rgba(0, 220, 255, .55)); }
 @media (max-width: 760px) { .pw-bars::before, .pw-bars::after { height: 7vh; } }
 
