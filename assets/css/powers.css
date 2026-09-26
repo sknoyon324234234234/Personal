@@ -66,7 +66,10 @@ html.pw-neg.pw-neg-gold body > *:not(.pw-canvas):not(.pw-glow):not(.pw-bloom):no
 .pw-sfx.xl { font-size: clamp(56px, 15vw, 210px); }
 .pw-sfx .en { display: block; margin-top: .25em; font: 700 .2em/1 var(--font-mono, monospace); letter-spacing: .4em; -webkit-text-stroke: 0; text-shadow: 0 2px 6px #000; text-align: center; }
 .pw-cracks { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 585; pointer-events: none; }
-.pw-cracks path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.pw-cracks path { stroke-linecap: round; stroke-linejoin: round; }
+.pw-crack-glow { filter: drop-shadow(0 0 3px #4aa8ff) drop-shadow(0 0 8px rgba(74,168,255,.6)); }
+.pw-shard { z-index: 586; overflow: visible; }
+@media (max-width: 760px) { .pw-crack-glow { filter: none; } }
 
 /* ---------- destroyed page ---------- */
 html.pw-locked, html.pw-locked body { overflow: hidden !important; overscroll-behavior: none; }

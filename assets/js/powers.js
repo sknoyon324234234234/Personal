@@ -525,7 +525,8 @@
      ================================================================== */
   var ATOM = /^(IMG|SVG|CANVAS|VIDEO|PICTURE|IFRAME|BUTTON|A|INPUT|TEXTAREA|SELECT|H1|H2|H3|H4|H5|H6|P|LI|LABEL|DT|DD|BLOCKQUOTE|FIGURE|PRE|CODE|SPAN|B|STRONG|EM|SMALL|I)$/;
   var SKIP = /^(SCRIPT|STYLE|TEMPLATE|NOSCRIPT|LINK|META|BR|DEFS)$/;
-  function isOurs(n) { return n.className && typeof n.className === 'string' && /(^|\s)(pw-|toasts|curtain|loader|skip|grain|progress)/.test(n.className); }
+  /* our own layers (including SVG ones, whose className is not a string) never fly as rubble */
+  function isOurs(n) { var c = n.getAttribute && n.getAttribute('class'); return !!c && /(^|\s)(pw-|toasts|curtain|loader|skip|grain|progress)/.test(c); }
   function hasSkin(cs) {
     return (cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && cs.backgroundColor !== 'transparent') ||
       cs.backgroundImage !== 'none' || parseFloat(cs.borderTopWidth) > 0 || cs.boxShadow !== 'none';
@@ -676,31 +677,106 @@
   }
 
   var ruinParts = [];
+  /* the screen itself breaks like smashed glass: straight, sharp cracks
+     run out from the hit, short straight cracks join some of them (never a
+     full ring), each piece catches the light a little differently, the
+     impact point is crushed white, and a few shards drop out of the screen */
   function cracks(px, py) {
     var w = vw(), h = vh(), NS = 'http://www.w3.org/2000/svg';
-    var svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('class', 'pw-cracks'); svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h); svg.setAttribute('aria-hidden', 'true');
-    var d = '', n = phone ? 9 : 14;
-    for (var i = 0; i < n; i++) {
-      var a = (i / n) * TAU + rand(-.25, .25), x = px, y = py, len = Math.max(w, h) * rand(.4, .9), steps = 7;
-      d += 'M' + x.toFixed(0) + ' ' + y.toFixed(0);
-      for (var s = 0; s < steps; s++) {
-        a += rand(-.35, .35); x += Math.cos(a) * len / steps; y += Math.sin(a) * len / steps;
-        d += 'L' + x.toFixed(0) + ' ' + y.toFixed(0);
-        if (Math.random() < .35) { var b = a + rand(-1, 1); d += 'M' + x.toFixed(0) + ' ' + y.toFixed(0) + 'l' + (Math.cos(b) * 60).toFixed(0) + ' ' + (Math.sin(b) * 60).toFixed(0) + 'M' + x.toFixed(0) + ' ' + y.toFixed(0); }
+    var maxR = Math.hypot(Math.max(px, w - px), Math.max(py, h - py)) + 60, crush = phone ? 20 : 30;
+    function f(q) { return q[0].toFixed(1) + ' ' + q[1].toFixed(1); }
+    function ray(th) {
+      var p = [[px, py]], s = [0], a = th, x = px, y = py, len = 0;
+      while (len < maxR) { var seg = rand(110, 280); a += rand(-.12, .12); x += Math.cos(a) * seg; y += Math.sin(a) * seg; len += seg; p.push([x, y]); s.push(len); }
+      return { p: p, s: s };
+    }
+    function at(R, d) {
+      for (var k = 1; k < R.s.length; k++) if (R.s[k] >= d) { var u = (d - R.s[k - 1]) / (R.s[k] - R.s[k - 1]); return [R.p[k - 1][0] + (R.p[k][0] - R.p[k - 1][0]) * u, R.p[k - 1][1] + (R.p[k][1] - R.p[k - 1][1]) * u]; }
+      return R.p[R.p.length - 1];
+    }
+    function span(R, d0, d1) {
+      var out = [at(R, d0)];
+      for (var k = 1; k < R.s.length; k++) if (R.s[k] > d0 && R.s[k] < d1) out.push(R.p[k]);
+      out.push(at(R, d1));
+      return out;
+    }
+    var n = phone ? 9 : 14, rays = [], i, k;
+    for (i = 0; i < n; i++) rays.push(ray((i + rand(-.3, .3)) / n * TAU));
+    var lines = '', near = '', shards = '', fallers = [];
+    rays.forEach(function (R) {
+      lines += 'M' + span(R, crush * .8, maxR).map(f).join('L');
+      near += 'M' + span(R, crush * .8, maxR * .2).map(f).join('L');
+      /* the odd Y-fork: a straight branch off the main crack */
+      if (Math.random() < .45) {
+        var d = maxR * rand(.2, .55), o = at(R, d), q = at(R, d + 10), ang = Math.atan2(q[1] - o[1], q[0] - o[0]) + rand(.25, .55) * (Math.random() < .5 ? 1 : -1), l = rand(90, 260);
+        var m = [o[0] + Math.cos(ang) * l * .5, o[1] + Math.sin(ang) * l * .5], e = [m[0] + Math.cos(ang + rand(-.1, .1)) * l * .5, m[1] + Math.sin(ang + rand(-.1, .1)) * l * .5];
+        lines += 'M' + [o, m, e].map(f).join('L');
+      }
+    });
+    /* each wedge between two cracks is split into pieces by 0-3 straight cross-cracks */
+    for (i = 0; i < n; i++) {
+      var A = rays[i], B = rays[(i + 1) % n], cuts = [[crush, crush]], cnt = pick([0, 1, 1, 2, 2, 3]);
+      for (k = 0; k < cnt; k++) { var d0 = rand(crush * 2.5, maxR * .7); cuts.push([d0, d0 * rand(.8, 1.25)]); }
+      cuts.sort(function (x, y) { return x[0] - y[0]; });
+      for (k = 1; k < cuts.length; k++) if (cuts[k][1] <= cuts[k - 1][1] + 24) cuts[k][1] = cuts[k - 1][1] + 24;
+      cuts.push([maxR, maxR]);
+      for (k = 1; k < cuts.length - 1; k++) {
+        var c0 = at(A, cuts[k][0]), c1 = at(B, cuts[k][1]), mid = [(c0[0] + c1[0]) / 2 + rand(-10, 10), (c0[1] + c1[1]) / 2 + rand(-10, 10)];
+        lines += 'M' + [c0, mid, c1].map(f).join('L');
+      }
+      for (k = 0; k < cuts.length - 1; k++) {
+        var poly = span(A, cuts[k][0], cuts[k + 1][0]).concat(span(B, cuts[k][1], cuts[k + 1][1]).reverse()), d = 'M' + poly.map(f).join('L') + 'Z';
+        var falls = k < 2 && cuts[k + 1][0] < maxR * .45 && fallers.length < (phone ? 3 : 6) && Math.random() < .5;
+        if (falls) { fallers.push({ d: d, poly: poly }); shards += '<path d="' + d + '" fill="rgba(0,0,0,.72)"/>'; }
+        else shards += '<path d="' + d + '" fill="' + (Math.random() < .72 ? 'rgba(255,255,255,' + rand(.012, .06).toFixed(3) : 'rgba(8,12,28,' + rand(.05, .15).toFixed(3)) + ')"/>';
       }
     }
-    for (var ring = 1; ring <= 3; ring++) {
-      var rr = ring * (phone ? 70 : 110);
-      d += 'M' + (px + rr) + ' ' + py;
-      for (var k = 1; k <= 12; k++) { var aa = k / 12 * TAU; d += 'L' + (px + Math.cos(aa) * rr * rand(.85, 1.15)).toFixed(0) + ' ' + (py + Math.sin(aa) * rr * rand(.85, 1.15)).toFixed(0); }
+    /* the crushed spot where it hit */
+    var crushLines = '';
+    for (k = 0; k < (phone ? 18 : 30); k++) {
+      var ca = rand(0, TAU), cr = rand(2, crush * 1.4), cl = rand(5, crush * .8), cb = ca + rand(-1.2, 1.2);
+      var s0 = [px + Math.cos(ca) * cr, py + Math.sin(ca) * cr];
+      crushLines += 'M' + f(s0) + 'L' + f([s0[0] + Math.cos(cb) * cl, s0[1] + Math.sin(cb) * cl]);
     }
-    svg.innerHTML = '<path d="' + d + '" stroke="rgba(120,190,255,.55)" stroke-width="7"/><path d="' + d + '" stroke="#05040a" stroke-width="3.2"/><path d="' + d + '" stroke="rgba(230,245,255,.8)" stroke-width="1"/>';
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'pw-cracks'); svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h); svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML =
+      '<defs><radialGradient id="pw-crush"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#dfefff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>' +
+      '<g>' + shards + '</g>' +
+      '<path d="' + lines + '" fill="none" stroke="rgba(0,0,0,.65)" stroke-width="3" transform="translate(1.2 1.2)"/>' +
+      '<path d="' + lines + '" fill="none" stroke="rgba(238,246,255,.92)" stroke-width="1.4"/>' +
+      '<path d="' + near + '" fill="none" stroke="#fff" stroke-width="2.2"/>' +
+      '<path class="pw-crack-glow" d="' + near + '" fill="none" stroke="#8fd0ff" stroke-width="1.4"/>' +
+      '<circle cx="' + px.toFixed(0) + '" cy="' + py.toFixed(0) + '" r="' + (crush * 2.2).toFixed(0) + '" fill="url(#pw-crush)"/>' +
+      '<path d="' + crushLines + '" fill="none" stroke="rgba(255,255,255,.9)" stroke-width=".9"/>' +
+      '<circle cx="' + px.toFixed(0) + '" cy="' + py.toFixed(0) + '" r="' + (phone ? 4 : 6) + '" fill="#000"/>';
     document.body.appendChild(svg);
-    Array.prototype.forEach.call(svg.querySelectorAll('path'), function (p) {
-      p.style.strokeDasharray = 6000; p.animate([{ strokeDashoffset: 6000 }, { strokeDashoffset: 0 }], { duration: reduce ? 1 : 700, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' });
-    });
     ruinParts.push(svg);
+    if (!reduce) {
+      /* glass cracks almost instantly */
+      svg.animate([{ clipPath: 'circle(0px at ' + px + 'px ' + py + 'px)' }, { clipPath: 'circle(' + maxR.toFixed(0) + 'px at ' + px + 'px ' + py + 'px)' }],
+        { duration: 200, easing: 'cubic-bezier(.1,.8,.3,1)', fill: 'forwards' });
+      svg.querySelector('.pw-crack-glow').animate([{ opacity: 1 }, { opacity: .8, offset: .15 }, { opacity: 0 }], { duration: 2400, easing: 'ease-out', fill: 'forwards' });
+    }
+    /* loose shards drop out of the screen, turning as they fall */
+    fallers.forEach(function (sh) {
+      var cxs = 0, cys = 0;
+      sh.poly.forEach(function (q) { cxs += q[0]; cys += q[1]; });
+      cxs /= sh.poly.length; cys /= sh.poly.length;
+      var el2 = document.createElementNS(NS, 'svg');
+      el2.setAttribute('class', 'pw-cracks pw-shard'); el2.setAttribute('viewBox', '0 0 ' + w + ' ' + h); el2.setAttribute('aria-hidden', 'true');
+      el2.innerHTML = '<path d="' + sh.d + '" fill="rgba(200,225,255,.16)" stroke="rgba(240,248,255,.9)" stroke-width="1.2"/>';
+      el2.style.transformOrigin = cxs.toFixed(0) + 'px ' + cys.toFixed(0) + 'px';
+      document.body.appendChild(el2);
+      ruinParts.push(el2);
+      if (reduce) { el2.style.opacity = 0; return; }
+      var dx = rand(-60, 60) + (cxs - px) * .2, rot = rand(-70, 70);
+      el2.animate([
+        { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+        { transform: 'translate(' + (dx * .15).toFixed(0) + 'px,4px) rotate(' + (rot * .05).toFixed(1) + 'deg)', opacity: 1, offset: .12 },
+        { transform: 'translate(' + dx.toFixed(0) + 'px,' + (h - cys + 120).toFixed(0) + 'px) rotate(' + rot.toFixed(0) + 'deg)', opacity: .9 }
+      ], { duration: rand(900, 1400), delay: rand(180, 700), easing: 'cubic-bezier(.55,0,.85,.55)', fill: 'forwards' });
+    });
   }
 
   function glass(px, py) {
