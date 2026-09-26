@@ -86,3 +86,22 @@ node tools/version-assets.js
 It adds `?v=<hash>` to every stylesheet and script link, and only changes the ones whose file changed.
 `.htaccess` also makes browsers check CSS and JS for updates on every visit, so a forgotten run can't leave
 visitors stuck on old files. It can only make the first load after a deploy slower.
+
+## 8. Power sounds (your own clips)
+
+The powers (the 術 button) play only the audio files you add. Put each clip in `assets/sfx/` with one of
+these names (mp3, m4a, ogg, wav or webm), then run `node tools/version-assets.js` and push:
+
+| File | Plays |
+| --- | --- |
+| `chidori` | as Chidori starts charging |
+| `chidori-hit` | when it strikes and the page shatters |
+| `arise` | the voice, as the dark falls |
+| `arise-rise` | when the fallen page rises back up |
+| `wind` | loops while the wind blows |
+| `kamehameha` | the chant, ka... me... ha... me... |
+| `kamehameha-fire` | HAAAA, as the beam fires |
+| `super-saiyan` | the scream while powering up |
+| `super-saiyan-burst` | the golden burst at the end |
+
+A power with no clip is silent. Only add clips you have the right to publish.
