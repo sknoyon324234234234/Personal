@@ -686,5 +686,18 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 
-  window.XRPowers = { chidori: chidori, arise: arise, wind: wind, kamehameha: kamehameha, ssj: ssj };
+  /* page code can trigger any power: XRPowers.chidori() or <button data-power="chidori"> */
+  var API = {
+    chidori: chidori, arise: arise, wind: wind, kamehameha: kamehameha,
+    ssj: function (onOff) { if (busy || ruin) return; ssj(onOff == null ? !root.classList.contains('pw-ssj') : !!onOff, true); },
+    state: function () { return { busy: busy, destroyed: !!ruin, wind: windOn, ssj: root.classList.contains('pw-ssj') }; }
+  };
+  window.XRPowers = API;
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-power]');
+    if (!t || dock.contains(t)) return;
+    var fn = API[t.getAttribute('data-power')];
+    if (fn) { e.preventDefault(); fn(); }
+  });
+  document.dispatchEvent(new CustomEvent('xr-powers-ready', { detail: API }));
 })();
