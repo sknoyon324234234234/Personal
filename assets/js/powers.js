@@ -2103,3 +2103,580 @@
       if (!restoring) toast('Use Chidori first, then Arise will extract the fallen page.');
     }
   }
+
+  /* ==================================================================
+     風 WIND — a gale: streaks, spiral vortices, leaves; the page sways
+     ================================================================== */
+  var windStop = 0;
+  function wind() {
+    if (windOn) { windOn = false; root.classList.remove('pw-windy'); paint(); return; }
+    if (busy || ruin) return;
+    windOn = true; paint(); closeDock();
+    if (!reduce) root.classList.add('pw-windy');
+    Array.prototype.forEach.call(document.querySelectorAll('main h1, main h2, main h3, main img, main .btn, main .card, main p, .hero-mascot'), function (e, i) {
+      if (i < 300) e.style.setProperty('--pw-d', (-(i % 7) * .13).toFixed(2));
+    });
+    clip('wind', 0, true);
+    var dark = root.getAttribute('data-mode') === 'ink';
+    var streak = dark ? 'rgba(230,240,255,1)' : 'rgba(40,70,90,1)';
+    var LEAF = ['#e8a1b0', '#f3c3cc', '#7fae5a', '#a9c96e', '#d9a441'];
+    var lines = [], leaves = [], vort = [], NL = phone ? 26 : 60, NV = phone ? 18 : 42;
+    var motes = [], NM = phone ? 120 : 300;
+    for (var m0 = 0; m0 < NM; m0++) motes.push({ x: rand(0, vw()), y: rand(0, vh()), s: rand(.6, 1.4) });
+    function newLine(any) { return { x: any ? rand(-vw(), vw()) : rand(-400, -60), y: rand(0, vh()), len: rand(80, 300), v: rand(16, 34), a: rand(.12, .45), wob: rand(0, 6) }; }
+    function newLeaf(any) { return { x: any ? rand(0, vw()) : rand(-80, -10), y: rand(-20, vh()), v: rand(4, 11), s: rand(4, 9), r: rand(0, 6), vr: rand(-.25, .25), c: pick(LEAF), wob: rand(0, 6) }; }
+    function newVortex() { return { x: rand(-200, -50), y: rand(.15, .85) * vh(), r: rand(40, phone ? 80 : 130), v: rand(8, 14), spin: rand(0, TAU) }; }
+    for (var i = 0; i < NL; i++) lines.push(newLine(true));
+    for (var j = 0; j < NV; j++) leaves.push(newLeaf(true));
+    for (var k = 0; k < (phone ? 2 : 4); k++) { var v0 = newVortex(); v0.x = rand(0, vw()); vort.push(v0); }
+    var kanji = sfx('風', vw() * .5, vh() * .4, { cls: 'xl', en: 'WIND RELEASE', color: '#2fa876', life: 1400, rot: -4 });
+    later(500, function () { sfx('ヒュウウウ', vw() * .7, vh() * .62, { cls: 'sm', color: '#2fa876', life: 1100 }); });
+    var end = performance.now() + 9000; windStop = end;
+    layer(function (c, t, now) {
+      var fade = windOn ? Math.min(1, t / 400) : 0;
+      if (windOn && now > end && windStop === end) { windOn = false; root.classList.remove('pw-windy'); paint(); }
+      if (!windOn) { stopClip('wind'); return false; }
+      var Wd = vw(), Hd = vh();
+      c.lineCap = 'round'; c.strokeStyle = streak;
+      /* dust motes riding a turbulent flow field */
+      c.globalAlpha = .45 * fade; c.lineWidth = 1; c.beginPath();
+      motes.forEach(function (m) {
+        var an = (noise2(m.x * .003, m.y * .004 + t * .0004) - .5) * 1.6, sp = (9 + noise1(m.y * .01 + t * .001) * 14) * m.s;
+        var mx = m.x + Math.cos(an) * sp, my = m.y + Math.sin(an) * sp;
+        c.moveTo(m.x, m.y); c.lineTo(mx, my); m.x = mx; m.y = my;
+        if (m.x > Wd + 20 || m.y < -20 || m.y > Hd + 20) { m.x = rand(-40, 0); m.y = rand(0, Hd); }
+      });
+      c.stroke();
+      lines.forEach(function (l, i) {
+        l.x += l.v; if (l.x > Wd + 40) lines[i] = newLine(false);
+        var y = l.y + Math.sin(t / 400 + l.wob) * 12;
+        c.globalAlpha = l.a * fade; c.lineWidth = 1.4;
+        c.beginPath(); c.moveTo(l.x, y); c.quadraticCurveTo(l.x + l.len * .5, y - 10, l.x + l.len, y); c.stroke();
+      });
+      /* spiral vortices rolling across */
+      vort.forEach(function (v, i) {
+        v.x += v.v; v.spin += .12; if (v.x > Wd + 200) vort[i] = newVortex();
+        c.globalAlpha = .35 * fade; c.lineWidth = 1.6;
+        for (var r = 0; r < 3; r++) {
+          c.beginPath();
+          for (var a = 0; a < 5.5; a += .15) {
+            var rr = v.r * (a / 5.5) * (1 - r * .2), px = v.x + Math.cos(a + v.spin + r * 2) * rr, py = v.y + Math.sin(a + v.spin + r * 2) * rr * .45;
+            if (a === 0) c.moveTo(px, py); else c.lineTo(px, py);
+          }
+          c.stroke();
+        }
+      });
+      leaves.forEach(function (f, i) {
+        f.x += f.v; f.y += Math.sin(t / 300 + f.wob) * 1.8 + .6 + (noise2(f.x * .003, t * .0004) - .5) * 3; f.r += f.vr;
+        if (f.x > Wd + 30 || f.y > Hd + 30) leaves[i] = newLeaf(false);
+        /* leaves tumble in 3D: they turn edge-on and show their darker back */
+        var flip = Math.cos(t / 240 + f.wob), sq = Math.sin(t / 170 + f.wob * 2);
+        c.save(); c.translate(f.x, f.y); c.rotate(f.r); c.scale(Math.max(.12, Math.abs(flip)), .55 + Math.abs(sq) * .45);
+        c.globalAlpha = .92 * fade; c.fillStyle = f.c;
+        c.beginPath(); c.moveTo(-f.s, 0); c.quadraticCurveTo(0, -f.s * .75, f.s, 0); c.quadraticCurveTo(0, f.s * .75, -f.s, 0); c.fill();
+        if (flip < 0) { c.fillStyle = 'rgba(0,0,0,.28)'; c.fill(); }
+        c.strokeStyle = 'rgba(0,0,0,.25)'; c.lineWidth = .8; c.beginPath(); c.moveTo(-f.s, 0); c.lineTo(f.s, 0); c.stroke();
+        c.restore();
+      });
+    });
+    return kanji;
+  }
+
+  /* ==================================================================
+     かめはめ波 KAMEHAMEHA — ka, me, ha, me: energy spirals into the
+     cupped hands, then HAAA: a beam with bloom, rings and debris
+     ================================================================== */
+  function kamehameha() {
+    if (busy || ruin) return;
+    setBusy(true); closeDock();
+    var w = vw(), h = vh(), portrait = h > w;
+    var ox = portrait ? w / 2 : w * .14, oy = portrait ? h * .8 : h * .58, ang = portrait ? -Math.PI / 2 : 0;
+    var dim = overlay('pw-dim kame'); dim.style.setProperty('--px', ox + 'px'); dim.style.setProperty('--py', oy + 'px'); on(dim);
+    var STEP = reduce ? 150 : 520, CHARGE = STEP * 4 + 250, BEAM = reduce ? 600 : 1700;
+    /* with a voice clip, the charge lasts as long as the chant and the beam fires on its HAAA
+       (the 'fire' mark in assets/sfx/marks.json, else about 1.3 s before the clip ends) */
+    var vd = clipDur('kamehameha-voice');
+    if (vd && !reduce) {
+      CHARGE = Math.max(CHARGE, Math.round(mark('kamehameha-voice', 'fire', vd - 1.3) * 1000));
+      BEAM = Math.max(BEAM, Math.round(mark('kamehameha-voice', 'beam', 1.7) * 1000));
+      STEP = (CHARGE - 250) / 4;
+    }
+    var lit = reduce ? null : pageLight('70,150,255'), litB = reduce ? null : pageLight('110,180,255'), spk = sparkField('90,160,255');
+    layer(function (c, t) { spk.draw(c); return t < CHARGE + BEAM + 1600; });
+    clip('kamehameha-voice', 0);
+    clip('kamehameha', Math.max(0, CHARGE - 2350));
+    ['か', 'め', 'は', 'め'].forEach(function (ch, i) {
+      later(i * STEP, function () {
+        var tx = portrait ? w * (.2 + i * .2) : ox + 60 + i * Math.min(130, w * .09);
+        var ty = portrait ? h * .5 : oy - 160 - (i % 2) * 44;
+        sfx(ch, tx, ty, { color: '#2d8cff', life: CHARGE - i * STEP + 200, rot: rand(-12, 12) });
+        shake(2 + i * 2.5, STEP);
+      });
+    });
+    var bits = [], dust = [], zaps = [];
+    for (var z = 0; z < (phone ? 4 : 7); z++) zaps.push(null);
+    layer(function (c, t, now) {
+      if (t > CHARGE + BEAM + 700) return false;
+      var p = Math.min(1, t / CHARGE), fire = t > CHARGE, bt = t - CHARGE;
+      /* the orb and then the beam light up the page */
+      var fl = .9 + Math.random() * .1;
+      if (lit) lit.at(ox, oy, 180 + p * 620 + (fire ? 220 : 0), (fire ? Math.max(0, 1 - Math.max(0, bt - BEAM) / 700) : .15 + p * .6) * fl);
+      if (!fire && p > .4 && Math.random() < .4) spk.burst(ox, oy, 1, 6 + p * 6);
+      if (!fire && !reduce) focusLines(c, ox, oy, 120 - p * 40, 'rgba(200,230,255,1)', phone ? 36 : 70, .08 + p * .18);
+      c.globalCompositeOperation = 'lighter';
+      /* energy spiralling into the palms */
+      /* energy on tilted 3D orbits, spiralling into the palms */
+      if (t < CHARGE) for (var k = 0; k < (phone ? 4 : 8); k++) { var nrm = unit3(), e1 = norm3(cross3(nrm, unit3())); bits.push({ e1: e1, e2: cross3(nrm, e1), a: rand(0, TAU), r: rand(120, 340), v: rand(.1, .16) }); }
+      c.strokeStyle = '#a8dcff';
+      bits = bits.filter(function (b) {
+        function at(a, r) { var ca = Math.cos(a) * r, sa = Math.sin(a) * r; return proj([b.e1[0] * ca + b.e2[0] * sa, b.e1[1] * ca + b.e2[1] * sa, b.e1[2] * ca + b.e2[2] * sa], ox, oy); }
+        var p0 = at(b.a, b.r); b.a += b.v * 2; b.r *= .9; var p1 = at(b.a, b.r);
+        c.globalAlpha = Math.min(1, (p1[2] - .6) * 2); c.lineWidth = 2.6 * p1[2];
+        c.beginPath(); c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); c.stroke();
+        return b.r > 8;
+      });
+      /* three tilted energy rings orbiting the orb */
+      if (!fire || bt < 300) for (var ri = 0; ri < 3; ri++) {
+        var rr = 30 + p * 70 + ri * 14, ring = [];
+        for (var ra = 0; ra <= 36; ra++) { var aa = ra / 36 * TAU; ring.push([Math.cos(aa) * rr, Math.sin(aa) * rr * .15, Math.sin(aa) * rr]); }
+        draw3d(c, ring, ox, oy, t * .004 + ri * 2.1, .9 + ri * .5, '#6ab8ff', .9);
+      }
+      /* ground dust lifting */
+      if (t < CHARGE + BEAM && Math.random() < .8) dust.push({ x: rand(0, w), y: h + 5, v: rand(1, 3 + p * 4), s: rand(2, 5), l: 1 });
+      c.fillStyle = '#bfe3ff';
+      dust = dust.filter(function (d) { d.y -= d.v; d.l -= .012; c.globalAlpha = d.l * .6; c.fillRect(d.x, d.y, d.s, d.s); return d.l > 0; });
+      /* the orb */
+      var R = fire ? 64 * (1 - Math.max(0, bt - BEAM) / 700) : 10 + p * 50 + Math.sin(t / 40) * 4;
+      if (R > 0) {
+        var g = c.createRadialGradient(ox, oy, 0, ox, oy, R * 2.8);
+        g.addColorStop(0, '#fff'); g.addColorStop(.25, 'rgba(160,220,255,1)'); g.addColorStop(.55, 'rgba(60,140,255,.6)'); g.addColorStop(1, 'rgba(20,90,255,0)');
+        c.fillStyle = g; c.globalAlpha = 1; c.beginPath(); c.arc(ox, oy, R * 2.8, 0, TAU); c.fill();
+        /* corona: a wide soft halo that breathes, a white-hot heart and an anamorphic streak */
+        blob(c, sprite('80,160,255'), ox, oy, R * (5.5 + Math.sin(t / 55) * .4), .45);
+        blob(c, sprite('220,240,255', true), ox, oy, R * 1.3, .9);
+        if (!reduce) { var sl2 = R * (6 + p * 4), sg2 = c.createLinearGradient(ox - sl2, 0, ox + sl2, 0); sg2.addColorStop(0, 'rgba(80,160,255,0)'); sg2.addColorStop(.5, 'rgba(230,245,255,1)'); sg2.addColorStop(1, 'rgba(80,160,255,0)'); c.globalAlpha = .5 + p * .4; c.fillStyle = sg2; c.fillRect(ox - sl2, oy - 1.5, sl2 * 2, 3); }
+        c.globalAlpha = 1;
+        /* sparks crackling off the orb */
+        if (p > .3) for (var q = 0; q < zaps.length; q++) {
+          if (!zaps[q] || now > zaps[q].until) { var a = rand(0, TAU), l = R * rand(1.2, 2.6); zaps[q] = { b: makeBolt(ox + Math.cos(a) * R * .5, oy + Math.sin(a) * R * .5, ox + Math.cos(a) * l, oy + Math.sin(a) * l, 1, 1, .15), until: now + rand(40, 90) }; }
+          drawBolt(c, zaps[q].b, '#5fb4ff', .8);
+        }
+      }
+      if (!fire) return;
+      /* the beam */
+      var grow = Math.min(1, bt / 200), thin = bt > BEAM ? Math.max(0, 1 - (bt - BEAM) / 700) : 1;
+      var L = Math.hypot(w, h) * 1.2 * grow, hh = (portrait ? w * .22 : h * .15) * thin * (1 + Math.sin(bt / 28) * .06);
+      /* the beam casts a band of light across the page */
+      if (litB) {
+        var bw2 = Math.round(hh * 3.2 / 8) * 8, fb = (.55 + Math.random() * .15) * thin * grow, lc = 'rgba(110,180,255,';
+        litB.band(portrait ? 'linear-gradient(90deg,' + lc + '0) ' + (ox - bw2) + 'px,' + lc + '.55) ' + ox.toFixed(0) + 'px,' + lc + '0) ' + (ox + bw2) + 'px)'
+          : 'linear-gradient(180deg,' + lc + '0) ' + (oy - bw2) + 'px,' + lc + '.55) ' + oy.toFixed(0) + 'px,' + lc + '0) ' + (oy + bw2) + 'px)', fb);
+      }
+      if (!reduce && thin > .3 && Math.random() < .8) spk.burst(ox + Math.cos(ang) * 40, oy + Math.sin(ang) * 40, 3, 28, ang, .35, 0);
+      c.translate(ox, oy); c.rotate(ang);
+      var gr = c.createLinearGradient(0, -hh * 1.3, 0, hh * 1.3);
+      gr.addColorStop(0, 'rgba(30,110,255,0)'); gr.addColorStop(.2, 'rgba(40,130,255,.45)'); gr.addColorStop(.38, 'rgba(120,210,255,.95)');
+      gr.addColorStop(.5, '#ffffff'); gr.addColorStop(.62, 'rgba(120,210,255,.95)'); gr.addColorStop(.8, 'rgba(40,130,255,.45)'); gr.addColorStop(1, 'rgba(30,110,255,0)');
+      c.fillStyle = gr; c.globalAlpha = 1; c.beginPath(); c.moveTo(0, -hh * .5);
+      for (var x = 0; x <= L; x += 22) c.lineTo(x, -hh * 1.3 * (1 + Math.sin(x * .03 - bt * .045) * .08));
+      c.lineTo(L, hh * 1.3);
+      for (var x2 = L; x2 >= 0; x2 -= 22) c.lineTo(x2, hh * 1.3 * (1 + Math.sin(x2 * .03 + bt * .05) * .08));
+      c.lineTo(0, hh * .5); c.closePath(); c.fill();
+      /* a turbulent plasma envelope: three layers of rolling noise */
+      for (var pl = 0; pl < 3; pl++) {
+        var amp = hh * (1.45 + pl * .3), fq = .0035 + pl * .0025, spd = .004 + pl * .003;
+        c.beginPath(); c.moveTo(0, -hh * .4);
+        for (var nx = 0; nx <= L; nx += 16) c.lineTo(nx, -amp * (.7 + noise1(nx * fq - bt * spd + pl * 9) * .55));
+        for (var nx2 = L; nx2 >= 0; nx2 -= 16) c.lineTo(nx2, amp * (.7 + noise1(nx2 * fq + bt * spd + pl * 17) * .55));
+        c.lineTo(0, hh * .4); c.closePath();
+        c.fillStyle = 'rgba(' + (pl ? '40,110,255' : '90,170,255') + ',' + ((.13 - pl * .03) * thin) + ')'; c.fill();
+      }
+      /* the white-hot core, flickering along its length */
+      c.fillStyle = '#ffffff'; c.globalAlpha = .9 * thin;
+      c.beginPath(); c.moveTo(0, -hh * .22);
+      for (var cq = 0; cq <= L; cq += 24) c.lineTo(cq, -hh * (.18 + noise1(cq * .01 - bt * .02) * .1));
+      for (var cq2 = L; cq2 >= 0; cq2 -= 24) c.lineTo(cq2, hh * (.18 + noise1(cq2 * .01 + bt * .02 + 5) * .1));
+      c.closePath(); c.fill(); c.globalAlpha = 1;
+      /* spiralling energy around the beam */
+      c.strokeStyle = '#dff3ff'; c.lineWidth = 1.4; c.globalAlpha = .28 * thin;
+      for (var sI = 0; sI < 3; sI++) {
+        c.beginPath();
+        for (var sx2 = 0; sx2 <= L; sx2 += 14) { var yy = Math.sin(sx2 * (.012 + sI * .006) - bt * .03 + sI * 2) * hh * (.9 + Math.sin(sx2 * .01 + sI) * .2); if (sx2 === 0) c.moveTo(sx2, yy); else c.lineTo(sx2, yy); }
+        c.stroke();
+      }
+      /* shock rings travelling along the beam give it a round, 3D body */
+      c.strokeStyle = '#ffffff';
+      for (var ring2 = 0; ring2 < 6; ring2++) {
+        var rx0 = ((bt * .9 + ring2 * L / 6) % L);
+        c.globalAlpha = .45 * thin * (1 - rx0 / L * .6); c.lineWidth = 3;
+        c.beginPath(); c.ellipse(rx0, 0, hh * .28, hh * 1.35, 0, 0, TAU); c.stroke();
+      }
+      c.globalAlpha = .85 * thin; c.lineWidth = 2;
+      for (var s = 0; s < 10; s++) { var y3 = rand(-hh * .9, hh * .9), xs = rand(0, L); c.beginPath(); c.moveTo(xs, y3); c.lineTo(xs + rand(60, 240), y3); c.stroke(); }
+      if (grow < 1) { var hg = c.createRadialGradient(L, 0, 0, L, 0, hh * 2); hg.addColorStop(0, '#fff'); hg.addColorStop(1, 'rgba(60,150,255,0)'); c.fillStyle = hg; c.beginPath(); c.arc(L, 0, hh * 2, 0, TAU); c.fill(); }
+    });
+    later(CHARGE, function () {
+      clip('kamehameha-fire', 0);
+      impact(['neg', 'white', 'neg'], null);
+      flash('#dff1ff', 420, .7); shake(phone ? 14 : 22, BEAM);
+      spk.burst(ox, oy, phone ? 30 : 60, 20);
+      shockwave(ox, oy, '#6ab8ff', Math.max(w, h) * .6, 800);
+      later(260, function () { shockwave(ox, oy, '#6ab8ff', Math.max(w, h) * .45, 700); });
+      sfx('波ァァァ!!', portrait ? w / 2 : w * .55, portrait ? h * .3 : oy - (phone ? 90 : 180), { cls: 'xl', en: 'KAMEHAMEHA', color: '#2d8cff', life: BEAM + 200, rot: -5 });
+      blast(ox, oy, ang, portrait ? w * .22 : h * .15);
+    });
+    later(CHARGE + BEAM + 450, function () {
+      drop(dim, 500);
+      if (lit) lit.off(600);
+      if (litB) litB.off(400);
+      if (!root.classList.contains('pw-ssj')) ssj(true, true); else setBusy(false);
+    });
+  }
+
+  /* anything the beam passes through gets knocked about */
+  function blast(ox, oy, ang, hh) {
+    if (reduce) return;
+    var dx = Math.cos(ang), dy = Math.sin(ang);
+    pieces(phone ? 60 : 160).forEach(function (p) {
+      var r = p.r, cxp = r.left + r.width / 2 - ox, cyp = r.top + r.height / 2 - oy;
+      var along = cxp * dx + cyp * dy, across = Math.abs(-cxp * dy + cyp * dx);
+      if (along < 0 || across > hh * 1.4) return;
+      var k = rand(16, 40);
+      p.el.animate([
+        { transform: 'none' },
+        { transform: 'translate(' + (dx * k + rand(-6, 6)).toFixed(0) + 'px,' + (dy * k + rand(-6, 6)).toFixed(0) + 'px) rotate(' + rand(-6, 6).toFixed(1) + 'deg)', offset: .2 },
+        { transform: 'translate(' + rand(-3, 3).toFixed(0) + 'px,' + rand(-3, 3).toFixed(0) + 'px)', offset: .6 },
+        { transform: 'none' }
+      ], { duration: 900, delay: along / 6, easing: 'ease-out' });
+    });
+  }
+
+  /* ==================================================================
+     超 SUPER SAIYAN — the scream, the ground cracking and its stones
+     lifting into the updraft, golden fire from below, SSJ2 lightning,
+     then a gold impact, the stones drop and the aura stays on
+     ================================================================== */
+  /* ---------- levitating stones ---------- */
+  /* a chunky silhouette: five to seven corners at uneven radii, so every
+     stone has a few long flat facets and a couple of sharp ones */
+  function stoneShape(s) {
+    var n = 5 + (Math.random() * 3 | 0), pts = [], sq = rand(.55, 1);
+    for (var i = 0; i < n; i++) {
+      var a = i / n * TAU + rand(-.22, .22), r = s * rand(.55, 1.05);
+      pts.push([Math.cos(a) * r, Math.sin(a) * r * sq]);
+    }
+    return pts;
+  }
+  function tracePoly(c, pts) {
+    c.beginPath();
+    for (var i = 0; i < pts.length; i++) { if (i) c.lineTo(pts[i][0], pts[i][1]); else c.moveTo(pts[i][0], pts[i][1]); }
+    c.closePath();
+  }
+  /* cel shading in two tones: the side facing the light in warm ochre behind a
+     jagged terminator, the rest in shadow, a gold rim on the lit edges and an
+     ink outline. Far stones get less contrast, like anything in the distance. */
+  function drawStone(c, r, lx, ly, alpha, far) {
+    var s = r.s, cs = Math.cos(-r.r), sn = Math.sin(-r.r);
+    var dx = lx - r.x, dy = ly - r.y, l = Math.hypot(dx, dy) || 1; dx /= l; dy /= l;
+    var ldx = dx * cs - dy * sn, ldy = dx * sn + dy * cs, px = -ldy, py = ldx, o = s * r.k;
+    c.save(); c.translate(r.x, r.y); c.rotate(r.r); c.globalAlpha = alpha;
+    tracePoly(c, r.p);
+    c.fillStyle = far ? '#4d3d2e' : '#2b2015'; c.fill();
+    c.save(); c.clip();
+    c.beginPath();
+    c.moveTo(ldx * o + px * 3 * s, ldy * o + py * 3 * s);
+    c.lineTo(ldx * (o + s * .18) + px * s * .9, ldy * (o + s * .18) + py * s * .9);
+    c.lineTo(ldx * (o - s * .1) + px * s * .2, ldy * (o - s * .1) + py * s * .2);
+    c.lineTo(ldx * (o + s * .12) - px * s * .5, ldy * (o + s * .12) - py * s * .5);
+    c.lineTo(ldx * o - px * 3 * s, ldy * o - py * 3 * s);
+    c.lineTo(ldx * 4 * s - px * 3 * s, ldy * 4 * s - py * 3 * s);
+    c.lineTo(ldx * 4 * s + px * 3 * s, ldy * 4 * s + py * 3 * s);
+    c.closePath();
+    c.fillStyle = far ? '#8a6c4c' : '#86603a'; c.fill();
+    c.restore();
+    c.strokeStyle = far ? 'rgba(255,215,140,.55)' : 'rgba(255,222,150,.95)'; c.lineWidth = far ? 1 : 1.6; c.lineCap = 'round';
+    c.beginPath();
+    for (var i = 0; i < r.p.length; i++) {
+      var a = r.p[i], b = r.p[(i + 1) % r.p.length], ex = b[0] - a[0], ey = b[1] - a[1], el = Math.hypot(ex, ey) || 1;
+      if ((ey * ldx - ex * ldy) / el > .35) { c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); }
+    }
+    c.stroke();
+    tracePoly(c, r.p); c.strokeStyle = far ? 'rgba(20,12,6,.6)' : '#140c06'; c.lineWidth = far ? 1 : 1.5; c.lineJoin = 'round'; c.stroke();
+    c.restore();
+  }
+  /* the ground under the power: cracks that grow out along the floor and leak gold,
+     pebbles that shiver loose first, then rocks, then slabs that tear free and drift
+     up in the updraft, tumbling, shedding crumbs and dust. A far layer and a near
+     layer for parallax. On the burst everything drops and shatters on the floor. */
+  function stoneField(w, h, fx, fy, DUR) {
+    var far = [], near = [], frags = [], dust = [], crumbs = [], motes = [], cracks = [], arc = null, arcAt = 0;
+    var N = reduce ? .4 : phone ? .5 : 1, TEAR = reduce ? 40 : 140, GROW = reduce ? 60 : 320, LX = fx, LY = h * .96;
+    function seat(list, n, s0, s1, t0, t1, isFar) {
+      for (var i = 0; i < Math.round(n); i++) {
+        var s = rand(s0, s1), g = (isFar ? h * .84 : h * .9) + rand(0, isFar ? h * .05 : h * .1);
+        /* most of the stones lift near the middle, where the aura pulls hardest */
+        list.push({ x: fx + (rand(-1, 1) + rand(-1, 1)) * w * (s > 16 ? .3 : .44), y: g + s * .7, s: s, p: stoneShape(s), r: rand(0, TAU), vr: 0, vx: 0, vy: 0, at: rand(t0, t1), st: 0, far: isFar, g: g, k: rand(-.05, .2), ph: rand(0, TAU), u: 0 });
+      }
+    }
+    seat(far, 26 * N, 2.5, 5, 0, DUR * .3, true);        /* pebbles shiver loose first */
+    seat(near, 18 * N, 3, 6, DUR * .04, DUR * .34, false);
+    seat(far, 12 * N, 6, 11, DUR * .18, DUR * .55, true);  /* then rocks */
+    seat(near, 9 * N, 8, 15, DUR * .2, DUR * .58, false);
+    seat(far, 4 * N, 12, 18, DUR * .36, DUR * .7, true);   /* then slabs */
+    seat(near, 4 * N, 18, 30, DUR * .38, DUR * .72, false);
+    /* a crack keeps its heading and kinks hard every few segments, the way stone splits */
+    function crack(x0, y0, ang, len, wid, depth, at) {
+      var pts = [[x0, y0]], x = x0, y = y0, a = ang, segs = 5 + (len / 36 | 0), kids = [];
+      for (var i = 0; i < segs; i++) {
+        var sl = len / segs * rand(.5, 1.5); a += Math.random() < .3 ? rand(.5, 1) * (Math.random() < .5 ? -1 : 1) : rand(-.12, .12);
+        x += Math.cos(a) * sl; y += Math.sin(a) * sl * .3;   /* the floor is seen at a low angle */
+        pts.push([x, y]);
+        if (depth > 0 && i > 0 && Math.random() < .35) kids.push(crack(x, y, a + rand(.6, 1.3) * (Math.random() < .5 ? -1 : 1), len * rand(.25, .5), wid * .5, depth - 1, at + GROW * (i + 1) / segs));
+      }
+      return { p: pts, w: wid, kids: kids, at: at };
+    }
+    for (var i = 0; i < Math.round(7 * N); i++) cracks.push(crack(fx + rand(-w * .22, w * .22), h * .97 + rand(-10, 6), rand(0, TAU), rand(160, 420) * (phone ? .6 : 1), rand(4.5, 7), 1, rand(0, DUR * .35)));
+    for (var m = 0; m < Math.round(48 * N); m++) motes.push({ x: rand(0, w), y: rand(h * .2, h), v: rand(1.4, 4), s: rand(.8, 1.8), ph: rand(0, TAU) });
+    function puff(x, y, r, n) { for (var i = 0; i < n; i++) dust.push({ x: x + rand(-r, r), y: y + rand(-r * .3, r * .3), r: r * rand(.6, 1.2), vx: rand(-.5, .5), vy: -rand(.2, .7), l: 1, d: rand(.012, .022) }); }
+    function shatter(r) {
+      var n = 3 + (Math.min(r.s, 24) / 5 | 0);
+      for (var i = 0; i < n; i++) {
+        var s = r.s * rand(.2, .45), a = rand(-Math.PI, 0);
+        frags.push({ x: r.x + rand(-r.s, r.s) * .5, y: r.g - s * .5, s: s, p: stoneShape(s), r: rand(0, TAU), vr: rand(-.3, .3), vx: Math.cos(a) * rand(1, 4) + r.vx * .3, vy: Math.sin(a) * rand(1, 3.5), g: r.g, k: r.k, l: 1, far: r.far });
+      }
+      puff(r.x, r.g, r.s * 1.1, 3);
+    }
+    /* pass 0: the fissure in ink; pass 1: gold light leaking up out of it; pass 2: its soft glow */
+    function drawCrack(c, k, t, p, pass) {
+      var f = Math.min(1, Math.max(0, (t - k.at) / GROW)); if (f <= 0) return;
+      f = 1 - Math.pow(1 - f, 2.6);
+      var n = (k.p.length - 1) * f, full = Math.floor(n), part = n - full, wk = k.w * (pass === 0 ? 1 : pass === 1 ? .36 : 2.6), N2 = k.p.length - 1;
+      /* wide where it opened, a hairline at the tip */
+      for (var i = 1; i <= full; i++) { c.lineWidth = wk * (1 - (i - 1) / N2 * .8); c.beginPath(); c.moveTo(k.p[i - 1][0], k.p[i - 1][1]); c.lineTo(k.p[i][0], k.p[i][1]); c.stroke(); }
+      if (full < N2 && part > 0) { var a = k.p[full], b = k.p[full + 1]; c.lineWidth = wk * (1 - full / N2 * .8); c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(a[0] + (b[0] - a[0]) * part, a[1] + (b[1] - a[1]) * part); c.stroke(); }
+      if (pass === 0 && f < 1 && f > .1 && Math.random() < .35) { var tip = k.p[full]; dust.push({ x: tip[0], y: tip[1], r: rand(4, 9), vx: rand(-.4, .4), vy: -rand(.4, 1), l: .8, d: .03 }); }
+      k.kids.forEach(function (kid) { drawCrack(c, kid, t, p, pass); });
+    }
+    function stepStone(r, t, p, burst) {
+      if (r.st === 0) { if (t < r.at) return true; r.st = 1; puff(r.x, r.g, r.s * 1.4, r.s > 10 ? 4 : 2); }
+      if (r.st === 1) {
+        var k = Math.min(1, (t - r.at) / TEAR), e = k * k;
+        r.y = r.g + r.s * .7 - e * r.s;
+        r.x += ((Math.round(t / 16) & 1) ? 1 : -1) * (.6 + r.s * .06) * k;
+        if (k >= 1) {
+          r.st = 2; r.vy = -(2 + 10 / r.s) * (reduce ? .5 : 1); r.vr = rand(-1, 1) * (.006 + .1 / r.s);
+          r.u = r.far ? -(.8 + 3.5 / r.s) : -(1.6 + 8 / r.s);
+          puff(r.x, r.g, r.s * 1.2, r.s > 10 ? 3 : 1);
+          if (r.s > 10) for (var i = 0; i < 4; i++) crumbs.push({ x: r.x + rand(-r.s, r.s) * .5, y: r.g, vx: rand(-.6, .6), vy: rand(.2, 1.4), s: rand(1, 2.4), l: 1 });
+        }
+      } else if (r.st === 2) {
+        if (burst) {
+          r.st = 3;
+          var ax = r.x - fx, ay = r.y - (fy - 60), al = Math.hypot(ax, ay) || 1, v = (5 + 40 / r.s) * (r.far ? .5 : 1);
+          r.vx = ax / al * v; r.vy = ay / al * v - 1; r.vr *= 3;
+        } else {
+          r.vy += (r.u - r.vy) * .06;
+          r.vx = Math.sin(t * .003 + r.ph) * (.15 + 1.2 / r.s) + (fx - r.x) * .0004;
+          if (r.s > 10 && Math.random() < .12) crumbs.push({ x: r.x + rand(-r.s, r.s) * .5, y: r.y + r.s * .5, vx: rand(-.3, .3), vy: rand(.4, 1.2), s: rand(.8, 2.2), l: 1 });
+          if (r.s > 14 && Math.random() < .25) dust.push({ x: r.x + rand(-r.s, r.s) * .4, y: r.y + r.s * .4, r: r.s * rand(.4, .7), vx: 0, vy: rand(.2, .6), l: .5, d: .02 });
+        }
+      }
+      if (r.st === 3) {
+        r.vy += .45; r.vx *= .985;
+        if (r.y + r.vy >= r.g) { shatter(r); return false; }
+      }
+      r.x += r.vx; r.y += r.vy; r.r += r.vr;
+      return r.y > -r.s * 2 && r.x > -r.s * 2 && r.x < w + r.s * 2;
+    }
+    function drawLayer(c, list, t, p, fade, burst, isFar) {
+      for (var i = 0; i < list.length; i++) {
+        var r = list[i];
+        if (!stepStone(r, t, p, burst)) { list.splice(i--, 1); continue; }
+        if (r.st === 0) continue;
+        /* a stone tearing free is only seen above the floor line it comes out of */
+        if (r.st === 1) { c.save(); c.beginPath(); c.rect(0, 0, w, r.g); c.clip(); drawStone(c, r, LX, LY, fade, isFar); c.restore(); }
+        else drawStone(c, r, LX, LY, fade, isFar);
+      }
+    }
+    return {
+      draw: function (c, t, p, fade, now, END) {
+        /* the light dies with the burst and the floor heals under the flash; the stones
+           stay solid until they have dropped, then go with the last of the dust */
+        var burst = t >= DUR, sf = Math.max(0, Math.min(1, (END - t) / 400)), cf = burst ? Math.max(0, 1 - (t - DUR) / 450) : 1, sprDust = sprite('205,165,105'), i;
+        /* the cracks: a dark fissure, gold light leaking up out of it, and its glow */
+        var flick = (.6 + p * .4) * fade * (.75 + noise1(t * .02) * .4);
+        c.lineCap = 'round'; c.lineJoin = 'round';
+        c.globalCompositeOperation = 'source-over'; c.strokeStyle = '#1a110a'; c.globalAlpha = .92 * cf;
+        for (i = 0; i < cracks.length; i++) drawCrack(c, cracks[i], t, p, 0);
+        c.globalCompositeOperation = 'lighter'; c.strokeStyle = 'rgba(255,200,90,1)'; c.globalAlpha = flick;
+        for (i = 0; i < cracks.length; i++) drawCrack(c, cracks[i], t, p, 1);
+        c.strokeStyle = 'rgba(255,160,40,1)'; c.globalAlpha = .22 * flick;
+        for (i = 0; i < cracks.length; i++) drawCrack(c, cracks[i], t, p, 2);
+        /* dust in the updraft */
+        if (!reduce) {
+          c.globalCompositeOperation = 'lighter'; c.fillStyle = 'rgb(255,225,170)'; c.globalAlpha = .4 * p * fade;
+          for (i = 0; i < motes.length; i++) { var m = motes[i]; m.y -= m.v * (.4 + p); m.x += Math.sin(t * .004 + m.ph) * .4; if (m.y < h * .1) { m.y = h + 4; m.x = rand(0, w); } c.fillRect(m.x, m.y, m.s, m.s * 2.2); }
+        }
+        c.globalCompositeOperation = 'source-over';
+        dust = dust.filter(function (d) { d.x += d.vx; d.y += d.vy; d.r *= 1.012; d.l -= d.d; if (d.l <= 0) return false; blob(c, sprDust, d.x, d.y, d.r, d.l * .22 * sf); return true; });
+        c.globalAlpha = 1;
+        drawLayer(c, far, t, p, sf, burst, true);
+        crumbs = crumbs.filter(function (k) { k.vy -= .06; k.x += k.vx; k.y += k.vy; k.l -= .02; if (k.l <= 0) return false; c.globalAlpha = k.l * sf; c.fillStyle = '#2b2015'; c.fillRect(k.x - k.s / 2, k.y - k.s / 2, k.s, k.s * .8); return true; });
+        c.globalAlpha = 1;
+        drawLayer(c, near, t, p, sf, burst, false);
+        frags = frags.filter(function (f) {
+          f.vy += .4; f.x += f.vx; f.y += f.vy; f.r += f.vr;
+          if (f.y > f.g) { f.y = f.g; f.vy *= -.35; f.vx *= .7; f.vr *= .5; f.l -= .1; }
+          f.l -= .018; if (f.l <= 0) return false;
+          drawStone(c, f, LX, LY, Math.min(1, f.l * 1.5) * sf, f.far); return true;
+        });
+        /* SSJ2 crackle jumping between two stones */
+        if (!reduce && now > arcAt) {
+          var pool = near.concat(far).filter(function (r) { return r.st === 2; }), a1 = pool.length > 1 ? pick(pool) : null, a2 = null;
+          if (a1) for (i = 0; i < 6 && !a2; i++) { var cand = pick(pool); if (cand !== a1 && Math.hypot(cand.x - a1.x, cand.y - a1.y) < 260) a2 = cand; }
+          arc = a2 ? { b: makeBolt(a1.x, a1.y, a2.x, a2.y, .9, 0, .1), until: now + rand(30, 60) } : null;
+          if (arc) ion(arc.b, .4);
+          arcAt = now + rand(70, 160);
+        }
+        if (arc && now < arc.until) { c.globalCompositeOperation = 'lighter'; drawBolt(c, arc.b, '#ffd35a', fade); }
+        c.globalAlpha = 1;
+      }
+    };
+  }
+  var aura = null;
+  function ssj(onOff, animate) {
+    if (onOff) {
+      if (!aura) aura = overlay('pw-aura');
+      if (animate) {
+        setBusy(true);
+        var w = vw(), h = vh(), DUR = reduce ? 300 : 1700, fx = w / 2, fy = h * (phone ? .66 : .7);
+        var dim = overlay('pw-dim ssj'); on(dim);
+        /* the light comes up off the floor the aura burns on, not from a spot in the middle */
+        var lit = reduce ? null : pageLight('255,190,60');
+        if (lit) lit.band('linear-gradient(to top, rgba(255,200,70,.75), rgba(255,190,60,.3) 38%, rgba(255,190,60,0) 80%)', 0);
+        later(DUR + 700, function () { if (lit) lit.off(400); });
+        clip('super-saiyan', 0);
+        clip('super-saiyan-burst', DUR);
+        var END = DUR + (reduce ? 700 : 1500), stones = stoneField(w, h, fx, fy, DUR), zap = [], flames = [];
+        for (var z = 0; z < (phone ? 3 : 6); z++) zap.push(null);
+        layer(function (c, t, now) {
+          if (t > END) return false;
+          var p = Math.min(1, t / DUR), fade = t > DUR ? Math.max(0, 1 - (t - DUR) / 700) : 1;
+          if (!reduce) focusLines(c, fx, fy - 60, 150, 'rgba(255,230,150,1)', phone ? 36 : 70, (.1 + p * .2) * fade);
+          if (lit) lit.el.style.opacity = ((.2 + p * .6) * fade * (.85 + Math.random() * .15)).toFixed(2);
+          c.globalCompositeOperation = 'lighter';
+          /* golden fire licking up off the floor across the whole width, tallest in the middle */
+          if (t < DUR + 300) for (var i = 0; i < (phone ? 6 : 12); i++) {
+            var sx = fx + (rand(-1, 1) + rand(-1, 1)) * w * .3, near = 1 - Math.abs(sx - fx) / (w * .5);
+            flames.push({ x: sx, y: h + rand(0, 14), vx: (fx - sx) * .002, vy: -rand(2.5, 5.5) * (.5 + p * .7) * (.7 + near * .6), s: rand(10, 26) * (.6 + p * .6), l: 1, d: rand(.016, .028), ph: rand(0, 50) });
+          }
+          var sprHot = sprite('255,240,190'), sprGold = sprite('255,180,40');
+          flames = flames.filter(function (f) {
+            f.x += f.vx + (noise1(f.ph + t * .004) - .5) * 2.2; f.y += f.vy; f.vy *= .99; f.l -= f.d; f.s *= .985;
+            if (f.l <= 0) return false;
+            c.save(); c.translate(f.x, f.y); c.scale(.7, 1.6);
+            blob(c, f.l > .6 ? sprHot : sprGold, 0, 0, f.s, f.l * Math.min(1, (1 - f.l) * 5) * fade * .5);
+            c.restore();
+            return true;
+          });
+          /* SSJ2 lightning crawling over the whole aura */
+          for (var q = 0; q < zap.length; q++) {
+            if (!zap[q] || now > zap[q].until) { var x0 = fx + rand(-w * .38, w * .38), y0 = rand(h * .22, h * .9); zap[q] = { b: makeBolt(x0, y0, x0 + rand(-70, 70), y0 + rand(40, 140), 1.1, 1, .15), c: Math.random() < .5 ? '#ffd35a' : '#8fd3ff', until: now + rand(50, 110) }; ion(zap[q].b, .6); }
+            drawBolt(c, zap[q].b, zap[q].c, fade);
+          }
+          /* the floor cracks and its stones lift, tumble, then drop on the burst */
+          stones.draw(c, t, p, fade, now, END);
+        });
+        sfx('ハアアアア!!', w / 2, h * .3, { cls: 'xl', en: 'SUPER SAIYAN', color: '#ff9f00', life: DUR + 300, rot: -3 });
+        shake(6, DUR * .5); later(DUR * .5, function () { shake(14, DUR * .5); });
+        later(DUR, function () {
+          impact(['neg', 'white', 'neg'], 'gold');
+          flash('#fff3c4', 700, .85);
+          shockwave(fx, fy - 60, '#ffd35a', Math.max(w, h) * .8, 900);
+          root.classList.add('pw-ssj'); on(aura);
+          drop(dim, 700); setBusy(false); paint();
+          toast('Super Saiyan mode. Tap 超 again to power down.');
+        });
+      } else { root.classList.add('pw-ssj'); on(aura); }
+      store(KEY_SSJ, '1');
+    } else {
+      root.classList.remove('pw-ssj');
+      if (aura) { drop(aura, 1000); aura = null; }
+      store(KEY_SSJ, null);
+    }
+    paint();
+  }
+
+  /* ==================================================================
+     The dock
+     ================================================================== */
+  var POWERS = [
+    { id: 'chidori', k: '千', name: 'Chidori', sub: 'destroy the page', c: '#5fb4ff', run: chidori },
+    { id: 'arise', k: '起', name: 'Arise', sub: 'raise the shadows', c: '#9a6bff', run: arise },
+    { id: 'wind', k: '風', name: 'Wind', sub: 'wind release', c: '#4fbf8f', run: wind },
+    { id: 'kame', k: '波', name: 'Kamehameha', sub: 'charge and fire', c: '#2d8cff', run: kamehameha },
+    { id: 'ssj', k: '超', name: 'Super Saiyan', sub: 'golden aura', c: '#ffc83a', run: function () { if (!busy && !ruin) ssj(!root.classList.contains('pw-ssj'), true); } }
+  ];
+  var dock = el('div', 'pw-dock');
+  dock.innerHTML = '<div class="pw-list" id="pw-list"></div><button type="button" class="pw-toggle" aria-expanded="false" aria-controls="pw-list" aria-label="Powers"><span aria-hidden="true">術</span></button>';
+  var list = dock.querySelector('.pw-list'), toggle = dock.querySelector('.pw-toggle'), btn = {};
+  POWERS.forEach(function (p, i) {
+    var b = el('button', 'pw-item', '<b aria-hidden="true">' + p.k + '</b><span>' + p.name + '<small>' + p.sub + '</small></span>');
+    b.type = 'button'; b.style.setProperty('--pw-c', p.c); b.style.setProperty('--i', i);
+    b.addEventListener('click', function () { p.run(); });
+    btn[p.id] = b; list.appendChild(b);
+  });
+  var mute = el('button', 'pw-item pw-mute');
+  mute.type = 'button'; mute.style.setProperty('--i', POWERS.length);
+  mute.addEventListener('click', function () {
+    muted = !muted; store(KEY_MUTE, muted ? '1' : null);
+    if (muted) Object.keys(loops).forEach(function (n) { stopClip(n, 200); });
+    if (AC) { if (muted) AC.suspend(); else AC.resume(); }
+    if (!muted) { preload(); if (windOn) clip('wind', 0, true); }
+    paint();
+  });
+  list.appendChild(mute);
+  toggle.addEventListener('click', function () { dock.classList.contains('open') ? closeDock() : openDock(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && dock.classList.contains('open')) { closeDock(); toggle.focus(); } });
+  document.addEventListener('click', function (e) { if (!dock.contains(e.target)) closeDock(); });
+  function openDock() {
+    dock.classList.add('open'); toggle.setAttribute('aria-expanded', 'true');
+    preload();
+  }
+  function closeDock() { dock.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
+  function setBusy(b) { busy = b; dock.classList.toggle('pw-busy', b); root.classList.toggle('pw-active', b || !!ruin); }
+  function paint() {
+    root.classList.toggle('pw-active', busy || !!ruin);
+    btn.chidori.disabled = !!ruin;
+    btn.kame.disabled = !!ruin;
+    btn.ssj.disabled = !!ruin;
+    btn.wind.disabled = !!ruin;
+    btn.arise.classList.toggle('pw-ready', !!ruin);
+    btn.wind.setAttribute('aria-pressed', windOn ? 'true' : 'false');
+    btn.ssj.setAttribute('aria-pressed', root.classList.contains('pw-ssj') ? 'true' : 'false');
+    mute.innerHTML = muted ? 'Sound off' : 'Sound on';
+    mute.setAttribute('aria-pressed', muted ? 'false' : 'true');
+  }
+
+  function start() {
+    document.body.appendChild(dock);
+    if (store(KEY_SSJ) === '1') ssj(true, false);
+    paint();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+
+  /* page code can trigger any power: XRPowers.chidori() or <button data-power="chidori"> */
+  var API = {
+    chidori: chidori, arise: arise, wind: wind, kamehameha: kamehameha, 
+    ssj: function (onOff) { if (busy || ruin) return; ssj(onOff == null ? !root.classList.contains('pw-ssj') : !!onOff, true); },
+    state: function () { return { busy: busy, destroyed: !!ruin, wind: windOn, ssj: root.classList.contains('pw-ssj') }; }
+  };
+  window.XRPowers = API;
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-power]');
+    if (!t || dock.contains(t)) return;
+    var fn = API[t.getAttribute('data-power')];
+    if (fn) { e.preventDefault(); fn(); }
+  });
+  document.dispatchEvent(new CustomEvent('xr-powers-ready', { detail: API }));
+})();
