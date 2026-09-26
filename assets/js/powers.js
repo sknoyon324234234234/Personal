@@ -205,12 +205,16 @@
     },
     /* Hinokami Kagura: the breath, the draw, a roaring fire dragon with
        sword swings, then the cut */
-    hinokami: function (start, dragon, slash) {
+    hinoBreath: function (start) {
       nz(0, start + .1, 'bandpass', 450, 950, .4, 1.6, .3, start * .8);
       SND.shing(start * .7);
-      nz(start, dragon, 'lowpass', 500, 1500, .55, .8, .3, .15);
-      crackle(start, dragon, 1600, .45, 28);
-      for (var i = 0; i < 4; i++) nz(start + i * dragon / 4, .32, 'bandpass', 280, 2200, .55, 2, .2, .05);
+    },
+    hinoFire: function (dragon) {
+      nz(0, dragon, 'lowpass', 500, 1500, .55, .8, .3, .15);
+      crackle(0, dragon, 1600, .45, 28);
+      for (var i = 0; i < 4; i++) nz(i * dragon / 4, .32, 'bandpass', 280, 2200, .55, 2, .2, .05);
+    },
+    hinoCut: function (slash) {
       nz(slash, .1, 'highpass', 5000, 2000, 1, .7, .4, .002);
       nz(slash, .5, 'bandpass', 2500, 600, .6, 1.5, .4, .01);
       osc(slash, 1.2, 'sine', 85, 30, .9, .3, .004, 3);
@@ -289,6 +293,39 @@
     });
   }
   if ('speechSynthesis' in window) try { speechSynthesis.getVoices(); } catch (e) {}
+
+  /* recorded sound cues (assets/sfx/sounds.js lists which exist). A cue
+     plays its recording on the exact beat of the animation; any cue that
+     has no recording, or hasn't loaded yet, falls back to the synth. */
+  var cueBufs = {}, cueLoading = false;
+  (function () {
+    var s = document.currentScript && document.currentScript.src;
+    var src = s ? s.replace(/js\/powers\.js.*$/, 'sfx/sounds.js') : 'assets/sfx/sounds.js';
+    var tag = document.createElement('script'); tag.src = src; tag.async = true; document.head.appendChild(tag);
+  })();
+  function sfxMap() { return window.XR_SFX || { files: {} }; }
+  function preloadCues() {
+    if (cueLoading || muted) return;
+    var a = audio(), m = sfxMap(); if (!a) return;
+    var names = Object.keys(m.files || {}); if (!names.length) return;
+    cueLoading = true;
+    names.forEach(function (n) {
+      fetch(sfxBase() + m.files[n]).then(function (r) { if (!r.ok) throw 0; return r.arrayBuffer(); })
+        .then(function (b) { return new Promise(function (ok, no) { a.decodeAudioData(b, ok, no); }); })
+        .then(function (buf) { cueBufs[n] = buf; }).catch(function () {});
+    });
+  }
+  var sfxRoot = (function () { var s = document.currentScript && document.currentScript.src; return s ? s.replace(/js\/powers\.js.*$/, 'sfx/') : 'assets/sfx/'; })();
+  function sfxBase() { return sfxRoot; }
+  function cue(name, when, fallback, gain) {
+    var a = audio(); if (!a) return;
+    var buf = cueBufs[name];
+    if (!buf) { if (fallback) fallback(); return; }
+    var src = a.createBufferSource(), g = a.createGain();
+    src.buffer = buf; g.gain.value = gain || 1;
+    src.connect(g); out(g, .12); src.start(T(when || 0));
+  }
+  document.addEventListener('pointerdown', function () { preloadCues(); }, { once: true, capture: true });
 
   /* your own sound files, if set in XIRAIYA_CONFIG.powerSounds */
   var buffers = {};
@@ -670,7 +707,10 @@
     /* camera: slow push in on the hand while it charges, whip to the target on the dash */
     camera(sx, sy, 1.07, CHARGE, 'cubic-bezier(.3,0,.2,1)');
     later(CHARGE, function () { camera(ex, ey, 1.12, DASH, 'cubic-bezier(.7,0,.3,1)'); });
-    if (!custom('chidori')) { SND.chidoriCharge(HIT / 1000); SND.thunder(HIT / 1000); SND.glass(HIT / 1000 + .05); SND.rubble(HIT / 1000 + .3); }
+    if (!custom('chidori')) {
+      cue('chidori_charge', 0, function () { SND.chidoriCharge(HIT / 1000); });
+      cue('chidori_hit', HIT / 1000, function () { SND.thunder(HIT / 1000); SND.glass(HIT / 1000 + .05); SND.rubble(HIT / 1000 + .3); });
+    }
 
     var sparks = [], trail = [], arcs = [];
     for (var i = 0; i < (phone ? 7 : 12); i++) arcs.push({ b: null, until: 0 });
@@ -1042,7 +1082,10 @@
     if (restoring) { ruin.rising = true; if (ruin.cta) { drop(ruin.cta, 600); ruin.cta = null; } }
     var w = vw(), h = vh(), own = custom('arise');
     var count = restoring ? ruin.anims.length : 0;
-    if (!own) { SND.arise(); say('Arise', 820, .05, .7); }
+    if (!own) {
+      cue('arise_drone', 0, function () { SND.arise(); });
+      cue('arise_voice', .8, function () { say('Arise', 820, .05, .7); });
+    }
     var sh = overlay('pw-shadow'); on(sh);
     letterbox(true);
     /* camera sinks toward the ground where the fallen lie */
@@ -1077,12 +1120,12 @@
 
     if (!restoring) {
       later(1500, function () {
-        if (!own) SND.souls(1.6);
+        if (!own) cue('arise_souls', 0, function () { SND.souls(1.6); });
         sys = sysWindow('SYSTEM', ['No fallen enemies found.', 'Summoning your standing shadow army instead.']);
       });
       later(3600, function () {
         drop(sh, 800); drop(seal, 800); letterbox(false); cameraReset(500);
-        if (!own) SND.shing(0);
+        if (!own) cue('arise_done', 0, function () { SND.shing(0); });
         if (sys) sys.close(0);
         setBusy(false); paint();
         toast('Use Chidori first, then Arise will extract the fallen page.');
@@ -1092,7 +1135,7 @@
 
     /* 3 → souls torn out of the fallen */
     later(1300, function () {
-      if (!own) SND.souls(1.8);
+      if (!own) cue('arise_souls', 0, function () { SND.souls(1.8); });
       var rects = ruin.anims.map(function (p) { return p.el.getBoundingClientRect(); });
       extractSouls(rects, 1500);
       sys = sysWindow('SYSTEM', ['Shadow extraction in progress.', 'Targets: <em>' + count + '</em> fallen elements.'], { bar: true });
@@ -1108,7 +1151,7 @@
     /* 4 → the shadows stand up and take their places, then kneel */
     var done = [];
     later(2300, function () {
-      if (!own) SND.ariseRise();
+      if (!own) cue('arise_rise', 0, function () { SND.ariseRise(); });
       cameraReset(1400);
       sh.classList.add('thin');
       ruinParts.forEach(function (p) { p.style.transition = 'opacity 1.2s'; p.style.opacity = '0'; });
@@ -1130,7 +1173,7 @@
       Promise.all(done).then(function () {
         var SWEEP = reduce ? 300 : 1100;
         awakenSweep(SWEEP);
-        if (!own) SND.shing(0);
+        if (!own) cue('arise_done', 0, function () { SND.shing(0); });
         var wake = [];
         ruin.anims.forEach(function (p) {
           var top = p.el.getBoundingClientRect().top;
@@ -1169,8 +1212,9 @@
       if (i < 300) e.style.setProperty('--pw-d', (-(i % 7) * .13).toFixed(2));
     });
     var own = custom('wind');
-    if (!own) SND.gust(0, 2.4);
-    var gust = setInterval(function () { if (windOn && !own) SND.gust(0, rand(1.8, 2.8)); }, 2500);
+    function gustNow(d) { cue('wind_gust', 0, function () { SND.gust(0, d); }); }
+    if (!own) gustNow(2.4);
+    var gust = setInterval(function () { if (windOn && !own) gustNow(rand(1.8, 2.8)); }, 2500);
     var dark = root.getAttribute('data-mode') === 'ink';
     var streak = dark ? 'rgba(230,240,255,1)' : 'rgba(40,70,90,1)';
     var LEAF = ['#e8a1b0', '#f3c3cc', '#7fae5a', '#a9c96e', '#d9a441'];
@@ -1231,14 +1275,14 @@
     var dim = overlay('pw-dim kame'); dim.style.setProperty('--px', ox + 'px'); dim.style.setProperty('--py', oy + 'px'); on(dim);
     var STEP = reduce ? 150 : 520, CHARGE = STEP * 4 + 250, BEAM = reduce ? 600 : 1700;
     var own = custom('kamehameha');
-    if (!own) SND.kameCharge(CHARGE / 1000);
+    if (!own) cue('kame_charge', 0, function () { SND.kameCharge(CHARGE / 1000); });
     ['か', 'め', 'は', 'め'].forEach(function (ch, i) {
       later(i * STEP, function () {
         var tx = portrait ? w * (.2 + i * .2) : ox + 60 + i * Math.min(130, w * .09);
         var ty = portrait ? h * .5 : oy - 160 - (i % 2) * 44;
         sfx(ch, tx, ty, { color: '#2d8cff', life: CHARGE - i * STEP + 200, rot: rand(-12, 12) });
         shake(2 + i * 2.5, STEP);
-        if (!own) say(['Ka', 'me', 'ha', 'me'][i], 0, .6 - i * .05, 1);
+        if (!own) cue(['kame_ka', 'kame_me', 'kame_ha', 'kame_me2'][i], 0, function () { say(['Ka', 'me', 'ha', 'me'][i], 0, .6 - i * .05, 1); });
       });
     });
     var bits = [], dust = [], zaps = [];
@@ -1313,7 +1357,10 @@
       if (grow < 1) { var hg = c.createRadialGradient(L, 0, 0, L, 0, hh * 2); hg.addColorStop(0, '#fff'); hg.addColorStop(1, 'rgba(60,150,255,0)'); c.fillStyle = hg; c.beginPath(); c.arc(L, 0, hh * 2, 0, TAU); c.fill(); }
     });
     later(CHARGE, function () {
-      if (!own) { SND.kameFire(BEAM / 1000); say('HAAAAAA', 0, .5, .6); }
+      if (!own) {
+        cue('kame_fire', 0, function () { SND.kameFire(BEAM / 1000); });
+        cue('kame_haaa', 0, function () { say('HAAAAAA', 0, .5, .6); });
+      }
       impact(['neg', 'white', 'neg'], null);
       flash('#dff1ff', 420, .7); shake(phone ? 14 : 22, BEAM);
       shockwave(ox, oy, '#6ab8ff', Math.max(w, h) * .6, 800);
@@ -1367,7 +1414,12 @@
     var DRAGON = reduce ? 400 : 1500, START = reduce ? 100 : 650, SLASH = START + DRAGON + 120;
     var dim = overlay('pw-dim sun'); on(dim);
     var own = custom('slash');
-    if (!own) { SND.hinokami(START / 1000, DRAGON / 1000, SLASH / 1000); say('Hinokami Kagura', 120, .7, .95); }
+    if (!own) {
+      cue('slash_breath', 0, function () { SND.hinoBreath(START / 1000); });
+      cue('slash_voice', .12, function () { say('Hinokami Kagura', 120, .7, .95); });
+      cue('slash_fire', START / 1000, function () { var a = audio(); if (a) setTimeout(function () { SND.hinoFire(DRAGON / 1000); }, START); });
+      cue('slash_cut', SLASH / 1000, function () { SND.hinoCut(SLASH / 1000); });
+    }
     sfx('ヒノカミ神楽', w / 2, h * .2, { cls: 'xl', en: 'HINOKAMI KAGURA', color: '#e0401a', life: START + 900, rot: -3 });
     later(START + DRAGON * .45, function () { sfx('円舞', w * (phone ? .5 : .78), h * (phone ? .78 : .3), { en: 'DANCE', color: '#e0401a', life: 900, rot: 6 }); });
 
@@ -1479,7 +1531,10 @@
         setBusy(true);
         var w = vw(), h = vh(), DUR = reduce ? 300 : 1700, fx = w / 2, fy = h * (phone ? .66 : .7);
         var dim = overlay('pw-dim ssj'); on(dim);
-        if (!custom('ssj')) { SND.ssj(DUR / 1000); say('HAAAAAAAA', 100, .9, .5); }
+        if (!custom('ssj')) {
+          cue('ssj_scream', 0, function () { SND.ssj(DUR / 1000); });
+          cue('ssj_voice', .1, function () { say('HAAAAAAAA', 100, .9, .5); });
+        }
         var rocks = [], zap = [];
         for (var z = 0; z < (phone ? 3 : 6); z++) zap.push(null);
         layer(function (c, t, now) {
@@ -1564,6 +1619,7 @@
   function openDock() {
     dock.classList.add('open'); toggle.setAttribute('aria-expanded', 'true');
     ['chidori', 'arise', 'wind', 'kamehameha', 'ssj', 'slash'].forEach(loadFile);
+    preloadCues();
   }
   function closeDock() { dock.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
   function setBusy(b) { busy = b; dock.classList.toggle('pw-busy', b); }
