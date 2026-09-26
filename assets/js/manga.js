@@ -79,7 +79,7 @@
         var list = [];
         en.forEach(function (e) { if (e.isIntersecting && !e.target.classList.contains('in')) { list.push(e.target); io.unobserve(e.target); } });
         if (list.length) reveal(list);
-      }, { threshold: 0.3, rootMargin: '0px 0px -8% 0px' });
+      }, { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
       var seen = new IntersectionObserver(function (en) {
         en.forEach(function (e) {
           var p = e.target, i = onScreen.indexOf(p);

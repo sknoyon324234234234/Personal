@@ -84,9 +84,12 @@
     scene.background = SKY.dusk.clone();
     scene.fog = new T.Fog(scene.background.getHex(), 26, 70);
 
-    var camera = new T.PerspectiveCamera(phone ? 52 : 42, 1, .1, 200);
-    var target = new T.Vector3(0, 1.6, 0), goal = target.clone();
-    var orbit = { th: .5, ph: 1.2, r: phone ? 21 : 18 }, want = { th: .5, ph: 1.2, r: orbit.r };
+    /* phones are portrait: a wider lens, further back, aimed a little higher so the
+       square sits under the copy panel instead of behind it */
+    var REST = { y: phone ? 4.2 : 1.6, r: phone ? 26 : 18 };
+    var camera = new T.PerspectiveCamera(phone ? 70 : 42, 1, .1, 200);
+    var target = new T.Vector3(0, REST.y, 0), goal = target.clone();
+    var orbit = { th: .5, ph: 1.2, r: REST.r }, want = { th: .5, ph: 1.2, r: orbit.r };
 
     /* lights */
     var hemi = new T.HemisphereLight('#ffb38a', '#241632', 1.25);
@@ -180,10 +183,11 @@
     }
     [[-9, 12, .9], [9.5, 11.5, .85], [-11, -6, 1.3], [11, -7, 1.25], [-4, -13, 1], [5, -13, 1.1], [-17, 4, 1.2], [17, 3, 1.3]].forEach(function (t) { tree(t[0], t[2] > 0 ? t[1] : t[1], t[2]); });
 
-    /* lanterns with a few real lights */
+    /* lanterns with a few real lights, placed between the girls' spots so none
+       stands in front of a face when the camera zooms in on her */
     var lanterns = [];
     var lanM = new T.MeshStandardMaterial({ color: '#ff6a3a', emissive: '#ff5a24', emissiveIntensity: 1.6 });
-    [[-3.6, 7.5], [3.6, 7.5], [-8, 0], [8, 0], [-5, -8], [5, -8]].forEach(function (p, i) {
+    [[-2.2, 8.6], [2.2, 8.6], [-7.2, -4.15], [7.2, -4.15], [0, -8.3]].forEach(function (p, i) {
       var post = add(new T.CylinderGeometry(.06, .08, 2.2, 6), woodM, p[0], 1.1, p[1]);
       var l = add(new T.SphereGeometry(.34, 12, 10), lanM, p[0], 2.4, p[1]); l.scale.y = 1.25;
       if (i < (phone ? 2 : 4)) { var pl = new T.PointLight('#ff8a3c', 6, 11, 1.6); pl.position.set(p[0], 2.4, p[1]); scene.add(pl); lanterns.push(pl); }
@@ -276,11 +280,13 @@
       want.th = Math.atan2(-p.g.position.x, -p.g.position.z);
       want.th += Math.round((orbit.th - want.th) / (Math.PI * 2)) * Math.PI * 2;
       want.ph = 1.38;
-      want.r = phone ? 7.5 : 6.2;
+      want.r = phone ? 8.5 : 6.2;
+      if (phone) goal.y = 1.0;
+      section.classList.add('is-focus');
       setSpin(false);
       fillCard(p.c);
     }
-    if (card) $('.vl-x', card).addEventListener('click', function () { active = -1; goal.set(0, 1.6, 0); want.r = phone ? 21 : 18; want.ph = 1.2; });
+    if (card) $('.vl-x', card).addEventListener('click', function () { active = -1; goal.set(0, REST.y, 0); want.r = REST.r; want.ph = 1.2; section.classList.remove('is-focus'); });
 
     function setSpin(on) {
       spin = on;
