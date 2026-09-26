@@ -45,7 +45,7 @@
 <link rel="stylesheet" href="assets/css/core.css?v=82fbbd71">
 <link rel="stylesheet" href="assets/css/perf.css?v=8fc2f82d" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="assets/css/mystery.css?v=d7009d8a">
-<link rel="stylesheet" href="assets/css/home.css?v=8eb751f0">
+<link rel="stylesheet" href="assets/css/home.css?v=79d5269c">
 <link rel="stylesheet" href="assets/css/manga.css?v=74b1df1b">
 <link rel="stylesheet" href="assets/css/circuit.css?v=7d1f0d8a">
 <link rel="stylesheet" href="assets/css/bugs.css?v=ae1c485a">
@@ -189,20 +189,37 @@
 
   <section class="sp" data-sp="albedo" id="albedo" aria-label="Albedo, the Overseer"></section>
 
-  <!-- ============ MANGA VOLUME (scroll-driven) ============ -->
+  <!-- ============ MANGA VOLUME (scroll-driven motion comic) ============ -->
   <section class="mv" id="manga" aria-labelledby="mv-title">
+    <a class="mv-skip" href="#dojo">Skip the manga</a>
     <div class="mv-pin">
-      <div class="mv-head container container-wide">
-        <p class="mv-kicker"><span class="hanko sm">漫</span><span>Weekly Xiraiya · Vol. 01</span></p>
-        <h2 class="mv-title" id="mv-title">The Hidden Village <em>— a manga in four pages</em></h2>
+      <div class="mv-stage" tabindex="0" role="region" aria-roledescription="manga reader" aria-label="The Hidden Village, a manga in four pages. Scroll to read panel by panel, or use the left and right arrow keys to change page.">
+        <div class="mv-bg" aria-hidden="true"><i class="mv-wash"></i><i class="mv-glow" style="--gc:#c4321d"></i><i class="mv-glow" style="--gc:#b57bff"></i><i class="mv-glow" style="--gc:#ff7a2e"></i><i class="mv-glow" style="--gc:#ffd34d"></i><i class="mv-dots"></i></div>
+        <div class="mv-cam"><div class="mv-world"></div></div>
+        <div class="mv-speed" aria-hidden="true"><i class="spd-lines"></i><b class="spd-kanji jp"></b><i class="spd-slash"></i></div>
+        <div class="mv-card" aria-hidden="true">
+          <i class="cd-band"></i><i class="cd-burst"></i>
+          <div class="cd-char"><img alt="" decoding="async"></div>
+          <b class="cd-kanji jp"></b>
+          <div class="cd-text"><span class="cd-ep"></span><span class="cd-title"></span><i class="cd-rule"></i><span class="cd-hanko jp"></span></div>
+        </div>
+        <div class="mv-flash" aria-hidden="true"></div>
+        <div class="mv-vignette" aria-hidden="true"><i></i></div>
+        <div class="mv-grain" aria-hidden="true"></div>
+        <div class="mv-bars" aria-hidden="true"><i class="bar-t"></i><i class="bar-b"></i></div>
+        <header class="mv-head">
+          <p class="mv-kicker"><span class="hanko sm">漫</span><span>Weekly Xiraiya · Vol. 01</span></p>
+          <h2 class="mv-title" id="mv-title">The Hidden Village <em>— a manga in four pages</em></h2>
+        </header>
+        <div class="mv-pos" aria-hidden="true"><b class="pos-no jp">表紙</b><small>EP</small><span class="pos-roll"><span class="pos-col"><i>01</i><i>02</i><i>03</i><i>04</i></span></span><small>/ 04</small></div>
+        <div class="mv-nav" role="group" aria-label="Manga pages">
+          <button type="button" class="mv-prev" aria-label="Previous page"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
+          <div class="mv-seals"></div>
+          <button type="button" class="mv-next" aria-label="Next page"><svg class="ic" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+        </div>
+        <p class="mv-cue" aria-hidden="true">Scroll to read <i></i></p>
+        <p class="mv-live sr-only" aria-live="polite"></p>
       </div>
-      <div class="mv-book" aria-live="polite"></div>
-      <div class="mv-nav" role="group" aria-label="Manga pages">
-        <button type="button" class="mv-prev" aria-label="Previous page"><svg class="ic"><use href="#i-arrow-left"/></svg></button>
-        <span class="mv-pos"><b>1</b> / 4</span>
-        <button type="button" class="mv-next" aria-label="Next page"><svg class="ic"><use href="#i-arrow-right"/></svg></button>
-      </div>
-      <p class="mv-cue" aria-hidden="true">Scroll to read <i></i></p>
     </div>
   </section>
 
@@ -783,8 +800,8 @@
 <script src="assets/js/bugs.js?v=24137c14" defer></script>
 <script src="assets/js/impact.js?v=820ac2ba" defer></script>
 <script src="assets/js/home.js?v=8ff85049" defer></script>
-<script src="assets/js/home-reel.js?v=f634fdab" defer></script>
-<script src="assets/js/home-manga.js?v=f899e166" defer></script>
+<script src="assets/js/home-reel.js?v=b877103d" defer></script>
+<script src="assets/js/home-manga.js?v=b87fd51d" defer></script>
 <script src="assets/js/home-spotlights.js?v=55a10c94" defer></script>
 <script src="assets/js/manga.js?v=d79280c2" defer></script>
 </body>

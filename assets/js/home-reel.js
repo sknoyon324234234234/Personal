@@ -639,7 +639,7 @@
   }
   function tick(now) {
     raf = 0;
-    var dt = last ? Math.min(64, now - last) : 16, prev = t, tgt = null;
+    var dt = last ? clamp(now - last, 1, 64) : 16, prev = t, tgt = null;
     last = now;
     if (mode === 'play') {
       if (holdTill) { if (now >= holdTill) { holdTill = 0; t = 0; } }
