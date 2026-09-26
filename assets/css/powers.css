@@ -180,3 +180,4 @@ html.pw-ssj .pw-toggle { border-color: #ffd35a; box-shadow: 0 0 0 3px rgba(10, 8
 .pw-sys-n { margin-top: 4px; text-align: right; font-size: 11.5px; opacity: .8; }
 @media (prefers-reduced-motion: reduce) { .pw-sys { transition: opacity .2s; } }
 @media (max-width: 760px) { .pw-sys { top: auto; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); font-size: 12.5px; } }
+.pw-dim.sun { background: radial-gradient(ellipse at 50% 55%, rgba(255, 110, 30, .22), rgba(18, 6, 2, .84) 70%); }

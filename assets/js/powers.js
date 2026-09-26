@@ -3,6 +3,7 @@
      千鳥 Chidori      charges, dashes and shatters the page into rubble
      起きろ Arise      shadow soldiers rise and raise the page back
      風 Wind          a gale of streaks, vortices and leaves
+     日 Hinokami      Sun Breathing fire dragon and a slash that splits the page
      かめはめ波        chant, charge, fire a beam, then power up
      超 Super Saiyan  golden aura mode, remembered across pages
    Rendering: one effect canvas plus a blurred bloom copy of it (the
@@ -15,7 +16,7 @@
      powerSounds: { chidori: 'assets/sfx/chidori.mp3' }
    A file replaces that power's built-in sound and voice.
    Page code: XRPowers.chidori() / .arise() / .wind() / .kamehameha() /
-   .ssj(on?) / .state(), or any <button data-power="chidori">.
+   .slash() / .ssj(on?) / .state(), or any <button data-power="chidori">.
    ===================================================================== */
 (function () {
   'use strict';
@@ -202,6 +203,19 @@
       }
       crackle(0, dur, 2200, .15, 30);
     },
+    /* Hinokami Kagura: the breath, the draw, a roaring fire dragon with
+       sword swings, then the cut */
+    hinokami: function (start, dragon, slash) {
+      nz(0, start + .1, 'bandpass', 450, 950, .4, 1.6, .3, start * .8);
+      SND.shing(start * .7);
+      nz(start, dragon, 'lowpass', 500, 1500, .55, .8, .3, .15);
+      crackle(start, dragon, 1600, .45, 28);
+      for (var i = 0; i < 4; i++) nz(start + i * dragon / 4, .32, 'bandpass', 280, 2200, .55, 2, .2, .05);
+      nz(slash, .1, 'highpass', 5000, 2000, 1, .7, .4, .002);
+      nz(slash, .5, 'bandpass', 2500, 600, .6, 1.5, .4, .01);
+      osc(slash, 1.2, 'sine', 85, 30, .9, .3, .004, 3);
+      SND.shing(slash + .02);
+    },
     shing: function (when) {
       osc(when || 0, 1.6, 'sine', 2637, 2600, .22, .9, .002);
       osc(when || 0, 1.3, 'sine', 3951, 3900, .14, .9, .002);
@@ -371,6 +385,51 @@
     return function (now) { if (!cur || now > until) { cur = gen(); until = now + (life || 70) * rand(.6, 1.4); } return cur; };
   }
 
+  /* ---------- a small 3D engine: rotate, project, depth-shade ---------- */
+  var FOCAL = 620;
+  function unit3() { var z = rand(-1, 1), a = rand(0, TAU), r = Math.sqrt(1 - z * z); return [r * Math.cos(a), r * Math.sin(a), z]; }
+  function norm3(v) { var l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; }
+  function cross3(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+  function rotAxis(v, k, a) {
+    var c = Math.cos(a), s = Math.sin(a), d = v[0] * k[0] + v[1] * k[1] + v[2] * k[2];
+    return [v[0] * c + (k[1] * v[2] - k[2] * v[1]) * s + k[0] * d * (1 - c), v[1] * c + (k[2] * v[0] - k[0] * v[2]) * s + k[1] * d * (1 - c), v[2] * c + (k[0] * v[1] - k[1] * v[0]) * s + k[2] * d * (1 - c)];
+  }
+  function spin3(p, ay, ax) {
+    var cy = Math.cos(ay), sy = Math.sin(ay), x = p[0] * cy + p[2] * sy, z = -p[0] * sy + p[2] * cy;
+    var cx2 = Math.cos(ax), sx = Math.sin(ax), y = p[1] * cx2 - z * sx;
+    return [x, y, p[1] * sx + z * cx2];
+  }
+  function proj(p, ox, oy) { var s = FOCAL / (FOCAL + p[2]); return [ox + p[0] * s, oy + p[1] * s, s]; }
+  /* a jagged lightning arc wrapped around a sphere of radius R */
+  function sphereArc(R) {
+    var u = unit3(), k = norm3(cross3(u, unit3())), span = rand(.9, 2.4), n = 18, pts = [], th0 = rand(0, TAU);
+    for (var i = 0; i <= n; i++) {
+      var v = rotAxis(u, k, th0 + span * i / n), r = R * rand(.92, 1.28);
+      pts.push([v[0] * r + rand(-3, 3), v[1] * r + rand(-3, 3), v[2] * r + rand(-3, 3)]);
+    }
+    if (Math.random() < .5) { var tip = pts[n], out = rand(1.4, 2.6); pts.push([tip[0] * out, tip[1] * out, tip[2] * out]); }
+    return pts;
+  }
+  /* draw 3D polylines with depth: near is thick and bright, far is thin and dim */
+  function draw3d(c, pts, ox, oy, ay, ax, color, w) {
+    var P = pts.map(function (p) { return proj(spin3(p, ay, ax), ox, oy); });
+    c.lineCap = 'round';
+    [[color, .18, 6], [color, .6, 2.4], ['#ffffff', 1, 1]].forEach(function (ps) {
+      c.strokeStyle = ps[0];
+      for (var i = 1; i < P.length; i++) {
+        var s = (P[i][2] + P[i - 1][2]) / 2, d = Math.max(.08, Math.min(1, (s - .78) * 3.2));
+        c.globalAlpha = ps[1] * d; c.lineWidth = (w || 1.4) * ps[2] * s;
+        c.beginPath(); c.moveTo(P[i - 1][0], P[i - 1][1]); c.lineTo(P[i][0], P[i][1]); c.stroke();
+      }
+    });
+    c.globalAlpha = 1;
+  }
+  /* page elements move in real 3D: translate3d plus three rotations */
+  var Z0 = { x: 0, y: 0, z: 0, rx: 0, ry: 0, rz: 0 };
+  function tf(v, sc) {
+    return 'perspective(900px) translate3d(' + v.x.toFixed(0) + 'px,' + v.y.toFixed(0) + 'px,' + v.z.toFixed(0) + 'px) rotateX(' + v.rx.toFixed(1) + 'deg) rotateY(' + v.ry.toFixed(1) + 'deg) rotateZ(' + v.rz.toFixed(1) + 'deg) scale(' + (sc || 1) + ')';
+  }
+
   /* ---------- manga focus lines ---------- */
   function focusLines(c, x, y, inner, color, n, alpha) {
     var R = Math.hypot(W, H);
@@ -427,10 +486,18 @@
     var frames = [], n = Math.max(6, Math.round(ms / 40));
     for (var i = 0; i < n; i++) {
       var k = power * Math.pow(1 - i / n, 1.4);
-      frames.push({ transform: 'translate(' + rand(-k, k).toFixed(1) + 'px,' + rand(-k, k).toFixed(1) + 'px) rotate(' + (rand(-k, k) / 10).toFixed(2) + 'deg)' });
+      frames.push({ transform: 'perspective(1400px) translate3d(' + rand(-k, k).toFixed(1) + 'px,' + rand(-k, k).toFixed(1) + 'px,' + (-k * 3).toFixed(0) + 'px) rotateX(' + (rand(-k, k) / 7).toFixed(2) + 'deg) rotateY(' + (rand(-k, k) / 7).toFixed(2) + 'deg)' });
     }
-    frames.push({ transform: 'none' });
-    shakeTargets().forEach(function (t) { t.animate(frames, { duration: ms, easing: 'linear' }); });
+    frames.push({ transform: 'perspective(1400px) translate3d(0px,0px,0px) rotateX(0deg) rotateY(0deg)' });
+    /* pivot the 3D tilt on the middle of the screen, not the middle of a
+       page that may be tens of thousands of pixels tall */
+    shakeTargets().forEach(function (t) {
+      if (!t.__pwShakes) { t.__pwShakes = 0; t.__pwOrigin = t.style.transformOrigin; }
+      t.__pwShakes++;
+      t.style.transformOrigin = '50% ' + (vh() / 2 - t.getBoundingClientRect().top).toFixed(0) + 'px';
+      var done = function () { if (--t.__pwShakes === 0) { t.style.transformOrigin = t.__pwOrigin; t.__pwShakes = null; } };
+      t.animate(frames, { duration: ms, easing: 'linear' }).finished.then(done, done);
+    });
   }
   function flash(color, ms, peak) {
     var f = overlay('pw-flash'); f.style.background = color || '#fff';
@@ -474,6 +541,7 @@
       var r = n.getBoundingClientRect();
       if (r.width < 4 || r.height < 4 || r.bottom < 0 || r.top > h || r.right < 0 || r.left > w) return;
       var a = r.width * r.height, tag = n.tagName.toUpperCase();
+      if (tag === 'SVG' && r.height > h * 2) return; /* page-long decorative layers stay put */
       var small = a < area * .05, atom = ATOM.test(tag) && a < area * .3, card = hasSkin(cs) && a < area * .16;
       if (small || atom || card || tag === 'SVG' || !n.children.length) { outl.push({ el: n, r: r }); return; }
       kids(n);
@@ -528,16 +596,14 @@
       var g = c.createRadialGradient(x, y, 0, x, y, R * 3.4);
       g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.18, 'rgba(200,235,255,1)'); g.addColorStop(.45, 'rgba(70,150,255,.55)'); g.addColorStop(1, 'rgba(20,80,255,0)');
       c.fillStyle = g; c.beginPath(); c.arc(x, y, R * 3.4, 0, TAU); c.fill();
-      /* arcs spraying from the hand, each holding a few frames */
-      var n = Math.min(arcs.length, 3 + Math.round(p * arcs.length));
+      /* a 3D sphere of lightning spinning in the hand: arcs wrap around
+         it and whip outward, near side bright and thick, far side dim */
+      var n = Math.min(arcs.length, 3 + Math.round(p * arcs.length)), SR = 22 + p * (phone ? 34 : 48);
+      var ay = t * .006, ax = .5 + Math.sin(t / 700) * .4;
       for (var k = 0; k < n; k++) {
         var A = arcs[k];
-        if (!A.b || now > A.until || d > 0) {
-          var a = rand(0, TAU), len = rand(40, 80 + p * (phone ? 140 : 240));
-          A.b = makeBolt(x, y, x + Math.cos(a) * len, y + Math.sin(a) * len, rand(.8, 1.6), 1, .12);
-          A.until = now + rand(40, 90);
-        }
-        drawBolt(c, A.b, '#4aa8ff', .9);
+        if (!A.b || now > A.until) { A.b = sphereArc(SR); A.until = now + rand(40, 100); }
+        draw3d(c, A.b, x, y, ay, ax, '#4aa8ff', rand(1.1, 1.8));
       }
       /* dashing: lightning dragged along the ground behind the hand */
       if (d > 0 && d < 1) {
@@ -640,18 +706,22 @@
       var endTop = h - r.height * rand(.25, .75) - rand(0, h * (big ? .1 : .3));
       var ex = endLeft - r.left, ey = endTop - r.top;
       var rot = (big ? rand(-14, 14) : rand(-170, 170)) * (Math.random() < .5 ? 1 : -1);
-      var end = 'translate(' + ex.toFixed(0) + 'px,' + ey.toFixed(0) + 'px) rotate(' + rot.toFixed(0) + 'deg)';
+      var tilt = big ? 22 : 75;
+      var vEnd = { x: ex, y: ey, z: rand(-220, 60), rx: rand(-tilt, tilt), ry: rand(-tilt, tilt), rz: rot };
+      var vBlast = { x: bx, y: by, z: rand(120, big ? 200 : 420), rx: vEnd.rx * rand(.8, 1.6), ry: vEnd.ry * rand(.8, 1.6), rz: rot * .45 };
+      var vSettle = { x: ex, y: ey, z: vEnd.z, rx: vEnd.rx + rand(-4, 4), ry: vEnd.ry + rand(-4, 4), rz: rot + rand(-4, 4) };
+      var end = tf(vSettle);
       var endFilter = 'brightness(.5) saturate(.4)';
       var delay = Math.min(260, dist / 6) + rand(0, 80);
       var kf = reduce ? [{ opacity: 1 }, { opacity: 0 }] : [
-        { transform: 'none', filter: 'none', easing: 'cubic-bezier(.1,.7,.3,1)' },
-        { transform: 'translate(' + bx.toFixed(0) + 'px,' + by.toFixed(0) + 'px) rotate(' + (rot * .45).toFixed(0) + 'deg)', filter: 'brightness(1.8)', offset: .32, easing: 'cubic-bezier(.55,0,.9,.5)' },
-        { transform: end, filter: endFilter, offset: .9, easing: 'ease-out' },
-        { transform: end.replace(/rotate\(([-\d]+)deg\)/, function (m, dd) { return 'rotate(' + (+dd + rand(-4, 4)).toFixed(0) + 'deg)'; }), filter: endFilter }
+        { transform: tf(Z0), filter: 'none', easing: 'cubic-bezier(.1,.7,.3,1)' },
+        { transform: tf(vBlast), filter: 'brightness(1.8)', offset: .32, easing: 'cubic-bezier(.55,0,.9,.5)' },
+        { transform: tf(vEnd), filter: endFilter, offset: .9, easing: 'ease-out' },
+        { transform: end, filter: endFilter }
       ];
       if (phone) kf.forEach(function (k) { delete k.filter; });
       var a = p.el.animate(kf, { duration: reduce ? 500 : rand(1300, 1900), delay: reduce ? 0 : delay, fill: 'both' });
-      anims.push({ el: p.el, a: a, end: end, top: r.top });
+      anims.push({ el: p.el, a: a, end: end, v: vSettle, top: r.top });
     });
     ruin = { anims: anims, px: px, py: py };
     root.classList.add('pw-destroyed');
@@ -929,15 +999,13 @@
       ruinParts.forEach(function (p) { p.style.transition = 'opacity 1.2s'; p.style.opacity = '0'; });
       ruin.anims.forEach(function (p) {
         var d = reduce ? 0 : Math.max(0, (h - p.top) / h) * 600 + rand(0, 300);
-        var mid = p.end.replace(/translate\(([-\d.]+)px,([-\d.]+)px\) rotate\(([-\d.]+)deg\)/, function (m, x, y, r) {
-          return 'translate(' + (x * .35).toFixed(0) + 'px,' + (y * .35 - rand(30, 90)).toFixed(0) + 'px) rotate(' + (r * .25).toFixed(0) + 'deg)';
-        });
+        var v = p.v, mid = { x: v.x * .35, y: v.y * .35 - rand(30, 90), z: rand(80, 200), rx: v.rx * .2, ry: v.ry * .2, rz: v.rz * .25 };
         var kf = reduce ? [{ opacity: 0 }, { opacity: 1 }] : [
-          { transform: p.end, filter: SHADOW, easing: 'cubic-bezier(.5,0,.3,1)' },
-          { transform: mid + ' scale(1.04)', filter: SHADOW, offset: .55, easing: 'cubic-bezier(.2,.7,.2,1)' },
-          { transform: 'translate(0,-10px) scale(1.02)', filter: SHADOW, offset: .82, easing: 'cubic-bezier(.3,0,.3,1)' },
-          { transform: 'translate(0,5px) scale(.99)', filter: SHADOW, offset: .92 },
-          { transform: 'none', filter: SHADOW }
+          { transform: tf(v), filter: SHADOW, easing: 'cubic-bezier(.5,0,.3,1)' },
+          { transform: tf(mid, 1.04), filter: SHADOW, offset: .55, easing: 'cubic-bezier(.2,.7,.2,1)' },
+          { transform: tf({ x: 0, y: -10, z: 40, rx: -8, ry: 0, rz: 0 }, 1.02), filter: SHADOW, offset: .82, easing: 'cubic-bezier(.3,0,.3,1)' },
+          { transform: tf({ x: 0, y: 5, z: -10, rx: 6, ry: 0, rz: 0 }, .99), filter: SHADOW, offset: .92 },
+          { transform: tf(Z0), filter: SHADOW }
         ];
         p.rise = p.el.animate(kf, { duration: reduce ? 400 : rand(1300, 1700), delay: d, fill: 'forwards' });
         done.push(p.rise.finished.catch(function () {}));
@@ -1066,14 +1134,22 @@
       if (!fire && !reduce) focusLines(c, ox, oy, 120 - p * 40, 'rgba(200,230,255,1)', phone ? 36 : 70, .08 + p * .18);
       c.globalCompositeOperation = 'lighter';
       /* energy spiralling into the palms */
-      if (t < CHARGE) for (var k = 0; k < (phone ? 4 : 8); k++) bits.push({ a: rand(0, TAU), r: rand(120, 340), v: rand(.08, .14) });
-      c.strokeStyle = '#a8dcff'; c.lineWidth = 2;
+      /* energy on tilted 3D orbits, spiralling into the palms */
+      if (t < CHARGE) for (var k = 0; k < (phone ? 4 : 8); k++) { var nrm = unit3(), e1 = norm3(cross3(nrm, unit3())); bits.push({ e1: e1, e2: cross3(nrm, e1), a: rand(0, TAU), r: rand(120, 340), v: rand(.1, .16) }); }
+      c.strokeStyle = '#a8dcff';
       bits = bits.filter(function (b) {
-        var x0 = ox + Math.cos(b.a) * b.r, y0 = oy + Math.sin(b.a) * b.r;
-        b.a += b.v * 2; b.r *= .9;
-        c.globalAlpha = .8; c.beginPath(); c.moveTo(x0, y0); c.lineTo(ox + Math.cos(b.a) * b.r, oy + Math.sin(b.a) * b.r); c.stroke();
+        function at(a, r) { var ca = Math.cos(a) * r, sa = Math.sin(a) * r; return proj([b.e1[0] * ca + b.e2[0] * sa, b.e1[1] * ca + b.e2[1] * sa, b.e1[2] * ca + b.e2[2] * sa], ox, oy); }
+        var p0 = at(b.a, b.r); b.a += b.v * 2; b.r *= .9; var p1 = at(b.a, b.r);
+        c.globalAlpha = Math.min(1, (p1[2] - .6) * 2); c.lineWidth = 2.6 * p1[2];
+        c.beginPath(); c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); c.stroke();
         return b.r > 8;
       });
+      /* three tilted energy rings orbiting the orb */
+      if (!fire || bt < 300) for (var ri = 0; ri < 3; ri++) {
+        var rr = 30 + p * 70 + ri * 14, ring = [];
+        for (var ra = 0; ra <= 36; ra++) { var aa = ra / 36 * TAU; ring.push([Math.cos(aa) * rr, Math.sin(aa) * rr * .15, Math.sin(aa) * rr]); }
+        draw3d(c, ring, ox, oy, t * .004 + ri * 2.1, .9 + ri * .5, '#6ab8ff', .9);
+      }
       /* ground dust lifting */
       if (t < CHARGE + BEAM && Math.random() < .8) dust.push({ x: rand(0, w), y: h + 5, v: rand(1, 3 + p * 4), s: rand(2, 5), l: 1 });
       c.fillStyle = '#bfe3ff';
@@ -1110,6 +1186,13 @@
         for (var sx2 = 0; sx2 <= L; sx2 += 14) { var yy = Math.sin(sx2 * (.012 + sI * .006) - bt * .03 + sI * 2) * hh * (.9 + Math.sin(sx2 * .01 + sI) * .2); if (sx2 === 0) c.moveTo(sx2, yy); else c.lineTo(sx2, yy); }
         c.stroke();
       }
+      /* shock rings travelling along the beam give it a round, 3D body */
+      c.strokeStyle = '#ffffff';
+      for (var ring2 = 0; ring2 < 6; ring2++) {
+        var rx0 = ((bt * .9 + ring2 * L / 6) % L);
+        c.globalAlpha = .45 * thin * (1 - rx0 / L * .6); c.lineWidth = 3;
+        c.beginPath(); c.ellipse(rx0, 0, hh * .28, hh * 1.35, 0, 0, TAU); c.stroke();
+      }
       c.globalAlpha = .85 * thin; c.lineWidth = 2;
       for (var s = 0; s < 10; s++) { var y3 = rand(-hh * .9, hh * .9), xs = rand(0, L); c.beginPath(); c.moveTo(xs, y3); c.lineTo(xs + rand(60, 240), y3); c.stroke(); }
       if (grow < 1) { var hg = c.createRadialGradient(L, 0, 0, L, 0, hh * 2); hg.addColorStop(0, '#fff'); hg.addColorStop(1, 'rgba(60,150,255,0)'); c.fillStyle = hg; c.beginPath(); c.arc(L, 0, hh * 2, 0, TAU); c.fill(); }
@@ -1145,6 +1228,128 @@
         { transform: 'none' }
       ], { duration: 900, delay: along / 6, easing: 'ease-out' });
     });
+  }
+
+  /* ==================================================================
+     日の呼吸 HINOKAMI KAGURA — Total Concentration breath, the blade
+     catches fire, a fire dragon circles the screen in a tilted 3D halo
+     (Sun Halo Dragon Head Dance), then one final slash cuts the page in
+     two; the halves slide apart along the cut and seal back together
+     ================================================================== */
+  function flameTongue(c, x, y, len, wid, ang, a) {
+    c.save(); c.translate(x, y); c.rotate(ang);
+    var g = c.createLinearGradient(0, 0, 0, -len);
+    g.addColorStop(0, 'rgba(255,245,200,' + a + ')'); g.addColorStop(.35, 'rgba(255,170,40,' + (a * .9) + ')'); g.addColorStop(1, 'rgba(220,40,10,0)');
+    c.fillStyle = g; c.beginPath(); c.moveTo(-wid, 0);
+    c.quadraticCurveTo(-wid * .6, -len * .55, rand(-wid * .5, wid * .5), -len);
+    c.quadraticCurveTo(wid * .6, -len * .55, wid, 0); c.closePath(); c.fill();
+    c.restore();
+  }
+  function hinokami() {
+    if (busy || ruin) return;
+    setBusy(true); closeDock(); lock(true);
+    var w = vw(), h = vh(), cxs = w / 2, cys = h * .5, R = Math.min(w, h) * (phone ? .36 : .32);
+    var DRAGON = reduce ? 400 : 1500, START = reduce ? 100 : 650, SLASH = START + DRAGON + 120;
+    var dim = overlay('pw-dim sun'); on(dim);
+    var own = custom('slash');
+    if (!own) { SND.hinokami(START / 1000, DRAGON / 1000, SLASH / 1000); say('Hinokami Kagura', 120, .7, .95); }
+    sfx('ヒノカミ神楽', w / 2, h * .2, { cls: 'xl', en: 'HINOKAMI KAGURA', color: '#e0401a', life: START + 900, rot: -3 });
+    later(START + DRAGON * .45, function () { sfx('円舞', w * (phone ? .5 : .78), h * (phone ? .78 : .3), { en: 'DANCE', color: '#e0401a', life: 900, rot: 6 }); });
+
+    var flames = [], curls = [], embersL = [];
+    layer(function (c, t) {
+      if (t > SLASH + 600) return false;
+      c.globalCompositeOperation = 'lighter';
+      /* the blade heating up during the breath */
+      if (t < START) {
+        var k = t / START;
+        c.globalAlpha = k; flameTongue(c, w * .5, h * .86, 40 + k * 60, 10 + k * 8, 0, .8);
+      }
+      /* the dragon: its head travels 1.3 turns round a halo tilted in 3D.
+         The body is sampled straight from the curve every frame, so it
+         stays smooth whatever the frame rate. */
+      function dragonAt(u) {
+        var a = -Math.PI / 2 + u * TAU * 1.3;
+        return proj(spin3([Math.cos(a) * R, 0, Math.sin(a) * R], u * .9 - .45, 1.05 + Math.sin(u * 3) * .15), cxs, cys);
+      }
+      var uh = Math.min(1, Math.max(0, (t - START) / DRAGON)), u0 = Math.max(0, Math.min(1, (t - START) / DRAGON - .4));
+      if (t >= START && u0 < 1) {
+        var N = phone ? 44 : 70, body = [];
+        for (var i = 0; i <= N; i++) body.push(dragonAt(u0 + (uh - u0) * i / N));
+        c.lineCap = 'round'; c.lineJoin = 'round';
+        [[1.9, .22, '230,50,15'], [1, .75, '255,140,30'], [.45, .95, '255,240,190']].forEach(function (ps) {
+          for (var i = 1; i < body.length; i++) {
+            var q = i / body.length, s = body[i][2];
+            c.strokeStyle = 'rgba(' + ps[2] + ',' + (ps[1] * (.25 + q * .75)) + ')';
+            c.lineWidth = (6 + q * 40) * s * ps[0];
+            c.beginPath(); c.moveTo(body[i - 1][0], body[i - 1][1]); c.lineTo(body[i][0], body[i][1]); c.stroke();
+          }
+        });
+        /* flickering flame tongues along the whole body */
+        for (var j = 2; j < body.length; j += phone ? 3 : 2) {
+          var qq = j / body.length, bs = body[j][2];
+          flameTongue(c, body[j][0], body[j][1], rand(14, 46) * bs * (.4 + qq), rand(5, 11) * bs, rand(-.6, .6), .55 * qq);
+        }
+        var hd = body[body.length - 1];
+        if (uh < 1) {
+          for (var f = 0; f < (phone ? 2 : 4); f++) flames.push({ x: hd[0] + rand(-10, 10), y: hd[1] + rand(-10, 10), l: 1, s: hd[2], len: rand(30, 70), ang: rand(-.5, .5) });
+          if (Math.random() < .35) curls.push({ x: hd[0], y: hd[1], r: rand(8, 18) * hd[2], a0: rand(0, TAU), l: 1, dir: Math.random() < .5 ? 1 : -1 });
+          var hr = 34 * hd[2];
+          var g = c.createRadialGradient(hd[0], hd[1], 0, hd[0], hd[1], hr * 2.4);
+          g.addColorStop(0, 'rgba(255,255,230,1)'); g.addColorStop(.4, 'rgba(255,170,40,.8)'); g.addColorStop(1, 'rgba(220,40,10,0)');
+          c.fillStyle = g; c.globalAlpha = 1; c.beginPath(); c.arc(hd[0], hd[1], hr * 2.4, 0, TAU); c.fill();
+        }
+      }
+      /* flame tongues licking up off the body */
+      flames = flames.filter(function (fl) { fl.y -= 1.6; fl.l -= .045; flameTongue(c, fl.x, fl.y, fl.len * fl.s * fl.l, 9 * fl.s, fl.ang, Math.max(0, fl.l) * .8); return fl.l > 0; });
+      /* ukiyo-e style curls of flame */
+      c.strokeStyle = '#ffd98a';
+      curls = curls.filter(function (cu) {
+        cu.l -= .03; cu.y -= .8; c.globalAlpha = Math.max(0, cu.l); c.lineWidth = 2.2;
+        c.beginPath();
+        for (var ca = 0; ca < 4.2; ca += .25) { var rr = cu.r * (1 - ca / 5); c.lineTo(cu.x + Math.cos(cu.a0 + ca * cu.dir) * rr, cu.y + Math.sin(cu.a0 + ca * cu.dir) * rr); }
+        c.stroke(); return cu.l > 0;
+      });
+      if (Math.random() < .8) embersL.push({ x: rand(0, w), y: h + 5, v: rand(1.5, 4), l: 1 });
+      c.fillStyle = '#ffb347';
+      embersL = embersL.filter(function (e) { e.y -= e.v; e.x += Math.sin(e.y / 40); e.l -= .01; c.globalAlpha = e.l; c.fillRect(e.x, e.y, 2.4, 2.4); return e.l > 0; });
+    });
+
+    /* the final slash */
+    later(SLASH, function () {
+      var portrait = h > w;
+      var x1 = w * (portrait ? .04 : .06), y1 = h * (portrait ? .74 : .86), x2 = w * (portrait ? .96 : .94), y2 = h * (portrait ? .26 : .14);
+      var dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, nx = -uy, ny = ux;
+      impact(['neg', 'white', 'neg'], null);
+      flash('#fff1d6', 500, .7);
+      shake(phone ? 14 : 22, 600);
+      sfx('斬', w * .5, h * .5, { cls: 'xl', color: '#e0401a', life: 1100, rot: -18 });
+      layer(function (c, t) {
+        if (t > 1500) return false;
+        var grow = Math.min(1, t / 110), fade = t > 900 ? 1 - (t - 900) / 600 : 1;
+        var ex = x1 + dx * grow, ey = y1 + dy * grow;
+        c.globalCompositeOperation = 'lighter'; c.lineCap = 'round';
+        [['rgba(230,60,20,', 34], ['rgba(255,160,40,', 14], ['rgba(255,250,230,', 4]].forEach(function (ps) {
+          c.strokeStyle = ps[0] + (.8 * fade) + ')'; c.lineWidth = ps[1] * (t < 200 ? 1.4 : 1);
+          c.beginPath(); c.moveTo(x1, y1); c.lineTo(ex, ey); c.stroke();
+        });
+        for (var i = 0; i < (phone ? 6 : 12); i++) { var k = rand(0, grow); flameTongue(c, x1 + dx * k, y1 + dy * k, rand(20, 60), 8, Math.atan2(ny, nx) + Math.PI / 2 + rand(-.3, .3), .7 * fade); }
+      });
+      /* cut the page in two along the slash, slide the halves apart, seal */
+      if (reduce) return;
+      pieces(phone ? 120 : 280).forEach(function (pc) {
+        var r = pc.r, mx = r.left + r.width / 2 - x1, my = r.top + r.height / 2 - y1;
+        var side = (mx * nx + my * ny) > 0 ? 1 : -1, gap = rand(18, 30), slide = rand(24, 44);
+        var v = { x: nx * gap * side + ux * slide * side, y: ny * gap * side + uy * slide * side, z: 0, rx: side * rand(3, 8), ry: -side * rand(4, 10), rz: side * rand(.5, 2) };
+        pc.el.animate([
+          { transform: tf(Z0) },
+          { transform: tf(v), offset: .18, easing: 'cubic-bezier(.3,0,.3,1)' },
+          { transform: tf(v), offset: .62, easing: 'cubic-bezier(.5,0,.1,1.3)' },
+          { transform: tf(Z0) }
+        ], { duration: 1500, easing: 'cubic-bezier(.16,1,.3,1)' });
+      });
+    });
+    later(SLASH + 1600, function () { drop(dim, 600); lock(false); setBusy(false); paint(); });
   }
 
   /* ==================================================================
@@ -1216,6 +1421,7 @@
     { id: 'chidori', k: '千', name: 'Chidori', sub: 'destroy the page', c: '#5fb4ff', run: chidori },
     { id: 'arise', k: '起', name: 'Arise', sub: 'raise the shadows', c: '#9a6bff', run: arise },
     { id: 'wind', k: '風', name: 'Wind', sub: 'wind release', c: '#4fbf8f', run: wind },
+    { id: 'slash', k: '日', name: 'Hinokami Kagura', sub: 'sun breathing slash', c: '#ff7a2a', run: hinokami },
     { id: 'kame', k: '波', name: 'Kamehameha', sub: 'charge and fire', c: '#2d8cff', run: kamehameha },
     { id: 'ssj', k: '超', name: 'Super Saiyan', sub: 'golden aura', c: '#ffc83a', run: function () { if (!busy && !ruin) ssj(!root.classList.contains('pw-ssj'), true); } }
   ];
@@ -1242,13 +1448,14 @@
   document.addEventListener('click', function (e) { if (!dock.contains(e.target)) closeDock(); });
   function openDock() {
     dock.classList.add('open'); toggle.setAttribute('aria-expanded', 'true');
-    ['chidori', 'arise', 'wind', 'kamehameha', 'ssj'].forEach(loadFile);
+    ['chidori', 'arise', 'wind', 'kamehameha', 'ssj', 'slash'].forEach(loadFile);
   }
   function closeDock() { dock.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
   function setBusy(b) { busy = b; dock.classList.toggle('pw-busy', b); }
   function paint() {
     btn.chidori.disabled = !!ruin;
     btn.kame.disabled = !!ruin;
+    btn.slash.disabled = !!ruin;
     btn.ssj.disabled = !!ruin;
     btn.wind.disabled = !!ruin;
     btn.arise.classList.toggle('pw-ready', !!ruin);
@@ -1267,7 +1474,7 @@
 
   /* page code can trigger any power: XRPowers.chidori() or <button data-power="chidori"> */
   var API = {
-    chidori: chidori, arise: arise, wind: wind, kamehameha: kamehameha,
+    chidori: chidori, arise: arise, wind: wind, kamehameha: kamehameha, slash: hinokami, hinokami: hinokami,
     ssj: function (onOff) { if (busy || ruin) return; ssj(onOff == null ? !root.classList.contains('pw-ssj') : !!onOff, true); },
     state: function () { return { busy: busy, destroyed: !!ruin, wind: windOn, ssj: root.classList.contains('pw-ssj') }; }
   };
