@@ -1,6 +1,6 @@
 /* =====================================================================
    XIRAIYA — The Lab: control deck
-   Everything around the ten live stages: the contents page in the
+   Everything around the six live stages: the contents page in the
    hero, a chapter sidebar with progress, a window frame on
    every stage with a fullscreen focus mode, J/K/F shortcuts, and the
    "build your combo" price calculator at the end. The stages themselves
@@ -12,11 +12,9 @@
   if (!XR) return;
   var $ = XR.$, $$ = XR.$$, doc = document, root = doc.documentElement;
   var CH = [
-    ['web', 'web', 'globe', 'Websites'], ['automation', 'automation', 'flow', 'Automation'],
-    ['extension', 'extension', 'puzzle', 'Chrome Extensions'], ['minecraft', 'minecraft', 'cube', 'Minecraft Plugins'],
-    ['desktop', 'desktop', 'window', 'Desktop EXE'], ['mobile', 'mobile', 'phone', 'Mobile APK'],
-    ['ai-chat', 'chat', 'chat', 'AI Chat'], ['makeover', 'makeover', 'wand', 'Site Makeovers'],
-    ['scroll', 'scroll', 'book', 'The Project Scroll'], ['wishes', 'wishes', 'pen', 'The Wish Wall']
+    ['dojo', 'dojo', 'zap', 'The Jutsu Dojo'], ['cast', 'cast', 'users', 'Character Select'],
+    ['minecraft', 'minecraft', 'cube', 'Minecraft Plugins'], ['panels', 'panels', 'image', 'Manga Panel Maker'],
+    ['makeover', 'makeover', 'wand', 'Site Makeovers'], ['scroll', 'scroll', 'book', 'The Project Scroll']
   ].map(function (c, i) { return { id: c[0], stage: c[1], icon: c[2], name: c[3], n: i + 1 }; });
   var wide = window.matchMedia('(min-width: 1180px)');
 
@@ -188,16 +186,12 @@
 
   /* ---------- chapter dress: accent colour and a margin note under each stage ---------- */
   var DRESS = {
-    web: ['#c4321d', 'add three sections with the hand-sign buttons, then hit Deploy.'],
-    automation: ['#2c6f65', 'switch one clone off, summon the rest, then read the morning report.'],
-    extension: ['#b7862a', 'install the extension, slay the pop-ups, then highlight your own words.'],
+    dojo: ['#2f5f9e', 'sign Tiger, Snake, Rat for Chidori, then Dog, Ox, Snake to make every post Arise.'],
+    cast: ['#7a3fb0', 'pick a heroine, summon her into the arena, then fire her special.'],
     minecraft: ['#4d7424', 'raise the 経 and 店 banners, type /kit, then hang a lantern.'],
-    desktop: ['#5f4f95', 'download, install and launch, then add an invoice and take the update.'],
-    mobile: ['#a4473a', 'order two dishes, then follow the rider across the panels.'],
-    'ai-chat': ['#c4321d', 'ask to track order 4821, switch to বাংলা, then ask for a human.'],
+    panels: ['#c4321d', 'put a heroine in each panel, write her line, stamp an SFX, then save the PNG.'],
     makeover: ['#2c6f65', 'drag the red seal all the way across, then switch to another shop.'],
-    scroll: ['#c4321d', 'drag the paper sideways and watch each seal stamp itself as you pass.'],
-    wishes: ['#b7862a', 'turn a plaque over, then write your own wish and hang it on the rack.']
+    scroll: ['#c4321d', 'drag the paper sideways and watch each seal stamp itself as you pass.']
   };
   var ARROW = '<svg class="arr" viewBox="0 0 44 34" aria-hidden="true"><path d="M4 31c9-2 19-9 25-24"/><path d="M22 10l7-4 3 8"/></svg>';
   function tiers() {
