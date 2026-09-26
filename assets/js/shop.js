@@ -19,6 +19,8 @@
 (function () {
   'use strict';
   var XR = window.XR, STORES = window.XR_STORES;
+  // this script's ?v= (tools/version-assets.js), passed on to the store modules it loads
+  var VER = (function (s) { var q = s && s.src.indexOf('?'); return q > 0 ? s.src.slice(q) : ''; })(document.currentScript);
   if (!XR || !STORES || !STORES.length) return;
   var $ = XR.$, $$ = XR.$$, I = XR.icon, esc = XR.esc;
 
@@ -249,13 +251,13 @@
       function finish() { if (done || !(cssOk && jsOk)) return; done = true; resolve(LAYOUTS[id] || null); }
       if (!cssOk) {
         var l = document.createElement('link');
-        l.rel = 'stylesheet'; l.href = 'assets/css/shop/' + id + '.css';
+        l.rel = 'stylesheet'; l.href = 'assets/css/shop/' + id + '.css' + VER;
         l.onload = l.onerror = function () { cssOk = true; finish(); };
         document.head.appendChild(l);
       }
       if (!jsOk) {
         var s = document.createElement('script');
-        s.src = 'assets/js/shop/' + id + '.js';
+        s.src = 'assets/js/shop/' + id + '.js' + VER;
         s.onload = s.onerror = function () { jsOk = true; finish(); };
         document.body.appendChild(s);
       }

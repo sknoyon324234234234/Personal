@@ -11,6 +11,8 @@
   if (!XR) return;
   var $ = XR.$, $$ = XR.$$;
   var IMG = 'assets/img/anime/';
+  // this script's ?v= (tools/version-assets.js), passed on to three.js
+  var VER = (function (s) { var q = s && s.src.indexOf('?'); return q > 0 ? s.src.slice(q) : ''; })(document.currentScript);
 
   var CREW = [
     { id: 'albedo', name: 'Albedo', role: 'The Overseer', el: 'Shadow', job: 'Project lead', pow: 98, line: 'Keeps every project in order. Nothing ships until she nods.', h: 3.6 },
@@ -64,7 +66,7 @@
   }
 
   XR.whenVisible(stage, function () {
-    var url = new URL('assets/vendor/three.module.min.js', document.baseURI).href;
+    var url = new URL('assets/vendor/three.module.min.js' + VER, document.baseURI).href;
     import(url).then(build).catch(function (e) {
       console.error('[village] 3D failed, showing the still', e);
       section.classList.add('is-still'); wireStillButtons();

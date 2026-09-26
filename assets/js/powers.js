@@ -45,8 +45,8 @@
   /* stylesheet: one include line per page is enough */
   (function () {
     var s = document.currentScript && document.currentScript.src;
-    var href = s ? s.replace(/js\/powers\.js.*$/, 'css/powers.css') : 'assets/css/powers.css';
-    if (!document.querySelector('link[href$="powers.css"]')) {
+    var href = s ? s.replace(/js\/powers\.js(\?[^#]*)?.*$/, 'css/powers.css$1') : 'assets/css/powers.css';
+    if (!document.querySelector('link[href*="powers.css"]')) {
       var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = href; document.head.appendChild(l);
     }
   })();
@@ -300,7 +300,7 @@
   var cueBufs = {}, cueLoading = false;
   (function () {
     var s = document.currentScript && document.currentScript.src;
-    var src = s ? s.replace(/js\/powers\.js.*$/, 'sfx/sounds.js') : 'assets/sfx/sounds.js';
+    var src = s ? s.replace(/js\/powers\.js(\?[^#]*)?.*$/, 'sfx/sounds.js$1') : 'assets/sfx/sounds.js';
     var tag = document.createElement('script'); tag.src = src; tag.async = true; document.head.appendChild(tag);
   })();
   function sfxMap() { return window.XR_SFX || { files: {} }; }

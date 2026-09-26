@@ -74,3 +74,15 @@ node tools/seo.js         # rewrite the tags, sitemap, robots, llms.txt and .hta
 ```
 
 Keep titles under about 60 characters and descriptions under about 158. The generator warns you if they are longer.
+
+## 7. After changing CSS or JS
+
+Run this before you push, so visitors get the new styles and scripts straight away:
+
+```bash
+node tools/version-assets.js
+```
+
+It adds `?v=<hash>` to every stylesheet and script link, and only changes the ones whose file changed.
+`.htaccess` also makes browsers check CSS and JS for updates on every visit, so a forgotten run can't leave
+visitors stuck on old files. It can only make the first load after a deploy slower.
