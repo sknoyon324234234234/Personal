@@ -75,7 +75,19 @@ window.XIRAIYA_CONFIG = {
   ],
 
   // Typical first reply time shown on the Hire page
-  replyTime: 'within a few hours (GMT+6)'
+  replyTime: 'within a few hours (GMT+6)',
+
+  /* Sound for each power in the dock (effects + voice line in one track, timed to
+     the animation). Made with ElevenLabs sound effects and stock voices.
+     Remove a line to go back to the built-in synthesized sound for that power. */
+  powerSounds: {
+    chidori: 'assets/sfx/chidori.mp3',
+    arise: 'assets/sfx/arise.mp3',
+    wind: 'assets/sfx/wind.mp3',
+    kamehameha: 'assets/sfx/kamehameha.mp3',
+    slash: 'assets/sfx/slash.mp3',
+    ssj: 'assets/sfx/ssj.mp3'
+  }
 };
 
 /* ---------------------------------------------------------------------------
