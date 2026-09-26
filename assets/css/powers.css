@@ -5,7 +5,7 @@
 
 /* ---------- dock ---------- */
 .pw-dock { position: fixed; right: 14px; top: 50%; z-index: 140; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; transform: translateY(-50%); font-family: var(--font-body, system-ui, sans-serif); pointer-events: none; }
-.pw-dock > * { pointer-events: auto; }
+.pw-toggle { pointer-events: auto; }
 .pw-toggle {
   position: relative; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
   background: radial-gradient(circle at 35% 30%, #3a2a55, #0d0a14 70%); color: #fff3dd;
@@ -18,7 +18,8 @@
 .pw-toggle:focus-visible, .pw-item:focus-visible, .pw-arise-btn:focus-visible { outline: 3px solid #ffd35a; outline-offset: 3px; }
 .pw-toggle span { display: block; transition: transform .45s cubic-bezier(.34, 1.56, .64, 1); }
 .pw-dock.open .pw-toggle span { transform: rotate(180deg) scale(.9); }
-.pw-list { display: grid; gap: 8px; justify-items: end; }
+.pw-list { display: grid; gap: 8px; justify-items: end; pointer-events: none; }
+.pw-dock.open .pw-list { pointer-events: auto; }
 .pw-item {
   display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 5px 16px 5px 5px; border-radius: 999px; cursor: pointer;
   background: rgba(12, 9, 18, .92); color: #f5ecd8; border: 1.5px solid var(--pw-c, #8fd3ff);
@@ -147,8 +148,9 @@ html.pw-ssj .pw-toggle { border-color: #ffd35a; box-shadow: 0 0 0 3px rgba(10, 8
 
 @media (max-width: 760px) {
   .pw-glow { filter: blur(8px) saturate(1.4) brightness(1.4); }
-  .pw-dock { right: 8px; top: 44%; }
-  .pw-toggle { width: 48px; height: 48px; font-size: 21px; }
+  .pw-dock { right: 10px; top: auto; transform: none; bottom: calc(var(--tabbar-h, 0px) + env(safe-area-inset-bottom, 0px) + 26px); max-height: calc(100vh - 120px); }
+  .pw-toggle { width: 42px; height: 42px; font-size: 18px; }
+  .pw-toggle::after { font-size: 8px; margin-top: 5px; }
   .pw-item { font-size: 13px; }
   .pw-aura { box-shadow: inset 0 0 40px rgba(255, 196, 30, .38); }
 }
