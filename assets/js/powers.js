@@ -333,7 +333,10 @@
     if (!raf) raf = requestAnimationFrame(loop);
     return fn;
   }
+  var frozenUntil = 0;
   function loop(now) {
+    /* hit-stop: hold the last frame while the world is frozen */
+    if (now < frozenUntil) { raf = requestAnimationFrame(loop); return; }
     cx.setTransform(DPR, 0, 0, DPR, 0, 0);
     cx.clearRect(0, 0, W, H);
     layers = layers.filter(function (f) { cx.save(); var r = f(cx, Math.max(0, now - f.t0), now); cx.restore(); return r !== false; });
@@ -492,11 +495,96 @@
     /* pivot the 3D tilt on the middle of the screen, not the middle of a
        page that may be tens of thousands of pixels tall */
     shakeTargets().forEach(function (t) {
-      if (!t.__pwShakes) { t.__pwShakes = 0; t.__pwOrigin = t.style.transformOrigin; }
-      t.__pwShakes++;
-      t.style.transformOrigin = '50% ' + (vh() / 2 - t.getBoundingClientRect().top).toFixed(0) + 'px';
-      var done = function () { if (--t.__pwShakes === 0) { t.style.transformOrigin = t.__pwOrigin; t.__pwShakes = null; } };
-      t.animate(frames, { duration: ms, easing: 'linear' }).finished.then(done, done);
+      var done = pivot(t);
+      t.animate(frames, { duration: ms, easing: 'linear', composite: 'add' }).finished.then(done, done);
+    });
+  }
+  /* every camera move and shake pivots on the middle of the screen */
+  function pivot(t) {
+    if (!t.__pwShakes) { t.__pwShakes = 0; t.__pwOrigin = t.style.transformOrigin; t.style.transformOrigin = '50% ' + (vh() / 2 - t.getBoundingClientRect().top).toFixed(0) + 'px'; }
+    t.__pwShakes++;
+    var once = false;
+    return function () { if (once) return; once = true; if (--t.__pwShakes === 0) { t.style.transformOrigin = t.__pwOrigin; t.__pwShakes = null; } };
+  }
+
+  /* ---------- cinematic tools ---------- */
+  /* camera: push in toward a point on screen, like a dolly/zoom in AE */
+  var cams = [];
+  function camera(px, py, scale, ms, ease2) {
+    if (reduce) return;
+    var cxs = vw() / 2, cys = vh() / 2;
+    var tx = (px - cxs) * (1 - scale), ty = (py - cys) * (1 - scale);
+    shakeTargets().forEach(function (t) {
+      var cur = t.__pwCam || 'translate(0px,0px) scale(1)';
+      var next = 'translate(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px) scale(' + scale + ')';
+      var done = pivot(t);
+      var a = t.animate([{ transform: cur }, { transform: next }], { duration: ms, easing: ease2 || 'cubic-bezier(.45,0,.2,1)', fill: 'forwards' });
+      t.__pwCam = next;
+      cams.push({ t: t, a: a, done: done });
+    });
+  }
+  function cameraReset(ms) {
+    if (reduce) return;
+    camera(vw() / 2, vh() / 2, 1, ms || 300, 'cubic-bezier(.16,1,.3,1)');
+    var list = cams; cams = [];
+    later((ms || 300) + 30, function () { list.forEach(function (c) { c.a.cancel(); c.done(); c.t.__pwCam = null; }); });
+  }
+  /* cinematic letterbox bars */
+  var bars = null;
+  function letterbox(onOff) {
+    if (onOff) { if (!bars) { bars = overlay('pw-bars'); on(bars); } }
+    else if (bars) { drop(bars, 600); bars = null; }
+  }
+  /* hit-stop: the whole world freezes for a few frames on impact */
+  function hitStop(ms) {
+    if (reduce) return;
+    var list = document.getAnimations().filter(function (a) { return a.playState === 'running'; });
+    list.forEach(function (a) { a.pause(); });
+    frozenUntil = performance.now() + ms;
+    setTimeout(function () {
+      list.forEach(function (a) { try { a.play(); } catch (e) {} });
+      layers.forEach(function (f) { f.t0 += ms; });
+    }, ms);
+  }
+  /* chromatic aberration on the page */
+  function chroma(ms) {
+    if (reduce || phone) return;
+    root.classList.add('pw-chroma');
+    setTimeout(function () { root.classList.remove('pw-chroma'); }, ms);
+  }
+  /* anamorphic lens flare: a long horizontal streak plus ghosts */
+  function lensFlare(x, y, rgb, ms, size) {
+    size = size || 1;
+    layer(function (c, t) {
+      if (t > ms) return false;
+      var k = t < ms * .15 ? t / (ms * .15) : 1 - (t - ms * .15) / (ms * .85), w = vw(), h = vh();
+      c.globalCompositeOperation = 'lighter';
+      var len = w * .75 * size, g = c.createLinearGradient(x - len, 0, x + len, 0);
+      g.addColorStop(0, 'rgba(' + rgb + ',0)'); g.addColorStop(.5, 'rgba(255,255,255,' + (.9 * k) + ')'); g.addColorStop(1, 'rgba(' + rgb + ',0)');
+      c.fillStyle = g; c.fillRect(x - len, y - 2.5 * size, len * 2, 5 * size);
+      c.globalAlpha = .35 * k; c.fillRect(x - len * .6, y - 9 * size, len * 1.2, 18 * size);
+      var gx2 = w / 2 - (x - w / 2), gy2 = h / 2 - (y - h / 2);
+      [[.35, 40], [.6, 18], [.85, 70], [1.1, 28]].forEach(function (gh) {
+        var fx = x + (gx2 - x) * gh[0], fy = y + (gy2 - y) * gh[0], r = gh[1] * size;
+        var rg = c.createRadialGradient(fx, fy, 0, fx, fy, r);
+        rg.addColorStop(0, 'rgba(' + rgb + ',' + (.25 * k) + ')'); rg.addColorStop(.7, 'rgba(' + rgb + ',' + (.12 * k) + ')'); rg.addColorStop(1, 'rgba(' + rgb + ',0)');
+        c.globalAlpha = 1; c.fillStyle = rg; c.beginPath(); c.arc(fx, fy, r, 0, TAU); c.fill();
+      });
+    });
+  }
+  /* a ring of dust and smoke punching outward from an impact */
+  function smokeRing(x, y, rgb, n) {
+    var puffs = [];
+    for (var i = 0; i < n; i++) { var a = rand(0, TAU), v = rand(6, 16); puffs.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v * .6, r: rand(20, 50), l: 1 }); }
+    layer(function (c, t) {
+      if (t > 1800) return false;
+      c.globalCompositeOperation = 'source-over';
+      puffs.forEach(function (p) {
+        p.x += p.vx; p.y += p.vy; p.vx *= .93; p.vy *= .93; p.r *= 1.025; p.l -= .012;
+        var g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+        g.addColorStop(0, 'rgba(' + rgb + ',' + (.35 * Math.max(0, p.l)) + ')'); g.addColorStop(1, 'rgba(' + rgb + ',0)');
+        c.fillStyle = g; c.beginPath(); c.arc(p.x, p.y, p.r, 0, TAU); c.fill();
+      });
     });
   }
   function flash(color, ms, peak) {
@@ -577,8 +665,11 @@
     var w = vw(), h = vh();
     var sx = w * (phone ? .22 : .16), sy = h * .8, ex = w / 2, ey = h * (phone ? .56 : .58);
     var CHARGE = reduce ? 500 : 1350, DASH = reduce ? 1 : 420, HIT = CHARGE + DASH;
-    lock(true);
+    lock(true); letterbox(true);
     var dim = overlay('pw-dim'); dim.style.setProperty('--px', ex + 'px'); dim.style.setProperty('--py', ey + 'px'); on(dim);
+    /* camera: slow push in on the hand while it charges, whip to the target on the dash */
+    camera(sx, sy, 1.07, CHARGE, 'cubic-bezier(.3,0,.2,1)');
+    later(CHARGE, function () { camera(ex, ey, 1.12, DASH, 'cubic-bezier(.7,0,.3,1)'); });
     if (!custom('chidori')) { SND.chidoriCharge(HIT / 1000); SND.thunder(HIT / 1000); SND.glass(HIT / 1000 + .05); SND.rubble(HIT / 1000 + .3); }
 
     var sparks = [], trail = [], arcs = [];
@@ -588,6 +679,15 @@
       var p = Math.min(1, t / CHARGE), d = t < CHARGE ? 0 : ease(Math.min(1, (t - CHARGE) / DASH));
       var x = sx + (ex - sx) * d, y = sy + (ey - sy) * d;
       trail.push([x, y]); if (trail.length > 14) trail.shift();
+      /* the room flickers with the lightning, like a strobe */
+      dim.style.opacity = (.78 + Math.random() * .22 * (.4 + p)).toFixed(2);
+      /* anamorphic streak through the hand */
+      if (!reduce) {
+        var sl = w * (.2 + p * .5), sg = c.createLinearGradient(x - sl, 0, x + sl, 0);
+        sg.addColorStop(0, 'rgba(80,160,255,0)'); sg.addColorStop(.5, 'rgba(220,240,255,' + (.35 + p * .5) + ')'); sg.addColorStop(1, 'rgba(80,160,255,0)');
+        c.globalCompositeOperation = 'lighter'; c.fillStyle = sg; c.fillRect(x - sl, y - 2, sl * 2, 4);
+        c.globalCompositeOperation = 'source-over';
+      }
       /* focus lines tighten as the charge peaks */
       if (!reduce) focusLines(c, x, y, 140 - p * 50, 'rgba(210,235,255,1)', phone ? 40 : 80, .12 + p * .2);
       c.globalCompositeOperation = 'lighter';
@@ -622,6 +722,11 @@
     later(1000, function () { sfx('バチバチ', w * (phone ? .28 : .3), h * .42, { cls: 'sm', color: '#2d8cff', life: 800, rot: 8 }); });
 
     later(HIT, function () {
+      cameraReset(260);
+      hitStop(170);
+      chroma(420);
+      lensFlare(ex, ey, '90,170,255', 1100, 1.4);
+      smokeRing(ex, ey, '150,160,180', phone ? 12 : 22);
       impact(['neg', 'black', 'neg', 'black'], null);
       flash('#e8f4ff', 600, .85);
       shake(phone ? 18 : 30, 800);
@@ -642,6 +747,7 @@
       shatter(ex, ey);
     });
     later(HIT + 500, function () { drop(dim, 600); });
+    later(HIT + 1700, function () { letterbox(false); });
   }
 
   var ruinParts = [];
@@ -711,11 +817,11 @@
       var vBlast = { x: bx, y: by, z: rand(120, big ? 200 : 420), rx: vEnd.rx * rand(.8, 1.6), ry: vEnd.ry * rand(.8, 1.6), rz: rot * .45 };
       var vSettle = { x: ex, y: ey, z: vEnd.z, rx: vEnd.rx + rand(-4, 4), ry: vEnd.ry + rand(-4, 4), rz: rot + rand(-4, 4) };
       var end = tf(vSettle);
-      var endFilter = 'brightness(.5) saturate(.4)';
+      var endFilter = 'brightness(.5) saturate(.4) blur(0px)';
       var delay = Math.min(260, dist / 6) + rand(0, 80);
       var kf = reduce ? [{ opacity: 1 }, { opacity: 0 }] : [
-        { transform: tf(Z0), filter: 'none', easing: 'cubic-bezier(.1,.7,.3,1)' },
-        { transform: tf(vBlast), filter: 'brightness(1.8)', offset: .32, easing: 'cubic-bezier(.55,0,.9,.5)' },
+        { transform: tf(Z0), filter: 'brightness(1) saturate(1) blur(0px)', easing: 'cubic-bezier(.1,.7,.3,1)' },
+        { transform: tf(vBlast), filter: 'brightness(1.8) saturate(1) blur(1.6px)', offset: .32, easing: 'cubic-bezier(.55,0,.9,.5)' },
         { transform: tf(vEnd), filter: endFilter, offset: .9, easing: 'ease-out' },
         { transform: end, filter: endFilter }
       ];
@@ -839,6 +945,7 @@
         return s.l > 0;
       });
       army.forEach(function (s) {
+        if (!s.glint && t > s.at + 600) { s.glint = true; lensFlare(s.x, h + 10 - s.size * 2.3 + s.size * .17 * 1.3, '120,220,255', 700, .35); }
         var r = Math.max(0, Math.min(1, (t - s.at) / 900));
         s.rise = 1 - Math.pow(1 - r, 3); s.o = fade;
         if (s.rise > 0) soldier(c, s, t);
@@ -937,6 +1044,9 @@
     var count = restoring ? ruin.anims.length : 0;
     if (!own) { SND.arise(); say('Arise', 820, .05, .7); }
     var sh = overlay('pw-shadow'); on(sh);
+    letterbox(true);
+    /* camera sinks toward the ground where the fallen lie */
+    camera(w / 2, h * .85, 1.06, 1400, 'cubic-bezier(.4,0,.2,1)');
     var seal = overlay('pw-seal');
     seal.innerHTML = '<svg viewBox="-100 -100 200 200"><g fill="none" stroke="#b28cff"><circle r="96" stroke-width="2"/><circle r="84" stroke-width="1" stroke-dasharray="3 6"/><circle r="52" stroke-width="2"/>' +
       '<path d="M0-84 73 42H-73Z M0 84-73-42H73Z" stroke-width="1.6"/><path d="M0-52V52M-45-26 45 26M45-26-45 26" stroke-width=".8" opacity=".6"/></g>' +
@@ -953,6 +1063,10 @@
 
     /* 2 → the command */
     later(880, function () {
+      hitStop(140);
+      chroma(500);
+      lensFlare(w / 2, h * .3, '150,90,255', 1400, 1.6);
+      smokeRing(w / 2, h, '40,15,80', phone ? 10 : 18);
       impact(['neg', 'black', 'neg'], 'violet');
       shockwave(w / 2, h, '#9a6bff', Math.max(w, h), 1100);
       shake(10, 900);
@@ -967,7 +1081,7 @@
         sys = sysWindow('SYSTEM', ['No fallen enemies found.', 'Summoning your standing shadow army instead.']);
       });
       later(3600, function () {
-        drop(sh, 800); drop(seal, 800);
+        drop(sh, 800); drop(seal, 800); letterbox(false); cameraReset(500);
         if (!own) SND.shing(0);
         if (sys) sys.close(0);
         setBusy(false); paint();
@@ -995,17 +1109,18 @@
     var done = [];
     later(2300, function () {
       if (!own) SND.ariseRise();
+      cameraReset(1400);
       sh.classList.add('thin');
       ruinParts.forEach(function (p) { p.style.transition = 'opacity 1.2s'; p.style.opacity = '0'; });
       ruin.anims.forEach(function (p) {
         var d = reduce ? 0 : Math.max(0, (h - p.top) / h) * 600 + rand(0, 300);
         var v = p.v, mid = { x: v.x * .35, y: v.y * .35 - rand(30, 90), z: rand(80, 200), rx: v.rx * .2, ry: v.ry * .2, rz: v.rz * .25 };
         var kf = reduce ? [{ opacity: 0 }, { opacity: 1 }] : [
-          { transform: tf(v), filter: SHADOW, easing: 'cubic-bezier(.5,0,.3,1)' },
-          { transform: tf(mid, 1.04), filter: SHADOW, offset: .55, easing: 'cubic-bezier(.2,.7,.2,1)' },
-          { transform: tf({ x: 0, y: -10, z: 40, rx: -8, ry: 0, rz: 0 }, 1.02), filter: SHADOW, offset: .82, easing: 'cubic-bezier(.3,0,.3,1)' },
-          { transform: tf({ x: 0, y: 5, z: -10, rx: 6, ry: 0, rz: 0 }, .99), filter: SHADOW, offset: .92 },
-          { transform: tf(Z0), filter: SHADOW }
+          { transform: tf(v), filter: phone ? SHADOW : SHADOW + ' blur(0px)', easing: 'cubic-bezier(.5,0,.3,1)' },
+          { transform: tf(mid, 1.04), filter: phone ? SHADOW : SHADOW + ' blur(1.4px)', offset: .55, easing: 'cubic-bezier(.2,.7,.2,1)' },
+          { transform: tf({ x: 0, y: -10, z: 40, rx: -8, ry: 0, rz: 0 }, 1.02), filter: phone ? SHADOW : SHADOW + ' blur(0px)', offset: .82, easing: 'cubic-bezier(.3,0,.3,1)' },
+          { transform: tf({ x: 0, y: 5, z: -10, rx: 6, ry: 0, rz: 0 }, .99), filter: phone ? SHADOW : SHADOW + ' blur(0px)', offset: .92 },
+          { transform: tf(Z0), filter: phone ? SHADOW : SHADOW + ' blur(0px)' }
         ];
         p.rise = p.el.animate(kf, { duration: reduce ? 400 : rand(1300, 1700), delay: d, fill: 'forwards' });
         done.push(p.rise.finished.catch(function () {}));
@@ -1030,7 +1145,7 @@
         Promise.all(wake).then(function () {
           ruin.anims.forEach(function (p) { [p.a, p.dark, p.rise, p.wake].forEach(function (a) { if (a) a.cancel(); }); });
           ruinParts.forEach(function (p) { p.remove(); }); ruinParts = [];
-          drop(sh, 800); drop(seal, 800);
+          drop(sh, 800); drop(seal, 800); letterbox(false);
           root.classList.remove('pw-destroyed');
           if (sys) { sys.progress(1); sys.close(0); }
           var fin = sysWindow('SYSTEM', ['Shadow extraction <em>successful</em>.', '<em>' + count + '</em> shadows have joined your army.', 'The page lives again.']);
