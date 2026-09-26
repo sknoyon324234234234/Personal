@@ -378,6 +378,7 @@
   var ignore = 0;
   function readScroll() {
     if (ignore > 0) { ignore--; return; }
+    if (document.documentElement.classList.contains('pw-active')) return;   /* a power is moving the camera */
     var p = clamp(-sec.getBoundingClientRect().top / run, 0, 1), f = p * N, n = Math.min(N - 1, Math.floor(f));
     if (cur >= 0 && n !== cur && f > cur - .08 && f < cur + 1.08) n = cur;   // hysteresis at step edges
     frac = clamp(f - n, 0, 1);

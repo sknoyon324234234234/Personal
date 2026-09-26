@@ -569,9 +569,15 @@
     if (e.key === 'Escape' && ruin && !busy) { e.preventDefault(); arise(); return; }
     if (/^(ArrowUp|ArrowDown|PageUp|PageDown|Home|End| )$/.test(e.key) && !(e.target.closest && e.target.closest('.pw-dock, .pw-ruin-cta'))) block(e);
   }
+  /* the page is held still by blocking scroll input and undoing any stray scroll, never with
+     overflow: hidden, which breaks position: sticky and made pinned sections jump away */
+  var lockPos = null;
+  function holdScroll() { if (lockPos && (window.scrollX !== lockPos[0] || window.scrollY !== lockPos[1])) window.scrollTo({ left: lockPos[0], top: lockPos[1], behavior: 'instant' }); }
   function lock(onOff) {
     root.classList.toggle('pw-locked', onOff);
+    lockPos = onOff ? [window.scrollX, window.scrollY] : null;
     var fn = onOff ? 'addEventListener' : 'removeEventListener';
+    window[fn]('scroll', holdScroll, { passive: true });
     window[fn]('wheel', block, { capture: true, passive: false });
     window[fn]('touchmove', block, { capture: true, passive: false });
     window[fn]('keydown', blockKeys, true);
@@ -978,7 +984,7 @@
      ground, and the rubble rises with them back into place
      ================================================================== */
   function soldier(c, s, t) {
-    var h = vh(), size = s.size, rise = s.rise;
+    var h = s.base || vh(), size = s.size, rise = s.rise;
     var top = h + 10 - rise * size * 2.3, x = s.x + Math.sin(t / 900 + s.ph) * 3;
     var hr = size * .17, hy = top + hr * 1.3, sh = hy + size * .2, sw = size * .52;
     c.save();
@@ -1116,26 +1122,35 @@
     return m && m[key] != null ? m[key] : def;
   }
 
-  /* the shadow knights: they erupt on cue, their eyes pulse with the music */
+  /* the shadow army: a front line of knights that erupt on the drop, and two
+     ranks behind them (smaller, dimmer, standing higher up in the fog) that
+     rise on the accents; all their eyes pulse with the music */
   function legion(cine) {
-    var w = vw(), h = vh(), n = phone ? 4 : 8, list = [], kneelT = 0, fade = 1;
-    for (var i = 0; i < n; i++) {
+    var w = vw(), h = vh(), n = phone ? 4 : 8, list = [], ranks = [], kneelT = 0, fade = 1, i, j;
+    for (i = 0; i < n; i++) {
       var slot = (i + .5) / n, off = Math.abs(slot - .5);
-      list.push({ x: slot * w + rand(-24, 24), size: rand(.88, 1.1) * (phone ? 96 : 138) * (1.15 - off * .5), rise: 0, o: 1, ph: rand(0, 6), sword: i % 2 === 1, t0: 0, eye: 1, off: off });
+      list.push({ x: slot * w + rand(-24, 24), size: rand(.88, 1.1) * (phone ? 96 : 138) * (1.15 - off * .5), base: h, dim: 1, rise: 0, o: 1, ph: rand(0, 6), sword: i % 2 === 1, t0: 0, eye: 1, off: off });
     }
     list.sort(function (a, b) { return a.off - b.off; });   /* the middle rises first */
+    [[phone ? 5 : 10, .62, h - (phone ? 40 : 62), .72], [phone ? 6 : 13, .44, h - (phone ? 72 : 112), .5]].forEach(function (rk, ri) {
+      for (j = 0; j < rk[0]; j++) ranks.push({ x: (j + .5) / rk[0] * w + rand(-20, 20), size: rand(.9, 1.08) * (phone ? 96 : 138) * rk[1], base: rk[2], dim: rk[3], rise: 0, o: 0, ph: rand(0, 6), sword: Math.random() < .3, t0: 0, eye: 1, rank: ri });
+    });
     var spk = sparkField('150,100,255');
-    function eyeY(s) { return h + 10 - s.rise * s.size * 2.3 + s.size * .17 * 1.3; }
+    function eyeY(s) { return s.base + 10 - s.rise * s.size * 2.3 + s.size * .17 * 1.3; }
+    function draw(c, t, now, s, k) {
+      if (!s.t0 || now < s.t0) return;
+      var r = Math.min(1, (now - s.t0) / (s.rank == null ? 650 : 900));
+      s.rise = (1 - Math.pow(1 - r, 4)) * (1 - .22 * (1 - Math.pow(1 - k, 3)));
+      s.o = fade * s.dim; s.eye = 1 + (s.eye - 1) * .9;
+      soldier(c, s, t);
+    }
     layer(function (c, t, now) {
       if (cine.ending) fade = Math.max(0, fade - .025);
+      var k = kneelT ? Math.min(1, (now - kneelT) / 900) : 0;
       spk.draw(c);
-      list.forEach(function (s) {
-        if (!s.t0) return;
-        var r = Math.min(1, (now - s.t0) / 650), k = kneelT ? Math.min(1, (now - kneelT) / 900) : 0;
-        s.rise = (1 - Math.pow(1 - r, 4)) * (1 - .22 * (1 - Math.pow(1 - k, 3)));
-        s.o = fade; s.eye = 1 + (s.eye - 1) * .9;
-        soldier(c, s, t);
-      });
+      /* back to front: the far rank, the near rank, then the front line */
+      for (var ri = 1; ri >= 0; ri--) ranks.forEach(function (s) { if (s.rank === ri) draw(c, t, now, s, k); });
+      list.forEach(function (s) { draw(c, t, now, s, k); });
       if (cine.ending && fade <= 0) return false;
     });
     return {
@@ -1148,32 +1163,152 @@
           later(480, function () { if (!cine.dead) lensFlare(s.x, eyeY(s), '120,220,255', 800, .4); });
         });
       },
-      pulse: function (k) { list.forEach(function (s) { s.eye = Math.max(s.eye, k || 1.5); }); },
+      /* a whole rank rises out of the fog, rippling outward from the middle */
+      rank: function (ri) {
+        var now = performance.now();
+        ranks.forEach(function (s) { if (s.rank === ri) { s.t0 = now + Math.abs(s.x - w / 2) / w * 700 + rand(0, 120); s.eye = 1.8; } });
+      },
+      pulse: function (k) { list.concat(ranks).forEach(function (s) { s.eye = Math.max(s.eye, k || 1.5); }); },
       salute: function () {
         list.forEach(function (s, i) {
           if (!s.t0) return;
           s.eye = 2.8;
           later(i * 70, function () { if (!cine.dead) lensFlare(s.x, eyeY(s), '140,210,255', 1000, .55); });
         });
+        ranks.forEach(function (s) { s.eye = 2.4; });
       },
       kneel: function () { kneelT = performance.now(); }
     };
   }
 
-  /* the air: dark ground fog, drifting ash, bokeh, and soul light that
-     flows up into each piece of the page as it rises */
+  /* the Shadow Monarch: a tall cloaked figure who rises from the seal on the
+     command, coat streaming, eyes burning, wrapped in a violet-black aura;
+     purple lightning crackles around him when the music surges */
+  function monarch(cine) {
+    var w = vw(), h = vh(), S = phone ? 118 : 172, x0 = w / 2, t0 = 0, fade = 1, fx = [], zap = null, zapT = 0, surge = 0;
+    var sprV = sprite('140,80,255'), sprD = sprite('6,2,14'), sprE = sprite('175,232,255', true);
+    layer(function (c, t, now) {
+      if (cine.ending) fade = Math.max(0, fade - .025);
+      if (cine.ending && fade <= 0) return false;
+      if (!t0) return;
+      surge *= .94;
+      var r = Math.min(1, (now - t0) / 1200), rise = 1 - Math.pow(1 - r, 3);
+      var foot = h + 8, H = S * 2.7, top = foot - rise * H, x = x0 + Math.sin(t / 1300) * 2;
+      /* the aura: violet flames and black smoke boiling up off him */
+      for (var k = 0; k < (phone ? 3 : 6); k++) {
+        var a = rand(-1, 1);
+        fx.push({ x: x + a * S * .45, y: top + H * rand(.1, 1), vx: a * .3, vy: -rand(1.2, 3), s: rand(12, 30), l: 1, dark: Math.random() < .45 });
+      }
+      fx = fx.filter(function (f) {
+        f.x += f.vx + Math.sin(t / 200 + f.s) * .3; f.y += f.vy; f.l -= .022;
+        if (f.l <= 0) return false;
+        c.globalCompositeOperation = f.dark ? 'source-over' : 'lighter';
+        c.save(); c.translate(f.x, f.y); c.scale(.7, 1.5);
+        blob(c, f.dark ? sprD : sprV, 0, 0, f.s, (f.dark ? .5 : .35 + surge * .3) * f.l * fade * rise);
+        c.restore();
+        return true;
+      });
+      /* the silhouette: hood, high collar, broad shoulders, a long coat whose tails stream */
+      c.globalCompositeOperation = 'source-over';
+      var hw = S * .11, headY = top + S * .16, shY = top + S * .42, shW = S * .34, hemW = S * .62, q, yy;
+      var g = c.createLinearGradient(0, top, 0, foot);
+      g.addColorStop(0, 'rgba(4,2,10,' + fade + ')'); g.addColorStop(.7, 'rgba(8,3,20,' + (.95 * fade) + ')'); g.addColorStop(1, 'rgba(20,8,50,' + (.3 * fade) + ')');
+      c.fillStyle = g; c.beginPath();
+      c.moveTo(x - hw * 1.05, headY + hw * .9);
+      c.quadraticCurveTo(x - hw * 1.35, top - hw * .2, x, top - hw * .55);
+      c.quadraticCurveTo(x + hw * 1.35, top - hw * .2, x + hw * 1.05, headY + hw * .9);
+      c.lineTo(x + shW * .55, shY - S * .05); c.quadraticCurveTo(x + shW, shY - S * .04, x + shW * 1.05, shY + S * .08);
+      c.lineTo(x + shW * 1.1, shY + S * .75); c.lineTo(x + shW * .92, shY + S * .78);
+      for (q = 0; q <= 8; q++) { yy = shY + S * .5 + q / 8 * (foot - shY - S * .5); c.lineTo(x + shW * .9 + (hemW - shW * .9) * (q / 8) + Math.sin(t / 240 + q * .9) * 9 * (q / 8), yy); }
+      for (q = 8; q >= 0; q--) { yy = shY + S * .5 + q / 8 * (foot - shY - S * .5); c.lineTo(x - shW * .9 - (hemW - shW * .9) * (q / 8) + Math.sin(t / 230 + q * .9 + 2) * 9 * (q / 8), yy); }
+      c.lineTo(x - shW * .92, shY + S * .78); c.lineTo(x - shW * 1.1, shY + S * .75);
+      c.lineTo(x - shW * 1.05, shY + S * .08); c.quadraticCurveTo(x - shW, shY - S * .04, x - shW * .55, shY - S * .05);
+      c.closePath(); c.fill();
+      var edge = c.createLinearGradient(0, top, 0, foot);
+      edge.addColorStop(0, 'rgba(190,140,255,' + (.9 * fade) + ')'); edge.addColorStop(.6, 'rgba(120,60,255,' + (.4 * fade) + ')'); edge.addColorStop(1, 'rgba(120,60,255,0)');
+      c.strokeStyle = edge; c.lineWidth = 1.6; c.stroke();
+      /* the eyes */
+      c.globalCompositeOperation = 'lighter';
+      var ey = headY + hw * .15, eb = (.8 + Math.sin(t / 110) * .2 + surge) * fade * rise;
+      blob(c, sprE, x - hw * .38, ey, hw * .55 * (1 + surge), eb); blob(c, sprE, x + hw * .38, ey, hw * .55 * (1 + surge), eb);
+      c.fillStyle = '#e6f6ff'; c.globalAlpha = Math.min(1, eb);
+      c.fillRect(x - hw * .55, ey - 1, hw * .32, 2); c.fillRect(x + hw * .23, ey - 1, hw * .32, 2);
+      /* purple lightning when the music surges */
+      if (surge > .3 && now > zapT) {
+        zapT = now + rand(40, 90);
+        var za = rand(0, TAU), zy = top + H * rand(.15, .7);
+        zap = makeBolt(x + rand(-12, 12), zy, x + Math.cos(za) * S * rand(.6, 1.1), zy + Math.sin(za) * S * .6, 1, 1, .2);
+        ion(zap, .7);
+      }
+      if (zap && surge > .3) drawBolt(c, zap, '#a86bff', Math.min(1, surge));
+      c.globalAlpha = 1;
+    });
+    return {
+      rise: function () { t0 = performance.now(); surge = 1.3; },
+      surge: function (k) { surge = Math.max(surge, k); }
+    };
+  }
+
+  /* the air: shadow tendrils creeping in from the edges, dark ground fog,
+     drifting ash and bokeh, beat ripples out from the seal, god rays, embers,
+     and soul light flowing up into each piece of the page as it rises */
   function atmosphere(cine) {
-    var w = vw(), h = vh(), ash = [], fog = [], flow = [], fade = 0, i;
+    var w = vw(), h = vh(), ash = [], fog = [], flow = [], rings = [], tend = [], fade = 0, i, rayT = 0, retractT = 0;
     for (i = 0; i < (phone ? 50 : 120); i++) ash.push({ x: rand(0, w), y: rand(0, h), v: rand(.2, .9), s: rand(1, 2.6), ph: rand(0, 6), big: Math.random() < .08 });
     for (i = 0; i < (phone ? 6 : 12); i++) fog.push({ x: rand(-100, w + 100), y: h - rand(0, h * .16), r: rand(130, 280), v: rand(-.35, .35) });
-    var sprV = sprite('120,60,255'), sprD = sprite('8,3,18'), sprS = sprite('205,175,255', true);
+    for (i = 0; i < (phone ? 6 : 11); i++) {
+      var e = Math.random(), sx0 = e < .5 ? rand(0, w) : (e < .75 ? -10 : w + 10), sy0 = e < .5 ? (Math.random() < .5 ? -10 : h + 10) : rand(0, h);
+      var ang = Math.atan2(h * .55 - sy0, w / 2 - sx0) + rand(-.5, .5), pts = [[sx0, sy0]], L = Math.max(w, h) * rand(.28, .42);
+      for (var k = 1; k <= 22; k++) { ang += rand(-.28, .28); pts.push([pts[k - 1][0] + Math.cos(ang) * L / 22, pts[k - 1][1] + Math.sin(ang) * L / 22]); }
+      tend.push({ p: pts, w: rand(16, 30), ph: rand(0, 6) });
+    }
+    var sprV = sprite('120,60,255'), sprD = sprite('8,3,18'), sprS = sprite('205,175,255', true), emb = sparkField('180,130,255');
     layer(function (c, t, now) {
       fade = cine.ending ? Math.max(0, fade - .02) : Math.min(1, fade + .02);
       if (cine.ending && fade <= 0) return false;
+      /* shadow tendrils: they grow in as the dark falls and pull back when the knights rise */
+      var grow = Math.min(1, t / 2600) * (retractT ? Math.max(0, 1 - (now - retractT) / 1400) : 1);
+      if (grow > 0) {
+        c.globalCompositeOperation = 'source-over'; c.lineCap = 'round'; c.lineJoin = 'round';
+        tend.forEach(function (td) {
+          var m = Math.max(1, Math.floor(td.p.length * .8 * grow));
+          for (var s = 1; s < m; s++) {
+            var a0 = td.p[s - 1], a1 = td.p[s], wob = Math.sin(t / 320 + s * .6 + td.ph) * 4;
+            c.strokeStyle = 'rgba(4,2,10,.85)'; c.globalAlpha = fade; c.lineWidth = td.w * (1 - s / td.p.length) + 2;
+            c.beginPath(); c.moveTo(a0[0], a0[1] + wob); c.lineTo(a1[0], a1[1] + wob); c.stroke();
+          }
+          c.globalCompositeOperation = 'lighter'; c.strokeStyle = 'rgba(150,90,255,.4)'; c.lineWidth = 1.4; c.beginPath();
+          for (var s2 = 0; s2 < m; s2++) { var pp = td.p[s2]; c[s2 ? 'lineTo' : 'moveTo'](pp[0], pp[1] + Math.sin(t / 320 + s2 * .6 + td.ph) * 4); }
+          c.stroke(); c.globalCompositeOperation = 'source-over';
+        });
+      }
       c.globalCompositeOperation = 'source-over';
       fog.forEach(function (f) { f.x += f.v; if (f.x < -320) f.x = w + 320; if (f.x > w + 320) f.x = -320; blob(c, sprD, f.x, f.y, f.r, .6 * fade); });
       c.globalCompositeOperation = 'lighter';
       fog.forEach(function (f) { blob(c, sprV, f.x, f.y + 24, f.r * .8, .1 * fade); });
+      /* ripples out across the ground from the seal, on the beat */
+      rings = rings.filter(function (rg) {
+        var k2 = (now - rg.t) / 1400;
+        if (k2 >= 1) return false;
+        var e2 = 1 - Math.pow(1 - k2, 3), rx = e2 * w * .6 + 20;
+        c.strokeStyle = 'rgba(170,120,255,1)'; c.globalAlpha = (1 - k2) * .55 * rg.k * fade; c.lineWidth = 2;
+        c.beginPath(); c.ellipse(w / 2, h * .985, rx, rx * .16, 0, 0, TAU); c.stroke();
+        return true;
+      });
+      /* god rays when the page wakes */
+      if (rayT) {
+        var rk = (now - rayT) / 2200;
+        if (rk < 1) {
+          var env = Math.sin(Math.PI * rk), ox = w / 2, oy = -h * .25;
+          for (var ri = 0; ri < 14; ri++) {
+            var ra = Math.PI / 2 + (ri / 13 - .5) * 1.3 + Math.sin(now / 1400 + ri) * .03, rw = .018 + (ri % 3) * .01, R = Math.hypot(w, h) * 1.3;
+            var gr = c.createLinearGradient(ox, oy, ox + Math.cos(ra) * R, oy + Math.sin(ra) * R);
+            gr.addColorStop(0, 'rgba(235,225,255,' + (.34 * env) + ')'); gr.addColorStop(.6, 'rgba(150,100,255,' + (.12 * env) + ')'); gr.addColorStop(1, 'rgba(150,100,255,0)');
+            c.globalAlpha = fade; c.fillStyle = gr; c.beginPath(); c.moveTo(ox, oy);
+            c.lineTo(ox + Math.cos(ra - rw) * R, oy + Math.sin(ra - rw) * R); c.lineTo(ox + Math.cos(ra + rw) * R, oy + Math.sin(ra + rw) * R); c.closePath(); c.fill();
+          }
+        } else rayT = 0;
+      }
       ash.forEach(function (a) {
         a.y -= a.v; a.x += Math.sin(t / 900 + a.ph) * .3;
         if (a.y < -20) { a.y = h + 10; a.x = rand(0, w); }
@@ -1182,19 +1317,24 @@
       });
       c.lineCap = 'round';
       flow = flow.filter(function (p) {
-        var k = (now - p.t0) / p.d;
-        if (k < 0) return true;
-        if (k >= 1) return false;
-        var e = k * k * (3 - 2 * k), x = p.x0 + (p.x1 - p.x0) * e + Math.sin(k * 6 + p.ph) * p.sw * (1 - k), y = p.y0 + (p.y1 - p.y0) * e;
+        var k3 = (now - p.t0) / p.d;
+        if (k3 < 0) return true;
+        if (k3 >= 1) return false;
+        var e3 = k3 * k3 * (3 - 2 * k3), x = p.x0 + (p.x1 - p.x0) * e3 + Math.sin(k3 * 6 + p.ph) * p.sw * (1 - k3), y = p.y0 + (p.y1 - p.y0) * e3;
         if (p.px != null) { c.strokeStyle = '#a07bff'; c.globalAlpha = .7 * fade; c.lineWidth = 2; c.beginPath(); c.moveTo(p.px, p.py); c.lineTo(x, y); c.stroke(); }
         p.px = x; p.py = y;
         blob(c, sprS, x, y, 7, .9 * fade);
         return true;
       });
       c.globalAlpha = 1;
+      emb.draw(c);
     });
     return {
-      flow: function (x0, y0, x1, y1, delay) { flow.push({ x0: x0, y0: y0, x1: x1, y1: y1, t0: performance.now() + (delay || 0), d: rand(650, 1050), ph: rand(0, 6), sw: rand(10, 40), px: null, py: null }); }
+      flow: function (x0, y0, x1, y1, delay) { flow.push({ x0: x0, y0: y0, x1: x1, y1: y1, t0: performance.now() + (delay || 0), d: rand(650, 1050), ph: rand(0, 6), sw: rand(10, 40), px: null, py: null }); },
+      ripple: function (k) { rings.push({ t: performance.now(), k: k || 1 }); },
+      retract: function () { if (!retractT) retractT = performance.now(); },
+      rays: function () { rayT = performance.now(); },
+      embers: function (x, y, n2) { emb.burst(x, y, n2, 9, -Math.PI / 2, 1.4, 4); }
     };
   }
 
@@ -1260,15 +1400,12 @@
       '<g fill="#d9c6ff" font-size="11" font-family="serif" text-anchor="middle"><text y="-88">影</text><text y="96">王</text><text x="-90" y="4">起</text><text x="90" y="4">兵</text></g></svg>';
     on(seal);
     function sealPulse(k) { seal.animate([{ filter: 'brightness(' + (1 + k) + ') saturate(1.4)' }, { filter: 'brightness(1)' }], { duration: 420, easing: 'ease-out' }); }
-    var air = atmosphere(cine), army = legion(cine);
+    var air = atmosphere(cine), army = legion(cine), lord = monarch(cine);
     if (restoring) ruin.anims.forEach(function (p) {
       p.dark = p.el.animate([{ transform: p.end, filter: phone ? 'none' : 'brightness(.5) saturate(.4)' }, { transform: p.end, filter: SHADOW }],
         { duration: 900, delay: rand(0, 400), fill: 'forwards' });
     });
-    var sys = null, sys2 = null;
-    at(200, function () {
-      sys = sysWindow('SYSTEM', restoring ? ['<em>' + count + '</em> fallen targets detected.', 'Shadow extraction is available.'] : ['No fallen enemies found.', 'Summoning your standing shadow army.']);
-    });
+    /* the System speaks only once it is over (see finish) */
 
     /* skip: a button and Esc jump straight to the end */
     var skip = el('button', 'pw-skip', 'Skip <span aria-hidden="true">&#9656;</span>');
@@ -1288,8 +1425,8 @@
       impact(['neg', 'black', 'neg'], 'violet');
       shockwave(w / 2, h, '#9a6bff', Math.max(w, h), 1200);
       shake(12, 900); flare(.9); sealPulse(1.6);
+      lord.rise(); air.ripple(1.6); air.embers(w / 2, h, phone ? 30 : 60);
       sfx('ARISE', w / 2, h * .3, { cls: 'xl pw-arise-word', en: '起きろ', life: 2200, rot: 0 });
-      if (sys) { sys.close(300); sys = null; }
     });
 
     /* ---- 3. souls torn out of the fallen, as the choir comes in ---- */
@@ -1297,17 +1434,15 @@
       at(tm(.9), function () {
         extractSouls(ruin.anims.map(function (p) { return p.el.getBoundingClientRect(); }), (DROP[0] - .9) * 1000);
       });
-      at(tm(LOUD), function () {
-        flare(.5); sealPulse(1);
-        sys2 = sysWindow('SYSTEM', ['Shadow extraction in progress.', 'Targets: <em>' + count + '</em> fallen elements.'], { bar: true });
-      });
+      at(tm(LOUD), function () { flare(.5); sealPulse(1); });
     }
 
     /* ---- 4. the drop: a wave of knights erupts on each hit ---- */
     DROP.forEach(function (d, i) {
       at(tm(d), function () {
-        army.spawn(i, DROP.length);
+        army.spawn(i, DROP.length); lord.surge(1.1); air.ripple(1.2);
         shake(7 + i * 3, 360); flare(.6 + i * .15); sealPulse(1.2);
+        if (i === 0) air.retract();
         if (i === DROP.length - 1) { impact(['neg', 'black'], 'violet'); chroma(300); cameraReset(900); sh.classList.add('thin'); }
       });
     });
@@ -1315,9 +1450,11 @@
 
     /* the music breathes through everything: light, seal and eyes on the beat */
     for (var b = BEAT0, n = 0; b < END; b += BEAT, n++) {
-      (function (bt, even) { at(tm(bt), function () { flare(even ? .28 : .14); army.pulse(even ? 1.6 : 1.25); if (even) sealPulse(.5); }); })(b, n % 2 === 0);
+      (function (bt, even) { at(tm(bt), function () { flare(even ? .28 : .14); army.pulse(even ? 1.6 : 1.25); if (even) { sealPulse(.5); air.ripple(.7); } }); })(b, n % 2 === 0);
     }
-    ACC.forEach(function (a) { if (a < END) at(tm(a), function () { flare(.55); sealPulse(1); shake(4, 260); }); });
+    ACC.forEach(function (a) { if (a < END) at(tm(a), function () { flare(.55); sealPulse(1); shake(4, 260); lord.surge(.8); air.ripple(1.2); }); });
+    /* the ranks behind rise out of the fog on the first accents after the drop */
+    ACC.filter(function (a) { return a > lastDrop; }).slice(0, 2).forEach(function (a, ri) { at(tm(a), function () { army.rank(ri); sealPulse(1.4); }); });
 
     /* ---- 5. the page rebuilds on the beat, bottom to top ---- */
     var rebuilt = 0;
@@ -1345,20 +1482,20 @@
             }
           });
           rebuilt = Math.min(1, (gi + 1) / G);
-          if (sys2) sys2.progress(rebuilt);
         });
       });
     }
 
     /* ---- 6. the knights salute, the page wakes, they kneel ---- */
     at(tm(SALUTE), function () {
-      army.salute(); flare(1); sealPulse(2);
+      army.salute(); lord.surge(1.4); flare(1); sealPulse(2); air.embers(w / 2, h * .6, phone ? 30 : 60);
       shockwave(w / 2, h, '#b28cff', Math.max(w, h) * .8, 1000); shake(9, 500);
     });
     if (restoring) at(tm(AWAKE), function () {
       var SWEEP = 1500;
       awakenSweep(SWEEP);
       flash('#efe6ff', 500, .35);
+      air.rays(); air.embers(w / 2, h * .15, phone ? 40 : 90);
       ruin.anims.forEach(function (p) {
         var top = p.el.getBoundingClientRect().top, d = Math.max(0, Math.min(1, (top + 60) / (h + 120))) * SWEEP;
         p.wake = p.el.animate([
@@ -1367,21 +1504,17 @@
           { filter: 'none' }
         ], { duration: 560, delay: d, fill: 'forwards' });
       });
-      if (sys2) { sys2.progress(1); sys2.close(600); sys2 = null; }
     });
-    at(tm(restoring ? AWAKE + .4 : SALUTE + 1.2), function () { army.kneel(); });
+    at(tm(restoring ? AWAKE + .4 : SALUTE + 1.2), function () { army.kneel(); lord.surge(1); });
 
     /* ---- 7. the title card, then everything fades with the music ---- */
     var card = null;
     at(tm(TITLE), function () {
       card = overlay('pw-title');
-      card.innerHTML = '<small>影の君主 · Shadow Monarch</small><b>SHADOW ARMY</b><i></i><span>' +
+      card.innerHTML = '<u class="pw-title-k" aria-hidden="true">影</u><small>影の君主 · Shadow Monarch</small><b>SHADOW ARMY</b><i></i><span>' +
         (restoring ? '<em>' + count + '</em> shadows have risen · the page lives again' : 'your shadows stand ready') + '</span>';
       on(card);
-      flare(.7);
-    });
-    if (restoring) at(tm(TITLE + 1.2), function () {
-      sysWindow('SYSTEM', ['Shadow extraction <em>successful</em>.', '<em>' + count + '</em> shadows have joined your army.']).close(3200);
+      flare(.7); air.embers(w / 2, h * .45, phone ? 40 : 80);
     });
     at(tm(END), function () { finish(false); });
 
@@ -1398,7 +1531,10 @@
         lock(false); ruin = null;
       }
       if (skipped) flash('#efe6ff', 400, .3);
-      [sys, sys2].forEach(function (s) { if (s) s.close(0); });
+      later(skipped ? 300 : 900, function () {
+        sysWindow('SYSTEM', restoring ? ['Shadow extraction <em>successful</em>.', '<em>' + count + '</em> shadows have joined your army.', 'The page lives again.']
+          : ['No fallen enemies found.', 'Your shadow army stands ready.']).close(3600);
+      });
       drop(skip, 300); drop(sh, 900); drop(seal, 900); if (card) drop(card, 1200);
       letterbox(false); cameraReset(700);
       lit.dead = true; lit.off(1100);
@@ -1776,8 +1912,9 @@
     preload();
   }
   function closeDock() { dock.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
-  function setBusy(b) { busy = b; dock.classList.toggle('pw-busy', b); }
+  function setBusy(b) { busy = b; dock.classList.toggle('pw-busy', b); root.classList.toggle('pw-active', b || !!ruin); }
   function paint() {
+    root.classList.toggle('pw-active', busy || !!ruin);
     btn.chidori.disabled = !!ruin;
     btn.kame.disabled = !!ruin;
     btn.ssj.disabled = !!ruin;

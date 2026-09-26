@@ -652,7 +652,7 @@
         }
       }
     } else if (mode === 'scrub' && pinned) {
-      tgt = scrollT();
+      tgt = document.documentElement.classList.contains('pw-active') ? t : scrollT();   /* hold while a power moves the camera */
       var d = tgt - t;
       if (Math.abs(d) < 1 / 60) t = tgt;
       else { var cap = 6 * dt / 1000; t += clamp(d * (1 - Math.exp(-dt / 80)), -cap, cap); }

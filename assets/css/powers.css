@@ -72,7 +72,7 @@ html.pw-neg.pw-neg-gold body > *:not(.pw-canvas):not(.pw-glow):not(.pw-bloom):no
 @media (max-width: 760px) { .pw-crack-glow { filter: none; } }
 
 /* ---------- destroyed page ---------- */
-html.pw-locked, html.pw-locked body { overflow: hidden !important; overscroll-behavior: none; }
+html.pw-locked, html.pw-locked body { overscroll-behavior: none; }
 .pw-ruin {
   position: fixed; inset: 0; z-index: 575; pointer-events: none; opacity: 0; transition: opacity 1.2s;
   background:
@@ -221,3 +221,6 @@ html.pw-chroma body > main, html.pw-chroma body > .site-header, html.pw-chroma b
   .pw-title small, .pw-title span { letter-spacing: .2em; font-size: 11px; }
   .pw-skip { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); right: 14px; }
 }
+/* the huge faint 影 behind the title card */
+.pw-title-k { position: absolute; left: 50%; top: 50%; z-index: -1; transform: translate(-50%, -50%) scale(1.25); font: 900 min(58vh, 70vw)/1 var(--font-jp, serif); color: rgba(150, 90, 255, .13); text-decoration: none; opacity: 0; transition: opacity 1.2s, transform 3.2s cubic-bezier(.16, 1, .3, 1); }
+.pw-title.on .pw-title-k { opacity: 1; transform: translate(-50%, -50%) scale(1); }
