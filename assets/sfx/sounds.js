@@ -5,7 +5,6 @@ window.XR_SFX = { files: {
   "arise-theme": "arise-theme.mp3?v=2d5a98b0",
   "arise-voice": "arise-voice.mp3?v=71533e83",
   "arise": "arise.mp3?v=e00df89a",
-  "chidori-hit": "chidori-hit.mp3?v=1e24dfa5",
   "chidori": "chidori.mp3?v=f5a7b663",
   "kamehameha-fire": "kamehameha-fire.mp3?v=6bfc46b6",
   "kamehameha-voice": "kamehameha-voice.mp3?v=ab580290",
@@ -13,4 +12,4 @@ window.XR_SFX = { files: {
   "super-saiyan-burst": "super-saiyan-burst.mp3?v=4836889e",
   "super-saiyan": "super-saiyan.mp3?v=fc88a421",
   "wind": "wind.mp3?v=02122d5c"
-}, marks: {"chidori":{"strike":3.3},"kamehameha-voice":{"fire":8.62,"beam":7.6},"arise-voice":{"word":1.3,"end":1.85},"arise-theme":{"loud":1.6,"drop":[3.96,4.16,4.28,4.4],"beat":0.38,"beat0":4.12,"accents":[6.9,8.26,9.94,12.14,13.26,16.32,17.44,18.94,19.32,21.76,22.96],"salute":16.32,"awake":19.32,"title":21.76,"end":25.8}} };
+}, marks: {"chidori":{"strike":3.3,"surges":[0.84,1.02,2.04]},"kamehameha-voice":{"fire":8.62,"beam":7.6},"arise-voice":{"word":1.3,"end":1.85},"arise-theme":{"loud":1.6,"drop":[3.96,4.16,4.28,4.4],"beat":0.38,"beat0":4.12,"accents":[6.9,8.26,9.94,12.14,13.26,16.32,17.44,18.94,19.32,21.76,22.96],"salute":16.32,"awake":19.32,"title":21.76,"end":25.8}} };

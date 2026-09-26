@@ -95,7 +95,6 @@ these names (mp3, m4a, ogg, wav or webm), then run `node tools/version-assets.js
 | File | Plays |
 | --- | --- |
 | `chidori` | as Chidori starts charging |
-| `chidori-hit` | when it strikes and the page shatters |
 | `arise` | the shadow spell, as the dark falls |
 | `arise-voice` | a voice saying "Arise", landing on the command |
 | `arise-theme` | the music under the whole Arise cinematic (its drop, beat and accents go in `assets/sfx/marks.json`) |
@@ -107,6 +106,6 @@ these names (mp3, m4a, ogg, wav or webm), then run `node tools/version-assets.js
 | `super-saiyan-burst` | the golden burst at the end |
 
 A power with no clip is silent. `assets/sfx/marks.json` holds the timings inside the clips that the powers sync
-to: the Chidori `strike`, the Kamehameha `fire` and `beam`, the Arise `word`, and the theme's `drop`, `beat`,
+to: the Chidori `strike` and `surges`, the Kamehameha `fire` and `beam`, the Arise `word`, and the theme's `drop`, `beat`,
 `accents`, `salute`, `awake`, `title` and `end` (all in seconds). If you swap a clip, update its marks.
 Only add clips you have the right to publish.

@@ -53,7 +53,6 @@
      The tool lists the files it finds in assets/sfx/sounds.js; a cue with
      no file stays silent.
        chidori              the charge, as the power starts
-       chidori-hit          the strike, as the page shatters
        arise                the shadow spell, as the dark falls
        arise-voice          a voice saying "Arise", landing on the command
        arise-theme          the music under the whole Arise cinematic (its drop,
@@ -257,11 +256,13 @@
   }
 
   /* ---------- manga focus lines ---------- */
-  function focusLines(c, x, y, inner, color, n, alpha) {
-    var R = Math.hypot(W, H);
+  /* a repeatable random stream, so a frame can be held for a few frames (animation on twos) */
+  function seeded(v) { return function () { v = v + 0x6D2B79F5 | 0; var t = Math.imul(v ^ v >>> 15, 1 | v); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function focusLines(c, x, y, inner, color, n, alpha, rnd) {
+    var R = Math.hypot(W, H), rr = rnd || Math.random;
     c.fillStyle = color; c.globalAlpha = alpha; c.beginPath();
     for (var i = 0; i < n; i++) {
-      var a = rand(0, TAU), w = rand(.0025, .011), r0 = inner * rand(1, 1.9);
+      var a = rr() * TAU, w = .0025 + rr() * .0085, r0 = inner * (1 + rr() * .9);
       c.moveTo(x + Math.cos(a - w) * R, y + Math.sin(a - w) * R);
       c.lineTo(x + Math.cos(a) * r0, y + Math.sin(a) * r0);
       c.lineTo(x + Math.cos(a + w) * R, y + Math.sin(a + w) * R);
@@ -583,102 +584,187 @@
   function chidori() {
     if (busy || ruin) return;
     setBusy(true); closeDock();
-    var w = vw(), h = vh();
+    var w = vw(), h = vh(), floor = h * .93;
     var sx = w * (phone ? .22 : .16), sy = h * .8, ex = w / 2, ey = h * (phone ? .56 : .58);
-    /* the charge lasts until the strike marked in the clip (assets/sfx/marks.json) */
-    var DASH = reduce ? 1 : 420, CHARGE = reduce ? 500 : Math.max(900, mark('chidori', 'strike', 1.77) * 1000 - DASH), HIT = CHARGE + DASH;
+    /* timing from the clip (assets/sfx/marks.json): the strike, and the surges
+       (its strongest onsets) where the lightning flares */
+    var DASH = reduce ? 1 : 460, CHARGE = reduce ? 500 : Math.max(900, mark('chidori', 'strike', 1.77) * 1000 - DASH), HIT = CHARGE + DASH;
+    var SURGE = mark('chidori', 'surges', [.84, 1.02, 2.04]).map(function (s) { return s * 1000; }).filter(function (s) { return s < CHARGE - 150; });
+    var BIRTH = SURGE.length ? SURGE[0] : CHARGE * .3;
     lock(true); letterbox(true);
-    var dim = overlay('pw-dim'); dim.style.setProperty('--px', ex + 'px'); dim.style.setProperty('--py', ey + 'px'); on(dim);
-    var lit = reduce ? null : pageLight('90,160,255'), spk = sparkField('70,150,255', function () { return vh() * .93; });
+    var dim = overlay('pw-dim'); dim.style.setProperty('--px', sx + 'px'); dim.style.setProperty('--py', sy + 'px'); on(dim);
+    var lit = reduce ? null : pageLight('90,160,255'), spk = sparkField('70,150,255', function () { return floor; });
     layer(function (c, t) { spk.draw(c); return t < HIT + 3200; });
-    /* camera: slow push in on the hand while it charges, whip to the target on the dash */
-    camera(sx, sy, 1.07, CHARGE, 'cubic-bezier(.3,0,.2,1)');
-    later(CHARGE, function () { camera(ex, ey, 1.12, DASH, 'cubic-bezier(.7,0,.3,1)'); });
-    clip('chidori', 0, false, 1, true);
-    clip('chidori-hit', HIT);
-    later(HIT, function () { stopClip('chidori', 450); });
+    camera(sx, sy, 1.09, CHARGE, 'cubic-bezier(.3,0,.2,1)');
+    clip('chidori', 0);
 
-    var trail = [], arcs = [];
+    /* things near the hand the lightning can jump to */
+    var near = [];
+    Array.prototype.forEach.call(document.querySelectorAll('main h1, main h2, main h3, main .btn, main img, main p, main li, main a, main .card'), function (e) {
+      if (near.length >= 30) return;
+      var r = e.getBoundingClientRect();
+      if (r.width < 10 || r.height < 6 || r.bottom < 0 || r.top > h) return;
+      var nx = Math.max(r.left, Math.min(sx, r.right)), ny = Math.max(r.top, Math.min(sy, r.bottom)), d = Math.hypot(nx - sx, ny - sy);
+      if (d > 50 && d < (phone ? 260 : 430)) near.push({ e: e, r: r });
+    });
+    function edgePoint(r) {
+      var k = Math.random();
+      return k < .25 ? [rand(r.left, r.right), r.top] : k < .5 ? [rand(r.left, r.right), r.bottom] : k < .75 ? [r.left, rand(r.top, r.bottom)] : [r.right, rand(r.top, r.bottom)];
+    }
+
+    var flare = 0, lines = null, linesT = 0, ghosts = [], scar = [], jumpT = 0;
+    var arcs = [], tend = [];
     for (var i = 0; i < (phone ? 7 : 12); i++) arcs.push({ b: null, until: 0 });
+    for (i = 0; i < (phone ? 6 : 11); i++) tend.push({ b: null, until: 0 });
+    function surge(k) { flare = Math.max(flare, k); }
+    SURGE.forEach(function (s, n) {
+      later(s, function () {
+        surge(n === 0 ? 1.5 : 1.1);
+        flash('#dff1ff', 200, n === 0 ? .35 : .2);
+        shake(n === 0 ? 6 : 4 + n * 2, 320);
+        if (n === 0) sfx('千鳥', w / 2, h * (phone ? .24 : .2), { cls: 'xl', en: 'CHIDORI', color: '#2d8cff', life: 1700, rot: -6 });
+        if (n === 1) sfx('チチチチチ', w * (phone ? .7 : .72), h * .66, { cls: 'sm', color: '#2d8cff', life: 1100 });
+        if (n === 2) sfx('バチバチ', w * (phone ? .28 : .3), h * .42, { cls: 'sm', color: '#2d8cff', life: 900, rot: 8 });
+      });
+    });
+    if (!SURGE.length) later(250, function () { sfx('千鳥', w / 2, h * (phone ? .24 : .2), { cls: 'xl', en: 'CHIDORI', color: '#2d8cff', life: 1500, rot: -6 }); });
+
+    var sprCore = sprite('225,240,255', true), sprHalo = sprite('70,150,255');
     layer(function (c, t, now) {
-      if (t > HIT + 380) return false;
-      var p = Math.min(1, t / CHARGE), d = t < CHARGE ? 0 : ease(Math.min(1, (t - CHARGE) / DASH));
-      var x = sx + (ex - sx) * d, y = sy + (ey - sy) * d;
-      trail.push([x, y]); if (trail.length > 14) trail.shift();
-      /* the room flickers with the lightning, like a strobe */
-      dim.style.opacity = (.78 + Math.random() * .22 * (.4 + p)).toFixed(2);
-      /* the lightning lights the page around the hand, strobing as it arcs */
-      var fl = Math.random() < .3 ? rand(.45, 1) : rand(.8, .95);
-      if (lit && t < HIT) lit.at(x, y, 240 + p * 560, (.22 + p * .62) * fl);
-      /* anamorphic streak through the hand */
-      if (!reduce) {
-        var sl = w * (.2 + p * .5), sg = c.createLinearGradient(x - sl, 0, x + sl, 0);
-        sg.addColorStop(0, 'rgba(80,160,255,0)'); sg.addColorStop(.5, 'rgba(220,240,255,' + (.35 + p * .5) + ')'); sg.addColorStop(1, 'rgba(80,160,255,0)');
-        c.globalCompositeOperation = 'lighter'; c.fillStyle = sg; c.fillRect(x - sl, y - 2, sl * 2, 4);
-        c.globalCompositeOperation = 'source-over';
+      if (t > HIT + 420) return false;
+      flare *= .93;
+      var p = Math.min(1, t / CHARGE), born = Math.min(1, Math.max(0, (t - BIRTH) / 260)), bornE = 1 - Math.pow(1 - born, 3);
+      /* the dash: a short pull back, then an explosive, slightly arcing run */
+      var dt = t < CHARGE ? -1 : Math.min(1, (t - CHARGE) / DASH), x = sx, y = sy;
+      if (dt >= 0) {
+        if (dt < .2) { var q = dt / .2; x = sx - 22 * (1 - Math.pow(1 - q, 2)); y = sy + 6 * q; }
+        else { var u = (dt - .2) / .8, e = u < .5 ? 16 * u * u * u * u * u : 1 - Math.pow(-2 * u + 2, 5) / 2; x = sx - 22 + (ex - sx + 22) * e; y = sy + 6 + (ey - sy - 6) * e - Math.sin(Math.PI * e) * 46; }
       }
-      /* focus lines tighten as the charge peaks */
-      if (!reduce) focusLines(c, x, y, 140 - p * 50, 'rgba(210,235,255,1)', phone ? 40 : 80, .12 + p * .2);
+      var fl = Math.random() < .25 + p * .4 ? rand(.5, 1) : rand(.8, .95);   /* the strobe quickens as it charges */
+      dim.style.opacity = (.8 + Math.random() * .2 * (.3 + p)).toFixed(2);
+      if (lit && t < HIT) lit.at(x, y, 200 + p * 520 + flare * 160, Math.min(1, (.12 + bornE * .55 + flare * .3) * fl));
+      /* focus lines, redrawn on twos like anime cels, tightening to the peak */
+      if (!reduce && born > 0) {
+        if (!lines || now - linesT > 70) { linesT = now; lines = { s: (Math.random() * 1e9) | 0 }; }
+        focusLines(c, x, y, 150 - p * 55, 'rgba(210,235,255,1)', phone ? 40 : 80, (.1 + p * .22) * bornE, seeded(lines.s));
+      }
       c.globalCompositeOperation = 'lighter';
-      /* orb core */
-      var R = 14 + p * 30 + Math.sin(t / 25) * 4;
-      var g = c.createRadialGradient(x, y, 0, x, y, R * 3.4);
-      g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.18, 'rgba(200,235,255,1)'); g.addColorStop(.45, 'rgba(70,150,255,.55)'); g.addColorStop(1, 'rgba(20,80,255,0)');
-      c.fillStyle = g; c.beginPath(); c.arc(x, y, R * 3.4, 0, TAU); c.fill();
+      /* anamorphic streak through the hand */
+      if (!reduce && born > 0) {
+        var sl = w * (.18 + p * .5 + flare * .1), sg = c.createLinearGradient(x - sl, 0, x + sl, 0);
+        sg.addColorStop(0, 'rgba(80,160,255,0)'); sg.addColorStop(.5, 'rgba(225,242,255,' + Math.min(1, .3 + p * .5 + flare * .2) + ')'); sg.addColorStop(1, 'rgba(80,160,255,0)');
+        c.fillStyle = sg; c.fillRect(x - sl, y - 2, sl * 2, 4);
+      }
+      /* before it is born: a sputtering point */
+      var R = born > 0 ? 8 + bornE * (30 + p * 16) + flare * 10 + Math.sin(t / 22) * 2 : 3 + Math.random() * 3;
+      blob(c, sprHalo, x, y, R * 5.2, (.35 + .4 * bornE) * fl);
+      blob(c, sprCore, x, y, R * 1.6, 1);
       /* its light pooling on the ground below */
-      c.save(); c.translate(x, h * .93); c.scale(1, .16); blob(c, sprite('80,150,255'), 0, 0, 120 + p * 220, (.25 + p * .45) * fl); c.restore();
-      /* a 3D sphere of lightning spinning in the hand: arcs wrap around
-         it and whip outward, near side bright and thick, far side dim */
-      var n = Math.min(arcs.length, 3 + Math.round(p * arcs.length)), SR = 22 + p * (phone ? 34 : 48);
+      c.save(); c.translate(x, floor); c.scale(1, .16); blob(c, sprite('80,150,255'), 0, 0, 110 + p * 230 + flare * 80, (.2 + .5 * bornE) * fl); c.restore();
+      if (born <= 0) {
+        if (Math.random() < .5) spk.burst(x, y, 1, 4);
+        if (Math.random() < .3) drawBolt(c, makeBolt(x, y, x + rand(-30, 30), y + rand(-30, 30), .6, 0, 0), '#6ab8ff', .8);
+        return;
+      }
+      /* the 3D sphere of arcs spinning in the hand */
+      var n = Math.min(arcs.length, 3 + Math.round(p * arcs.length)), SR = 18 + bornE * (phone ? 30 : 44) + flare * 12;
       var ay = t * .006, ax = .5 + Math.sin(t / 700) * .4;
       for (var k = 0; k < n; k++) {
         var A = arcs[k];
-        if (!A.b || now > A.until) { A.b = sphereArc(SR); A.until = now + rand(40, 100); }
+        if (!A.b || now > A.until) { A.b = sphereArc(SR); A.until = now + rand(40, 90); }
         draw3d(c, A.b, x, y, ay, ax, '#4aa8ff', rand(1.1, 1.8));
       }
-      /* short arcs jumping off the sphere into the air around it */
-      if (!reduce && Math.random() < .45 + p * .45) {
-        var ma = rand(0, TAU), ml = rand(50, 90 + p * 150), mb = makeBolt(x + Math.cos(ma) * SR * .7, y + Math.sin(ma) * SR * .7, x + Math.cos(ma + rand(-.7, .7)) * ml, y + Math.sin(ma + rand(-.7, .7)) * ml, .9, 1, .22);
-        drawBolt(c, mb, '#6ab8ff', .95); ion(mb, .6);
-      }
-      /* dashing: lightning dragged along the ground behind the hand */
-      if (d > 0 && d < 1) {
-        for (var j = 0; j < trail.length - 1; j += 3) {
-          var tp = trail[j];
-          var tb = makeBolt(tp[0], tp[1], tp[0] + rand(-30, 30), h * .93 + rand(-10, 10), 1.2, 1, .1);
-          drawBolt(c, tb, '#4aa8ff', .7); ion(tb, .8);
+      /* long tendrils re-striking all around it: the thousand birds */
+      var nt = Math.min(tend.length, 2 + Math.round((p * .8 + flare * .4) * tend.length));
+      for (var m = 0; m < nt; m++) {
+        var T = tend[m];
+        if (!T.b || now > T.until) {
+          var ta = rand(0, TAU), tl = rand(55, 120 + p * 200) * (1 + flare * .6);
+          T.b = makeBolt(x + Math.cos(ta) * SR * .6, y + Math.sin(ta) * SR * .6, x + Math.cos(ta) * tl, y + Math.sin(ta) * tl * .8, 1, 1, .25);
+          T.until = now + rand(35, 80); ion(T.b, .5);
         }
-        spk.burst(x, h * .93, 5, 13, Math.PI + .5, .5, 2);
+        drawBolt(c, T.b, '#6ab8ff', .95);
       }
-      if (Math.random() < .55 + p * .3) spk.burst(x, y, 1 + Math.round(p * 2), 6 + p * 5);
+      /* lightning dragging into the ground below the hand */
+      if (dt < 0 && Math.random() < .35 + p * .45) {
+        var gb = makeBolt(x + rand(-10, 10), y + SR * .5, x + rand(-80, 80), floor + rand(-6, 6), 1.1, 1, .12);
+        drawBolt(c, gb, '#4aa8ff', .85); ion(gb, .7);
+        if (Math.random() < .5) spk.burst(gb[0].p[gb[0].p.length - 1][0], floor, 3, 8, -Math.PI / 2, 1, 2);
+      }
+      /* arcs jumping onto the page around it: what they hit flickers */
+      if (!reduce && dt < 0 && near.length && now > jumpT && Math.random() < .08 + p * .18) {
+        jumpT = now + rand(60, 160);
+        var tg = near[(Math.random() * near.length) | 0], ep = edgePoint(tg.r);
+        var jb = makeBolt(x, y, ep[0], ep[1], 1, 1, .15);
+        drawBolt(c, jb, '#8fd0ff', 1); ion(jb, .9);
+        spk.burst(ep[0], ep[1], 5, 7);
+        try { tg.e.animate([{ filter: 'brightness(2.4) drop-shadow(0 0 8px #6ab8ff)' }, { filter: 'none' }], { duration: 220 }); } catch (er) {}
+      }
+      if (Math.random() < .5 + p * .3) spk.burst(x, y, 1 + Math.round(p * 2), 6 + p * 5);
+      /* the dash: afterimages, speed and a scar gouged into the ground */
+      if (dt >= 0 && dt < 1) {
+        ghosts.push({ x: x, y: y, t: now });
+        scar.push([x, floor]);
+        spk.burst(x, floor, 6, 14, Math.PI + .45, .45, 2);
+        var tb = makeBolt(x, y, x - rand(20, 60), floor + rand(-8, 8), 1.2, 1, .1);
+        drawBolt(c, tb, '#4aa8ff', .75); ion(tb, .8);
+      }
+      ghosts = ghosts.filter(function (g) { var a = 1 - (now - g.t) / 200; if (a <= 0) return false; blob(c, sprHalo, g.x, g.y, R * 3.5, a * .45); blob(c, sprCore, g.x, g.y, R * 1.1, a * .6); return true; });
     });
-    later(250, function () { sfx('千鳥', w / 2, h * (phone ? .24 : .2), { cls: 'xl', en: 'CHIDORI', color: '#2d8cff', life: 1400, rot: -6 }); });
-    later(650, function () { sfx('チチチチチ', w * (phone ? .7 : .72), h * .66, { cls: 'sm', color: '#2d8cff', life: 1000 }); });
-    later(1000, function () { sfx('バチバチ', w * (phone ? .28 : .3), h * .42, { cls: 'sm', color: '#2d8cff', life: 800, rot: 8 }); });
 
+    /* the scar the dash leaves in the ground, cooling from white to ember */
+    layer(function (c, t) {
+      if (t > HIT + 1900) return false;
+      if (scar.length < 2) return;
+      var age = Math.max(0, t - HIT) / 1900, a = 1 - age;
+      c.globalCompositeOperation = 'lighter'; c.lineCap = 'round'; c.lineJoin = 'round';
+      [[age < .3 ? '#ffffff' : '#9fd6ff', 2.5], ['rgba(90,160,255,.6)', 9], ['rgba(255,130,60,' + (.5 * age) + ')', 5]].forEach(function (ps) {
+        c.strokeStyle = ps[0]; c.lineWidth = ps[1]; c.globalAlpha = a;
+        c.beginPath(); c.moveTo(scar[0][0], scar[0][1]);
+        for (var s = 1; s < scar.length; s++) c.lineTo(scar[s][0], scar[s][1] + Math.sin(s * 1.7) * 2);
+        c.stroke();
+      });
+      c.globalAlpha = 1;
+    });
+
+    later(CHARGE, function () { camera(ex, ey, 1.14, DASH, 'cubic-bezier(.7,0,.3,1)'); surge(.8); });
+
+    /* the strike: freeze, white-blue flash, a ring of lightning bursting
+       outward with bolts to every edge, then the glass breaks */
     later(HIT, function () {
       cameraReset(260);
-      hitStop(170);
-      chroma(420);
-      lensFlare(ex, ey, '90,170,255', 1100, 1.4);
-      smokeRing(ex, ey, '150,160,180', phone ? 12 : 22);
+      hitStop(210);
+      chroma(480);
+      lensFlare(ex, ey, '90,170,255', 1200, 1.5);
       impact(['neg', 'black', 'neg', 'black'], null);
-      flash('#e8f4ff', 600, .85);
-      shake(phone ? 18 : 30, 800);
-      spk.burst(ex, ey, phone ? 40 : 90, 24, null, null, 4);
-      if (lit) layer(function (c2, t2) { var k = Math.max(0, 1 - t2 / 1100); lit.at(ex, ey, Math.max(w, h) * (.6 + (1 - k) * .4), k * (Math.random() < .3 ? .5 : 1)); if (k <= 0) { lit.off(200); return false; } });
+      flash('#eef7ff', 650, .9);
+      shake(phone ? 18 : 30, 820);
+      spk.burst(ex, ey, phone ? 50 : 110, 26, null, null, 4);
+      if (lit) layer(function (c2, t2) { var k = Math.max(0, 1 - t2 / 1200); lit.at(ex, ey, Math.max(w, h) * (.6 + (1 - k) * .4), k * (Math.random() < .3 ? .5 : 1)); if (k <= 0) { lit.off(200); return false; } });
       shockwave(ex, ey, '#7cc4ff', Math.max(w, h) * .9, 900);
+      var ring = [], nr = phone ? 14 : 26;
+      for (var i = 0; i < nr; i++) ring.push({ b: null, until: 0, a: i / nr * TAU });
       var edges = [], ne = phone ? 7 : 12;
-      for (var i = 0; i < ne; i++) {
+      for (i = 0; i < ne; i++) {
         var a = (i / ne) * TAU + rand(-.2, .2);
         edges.push(flicker((function (aa) { return function () { return makeBolt(ex, ey, ex + Math.cos(aa) * Math.max(w, h), ey + Math.sin(aa) * Math.max(w, h), 2.4, 2, .09); }; })(a), 50));
       }
       layer(function (c, t, now) {
-        if (t > 520) return false;
+        if (t > 700) return false;
+        var k = 1 - t / 700, rr = (1 - Math.pow(1 - t / 700, 3)) * Math.max(w, h) * .62;
         c.globalCompositeOperation = 'lighter';
-        edges.forEach(function (f) { drawBolt(c, f(now), '#6ab8ff', 1 - t / 520); });
+        edges.forEach(function (f) { if (t < 520) drawBolt(c, f(now), '#6ab8ff', 1 - t / 520); });
+        /* the ring: short bolts laid along an expanding circle */
+        ring.forEach(function (r2) {
+          if (!r2.b || now > r2.until) {
+            var a0 = r2.a + rand(-.05, .05), a1 = a0 + TAU / nr * rand(.8, 1.3);
+            r2.b = makeBolt(ex + Math.cos(a0) * rr, ey + Math.sin(a0) * rr * .85, ex + Math.cos(a1) * rr, ey + Math.sin(a1) * rr * .85, 1.3, 1, .2);
+            r2.until = now + 45;
+          }
+          drawBolt(c, r2.b, '#8fd0ff', k);
+        });
       });
-      later(220, function () { sfx('ドゴォン', ex - (phone ? 40 : 190), ey - 60, { color: '#ff5a2a', life: 1200, rot: -12 }); });
+      later(200, function () { sfx('ピシャアアン', ex - (phone ? 40 : 190), ey - 70, { color: '#6ab8ff', life: 1200, rot: -12 }); });
       cracks(ex, ey);
       glass(ex, ey);
       shatter(ex, ey);
