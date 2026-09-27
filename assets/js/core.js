@@ -12,6 +12,11 @@
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fine = window.matchMedia('(pointer: fine)').matches;
   var phone = window.matchMedia('(max-width: 760px)').matches;
+  /* lite rendering (assets/css/perf.css): phones, touch screens and low-memory machines draw the
+     same page without the effects that each need their own offscreen GPU buffer */
+  var lite = phone || window.matchMedia('(hover: none) and (pointer: coarse)').matches ||
+    (navigator.deviceMemory && navigator.deviceMemory <= 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
+  if (lite) root.classList.add('xr-lite');
   var page = document.body.getAttribute('data-page') || '';
   var icon = window.XRIcon || function () { return ''; };
 
@@ -982,7 +987,7 @@
   function petals(canvas, opts) {
     if (!canvas || !canvas.getContext) return;
     opts = opts || {};
-    var ctx = canvas.getContext('2d'), dpr = Math.min(2, window.devicePixelRatio || 1);
+    var ctx = canvas.getContext('2d'), dpr = Math.min(lite ? 1.5 : 2, window.devicePixelRatio || 1);
     var W, H, parts = [], running = true, visible = true, onScreen = true, looping = false;
     var colors = opts.colors || ['#e0442e', '#f2a7a0', '#f6c9c1', '#eab3a8', '#d9a441'];
     function resize() {
@@ -1540,7 +1545,7 @@
   window.XR = {
     $: $, $$: $$, clamp: clamp, lerp: lerp, esc: esc, icon: icon, store: store, toast: toast, copy: copy,
     fmtPrice: fmtPrice, contacts: contacts, mascot: mascot, tsunade: tsunade, brandMark: brandMark, petals: petals,
-    reveals: reveals, whenVisible: whenVisible, onReady: onReady, modal: modal, reduce: reduce, fine: fine, phone: phone, qr: qr, seeded: seeded,
+    reveals: reveals, whenVisible: whenVisible, onReady: onReady, modal: modal, reduce: reduce, fine: fine, phone: phone, lite: lite, qr: qr, seeded: seeded,
     config: C, services: SERVICES, quest: quest, palette: function () { palette(); }
   };
 

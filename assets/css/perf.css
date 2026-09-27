@@ -1,4 +1,4 @@
-/* XIRAIYA — performance helpers (no visual rules).
+/* XIRAIYA — performance helpers.
    core.js marks page blocks that are far off screen with .xr-offscreen;
    their looping CSS animations are frozen until they come back near the
    viewport, so the browser does no per-frame style work for them. */
@@ -7,4 +7,52 @@
 .xr-offscreen *::before,
 .xr-offscreen *::after {
   animation-play-state: paused !important;
+}
+
+/* ---------------------------------------------------------------------
+   LITE RENDERING — html.xr-lite (core.js: phones, touch screens and
+   low-memory machines). The same page, drawn without the effects that each
+   need their own offscreen GPU buffer at full pixel density: blend modes,
+   blur filters and soft shadows, and 3D stacks. On a phone at 3x those
+   buffers are what ran the home page out of memory while scrolling. Every
+   section, image and animation stays.
+   --------------------------------------------------------------------- */
+
+/* reveals, letter slams and hero entrances: they fade and slide, without the blur */
+.xr-lite [data-reveal],
+.xr-lite .split .c,
+.xr-lite .hero-kicker, .xr-lite .hero-role, .xr-lite .hero-sub, .xr-lite .hero-ctas, .xr-lite .hero-mascot,
+.xr-lite .rot-word, .xr-lite .loader-num, .xr-lite .hs-title, .xr-lite .fm-l,
+.xr-lite .sp-name span {
+  filter: none !important;
+}
+
+/* mascots: the character itself and its ground shadow, without the five-copy 3D extrusion,
+   the masked sheen and the soft drop shadow (seven filtered layers each, down to one) */
+.xr-lite .mascot-art .a3-back,
+.xr-lite .mascot-art .a3-sheen { display: none; }
+.xr-lite .mascot-art .a3-front { filter: none; }
+.xr-lite .mascot-art .a3-sway,
+.xr-lite .mascot-art .a3-body { transform-style: flat; }
+
+/* spotlights and manga art without their drop shadows; the glow behind a spotlight is already a soft gradient */
+.xr-lite .sp-img,
+.xr-lite .sp-burst,
+.xr-lite .bt-fig,
+.xr-lite .mv .pn-out, .xr-lite .mv .cv-a, .xr-lite .mv .cv-b, .xr-lite .mv .cv-c { filter: none; }
+
+/* blends that only darken with black or lighten with white: plain alpha gives the same pixels */
+.xr-lite .sp-tone,
+.xr-lite .rl-grain { mix-blend-mode: normal; }
+
+/* hover-only glare (no hover on touch) and 3D card tilt */
+.xr-lite .svc-glare { display: none; }
+.xr-lite .bento .svc { transform-style: flat; }
+
+/* the header: a solid bar instead of blurring the page behind it on every scrolled frame */
+.xr-lite .hdr-bg { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(var(--bg-rgb), .95); }
+
+/* the horizontal scroll track is only animated on wide screens */
+@media (max-width: 760px) {
+  .xr-lite .hs-track { will-change: auto; transform-style: flat; }
 }
