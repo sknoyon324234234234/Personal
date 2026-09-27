@@ -52,6 +52,18 @@
 /* the header: a solid bar instead of blurring the page behind it on every scrolled frame */
 .xr-lite .hdr-bg { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(var(--bg-rgb), .95); }
 
+/* the reel is a 1080px comp scaled down to fit: a forced layer inside it (the camera's
+   will-change, the grain's endless animation) costs its full 1080px size at 3x, about 42 and 60
+   MB, as soon as it scrolls into view. Without them it is drawn at the size it shows. */
+.xr-lite .rl-cam { will-change: auto; }
+.xr-lite .rl-grain { animation: none; }
+
+/* Explore panels and the about card: translateZ with no perspective and a hidden backface show
+   nothing on a flat screen, but force a layer each */
+.xr-lite .pn-win { transform: none; }
+.xr-lite .panel { transform-style: flat; backface-visibility: visible; }
+.xr-lite .char-card { transform-style: flat; }
+
 /* the horizontal scroll track is only animated on wide screens */
 @media (max-width: 760px) {
   .xr-lite .hs-track { will-change: auto; transform-style: flat; }

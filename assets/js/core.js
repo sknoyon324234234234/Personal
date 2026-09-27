@@ -749,6 +749,9 @@
     window.addEventListener('pageshow', function (e) {
       if (e.persisted) root.classList.remove('is-leaving');
     });
+    /* once the entrance wipe has played, the curtain leaves the page (its finished, off-screen
+       panels would otherwise keep screen-sized GPU layers alive on phones); leaving brings it back */
+    setTimeout(function () { root.classList.add('curtain-done'); }, 1300);
   }
 
   /* ------------------------------------------------------------------

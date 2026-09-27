@@ -632,6 +632,7 @@ a.nv-chip:hover { border-color: var(--red); color: var(--ink); transform: transl
 @keyframes markOut { from { opacity: 1; } to { opacity: 0; } }
 /* leaving: wipe in from the left */
 .is-leaving .curtain { pointer-events: all; }
+.curtain-done:not(.is-leaving) .curtain { display: none; }
 .is-leaving .curtain .p1 { animation: cIn .46s var(--ease-in-out) both; }
 .is-leaving .curtain .p2 { animation: cIn .46s var(--ease-in-out) .05s both; }
 .is-leaving .curtain .curtain-mark { animation: markIn .3s ease .25s both; }
