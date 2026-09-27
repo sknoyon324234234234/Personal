@@ -55,6 +55,9 @@ async function launch() {
         listeners.push(f);
       });
       return {
+        /* raw protocol access, for tools that need more than the basics */
+        cdp: s,
+        on(method, fn) { listeners.push(m => { if (m.sessionId === sessionId && m.method === method) fn(m.params); }); },
         addInitScript: fn => s('Page.addScriptToEvaluateOnNewDocument', { source: '(' + fn + ')()' }),
         async goto(u) { const l = loaded(); await s('Page.navigate', { url: u }); await l; },
         async evaluate(fn, arg) {

@@ -830,7 +830,8 @@
       ticking = false;
       var y = scrollY, max = document.documentElement.scrollHeight - innerHeight, vh = innerHeight;
       /* read every parallax rect before any style write below, so one layout serves them all */
-      var rects = reduce ? null : par.map(function (el) { return (el.parentElement || el).getBoundingClientRect(); });
+      /* ...skipping blocks that are far off screen, whose layout the browser may not even keep */
+      var rects = reduce ? null : par.map(function (el) { return el.closest('.xr-offscreen') ? null : (el.parentElement || el).getBoundingClientRect(); });
       if (bar) bar.style.transform = 'scaleX(' + (max > 0 ? y / max : 0).toFixed(4) + ')';
       if (hdr) {
         hdr.classList.toggle('is-scrolled', y > 24);
@@ -840,7 +841,7 @@
       lastY = y;
       if (!reduce) par.forEach(function (el, i) {
         var r = rects[i];
-        if (r.bottom < -200 || r.top > vh + 200) return;
+        if (!r || r.bottom < -200 || r.top > vh + 200) return;
         var d = (r.top + r.height / 2 - vh / 2) * parseFloat(el.getAttribute('data-speed'));
         el.style.transform = 'translate3d(0,' + d.toFixed(1) + 'px,0)';
       });
@@ -1105,7 +1106,7 @@
     if (!('IntersectionObserver' in window)) return;
     var SKIP = '.wx, [class*="lw-"], .pst, .modal, .drawer, .lv, .palette, .studio, .present, dialog, [aria-modal]';
     var io = new IntersectionObserver(function (en) {
-      en.forEach(function (e) { e.target.classList.toggle('xr-offscreen', !e.isIntersecting); });
+      en.forEach(function (e) { e.target.classList.toggle('xr-offscreen', !e.isIntersecting); if (e.target.__xrCV) skipRender(e.target, !e.isIntersecting); });
     }, { rootMargin: '100% 0px' });
     var vh = innerHeight;
     function add(el, depth) {
@@ -1116,8 +1117,88 @@
       }
       if (depth < 3 && el.offsetHeight > vh * 2.5 && el.children.length > 1) { $$(':scope > *', el).forEach(function (c) { add(c, depth + 1); }); return; }
       io.observe(el);
+      blocks.push(el);
     }
+    var blocks = [];
     $$('main > *').forEach(function (el) { add(el, 0); });
+    skipOffscreen(blocks, io);
+  }
+  /* a block that has gone far off screen stops being rendered, held at the size it has right
+     now (measured while it is still rendered, so nothing moves); it renders again well before
+     it comes back into view */
+  var cvBlocks = [];
+  function skipRender(el, off) {
+    /* never while a power plays (html.pw-active): its camera moves the page in 3D, which the
+       browser's own on-screen test gets wrong, and the page must be whole for the effects */
+    if (off && root.classList.contains('pw-active')) off = false;
+    if (off) {
+      /* the size it is held at is its content box, to the fraction of a pixel (padding and borders
+         are added on top); computed sizes ignore transforms, such as a power's camera zoom */
+      var cs = getComputedStyle(el), px = function (p) { return parseFloat(cs[p]) || 0; }, bb = cs.boxSizing === 'border-box';
+      el.style.containIntrinsicSize = Math.max(0, px('width') - (bb ? px('paddingLeft') + px('paddingRight') + px('borderLeftWidth') + px('borderRightWidth') : 0)).toFixed(2) + 'px ' +
+        Math.max(0, px('height') - (bb ? px('paddingTop') + px('paddingBottom') + px('borderTopWidth') + px('borderBottomWidth') : 0)).toFixed(2) + 'px';
+      el.style.contentVisibility = 'auto';
+    }
+    else el.style.contentVisibility = '';
+  }
+  /* Performance: blocks that are far off screen are not rendered at all (skipRender), so a long
+     page costs a phone only what is near the screen: no style, layout, paint or GPU layers for
+     the rest. Each block keeps its exact measured size, so nothing moves. Only
+     blocks where that is invisible get it: nothing position: fixed or sticky inside, nothing
+     drawn outside the block's own box (the browser clips a skipped block to it), and a layout
+     that containment does not change by a single pixel (it stops margins collapsing through the
+     block's edges); a block that fails is tried again by its children. Checked one block at a
+     time when the page is idle, after the first paint. */
+  function skipOffscreen(blocks, io) {
+    if (!window.CSS || !CSS.supports || !CSS.supports('content-visibility', 'auto')) return;
+    var idle = window.requestIdleCallback || function (fn) { return setTimeout(function () { fn({ timeRemaining: function () { return 8; } }); }, 60); };
+    var i = 0;
+    /* containment must not move the block, change its height or move what follows it */
+    function keepsLayout(el) {
+      var n = el.nextElementSibling, r0 = el.getBoundingClientRect(), n0 = n ? n.getBoundingClientRect().top : 0;
+      el.style.contain = 'layout paint';
+      var r1 = el.getBoundingClientRect(), n1 = n ? n.getBoundingClientRect().top : 0;
+      el.style.contain = '';
+      return Math.abs(r1.top - r0.top) < 1 && Math.abs(r1.height - r0.height) < 1 && Math.abs(n1 - n0) < 1;
+    }
+    function safe(el) {
+      var cs = getComputedStyle(el), r = el.getBoundingClientRect();
+      if (r.height < 120 || cs.display === 'contents' || el.querySelector('[data-speed], video, iframe')) return false;
+      var clipped = /hidden|clip/.test(cs.overflowX) && /hidden|clip/.test(cs.overflowY);
+      var all = el.getElementsByTagName('*');
+      for (var k = 0; k < all.length; k++) {
+        var c = getComputedStyle(all[k]);
+        if (c.position === 'fixed' || c.position === 'sticky') return false;
+        if (clipped || c.display === 'none') continue;
+        var q = all[k].getBoundingClientRect();
+        if (q.width && q.height && (q.top < r.top - 2 || q.bottom > r.bottom + 2 || q.left < r.left - 2 || q.right > r.right + 2)) return false;
+      }
+      return true;
+    }
+    function next(dl) {
+      while (i < blocks.length && dl.timeRemaining() > 4) {
+        var el = blocks[i++];
+        if (!el.isConnected) continue;
+        if (!safe(el) || !keepsLayout(el)) {
+          /* a tall block that fails is tried again by its children, when they are big enough to be worth it */
+          if (!el.__xrSplit && el.offsetHeight > innerHeight * 1.2) { el.__xrSplit = 1; $$(':scope > *', el).forEach(function (c) { if (c.offsetHeight > 300) blocks.push(c); }); }
+          continue;
+        }
+        el.__xrCV = 1; cvBlocks.push(el);
+        if (el.classList.contains('xr-offscreen')) skipRender(el, true);
+        io.observe(el);   /* a child tried after its parent failed is not watched yet */
+      }
+      if (i < blocks.length) idle(next);
+    }
+    setTimeout(function () { idle(next); }, 1500);
+    /* a power starting renders every block again; when it ends, the far ones are skipped again */
+    var wasActive = false;
+    new MutationObserver(function () {
+      var act = root.classList.contains('pw-active');
+      if (act === wasActive) return;
+      wasActive = act;
+      cvBlocks.forEach(function (el) { skipRender(el, !act && el.classList.contains('xr-offscreen')); });
+    }).observe(root, { attributes: true, attributeFilter: ['class'] });
   }
 
   // Inertia scrolling for mouse wheels (trackpads, touch, keyboard and scrollbars stay native)

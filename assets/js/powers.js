@@ -134,6 +134,11 @@
      ================================================================== */
   var cv = null, cx = null, glow = null, gx = null, bloom = null, bx = null, W = 0, H = 0, DPR = 1, layers = [], raf = 0;
   var GS = phone ? .25 : .33;
+  /* the glow and the bloom are blurred inside their small canvases when the browser can: a CSS
+     blur over the whole screen, redone every frame, is what made phones stutter and run hot */
+  var CF = typeof CanvasRenderingContext2D !== 'undefined' && 'filter' in CanvasRenderingContext2D.prototype;
+  if (CF) root.classList.add('pw-cf');
+  var GF = 'blur(' + ((phone ? 8 : 14) * GS).toFixed(1) + 'px) saturate(' + (phone ? 1.4 : 1.5) + ') brightness(' + (phone ? 1.4 : 1.5) + ')', BF = 'blur(3.6px) saturate(1.6) brightness(1.4)';
   function resize() {
     if (!cv) return;
     W = vw(); H = vh(); DPR = Math.min(window.devicePixelRatio || 1, phone ? 1.5 : 2);
@@ -165,8 +170,10 @@
     cx.clearRect(0, 0, W, H);
     layers = layers.filter(function (f) { cx.save(); var r = f(cx, Math.max(0, now - f.t0), now); cx.restore(); return r !== false; });
     gx.clearRect(0, 0, glow.width, glow.height);
+    if (CF) gx.filter = GF;
     if (layers.length) gx.drawImage(cv, 0, 0, glow.width, glow.height);
-    if (bx) { bx.clearRect(0, 0, bloom.width, bloom.height); if (layers.length) bx.drawImage(glow, 0, 0, bloom.width, bloom.height); }
+    /* the bloom samples the sharp canvas, so its blur is not stacked on the glow's */
+    if (bx) { bx.clearRect(0, 0, bloom.width, bloom.height); if (CF) bx.filter = BF; if (layers.length) bx.drawImage(CF ? cv : glow, 0, 0, bloom.width, bloom.height); }
     raf = layers.length ? requestAnimationFrame(loop) : 0;
   }
 
@@ -455,6 +462,9 @@
      ================================================================== */
   /* a light source that actually lights the page: a screen-blended
      radial glow over everything, moved and flickered every frame */
+  /* the pool of light is one gradient disc rendered once, then only moved, scaled and faded
+     (compositor work), instead of a screen-sized gradient repainted every frame */
+  var LR = 300;
   function pageLight(rgb) {
     var o = overlay('pw-light');
     o.style.setProperty('--lc', rgb);
@@ -465,10 +475,11 @@
         var k = x.toFixed(0) + ',' + y.toFixed(0) + ',' + r.toFixed(0) + ',' + a.toFixed(2);
         if (k === last) return;
         last = k;
-        o.style.setProperty('--lx', x.toFixed(0) + 'px'); o.style.setProperty('--ly', y.toFixed(0) + 'px');
-        o.style.setProperty('--lr', Math.max(1, r).toFixed(0) + 'px'); o.style.opacity = Math.max(0, Math.min(1, a)).toFixed(2);
+        if (o.classList.contains('band')) { o.classList.remove('band'); o.style.background = ''; }
+        o.style.transform = 'translate(' + (x - LR).toFixed(1) + 'px,' + (y - LR).toFixed(1) + 'px) scale(' + (Math.max(1, r) / LR).toFixed(3) + ')';
+        o.style.opacity = Math.max(0, Math.min(1, a)).toFixed(2);
       },
-      band: function (css, a) { o.style.background = css; o.style.opacity = Math.max(0, Math.min(1, a)).toFixed(2); },
+      band: function (css, a) { o.classList.add('band'); o.style.background = css; o.style.opacity = Math.max(0, Math.min(1, a)).toFixed(2); },
       off: function (ms) { o.style.transition = 'opacity ' + (ms || 500) + 'ms'; o.style.opacity = 0; setTimeout(function () { o.remove(); }, (ms || 500) + 50); }
     };
   }
@@ -584,21 +595,36 @@
       bands.forEach(function (b) { c.drawImage(cv, 0, b.y * DPR, cv.width, b.h * DPR, b.dx * DPR, b.y * DPR, cv.width, b.h * DPR); });
     });
   }
-  /* TV static: a grey noise tile, drawn once, jumping about on every drawing */
-  var noiseUrl = null;
+  /* TV static: a grey noise tile, drawn once, jumping about on every drawing, into a half-size
+     canvas the compositor stretches over the screen (one small layer, reused by every burst) */
+  var stat = null, statEnd = 0, statA = 0;
   function staticBurst(ms, a) {
     if (reduce) return;
-    if (!noiseUrl) {
-      var s = document.createElement('canvas'), x = s.getContext('2d'), d;
-      s.width = s.height = 128; d = x.createImageData(128, 128);
+    if (!stat) {
+      var nt = document.createElement('canvas'), x = nt.getContext('2d'), d;
+      nt.width = nt.height = 128; d = x.createImageData(128, 128);
       for (var i = 0; i < d.data.length; i += 4) { var v = Math.random() * 255 | 0; d.data[i] = d.data[i + 1] = v; d.data[i + 2] = Math.min(255, v * 1.15); d.data[i + 3] = 255; }
-      x.putImageData(d, 0, 0); noiseUrl = 'url(' + s.toDataURL() + ')';
+      x.putImageData(d, 0, 0);
+      stat = el('canvas', 'pw-static'); stat.setAttribute('aria-hidden', 'true');
+      stat.width = Math.ceil(vw() / 2); stat.height = Math.ceil(vh() / 2);
+      stat.pat = stat.getContext('2d').createPattern(nt, 'repeat');
     }
-    var o = overlay('pw-static'), n = Math.max(2, Math.round(ms / CEL)), kf = [];
-    o.style.backgroundImage = noiseUrl;
-    for (i = 0; i < n; i++) kf.push({ backgroundPosition: (rand(0, 128) | 0) + 'px ' + (rand(0, 128) | 0) + 'px', opacity: a * (i % 2 ? .7 : 1), easing: 'steps(1, end)' });
-    kf.push({ backgroundPosition: '0px 0px', opacity: 0 });
-    o.animate(kf, { duration: ms }).onfinish = function () { o.remove(); };
+    if (!stat.parentNode) document.body.appendChild(stat);
+    var now = performance.now(), running = now < statEnd;
+    statEnd = Math.max(statEnd, now + ms); statA = running ? Math.max(statA, a) : a;
+    if (running) return;
+    var sc = stat.getContext('2d'), cel = -1, t0 = now;
+    stat.style.display = 'block';
+    (function tick(t) {
+      if (t >= statEnd) { stat.style.display = 'none'; return; }
+      var f = Math.floor((t - t0) / CEL);
+      if (f !== cel) {
+        cel = f;
+        sc.setTransform(1, 0, 0, 1, -rand(0, 128), -rand(0, 128)); sc.fillStyle = stat.pat; sc.fillRect(0, 0, stat.width + 128, stat.height + 128);
+        stat.style.opacity = (statA * (f % 2 ? .7 : 1)).toFixed(2);
+      }
+      requestAnimationFrame(tick);
+    })(now);
   }
 
   /* ==================================================================
@@ -978,7 +1004,7 @@
     function f(q) { return q[0].toFixed(1) + ' ' + q[1].toFixed(1); }
     function ray(th) {
       var p = [[px, py]], s = [0], a = th, x = px, y = py, len = 0;
-      while (len < maxR) { var seg = rand(110, 280); a += rand(-.12, .12); x += Math.cos(a) * seg; y += Math.sin(a) * seg; len += seg; p.push([x, y]); s.push(len); }
+      while (len < maxR) { var seg = Math.min(rand(110, 280), maxR - len + 20); a += rand(-.12, .12); x += Math.cos(a) * seg; y += Math.sin(a) * seg; len += seg; p.push([x, y]); s.push(len); }
       return { p: p, s: s };
     }
     function at(R, d) {
@@ -991,7 +1017,7 @@
       out.push(at(R, d1));
       return out;
     }
-    var n = o.n || (phone ? 11 : 20), rays = [], i, k, maxFall = o.fallers != null ? o.fallers : phone ? 4 : 10;
+    var n = o.n || (phone ? 11 : 20), rays = [], i, k, maxFall = o.fallers != null ? o.fallers : phone ? 3 : 10;
     for (i = 0; i < n; i++) rays.push(ray((i + rand(-.3, .3)) / n * TAU));
     var lines = '', near = '', shards = '', fallers = [];
     rays.forEach(function (R) {
@@ -999,7 +1025,7 @@
       near += 'M' + span(R, crush * .8, maxR * .2).map(f).join('L');
       /* the odd Y-fork: a straight branch off the main crack */
       if (Math.random() < .7) {
-        var d = maxR * rand(.2, .55), o = at(R, d), q = at(R, d + 10), ang = Math.atan2(q[1] - o[1], q[0] - o[0]) + rand(.25, .55) * (Math.random() < .5 ? 1 : -1), l = rand(90, 260);
+        var d = maxR * rand(.2, .55), o = at(R, d), q = at(R, d + 10), ang = Math.atan2(q[1] - o[1], q[0] - o[0]) + rand(.25, .55) * (Math.random() < .5 ? 1 : -1), l = Math.min(rand(90, 260), maxR * .7);
         var m = [o[0] + Math.cos(ang) * l * .5, o[1] + Math.sin(ang) * l * .5], e = [m[0] + Math.cos(ang + rand(-.1, .1)) * l * .5, m[1] + Math.sin(ang + rand(-.1, .1)) * l * .5];
         lines += 'M' + [o, m, e].map(f).join('L');
       }
@@ -1029,8 +1055,14 @@
       var s0 = [px + Math.cos(ca) * cr, py + Math.sin(ca) * cr];
       crushLines += 'M' + f(s0) + 'L' + f([s0[0] + Math.cos(cb) * cl, s0[1] + Math.sin(cb) * cl]);
     }
-    var svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('class', 'pw-cracks'); svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h); svg.setAttribute('aria-hidden', 'true');
+    var svg = document.createElementNS(NS, 'svg'), bx0 = 0, by0 = 0;
+    svg.setAttribute('class', 'pw-cracks'); svg.setAttribute('aria-hidden', 'true');
+    if (o.reach) {
+      /* a small crack star is drawn in a box around itself, not across the whole screen */
+      var bs = Math.ceil(maxR + 30); bx0 = Math.round(px - bs); by0 = Math.round(py - bs);
+      svg.setAttribute('viewBox', bx0 + ' ' + by0 + ' ' + bs * 2 + ' ' + bs * 2);
+      svg.style.cssText = 'inset:auto;left:' + bx0 + 'px;top:' + by0 + 'px;width:' + bs * 2 + 'px;height:' + bs * 2 + 'px';
+    } else svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
     svg.innerHTML =
       '<defs><radialGradient id="pw-crush"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#dfefff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>' +
       '<g>' + shards + '</g>' +
@@ -1047,13 +1079,13 @@
       /* the cracks race out in six jumps over the impact frames, fast near the hit,
          slowing as they reach the edges: propagation drawn on twos, not a smooth wipe */
       svg.animate([
-        { clipPath: 'circle(0px at ' + px + 'px ' + py + 'px)', easing: 'steps(1, end)' },
-        { clipPath: 'circle(' + (maxR * .3).toFixed(0) + 'px at ' + px + 'px ' + py + 'px)', offset: .17, easing: 'steps(1, end)' },
-        { clipPath: 'circle(' + (maxR * .55).toFixed(0) + 'px at ' + px + 'px ' + py + 'px)', offset: .34, easing: 'steps(1, end)' },
-        { clipPath: 'circle(' + (maxR * .74).toFixed(0) + 'px at ' + px + 'px ' + py + 'px)', offset: .5, easing: 'steps(1, end)' },
-        { clipPath: 'circle(' + (maxR * .88).toFixed(0) + 'px at ' + px + 'px ' + py + 'px)', offset: .67, easing: 'steps(1, end)' },
-        { clipPath: 'circle(' + (maxR * .97).toFixed(0) + 'px at ' + px + 'px ' + py + 'px)', offset: .84, easing: 'steps(1, end)' },
-        { clipPath: 'circle(' + maxR.toFixed(0) + 'px at ' + px + 'px ' + py + 'px)' }
+        { clipPath: 'circle(0px at ' + (px - bx0) + 'px ' + (py - by0) + 'px)', easing: 'steps(1, end)' },
+        { clipPath: 'circle(' + (maxR * .3).toFixed(0) + 'px at ' + (px - bx0) + 'px ' + (py - by0) + 'px)', offset: .17, easing: 'steps(1, end)' },
+        { clipPath: 'circle(' + (maxR * .55).toFixed(0) + 'px at ' + (px - bx0) + 'px ' + (py - by0) + 'px)', offset: .34, easing: 'steps(1, end)' },
+        { clipPath: 'circle(' + (maxR * .74).toFixed(0) + 'px at ' + (px - bx0) + 'px ' + (py - by0) + 'px)', offset: .5, easing: 'steps(1, end)' },
+        { clipPath: 'circle(' + (maxR * .88).toFixed(0) + 'px at ' + (px - bx0) + 'px ' + (py - by0) + 'px)', offset: .67, easing: 'steps(1, end)' },
+        { clipPath: 'circle(' + (maxR * .97).toFixed(0) + 'px at ' + (px - bx0) + 'px ' + (py - by0) + 'px)', offset: .84, easing: 'steps(1, end)' },
+        { clipPath: 'circle(' + maxR.toFixed(0) + 'px at ' + (px - bx0) + 'px ' + (py - by0) + 'px)' }
       ], { duration: 200, fill: 'forwards' });
       svg.querySelector('.pw-crack-glow').animate([{ opacity: 1 }, { opacity: .8, offset: .15 }, { opacity: 0 }], { duration: 2400, easing: 'ease-out', fill: 'forwards' });
     }
@@ -1062,10 +1094,14 @@
       var cxs = 0, cys = 0;
       sh.poly.forEach(function (q) { cxs += q[0]; cys += q[1]; });
       cxs /= sh.poly.length; cys /= sh.poly.length;
-      var el2 = document.createElementNS(NS, 'svg');
-      el2.setAttribute('class', 'pw-cracks pw-shard'); el2.setAttribute('viewBox', '0 0 ' + w + ' ' + h); el2.setAttribute('aria-hidden', 'true');
+      /* each loose shard is its own SVG just big enough to hold it */
+      var el2 = document.createElementNS(NS, 'svg'), x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      sh.poly.forEach(function (q) { x0 = Math.min(x0, q[0]); y0 = Math.min(y0, q[1]); x1 = Math.max(x1, q[0]); y1 = Math.max(y1, q[1]); });
+      x0 = Math.floor(x0 - 3); y0 = Math.floor(y0 - 3); x1 = Math.ceil(x1 + 3); y1 = Math.ceil(y1 + 3);
+      el2.setAttribute('class', 'pw-cracks pw-shard'); el2.setAttribute('viewBox', x0 + ' ' + y0 + ' ' + (x1 - x0) + ' ' + (y1 - y0)); el2.setAttribute('aria-hidden', 'true');
       el2.innerHTML = '<path d="' + sh.d + '" fill="rgba(200,225,255,.16)" stroke="rgba(240,248,255,.9)" stroke-width="1.2"/>';
-      el2.style.transformOrigin = cxs.toFixed(0) + 'px ' + cys.toFixed(0) + 'px';
+      el2.style.cssText = 'inset:auto;left:' + x0 + 'px;top:' + y0 + 'px;width:' + (x1 - x0) + 'px;height:' + (y1 - y0) + 'px';
+      el2.style.transformOrigin = (cxs - x0).toFixed(0) + 'px ' + (cys - y0).toFixed(0) + 'px';
       document.body.appendChild(el2);
       ruinParts.push(el2);
       if (reduce) { el2.style.opacity = 0; return; }
@@ -1270,7 +1306,7 @@
      pieces a little later; the strike's light flares on the pieces nearest the hit, then
      they all darken as they fall into the ruin's shadow */
   function shatter(px, py, burst, torn) {
-    var w = vw(), h = vh(), list = pieces(phone ? 130 : 320), anims = (torn || []).slice(), landings = [];
+    var w = vw(), h = vh(), list = pieces(phone ? 110 : 320), anims = (torn || []).slice(), landings = [];
     /* the pieces the charge tore off lie in the rubble with the rest */
     anims.forEach(function (p) { p.el.__pwTorn = null; });
     list.forEach(function (p) {
