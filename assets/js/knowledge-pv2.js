@@ -766,8 +766,8 @@
   };
   PV.og = function (k) {
     k.el.innerHTML = '<div class="pv pv-seo"><div class="se-form"><label><span>og:title</span><input class="og-t" value="Xiraiya — build something legendary"></label><label><span>og:description</span><input class="og-d" value="Websites, shops, bots and AI agents. Instant estimates."></label></div>' +
-      '<div class="og-2"><div class="og-chat"><small>' + I('send') + ' Telegram</small><div class="og-msg"><p>check this out ' + esc(HOST) + '</p><div class="og-card"><b class="og-site">Xiraiya</b><b class="og-tt"></b><span class="og-dd"></span><img src="assets/img/og-cover.jpg" alt=""></div></div></div>' +
-      '<div class="og-fb"><img src="assets/img/og-cover.jpg" alt=""><div><small>GITHUB.IO</small><b class="og-tt"></b><span class="og-dd"></span></div></div></div>' +
+      '<div class="og-2"><div class="og-chat"><small>' + I('send') + ' Telegram</small><div class="og-msg"><p>check this out ' + esc(HOST) + '</p><div class="og-card"><b class="og-site">Xiraiya</b><b class="og-tt"></b><span class="og-dd"></span><img src="assets/img/og-cover.jpg?v=df10f5b4" alt=""></div></div></div>' +
+      '<div class="og-fb"><img src="assets/img/og-cover.jpg?v=df10f5b4" alt=""><div><small>GITHUB.IO</small><b class="og-tt"></b><span class="og-dd"></span></div></div></div>' +
       '<pre class="pv-code og-code"></pre></div>';
     function run() {
       var t = $('.og-t', k.el).value, d = $('.og-d', k.el).value;

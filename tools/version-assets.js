@@ -42,6 +42,32 @@ fs.writeFileSync(path.join(root, 'assets/sfx/sounds.js'),
   `window.XR_SFX = { files: {${sfxList.length ? '\n' + sfxList.join(',\n') + '\n' : ''}}, marks: ${JSON.stringify(marks)} };\n`);
 console.log(`${sfxFiles.length} power sound clip(s) listed in assets/sfx/sounds.js.`);
 
+// images written with ?v= anywhere in the pages, scripts or stylesheets (for example
+// assets/img/og-cover.jpg?v=0) get the hash of the image itself, so a replaced picture is
+// fetched fresh even by a browser that cached the old one. Runs before the CSS/JS hashes,
+// since it can change those files.
+const IMG = /((?:\.\.\/)*assets\/img\/[^"'()?#\s]+\.(?:jpe?g|png|webp|avif|gif|svg))\?v=[0-9a-f]*/g;
+function imgFiles(dir, out) {
+  for (const e of fs.readdirSync(path.join(root, dir), { withFileTypes: true })) {
+    const rel = path.posix.join(dir, e.name);
+    if (e.isDirectory()) { if (!['.git', '.github', '.claude', 'tools', 'node_modules', 'img', 'sfx'].includes(e.name)) imgFiles(rel, out); }
+    else if (/\.(html|js|css)$/.test(e.name)) out.push(rel);
+  }
+  return out;
+}
+let imgRefs = 0;
+for (const f of imgFiles('.', [])) {
+  const src = fs.readFileSync(path.join(root, f), 'utf8');
+  const out = src.replace(IMG, (m, url) => {
+    const file = path.join(root, url.replace(/^(\.\.\/)+/, ''));
+    if (!fs.existsSync(file)) { console.warn(`  missing image: ${url} (in ${f})`); return m; }
+    imgRefs++;
+    return url + '?v=' + crypto.createHash('md5').update(fs.readFileSync(file)).digest('hex').slice(0, 8);
+  });
+  if (out !== src) { fs.writeFileSync(path.join(root, f), out); console.log(`  image versions in ${f}`); }
+}
+if (imgRefs) console.log(`${imgRefs} versioned image reference(s) checked.`);
+
 // line endings are normalised so Windows and Linux checkouts give the same hash
 const text = f => fs.readFileSync(path.join(root, f), 'utf8').replace(/\r\n/g, '\n');
 const hashes = {};

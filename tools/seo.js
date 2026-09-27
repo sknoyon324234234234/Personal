@@ -62,7 +62,7 @@ function lastmod(f) {
 /* ---------- 3. structured data ---------- */
 const ID = { site: abs('#website'), person: abs('#person'), biz: abs('#business'), logo: abs('#logo') };
 function graph(p) {
-  const url = abs(p.path), img = abs('assets/img/' + p.image.file), per = cfg.person;
+  const url = abs(p.path), img = abs('assets/img/' + p.image.file) + imgV(p.image.file), per = cfg.person;
   const G = [
     { '@type': 'WebSite', '@id': ID.site, url: SITE, name: cfg.name, alternateName: cfg.alternateName, inLanguage: cfg.language, publisher: { '@id': ID.person } },
     { '@type': 'Person', '@id': ID.person, name: per.name, jobTitle: per.jobTitle, description: per.description, url: SITE, image: abs(per.image),
@@ -165,7 +165,7 @@ for (const p of cfg.pages) {
   const url = abs(p.path);
   sm.push('  <url>', '    <loc>' + url + '</loc>', '    <lastmod>' + lastmod(p.file) + '</lastmod>', '    <changefreq>' + p.changefreq + '</changefreq>', '    <priority>' + p.priority + '</priority>',
     '    <xhtml:link rel="alternate" hreflang="' + cfg.language + '" href="' + url + '"/>',
-    '    <image:image><image:loc>' + abs('assets/img/' + p.image.file) + '</image:loc><image:title>' + esc(p.name + ' — ' + cfg.name) + '</image:title></image:image>',
+    '    <image:image><image:loc>' + abs('assets/img/' + p.image.file) + imgV(p.image.file) + '</image:loc><image:title>' + esc(p.name + ' — ' + cfg.name) + '</image:title></image:image>',
     '  </url>');
 }
 sm.push('</urlset>', '');
@@ -257,8 +257,11 @@ write('.htaccess', [
   '  <FilesMatch "\\.(css|js)$">',
   '    Header set Cache-Control "no-cache"',
   '  </FilesMatch>',
+  /* images and fonts: a week, then revalidated (a cheap 304 when unchanged), so a picture
+     replaced under the same name reaches every visitor within days; files that change carry
+     ?v= (tools/version-assets.js) and are fetched fresh at once */
   '  <FilesMatch "\\.(png|jpe?g|webp|avif|gif|svg|ico|woff2?)$">',
-  '    Header set Cache-Control "public, max-age=31536000, immutable"',
+  '    Header set Cache-Control "public, max-age=604800, stale-while-revalidate=86400"',
   '  </FilesMatch>',
   '</IfModule>',
   '',
@@ -275,11 +278,11 @@ write('.htaccess', [
   '  ExpiresByType application/javascript "access plus 0 seconds"',
   '  ExpiresByType application/x-javascript "access plus 0 seconds"',
   '  ExpiresByType text/javascript "access plus 0 seconds"',
-  '  ExpiresByType image/webp "access plus 1 year"',
-  '  ExpiresByType image/png "access plus 1 year"',
-  '  ExpiresByType image/jpeg "access plus 1 year"',
-  '  ExpiresByType image/svg+xml "access plus 1 year"',
-  '  ExpiresByType font/woff2 "access plus 1 year"',
+  '  ExpiresByType image/webp "access plus 1 week"',
+  '  ExpiresByType image/png "access plus 1 week"',
+  '  ExpiresByType image/jpeg "access plus 1 week"',
+  '  ExpiresByType image/svg+xml "access plus 1 week"',
+  '  ExpiresByType font/woff2 "access plus 1 week"',
   '</IfModule>',
   ''
 ].filter(l => l !== '').join('\n').replace(/\n(<IfModule|# one|  # )/g, '\n$1') + '\n');
