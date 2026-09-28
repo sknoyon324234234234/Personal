@@ -64,6 +64,15 @@
 .xr-lite .panel { transform-style: flat; backface-visibility: visible; }
 .xr-lite .char-card { transform-style: flat; }
 
+/* backgrounds that spin or crawl forever over areas bigger than the screen (the manga cover's rays,
+   the spotlights' speed lines, the viewer's grain, wash and camera breath, the footer rays) are held
+   still: each one kept a moving layer of 10-130 MB alive at 3x. A still frame looks the same. */
+.xr-lite .mv .cv-rays, .xr-lite .sp-lines, .xr-lite .mv-grain, .xr-lite .mv-bg > .mv-wash, .xr-lite .mv-cam, .xr-lite .fm-rays { animation: none !important; }
+
+/* a manga panel's flash ends at opacity 0, its resting value: it stops being held once played,
+   so its layer can go (the fill only covers the delay before it) */
+.xr-lite .mv .pn.on .pn-flash { animation-fill-mode: backwards; }
+
 /* the horizontal scroll track is only animated on wide screens */
 @media (max-width: 760px) {
   .xr-lite .hs-track { will-change: auto; transform-style: flat; }
