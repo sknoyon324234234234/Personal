@@ -448,11 +448,14 @@
       '<path fill="url(#' + id + 'b)" d="M100.04 144.41l48.36 35.729c5.519 3.045 9.501 1.468 10.876-5.123l19.685-92.763c2.015-8.08-3.08-11.746-8.36-9.349l-115.59 44.571c-7.89 3.165-7.843 7.567-1.438 9.528l29.663 9.259 68.673-43.325c3.242-1.966 6.218-.91 3.776 1.258"/></svg>';
   }
   function real(v) { return !!v && !/example\.com|your[-_]/i.test(v); }
+  /* a number as people read it: +880 1794-344157 for Bangladesh, otherwise +<digits> */
+  function phoneText(n) { n = String(n || '').replace(/\D/g, ''); return /^880\d{10}$/.test(n) ? '+880 ' + n.slice(3, 7) + '-' + n.slice(7) : '+' + n; }
   function contacts() {
     var c = C.contact || {}, out = [];
     if (real(c.email)) out.push({ id: 'email', icon: 'mail', label: 'Email', text: c.email, href: 'mailto:' + c.email });
     if (real(c.telegram)) out.push({ id: 'telegram', icon: 'telegram', label: 'Telegram', text: '@' + c.telegram, href: 'https://t.me/' + c.telegram });
-    if (c.whatsapp) out.push({ id: 'whatsapp', icon: 'phone-call', label: 'WhatsApp', text: '+' + c.whatsapp, href: 'https://wa.me/' + c.whatsapp });
+    if (c.whatsapp) out.push({ id: 'whatsapp', icon: 'whatsapp', label: 'WhatsApp', text: phoneText(c.whatsapp), href: 'https://wa.me/' + c.whatsapp });
+    if (c.phone) out.push({ id: 'phone', icon: 'phone-call', label: 'Call', text: phoneText(c.phone), href: 'tel:+' + c.phone });
     if (c.github) out.push({ id: 'github', icon: 'git', label: 'GitHub', text: 'GitHub', href: c.github });
     if (c.linkedin) out.push({ id: 'linkedin', icon: 'briefcase', label: 'LinkedIn', text: 'LinkedIn', href: c.linkedin });
     if (c.fiverr) out.push({ id: 'fiverr', icon: 'star', label: 'Fiverr', text: 'Fiverr', href: c.fiverr });
@@ -1566,7 +1569,7 @@
   window.XR = {
     $: $, $$: $$, clamp: clamp, lerp: lerp, esc: esc, icon: icon, store: store, toast: toast, copy: copy,
     fmtPrice: fmtPrice, contacts: contacts, mascot: mascot, tsunade: tsunade, brandMark: brandMark, petals: petals,
-    reveals: reveals, whenVisible: whenVisible, onReady: onReady, modal: modal, reduce: reduce, fine: fine, phone: phone, lite: lite, qr: qr, seeded: seeded,
+    reveals: reveals, whenVisible: whenVisible, onReady: onReady, modal: modal, reduce: reduce, fine: fine, phone: phone, lite: lite, phoneText: phoneText, qr: qr, seeded: seeded,
     config: C, services: SERVICES, quest: quest, palette: function () { palette(); }
   };
 

@@ -21,7 +21,9 @@ window.XIRAIYA_CONFIG = {
   contact: {
     email: 'your-email@example.com',       // e.g. 'hello@yourdomain.com'
     telegram: 'TheMysteriousGhost',       // username without @
-    whatsapp: '',                          // full number with country code, digits only, e.g. '8801XXXXXXXXX'
+    whatsapp: '8801794344157',             // full number with country code, digits only, e.g. '8801XXXXXXXXX'
+    phone: '8801794344157',                // for "Call" buttons: full number, digits only (empty hides them)
+    online: [9, 23],                       // hours (Bangladesh time) shown as "Online now" on the Hire page
     github: '',                            // e.g. 'https://github.com/yourname'
     linkedin: '',                          // e.g. 'https://linkedin.com/in/yourname'
     fiverr: '',                            // profile URL (optional)

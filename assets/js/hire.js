@@ -217,4 +217,57 @@
   $('.sum-copy').addEventListener('click', function () { XR.copy(brief()).then(function () { XR.toast('Brief copied to clipboard'); }); });
 
   calc();
+
+  /* ---------- talk directly: the number, a live status, WhatsApp, call, copy, save contact ---------- */
+  (function direct() {
+    var sec = $('.direct-sec'), cc = C.contact || {};
+    var wa = String(cc.whatsapp || '').replace(/\D/g, ''), tel = String(cc.phone || cc.whatsapp || '').replace(/\D/g, '');
+    if (!sec || !tel) return;
+    var shown = XR.phoneText(tel), hours = cc.online || [9, 23], who = C.name || 'Xiraiya';
+    sec.hidden = false;
+    var num = $('.direct-num', sec), waBtn = $('.direct-btn.wa', sec);
+    num.textContent = shown; num.href = 'tel:+' + tel;
+    $('.direct-num-sm', sec).textContent = shown;
+    $('.direct-btn.call', sec).href = 'tel:+' + tel;
+
+    /* the hello that opens in WhatsApp; once services are picked above, it carries them and the estimate */
+    function hello() {
+      var site = location.hostname || 'your site';
+      if (!state.svc.length || !est.low) return 'Hi ' + who + '! I found you on ' + site + ' and I would like to talk about a project.';
+      return 'Hi ' + who + '! I found you on ' + site + '. I am interested in: ' + state.svc.map(function (id) { return byId[id].name; }).join(', ') +
+        '. My estimate: ' + money(est.low) + ' - ' + money(est.high) + ', about ' + est.dmin + '-' + est.dmax + ' days. Can we talk?';
+    }
+    function waHref() { return 'https://wa.me/' + wa + '?text=' + encodeURIComponent(hello()); }
+    /* every WhatsApp link on the page gets the current hello the moment it is used */
+    if (wa) $$('.direct-btn.wa, [data-contact="whatsapp"]').forEach(function (el) {
+      el.href = waHref();
+      ['pointerenter', 'focus', 'click'].forEach(function (ev) { el.addEventListener(ev, function () { el.href = waHref(); }); });
+    });
+    else waBtn.hidden = true;
+
+    /* online or not, by the clock in Bangladesh (UTC+6 all year) */
+    var live = $('.direct-live', sec), stateEl = $('.direct-state', sec), clock = $('.direct-clock', sec);
+    function fmt(h, m) { return (h % 12 || 12) + ':' + (m < 10 ? '0' : '') + m + (h < 12 ? ' am' : ' pm'); }
+    function tick() {
+      var d = new Date(), h = (d.getUTCHours() + 6) % 24, m = d.getUTCMinutes(), on = h >= hours[0] && h < hours[1];
+      live.classList.toggle('off', !on);
+      stateEl.textContent = on ? 'Online now' : 'Offline, back at ' + fmt(hours[0], 0);
+      clock.textContent = fmt(h, m) + ' in Rajshahi';
+    }
+    tick(); setInterval(tick, 30000);
+
+    $('.direct-btn.copy', sec).addEventListener('click', function () {
+      XR.copy('+' + tel).then(function () { XR.toast('Number copied: ' + shown); });
+    });
+    /* a contact card (vCard) the phone offers to add to its contacts */
+    $('.direct-btn.save', sec).addEventListener('click', function () {
+      var vcf = ['BEGIN:VCARD', 'VERSION:3.0', 'N:;' + who + ';;;', 'FN:' + who, 'ORG:' + who + ' - Full-Stack Developer',
+        'TEL;TYPE=CELL,VOICE:+' + tel, wa && wa !== tel ? 'TEL;TYPE=CELL:+' + wa : '', 'URL:' + (C.siteUrl || location.origin + '/'),
+        'NOTE:Websites, bots, apps and AI agents. WhatsApp: +' + (wa || tel), 'END:VCARD'].filter(Boolean).join('\r\n');
+      var url = URL.createObjectURL(new Blob([vcf], { type: 'text/vcard' })), a = document.createElement('a');
+      a.href = url; a.download = who + '.vcf'; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+      XR.toast('Contact card ready: open it to add me');
+    });
+  })();
 })();

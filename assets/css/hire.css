@@ -12,6 +12,40 @@
 .hire-mascot { position: relative; max-width: 420px; justify-self: center; width: 100%; }
 .hire-bubble { position: absolute; left: -22%; top: 2%; max-width: 230px; transform: rotate(-4deg); z-index: 2; }
 
+/* talk directly: the number, a live status, WhatsApp, call, copy, save contact */
+.direct-sec { padding-top: 0; }
+.direct { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(18px, 3vw, 40px); align-items: center; padding: clamp(20px, 3vw, 34px);
+  border-color: rgba(37, 211, 102, .35); background: linear-gradient(160deg, rgba(37, 211, 102, .09), rgba(var(--bg-rgb), .92) 45%); }
+.direct-id { display: grid; gap: 10px; min-width: 0; }
+.direct-id .h3 { margin: 0; }
+.direct-live { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px; width: fit-content; padding: 7px 12px; border-radius: 99px; background: rgba(37, 211, 102, .12);
+  font: 600 12px/1.2 var(--font-mono); letter-spacing: .04em; color: var(--ink-2); }
+.direct-live i { width: 8px; height: 8px; border-radius: 50%; background: #25d366; animation: directPing 2s infinite; }
+.direct-live b { color: var(--ink); font-weight: 700; }
+.direct-live.off { background: rgba(217, 164, 65, .14); }
+.direct-live.off i { background: var(--gold); animation: none; }
+.direct-clock:not(:empty)::before { content: '·'; margin-right: 8px; opacity: .5; }
+@keyframes directPing { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, .55); } 80%, 100% { box-shadow: 0 0 0 9px rgba(37, 211, 102, 0); } }
+.direct-num { width: fit-content; font: 800 clamp(28px, 4.2vw, 46px)/1.05 var(--font-display); color: var(--ink); text-decoration: none; white-space: nowrap; }
+.direct-num:hover { color: var(--red); }
+.direct-note { margin: 0; max-width: 46ch; color: var(--ink-2); font-size: 14.5px; line-height: 1.55; }
+.direct-acts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.direct-btn { display: flex; align-items: center; gap: 12px; min-height: 66px; padding: 14px 16px; border: 1px solid var(--line-2); border-radius: 16px; background: var(--surface);
+  color: var(--ink); font: inherit; text-align: left; text-decoration: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: transform .25s var(--ease-out), border-color .25s, box-shadow .25s; }
+.direct-btn .ic { flex: none; width: 26px; height: 26px; }
+.direct-btn span { display: grid; gap: 3px; min-width: 0; }
+.direct-btn b { font-size: 15.5px; line-height: 1.2; }
+.direct-btn small { overflow: hidden; font-size: 12.5px; color: var(--ink-3); white-space: nowrap; text-overflow: ellipsis; }
+.direct-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.direct-btn:active { transform: scale(.98); }
+.direct-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+/* WhatsApp green with dark text (white on this green is too faint to read) */
+.direct-btn.wa { border-color: #25d366; background: #25d366; color: #073b1f; }
+.direct-btn.wa small { color: rgba(7, 59, 31, .78); }
+.direct-btn.call { border-color: var(--red); background: var(--red); color: #fff; }
+.direct-btn.call small { color: rgba(255, 255, 255, .85); }
+
 /* packages */
 .packs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: start; }
 .pack { position: relative; display: grid; gap: 16px; padding: 28px; }
@@ -122,6 +156,7 @@
   .nexts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 900px) {
+  .direct { grid-template-columns: 1fr; }
   .hire-hero-grid, .faq-grid { grid-template-columns: 1fr; }
   .hire-mascot { max-width: 320px; }
   .faq-grid .section-head { position: relative; top: 0; }
@@ -153,4 +188,15 @@
   /* four configurator steps as a tidy 2 x 2 instead of 3 + an orphan */
   .cfg-steps { display: grid; grid-template-columns: 1fr 1fr; }
   .sp small { line-height: 1.45; }
+}
+
+/* talk directly on phones: the two main actions full width and thumb-sized */
+@media (max-width: 560px) {
+  .direct { gap: 18px; padding: 20px 18px; }
+  .direct-num { font-size: 31px; }
+  .direct-acts { gap: 10px; }
+  .direct-btn { min-height: 58px; padding: 12px 14px; }
+  .direct-btn.wa, .direct-btn.call { grid-column: 1 / -1; min-height: 62px; justify-content: center; }
+  .direct-btn.wa span, .direct-btn.call span { text-align: left; }
+  .direct-btn.copy small, .direct-btn.save small { display: none; }
 }

@@ -65,11 +65,12 @@ function graph(p) {
   const url = abs(p.path), img = abs('assets/img/' + p.image.file) + imgV(p.image.file), per = cfg.person;
   const G = [
     { '@type': 'WebSite', '@id': ID.site, url: SITE, name: cfg.name, alternateName: cfg.alternateName, inLanguage: cfg.language, publisher: { '@id': ID.person } },
-    { '@type': 'Person', '@id': ID.person, name: per.name, jobTitle: per.jobTitle, description: per.description, url: SITE, image: abs(per.image),
+    { '@type': 'Person', '@id': ID.person, name: per.name, jobTitle: per.jobTitle, description: per.description, url: SITE, image: abs(per.image), telephone: per.telephone || undefined,
       address: { '@type': 'PostalAddress', addressLocality: per.city, addressCountry: per.country }, knowsAbout: per.knowsAbout, sameAs: per.sameAs.length ? per.sameAs : undefined, worksFor: { '@id': ID.biz } },
     { '@type': 'ProfessionalService', '@id': ID.biz, name: cfg.name + ' — Development Studio', url: SITE, image: abs('assets/img/og/home.jpg'), logo: abs('assets/img/icon-512.png'),
-      founder: { '@id': ID.person }, address: { '@type': 'PostalAddress', addressLocality: per.city, addressCountry: per.country }, areaServed: 'Worldwide', sameAs: per.sameAs.length ? per.sameAs : undefined,
-      contactPoint: per.sameAs.filter(u => /t\.me\//.test(u)).map(u => ({ '@type': 'ContactPoint', contactType: 'customer support', url: u, availableLanguage: ['English', 'Bengali'] })),
+      founder: { '@id': ID.person }, address: { '@type': 'PostalAddress', addressLocality: per.city, addressCountry: per.country }, areaServed: 'Worldwide', sameAs: per.sameAs.length ? per.sameAs : undefined, telephone: per.telephone || undefined,
+      contactPoint: (per.telephone ? [{ '@type': 'ContactPoint', contactType: 'sales', telephone: per.telephone, availableLanguage: ['English', 'Bengali'] }] : [])
+        .concat(per.sameAs.filter(u => /t\.me\//.test(u)).map(u => ({ '@type': 'ContactPoint', contactType: 'customer support', url: u, availableLanguage: ['English', 'Bengali'] }))),
       priceRange: '$' + Math.min.apply(null, services.map(s => s.lo)) + ' – $' + Math.max.apply(null, services.map(s => s.hi)),
       paymentAccepted: 'bKash, Nagad, USDT, Bitcoin, Ethereum, Binance Pay, Payoneer, bank transfer', currenciesAccepted: 'USD, BDT',
       hasOfferCatalog: { '@type': 'OfferCatalog', name: 'Development services', itemListElement: services.map(s => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: s.name, provider: { '@id': ID.person } },
