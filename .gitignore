@@ -1,3 +1,2 @@
-# the Telegram bot token for api/visit.php - never commit it (see DEPLOY.md)
+# the Telegram bot token for api/visit.php when kept outside public_html (see DEPLOY.md)
 xr-telegram.php
-api/.telegram.php

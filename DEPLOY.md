@@ -118,7 +118,8 @@ message from the server, so the bot token never reaches the browser or GitHub. B
 and automated browsers are ignored; one alert per visitor per 12 hours, at most 120 an hour. No IP address
 is sent. It only runs on the live domain (Hostinger, PHP), not on GitHub Pages.
 
-Set it up once:
+The token is in `api/.telegram.php` (the server never serves dot-files, so the site cannot leak it; keep the
+GitHub repository **private**, since the file is committed). To keep it off GitHub instead:
 
 1. Create `xr-telegram.php` with your bot token (from @BotFather) and your chat id:
    ```php
@@ -128,7 +129,7 @@ Set it up once:
 2. hPanel → **File Manager** → open the folder that **contains** `public_html` (one level up) → upload
    `xr-telegram.php` there. Outside `public_html` it can never be downloaded. (If your plan does not allow
    that, name it `.telegram.php` and put it in `public_html/api/`: the server never serves dot-files.)
-3. Never commit it: `.gitignore` already lists both names.
+3. Delete `api/.telegram.php` from the repository; `.gitignore` already lists `xr-telegram.php`.
 
 To test, open the site in a private window: the message arrives within a few seconds. To change the token
 (for example after revoking it in @BotFather), just edit that one file on the server.
