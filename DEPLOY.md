@@ -109,3 +109,26 @@ A power with no clip is silent. `assets/sfx/marks.json` holds the timings inside
 to: the Chidori `strike` and `surges`, the Kamehameha `fire` and `beam`, the Arise `word`, and the theme's `drop`, `beat`,
 `accents`, `salute`, `awake`, `title` and `end` (all in seconds). If you swap a clip, update its marks.
 Only add clips you have the right to publish.
+
+## 9. Telegram visitor alerts
+
+Every new visitor (the first visit in a browser) sends you a Telegram message: the page, where they came
+from, device, screen, language and time zone. `assets/js/core.js` pings `api/visit.php`, which sends the
+message from the server, so the bot token never reaches the browser or GitHub. Bots, link-preview crawlers
+and automated browsers are ignored; one alert per visitor per 12 hours, at most 120 an hour. No IP address
+is sent. It only runs on the live domain (Hostinger, PHP), not on GitHub Pages.
+
+Set it up once:
+
+1. Create `xr-telegram.php` with your bot token (from @BotFather) and your chat id:
+   ```php
+   <?php
+   return array('token' => '123456:ABC...', 'chat' => '123456789');
+   ```
+2. hPanel → **File Manager** → open the folder that **contains** `public_html` (one level up) → upload
+   `xr-telegram.php` there. Outside `public_html` it can never be downloaded. (If your plan does not allow
+   that, name it `.telegram.php` and put it in `public_html/api/`: the server never serves dot-files.)
+3. Never commit it: `.gitignore` already lists both names.
+
+To test, open the site in a private window: the message arrives within a few seconds. To change the token
+(for example after revoking it in @BotFather), just edit that one file on the server.

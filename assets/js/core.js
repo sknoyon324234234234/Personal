@@ -1210,6 +1210,23 @@
     }).observe(root, { attributes: true, attributeFilter: ['class'] });
   }
 
+  /* A new visitor (the first visit in this browser) pings api/visit.php, which tells the owner
+     on Telegram. Only on the live domain (the page's canonical address), never for automated
+     browsers, a few seconds after load so it costs the page nothing. */
+  function visitPing() {
+    var canon = document.querySelector('link[rel="canonical"]'), live = '';
+    try { live = canon ? new URL(canon.href).hostname : ''; } catch (e) { /* ignore */ }
+    if (!live || location.hostname !== live || navigator.webdriver) return;
+    try { if (localStorage.getItem('xr-visited')) return; localStorage.setItem('xr-visited', String(Date.now())); } catch (e) { return; }
+    var tz = '';
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { /* ignore */ }
+    var data = JSON.stringify({ page: location.pathname, ref: document.referrer || '', lang: navigator.language || '', tz: tz, scr: screen.width + 'x' + screen.height });
+    try {
+      if (navigator.sendBeacon) navigator.sendBeacon('/api/visit.php', new Blob([data], { type: 'application/json' }));
+      else fetch('/api/visit.php', { method: 'POST', body: data, keepalive: true, headers: { 'Content-Type': 'application/json' } });
+    } catch (e) { /* ignore */ }
+  }
+
   // Inertia scrolling for mouse wheels (trackpads, touch, keyboard and scrollbars stay native)
   function smoothScroll() {
     if (reduce || !fine || !window.requestAnimationFrame) return;
@@ -1593,5 +1610,5 @@
   watchMascots();
   $$('canvas[data-petals]').forEach(function (c) { petals(c, { density: parseFloat(c.getAttribute('data-petals')) || 26000 }); });
   loader();
-  onReady(function () { setTimeout(pauseOffscreen, 1200); });
+  onReady(function () { setTimeout(pauseOffscreen, 1200); setTimeout(visitPing, 3000); });
 })();

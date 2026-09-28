@@ -1,0 +1,3 @@
+# the Telegram bot token for api/visit.php - never commit it (see DEPLOY.md)
+xr-telegram.php
+api/.telegram.php
