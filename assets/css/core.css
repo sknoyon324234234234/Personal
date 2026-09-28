@@ -624,6 +624,11 @@ a.nv-chip:hover { border-color: var(--red); color: var(--ink); transform: transl
 .curtain-mark { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; }
 .curtain-mark svg { width: 72px; height: 72px; }
 .curtain-mark .jp { position: absolute; font-size: 42vh; color: rgba(224,68,46,.16); }
+/* until core.js has put the curtain in (html.has-curtain), the page's first paint is already
+   covered exactly like it, so a page never flashes uncovered between the leave wipe and its own
+   entrance wipe; if the script never runs, the cover lifts by itself */
+.js:not(.has-curtain) body::after { content: '忍'; position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; background: #16110d; color: rgba(224,68,46,.16); font: 900 42vh/1 var(--font-jp, serif); pointer-events: none; animation: coverLift 0s 2.5s forwards; }
+@keyframes coverLift { to { visibility: hidden; } }
 /* entering: panels start covering, then wipe away to the right */
 .js .curtain .p2 { animation: cOut .7s var(--ease-in-out) .08s both; }
 .js .curtain .p1 { animation: cOut .7s var(--ease-in-out) .02s both; }

@@ -714,6 +714,7 @@
       '<div class="grain" aria-hidden="true"></div>' +
       '<div class="toasts" role="status" aria-live="polite"></div>';
     while (frag.firstChild) document.body.appendChild(frag.firstChild);
+    root.classList.add('has-curtain');   /* the curtain takes over from the CSS cover (core.css) */
   }
 
   function toast(msg, type) {
